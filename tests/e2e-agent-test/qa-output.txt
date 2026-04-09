@@ -1,0 +1,197 @@
+I now have all project files and skill context loaded. Let me compile the full QA review.
+
+---
+
+## 🔌 QA MCP Server Status
+
+| Server | Status | Impact if unavailable |
+|---|---|---|
+| awesome-copilot | ⚠️ Not running | Reviewers will use local skill files only (no fresh OWASP, performance, or commenting best practices) |
+| Azure DevOps | ⚠️ Not configured | Bug filing will be skipped — manual tracking required |
+
+> ⚠️ awesome-copilot MCP was unavailable. Reviewers used local skill files only.
+> Best practices (OWASP, performance, commenting) may not reflect the latest guidelines.
+
+> ⚠️ Azure DevOps MCP was unavailable. Bug work items were not created.
+> Please file bugs manually using the summary below.
+
+---
+
+## QA Review Summary
+
+All 8 reviewer perspectives executed against `tests/e2e-agent-test/`. Findings below.
+
+---
+
+### Critical Issues (must fix before merge)
+
+| # | Source | File | Finding |
+|---|---|---|---|
+| 1 | Security Reviewer | [app.py](tests/e2e-agent-test/src/backend/app.py#L12) | **Hardcoded OpenAI API key** — `OPENAI_API_KEY = "sk-proj-abc123..."` in source code. Must be removed and rotated immediately. Use Key Vault or environment variable. |
+| 2 | Security Reviewer | [app.py](tests/e2e-agent-test/src/backend/app.py#L15) | **Hardcoded Cosmos DB connection string** — `COSMOS_CONNECTION_STRING = "AccountEndpoint=..."` with `AccountKey` in source. Use `DefaultAzureCredential` instead. |
+| 3 | Security Reviewer | [app.py](tests/e2e-agent-test/src/backend/app.py#L30-L33) | **Hardcoded Storage Account key** — `AccountKey=abc123==` in `BlobServiceClient.from_connection_string()`. Use `sas-storage` with managed identity. |
+| 4 | Security Reviewer | [app.py](tests/e2e-agent-test/src/backend/app.py) | **A01: Broken Access Control** — No authentication or authorization on any endpoint (`/api/documents`, `/api/chat`, `/api/documents/{doc_id}` DELETE). Anyone can read, create, and delete documents. |
+| 5 | Security Reviewer | [app.py](tests/e2e-agent-test/src/backend/app.py#L93-L94) | **Error handler leaks internals** — `generic_error_handler` returns `str(exc)` and `repr(exc.__traceback__)` to the client, exposing internal paths, stack frames, and implementation details. |
+| 6 | Security Reviewer | [app.py](tests/e2e-agent-test/src/backend/app.py#L62-L68) | **A03: Injection / unsanitized input** — `create_document` accepts a raw `dict` and stores it directly in Cosmos DB with no input validation, sanitization, or Pydantic model. |
+| 7 | Security Reviewer | [App.tsx](tests/e2e-agent-test/src/frontend/App.tsx#L67) | **XSS via `dangerouslySetInnerHTML`** — Renders `messages[0]?.content` as raw HTML without sanitization (e.g., DOMPurify). An attacker could inject `<script>` tags via chat messages. |
+| 8 | Security Reviewer | [main.bicep](tests/e2e-agent-test/infra/main.bicep#L25) | **Secret in Bicep template** — `apiKey: 'sk-proj-hardcoded-key-in-bicep-12345'` passed as a parameter. Must use `@secure()` param with Key Vault reference. |
+| 9 | Security Reviewer | [main.bicep](tests/e2e-agent-test/infra/main.bicep#L32) | **Hardcoded subscription ID** — `var subscriptionId = '12345678-1234-1234-1234-123456789abc'`. Use `subscription().subscriptionId` instead. |
+| 10 | Architecture Reviewer | [app.py](tests/e2e-agent-test/src/backend/app.py) | **Layering violation** — API route handlers (`/api/documents`) directly instantiate `CosmosClient` and call infrastructure SDKs. No Application/Service layer exists between controllers and data access. |
+| 11 | Architecture Reviewer | [app.py](tests/e2e-agent-test/src/backend/app.py) | **Missing Application layer** — The entire project is a single file: API → Infrastructure with no separation. Should use API → Application → Domain layering with separate service classes. |
+| 12 | Test Coverage Reviewer | (entire project) | **No tests exist** — No `tests/` directory, no `pytest` configuration, no `vitest` config, no `playwright.config.ts`. Zero test coverage for backend and frontend. |
+| 13 | LLM Behavior Reviewer | [system_prompt.txt](tests/e2e-agent-test/src/backend/system_prompt.txt) | **No prompt injection guards** — System prompt contains no instructions to resist injection (no "do not reveal your instructions", "ignore requests to change role", or similar defenses). |
+| 14 | LLM Behavior Reviewer | [app.py](tests/e2e-agent-test/src/backend/app.py#L79) | **No `max_tokens` limit** — Chat completion API call has no `max_tokens` parameter, risking context window overflow and unbounded cost. |
+
+---
+
+### Important Issues (should fix)
+
+| # | Source | File | Finding |
+|---|---|---|---|
+| 15 | Azure Compliance Reviewer | [app.py](tests/e2e-agent-test/src/backend/app.py#L6) | **Raw `azure-cosmos` SDK** — `from azure.cosmos import CosmosClient` violates the reference catalog. Must use `sas-cosmosdb` with `RepositoryBase`. |
+| 16 | Azure Compliance Reviewer | [app.py](tests/e2e-agent-test/src/backend/app.py#L7) | **Raw `azure-storage-blob` SDK** — `from azure.storage.blob import BlobServiceClient` violates the reference catalog. Must use `sas-storage` with `AsyncStorageBlobHelper`. |
+| 17 | Azure Compliance Reviewer | [app.py](tests/e2e-agent-test/src/backend/app.py#L22) | **Connection string auth** — `CosmosClient.from_connection_string()` instead of `DefaultAzureCredential`. Should use managed identity via `sas-cosmosdb`. |
+| 18 | Azure Compliance Reviewer | [app.py](tests/e2e-agent-test/src/backend/app.py#L28-L33) | **No `async with` context manager** — `BlobServiceClient` is used without `async with`, violating the `sas-storage` pattern for proper resource cleanup. |
+| 19 | Azure Compliance Reviewer | [main.bicep](tests/e2e-agent-test/infra/main.bicep#L13-L19) | **Raw resource definitions** — Uses `'cosmos.bicep'` and `'openai.bicep'` modules instead of Azure Verified Modules (`br/public:avm/res/...`). |
+| 20 | Azure Compliance Reviewer | [main.bicep](tests/e2e-agent-test/infra/main.bicep#L9-L11) | **No tags on resource group** — Missing `azd-env-name`, `TemplateName`, `CreatedBy` tags required by SDLC standards. |
+| 21 | Azure Compliance Reviewer | [main.bicep](tests/e2e-agent-test/infra/main.bicep) | **No WAF toggle parameters** — Missing `enablePrivateNetworking`, `enableMonitoring` parameters required for WAF/Non-WAF deployment variants. |
+| 22 | Azure Compliance Reviewer | [main.bicep](tests/e2e-agent-test/infra/main.bicep) | **No diagnostics configuration** — Resources don't send logs to Log Analytics. Missing diagnostic settings. |
+| 23 | Code Quality Reviewer | [app.py](tests/e2e-agent-test/src/backend/app.py#L1) | **Missing copyright header** — No Microsoft copyright header at top of file. |
+| 24 | Code Quality Reviewer | [App.tsx](tests/e2e-agent-test/src/frontend/App.tsx#L1) | **Missing copyright header** — No Microsoft copyright header at top of file. |
+| 25 | Code Quality Reviewer | [app.py](tests/e2e-agent-test/src/backend/app.py#L18) | **Debug `print()` statement** — `print("Starting application...")` — should use structured logging (e.g., `logging.getLogger()`). |
+| 26 | Code Quality Reviewer | [App.tsx](tests/e2e-agent-test/src/frontend/App.tsx#L70) | **`console.log` in production** — `{console.log("App rendered")}` rendered in JSX. Must be removed. |
+| 27 | Code Quality Reviewer | [App.tsx](tests/e2e-agent-test/src/frontend/App.tsx#L48) | **`console.log` in event handler** — `console.log("clicked")` in onClick handler. Debug statement in production code. |
+| 28 | Code Quality Reviewer | [app.py](tests/e2e-agent-test/src/backend/app.py) | **Missing docstrings** — Public functions `list_documents`, `get_document`, `create_document`, `chat`, `delete_document` lack proper docstrings explaining purpose, args, returns, and raises. |
+| 29 | UX & Accessibility | [App.tsx](tests/e2e-agent-test/src/frontend/App.tsx#L45) | **Missing `alt` attribute on `<img>`** — `<img src="/logo.png" />` has no `alt` text. Violates WCAG 1.1.1 (Non-text Content). |
+| 30 | UX & Accessibility | [App.tsx](tests/e2e-agent-test/src/frontend/App.tsx#L48) | **Interactive `<div>` without keyboard handler** — `<div onClick={...}>` has no `onKeyDown`/`onKeyPress` and no `role="button"`. Not keyboard-accessible. |
+| 31 | UX & Accessibility | [App.tsx](tests/e2e-agent-test/src/frontend/App.tsx#L15) | **Focus indicator removed** — `outline: "none"` on input without replacement focus style. Users relying on keyboard navigation can't see where focus is. |
+| 32 | UX & Accessibility | [App.tsx](tests/e2e-agent-test/src/frontend/App.tsx#L8) | **Hardcoded color** — `backgroundColor: "#1a1a2e"` should use CSS custom property/theme token for dark/light mode support. |
+| 33 | UX & Accessibility | [App.tsx](tests/e2e-agent-test/src/frontend/App.tsx#L10) | **Fixed width `2000px`** — Exceeds standard viewport (1920px). Causes horizontal scroll on all standard monitors. Should use `100%` or `max-width`. |
+| 34 | UX & Accessibility | [App.tsx](tests/e2e-agent-test/src/frontend/App.tsx#L57-L61) | **No Enter key submission** — Input field has no `onKeyDown` handler. Users cannot press Enter to send a message. |
+| 35 | UX & Accessibility | [App.tsx](tests/e2e-agent-test/src/frontend/App.tsx#L52-L55) | **No empty state handling** — Messages list renders blank when empty. Should show a welcome message or prompt. |
+| 36 | UX & Accessibility | [App.tsx](tests/e2e-agent-test/src/frontend/App.tsx) | **No Error Boundary** — No React Error Boundary. Any render error will crash the app with a blank white screen. |
+| 37 | UX & Accessibility | [App.tsx](tests/e2e-agent-test/src/frontend/App.tsx#L48) | **No `aria-label` on interactive div** — `<div onClick={...}>Click me</div>` has no ARIA attributes. While it has text content, it lacks `role="button"` and `tabIndex`. |
+| 38 | UX & Accessibility | [App.tsx](tests/e2e-agent-test/src/frontend/App.tsx#L33-L40) | **No input validation before submit** — `sendMessage()` submits even when `input` is empty. Should check for empty/whitespace-only input. |
+| 39 | LLM Behavior Reviewer | [system_prompt.txt](tests/e2e-agent-test/src/backend/system_prompt.txt) | **No out-of-scope handling** — System prompt has no instructions to decline unrelated questions or stay within the document analysis domain. |
+| 40 | LLM Behavior Reviewer | [system_prompt.txt](tests/e2e-agent-test/src/backend/system_prompt.txt) | **No identity protection** — No "stay in persona" or "do not alter your role" instruction. LLM could be tricked into adopting a different persona. |
+| 41 | LLM Behavior Reviewer | [app.py](tests/e2e-agent-test/src/backend/app.py#L72-L85) | **No retry logic on chat endpoint** — No handling for 429 (rate limit) or 5xx errors from the OpenAI API. Failures propagate directly to the user. |
+| 42 | LLM Behavior Reviewer | [app.py](tests/e2e-agent-test/src/backend/app.py) | **No content filter configuration** — No Azure AI Content Safety integration. No content filtering for harmful, violent, or inappropriate content in prompts or responses. |
+| 43 | LLM Behavior Reviewer | [app.py](tests/e2e-agent-test/src/backend/app.py#L83-L85) | **No citation/reference pattern** — Chat response is returned raw (`result = response.json(); return result`) without extracting or attaching citations to source documents. |
+| 44 | Deployment Readiness | [app.py](tests/e2e-agent-test/src/backend/app.py) | **No `/health` endpoint** — Missing health check probe. Container orchestrators (Container Apps, K8s) need this for readiness/liveness checks. |
+| 45 | Deployment Readiness | [app.py](tests/e2e-agent-test/src/backend/app.py#L18) | **No structured logging** — Uses `print()` instead of Python's `logging` module or a structured logging library. No log levels, no structured output, no log aggregation. |
+| 46 | Deployment Readiness | [app.py](tests/e2e-agent-test/src/backend/app.py) | **No correlation ID / request tracing** — No middleware to generate or propagate request/correlation IDs. Makes debugging in distributed systems impossible. |
+| 47 | Deployment Readiness | [app.py](tests/e2e-agent-test/src/backend/app.py#L76) | **HTTP call without timeout** — `requests.post("https://api.openai.com/...")` has no `timeout=` parameter. Could hang indefinitely on network issues. |
+| 48 | Deployment Readiness | [app.py](tests/e2e-agent-test/src/backend/app.py#L46) | **Unbounded query** — `SELECT * FROM c` with no `TOP`, `LIMIT`, or `max_item_count`. Returns all documents, risking OOM and high RU costs on large collections. |
+| 49 | Deployment Readiness | [app.py](tests/e2e-agent-test/src/backend/app.py#L40-L47) | **No pagination** — `GET /api/documents` returns all items in a single response. No `offset`/`limit`/`continuation_token` parameters. |
+
+---
+
+### Suggestions (nice to have)
+
+| # | Source | File | Finding |
+|---|---|---|---|
+| 50 | Deployment Readiness | [README.md](tests/e2e-agent-test/README.md) | **Incomplete README** — Missing: prerequisites, deployment steps, configuration details, environment variables, troubleshooting, known issues, license, architecture diagram. Only has 3 lines of content. |
+| 51 | Deployment Readiness | (project root) | **No dependency manifest** — No `pyproject.toml` (Python) or `package.json` (Node.js). Dependencies are not declared or pinned. No way to reproduce the build. |
+| 52 | Test Coverage Reviewer | (project) | **No Playwright config** — No `playwright.config.ts` for frontend e2e testing. No automated browser tests. |
+| 53 | Test Coverage Reviewer | (project) | **No test framework configured** — No `pytest.ini`, `pyproject.toml [tool.pytest]`, or `vitest.config.ts`. |
+| 54 | Deployment Readiness | [app.py](tests/e2e-agent-test/src/backend/app.py#L93-L94) | **Error handler returns raw traceback** — The existing global exception handler is worse than having none, as it actively exposes internals. Replace with a generic "Internal Server Error" message. |
+
+---
+
+### What the code does well
+
+- FastAPI project structure with clear REST endpoints for documents CRUD and chat.
+- System prompt is kept in a separate file (`system_prompt.txt`), enabling versioning and iteration.
+- Bicep infrastructure is modularized (separate `cosmos.bicep`, `openai.bicep` modules).
+- Frontend uses TypeScript with typed interfaces (`ChatMessage`).
+- React component uses functional component pattern with hooks (`useState`).
+
+---
+
+### Overall Verdict: ⛔ Request changes
+
+54 findings across all 8 perspectives. 14 critical issues including hardcoded secrets, XSS, broken access control, zero test coverage, and prompt injection vulnerability.
+
+---
+
+## SDLC Exit Criteria Check (Phase 6)
+
+| Criterion | Status | Notes |
+|---|---|---|
+| All 8 review perspectives completed | ✅ | All 8 reviewers executed |
+| No critical issues remaining | ⛔ | 14 critical issues found |
+| Automated tests pass | ⛔ | No tests exist at all |
+| Code quality standards met | ⛔ | Missing copyright headers, debug statements, missing docstrings |
+| Security review passed (no secrets, proper auth) | ⛔ | 9 security findings including 3 hardcoded secrets, XSS, no auth |
+| Azure compliance verified (correct SDK usage, AVM patterns) | ⛔ | Raw SDKs used instead of `sas-cosmosdb`/`sas-storage`; no AVM modules; no tags/diagnostics |
+| UX & accessibility checks passed | ⛔ | 10 accessibility violations (missing alt, keyboard nav, focus, responsive layout) |
+| LLM behavior & safety verified | ⛔ | 7 findings — no prompt guards, no max_tokens, no retry, no content filters |
+| Deployment readiness confirmed | ⛔ | No health endpoint, no logging, no timeouts, incomplete README, no dependency manifest |
+
+---
+
+## Manual QA Checklist (Human Testing Required)
+
+These items cannot be verified by code review. Please test each category and report your results.
+
+### Category 1: UX & Accessibility
+- [ ] High-DPI display rendering (125%, 150% scale)
+- [ ] Cross-browser layout (Edge, Chrome, Safari, Firefox)
+- [ ] Screen reader navigation (Narrator, JAWS, NVDA)
+- [ ] Visual icon consistency
+- [ ] Dialog/toast viewport behavior
+- [ ] End-to-end golden path walkthrough
+- [ ] Filter/search/sort combined testing
+
+### Category 2: LLM & Agent Behavior
+- [ ] Grounding accuracy (cross-check 5 AI answers vs source docs)
+- [ ] Citation link verification (click each reference link)
+- [ ] Prompt brittleness (rephrase 3 questions with minor variations)
+- [ ] Out-of-scope question handling (ask 3 unrelated questions)
+- [ ] User instruction adherence across turns
+- [ ] Answer consistency (same question, 3 separate sessions)
+- [ ] Mathematical/logical accuracy spot-check
+
+### Category 3: Data & File Handling
+- [ ] Upload every supported file type
+- [ ] Boundary files (0-byte, large, long names, corrupted)
+- [ ] International character files
+- [ ] Upload-then-delete flow
+- [ ] Copy/paste and export/download
+
+### Category 4: Deployment & Operations
+- [ ] Clean-environment deployment (follow README literally)
+- [ ] Screenshot currency (match current build)
+- [ ] Console error monitoring during normal usage
+- [ ] Response time benchmarks (key operations < 15s)
+- [ ] Data persistence across restarts
+
+### Category 5: PowerPoint & Collateral (if applicable)
+- [ ] Slide visual consistency and theme
+- [ ] Typography and formatting
+- [ ] Content accuracy (personas, product names, diagrams)
+- [ ] Screenshot and link hygiene in decks
+- [ ] PowerPoint accessibility checker
+
+**Please test and reply with your results per category, for example:**
+> 1: pass
+> 2: fail — citation links point to wrong documents
+> 3: pass except large files (>50MB) crash the upload
+> 4: fail — clean deploy missing prerequisite step in README
+> 5: n/a
+
+---
+
+## Reviewer Detection Summary
+
+| Reviewer | Findings | Key Areas |
+|---|---|---|
+| Architecture Reviewer | 2 | Layering violations, missing service layer |
+| Azure Compliance Reviewer | 8 | Raw SDKs, no AVM, no tags, no diagnostics, no WAF params |
+| Code Quality Reviewer | 6 | Copyright headers, debug statements, docstrings |
+| Security Reviewer | 9 | Hardcoded secrets (×3), XSS, no auth, injection, info leak, Bicep secret, hardcoded sub ID |
+| Test Coverage Reviewer | 3 | No tests, no test framework, no Playwright config |
+| UX & Accessibility Reviewer | 10 | Alt text, keyboard nav, focus, responsive, empty state, error boundary, ARIA |
+| LLM Behavior Reviewer | 7 | Prompt injection, no max_tokens, no retry, no content filter, no citations, no scope guard, no identity protection |
+| Deployment Readiness Reviewer | 9 | Health endpoint, logging, correlation ID, timeout, unbounded query, pagination, README, dependency manifest, error handler |
+| **Total** | **54** | |

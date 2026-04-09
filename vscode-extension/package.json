@@ -1,0 +1,139 @@
+{
+  "name": "sdlc-agent-template",
+  "displayName": "SDLC Agent Template",
+  "description": "Multi-agent system for building Azure solution accelerators with production-quality standards. Includes Sassy orchestrator, 8 QA reviewers, and 11 domain skills.",
+  "version": "1.0.0",
+  "publisher": "gim-home",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gim-home/sdl_with_agent"
+  },
+  "engines": {
+    "vscode": "^1.100.0"
+  },
+  "categories": [
+    "AI",
+    "Other"
+  ],
+  "keywords": [
+    "sdlc",
+    "azure",
+    "copilot",
+    "agents",
+    "skills",
+    "code-quality",
+    "qa-review",
+    "cosmos-db",
+    "fastapi",
+    "react"
+  ],
+  "contributes": {
+    "chatAgents": [
+      {
+        "name": "Sassy",
+        "description": "SDLC orchestrator — coordinates all phases from requirements to release",
+        "path": "./agents/sassy.agent.md"
+      },
+      {
+        "name": "Analyst",
+        "description": "Requirements analysis and stakeholder interview agent",
+        "path": "./agents/analyst.agent.md"
+      },
+      {
+        "name": "Scaffolder",
+        "description": "Project scaffolding using Azure accelerator templates",
+        "path": "./agents/scaffolder.agent.md"
+      },
+      {
+        "name": "Implementer",
+        "description": "Code implementation following layered architecture patterns",
+        "path": "./agents/implementer.agent.md"
+      },
+      {
+        "name": "Deployer",
+        "description": "Azure deployment with Bicep, Container Apps, and azd",
+        "path": "./agents/deployer.agent.md"
+      },
+      {
+        "name": "Documenter",
+        "description": "Architecture Decision Records and API documentation",
+        "path": "./agents/documenter.agent.md"
+      },
+      {
+        "name": "ReleaseManager",
+        "description": "Release script preparation and publishing workflow",
+        "path": "./agents/release-manager.agent.md"
+      },
+      {
+        "name": "QACoordinator",
+        "description": "Orchestrates all QA reviewers for comprehensive quality checks",
+        "path": "./agents/qa-coordinator.agent.md"
+      },
+      {
+        "name": "ArchitectureReviewer",
+        "description": "Reviews architecture, layering, and dependency compliance",
+        "path": "./agents/architecture-reviewer.agent.md"
+      },
+      {
+        "name": "CodeQualityReviewer",
+        "description": "Reviews code quality, naming, imports, and dead code",
+        "path": "./agents/code-quality-reviewer.agent.md"
+      },
+      {
+        "name": "SecurityReviewer",
+        "description": "OWASP Top 10, secrets scanning, and dependency audit",
+        "path": "./agents/security-reviewer.agent.md"
+      },
+      {
+        "name": "TestCoverageReviewer",
+        "description": "Reviews test coverage, AAA structure, and test quality",
+        "path": "./agents/test-coverage-reviewer.agent.md"
+      },
+      {
+        "name": "UXAccessibilityReviewer",
+        "description": "Reviews UX patterns, accessibility, and ARIA compliance",
+        "path": "./agents/ux-accessibility-reviewer.agent.md"
+      },
+      {
+        "name": "LLMBehaviorReviewer",
+        "description": "Reviews LLM prompts, agent behavior, and data handling",
+        "path": "./agents/llm-behavior-reviewer.agent.md"
+      },
+      {
+        "name": "DeploymentReadinessReviewer",
+        "description": "Reviews deployment readiness, error handling, and observability",
+        "path": "./agents/deployment-readiness-reviewer.agent.md"
+      },
+      {
+        "name": "AzureComplianceReviewer",
+        "description": "Reviews Azure compliance, RBAC, and resource configuration",
+        "path": "./agents/azure-compliance-reviewer.agent.md"
+      },
+      {
+        "name": "RAIReviewer",
+        "description": "Responsible AI review for fairness, transparency, and safety",
+        "path": "./agents/rai-reviewer.agent.md"
+      },
+      {
+        "name": "QABugChecklistReviewer",
+        "description": "QA bug checklist verification and test scenario validation",
+        "path": "./agents/qa-bug-checklist-reviewer.agent.md"
+      }
+    ],
+    "chatSkills": [
+      { "path": "./skills/sdlc-accelerator-qa/SKILL.md" },
+      { "path": "./skills/sdlc-adr-authoring/SKILL.md" },
+      { "path": "./skills/sdlc-architecture-review/SKILL.md" },
+      { "path": "./skills/sdlc-azure-deployment/SKILL.md" },
+      { "path": "./skills/sdlc-blob-storage/SKILL.md" },
+      { "path": "./skills/sdlc-code-quality/SKILL.md" },
+      { "path": "./skills/sdlc-cosmos-repository/SKILL.md" },
+      { "path": "./skills/sdlc-project-manifest/SKILL.md" },
+      { "path": "./skills/sdlc-project-scaffolding/SKILL.md" },
+      { "path": "./skills/sdlc-qa-bug-checklist/SKILL.md" },
+      { "path": "./skills/sdlc-security-review/SKILL.md" },
+      { "path": "./skills/sdlc-workspace-init/SKILL.md" }
+    ]
+  }
+}

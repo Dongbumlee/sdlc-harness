@@ -1,0 +1,8 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "/^Select-String -Path \"h:\\\\Works\\\\sdl_with_agent\\\\outputs\\\\src\\\\SmartDocAnalyzerAPI\\\\tests\\\\test_document_service\\.py\" -Pattern \"Copyright\\|def test_\\|async def test_\" \\| Select-Object -ExpandProperty Line \\| ForEach-Object \\{ \\$_\\.Trim\\(\\) \\}$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}

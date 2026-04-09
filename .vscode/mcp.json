@@ -1,0 +1,66 @@
+{
+    "inputs": [
+        {
+            "id": "ado_org",
+            "type": "promptString",
+            "description": "Azure DevOps organization name (e.g. 'CSACTOSOL')"
+        }
+    ],
+    "servers": {
+        "awesome-copilot": {
+            "type": "stdio",
+            "command": "docker",
+            "args": [
+                "run",
+                "-i",
+                "--rm",
+                "ghcr.io/microsoft/mcp-dotnet-samples/awesome-copilot:latest"
+            ]
+        },
+        "github": {
+            "type": "http",
+            "url": "https://api.githubcopilot.com/mcp/"
+        },
+        "azure": {
+            "type": "stdio",
+            "command": "npx",
+            "args": [
+                "-y",
+                "@azure/mcp@latest",
+                "server",
+                "start"
+            ]
+        },
+        "azure-devops": {
+            "type": "stdio",
+            "command": "npx",
+            "args": [
+                "-y",
+                "@azure-devops/mcp",
+                "${input:ado_org}"
+            ]
+        },
+        "microsoft-learn": {
+            "type": "http",
+            "url": "https://learn.microsoft.com/api/mcp"
+        },
+        "context7": {
+            "type": "stdio",
+            "command": "npx",
+            "args": [
+                "-y",
+                "@upstash/context7-mcp@latest"
+            ]
+        },
+        "playwright": {
+            "type": "stdio",
+            "command": "npx",
+            "args": [
+                "@playwright/mcp@latest",
+                "--headless",
+                "--caps=testing",
+                "--output-dir=.playwright-mcp"
+            ]
+        }
+    }
+}

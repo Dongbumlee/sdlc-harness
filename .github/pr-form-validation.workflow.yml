@@ -1,0 +1,87 @@
+# TEMPLATE: Copy this file to your application repo at .github/workflows/pr-form-validation.yml
+# Then enable it as a required status check in branch protection settings.
+#
+# Validates that the PR description follows the required template (.github/PULL_REQUEST_TEMPLATE.md).
+# Add "Validate PR Form" as a required status check on your main branch to enforce the PR form.
+
+name: PR Form Validation
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+jobs:
+  validate-pr-form:
+    name: Validate PR Form
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR description is filled out
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = context.payload.pull_request.body || '';
+
+            const errors = [];
+
+            // 1. Description must not be empty or just the placeholder
+            const descriptionSection = body.match(/## Description\s*\n([\s\S]*?)(?=\n## )/);
+            const descriptionText = descriptionSection
+              ? descriptionSection[1].replace(/<!--.*?-->/gs, '').trim()
+              : '';
+            if (!descriptionText) {
+              errors.push('**Description** section is empty. Briefly describe what this PR does and why.');
+            }
+
+            // 2. At least one SDLC Phase must be checked
+            const sdlSection = body.match(/## SDLC Phase\s*\n([\s\S]*?)(?=\n## )/);
+            const sdlChecked = sdlSection ? (sdlSection[1].match(/- \[x\]/gi) || []).length : 0;
+            if (sdlChecked === 0) {
+              errors.push('**SDLC Phase** — select at least one phase that this change falls under.');
+            }
+
+            // 3. At least one Copilot Prompt must be checked
+            const promptSection = body.match(/## Copilot Prompt\(s\) Used\s*\n([\s\S]*?)(?=\n## )/);
+            const promptChecked = promptSection ? (promptSection[1].match(/- \[x\]/gi) || []).length : 0;
+            if (promptChecked === 0) {
+              errors.push('**Copilot Prompt(s) Used** — select at least one prompt or "None — manual change".');
+            }
+
+            // 4. Changes section must have at least one item
+            const changesSection = body.match(/## Changes\s*\n([\s\S]*?)(?=\n## )/);
+            const changesText = changesSection
+              ? changesSection[1].replace(/<!--.*?-->/gs, '').replace(/^- \s*$/gm, '').trim()
+              : '';
+            if (!changesText) {
+              errors.push('**Changes** — list at least one key change in this PR.');
+            }
+
+            // 5. At least one Testing checkbox must be checked
+            const testingSection = body.match(/## Testing\s*\n([\s\S]*?)(?=\n## )/);
+            const testingChecked = testingSection ? (testingSection[1].match(/- \[x\]/gi) || []).length : 0;
+            if (testingChecked === 0) {
+              errors.push('**Testing** — confirm at least one testing method was used.');
+            }
+
+            // 6. At least one Quality Checklist item must be checked
+            const qualitySection = body.match(/## Quality Checklist\s*\n([\s\S]*?)(?=\n## )/);
+            const qualityChecked = qualitySection ? (qualitySection[1].match(/- \[x\]/gi) || []).length : 0;
+            if (qualityChecked === 0) {
+              errors.push('**Quality Checklist** — confirm at least one quality item before requesting review.');
+            }
+
+            if (errors.length > 0) {
+              const message = [
+                '## ❌ PR Form Validation Failed',
+                '',
+                'The following required sections are incomplete:',
+                '',
+                ...errors.map(e => `- ${e}`),
+                '',
+                'Please edit the PR description to fill in the required sections from the template.',
+              ].join('\n');
+
+              core.setFailed(message);
+              console.log(message);
+            } else {
+              console.log('✅ PR form validation passed — all required sections are filled out.');
+            }
