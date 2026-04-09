@@ -64,22 +64,22 @@ Before starting, verify these are in place:
 
 | Step | SDLC Phase     | Agent Chain                          | Duration |
 | ---- | ------------- | ------------------------------------ | -------- |
-| 0    | Pre-flight    | Sassy (init)                         | 2 min    |
-| 1    | Phase 1-2     | Sassy → Analyst                      | 10 min   |
-| 2    | Phase 2 (ADR) | Sassy → Documenter                   | 5 min    |
-| 3    | Phase 3       | Sassy → Scaffolder                   | 10 min   |
-| 4    | Phase 3+8     | Sassy → Deployer                     | 10 min   |
-| 5    | Phase 4       | Sassy → Implementer                  | 15 min   |
-| 6    | Phase 5       | Sassy → Documenter                   | 5 min    |
-| 7    | Phase 6       | Sassy → QA Coordinator → 8 Reviewers | 10 min   |
-| 8    | Phase 7       | Sassy → RAI Reviewer                 | 5 min    |
-| 9    | Phase 8-9     | Sassy → Release Manager              | 5 min    |
+| 0    | Pre-flight    | Harness (init)                         | 2 min    |
+| 1    | Phase 1-2     | Harness → Analyst                      | 10 min   |
+| 2    | Phase 2 (ADR) | Harness → Documenter                   | 5 min    |
+| 3    | Phase 3       | Harness → Scaffolder                   | 10 min   |
+| 4    | Phase 3+8     | Harness → Deployer                     | 10 min   |
+| 5    | Phase 4       | Harness → Implementer                  | 15 min   |
+| 6    | Phase 5       | Harness → Documenter                   | 5 min    |
+| 7    | Phase 6       | Harness → QA Coordinator → 8 Reviewers | 10 min   |
+| 8    | Phase 7       | Harness → RAI Reviewer                 | 5 min    |
+| 9    | Phase 8-9     | Harness → Release Manager              | 5 min    |
 
 ---
 
-## Step 0 — First-Run Initialization (Sassy)
+## Step 0 — First-Run Initialization (Harness)
 
-### Prompt to send to `@Sassy`:
+### Prompt to send to `@Harness`:
 
 ```
 I want to build a Customer Feedback API for our team.
@@ -89,19 +89,19 @@ We need a REST API to store and query feedback.
 
 ### Expected behavior:
 
-- [ ] **MCP readiness check** — Sassy probes all 3 critical MCP servers BEFORE any other work:
+- [ ] **MCP readiness check** — Harness probes all 3 critical MCP servers BEFORE any other work:
   - [ ] `awesome-copilot` — runs `mcp_awesome-copil_search_instructions(keywords: "security")`
   - [ ] `GitHub MCP` — runs `mcp_github_get_file_contents` on `mcaps-microsoft/python_cosmosdb_helper`
   - [ ] `Context7` — runs `mcp_context7_resolve-library-id(libraryName: "fastapi")`
-- [ ] **Status table reported** — Sassy shows a table with ✅/⛔ status for each server
-- [ ] **Failure handling** — If awesome-copilot is down, Sassy stops and tells user to start Docker + MCP server
-- [ ] **Placeholder detection** — Sassy detects unfilled placeholders in `.github/copilot-instructions.md`
-- [ ] **Questions asked** — Sassy asks 2-3 quick questions:
+- [ ] **Status table reported** — Harness shows a table with ✅/⛔ status for each server
+- [ ] **Failure handling** — If awesome-copilot is down, Harness stops and tells user to start Docker + MCP server
+- [ ] **Placeholder detection** — Harness detects unfilled placeholders in `.github/copilot-instructions.md`
+- [ ] **Questions asked** — Harness asks 2-3 quick questions:
   - Project name → answer: `"customer-feedback-service"`
   - Business domain → answer: `"Customer Experience"`
   - Tech stack preferences → answer: `"Python, FastAPI, React"`
-- [ ] **Config update** — Sassy fills `<PROJECT_NAME>`, `<BUSINESS_DOMAIN>`, `<TECH_STACK>` in `copilot-instructions.md`
-- [ ] **Phase identification** — Sassy identifies this as Phase 1-2 and delegates to Analyst
+- [ ] **Config update** — Harness fills `<PROJECT_NAME>`, `<BUSINESS_DOMAIN>`, `<TECH_STACK>` in `copilot-instructions.md`
+- [ ] **Phase identification** — Harness identifies this as Phase 1-2 and delegates to Analyst
 
 ### Verification:
 
@@ -122,7 +122,7 @@ ___________________________________________________________________________
 
 ## Step 1 — Phase 1-2: Requirements & Design (Analyst)
 
-### Prompt to send to `@Sassy`:
+### Prompt to send to `@Harness`:
 
 ```
 Analyze requirements for the Customer Feedback API:
@@ -165,7 +165,7 @@ Please produce a design proposal.
 - [ ] **RAI / Risk Considerations** — user text content moderation
 - [ ] **SDLC Impact by Phase** — what each phase needs to do
 - [ ] **Open Questions** — listed for human decision
-- [ ] **Project Configuration** — `TECH_STACK`, `ARCH_STYLE`, `OTHER_AZURE_SERVICES` values for Sassy
+- [ ] **Project Configuration** — `TECH_STACK`, `ARCH_STYLE`, `OTHER_AZURE_SERVICES` values for Harness
 - [ ] **SDLC Exit Criteria** — checklist with ✅/⚠️/⛔ statuses
 
 ### Red flags (should NOT happen):
@@ -185,10 +185,10 @@ ___________________________________________________________________________
 
 ### Expected behavior (automatic — no prompt needed):
 
-Per Sassy's ADR generation rule, after the Analyst returns a design, Sassy MUST automatically
+Per Harness's ADR generation rule, after the Analyst returns a design, Harness MUST automatically
 delegate to the Documenter to save it as an ADR.
 
-- [ ] **Auto-delegation** — Sassy delegates to Documenter without user prompt
+- [ ] **Auto-delegation** — Harness delegates to Documenter without user prompt
 - [ ] **`sdlc-adr-authoring` skill activated** — Documenter reads `.github/skills/sdlc-adr-authoring/SKILL.md`
 - [ ] **awesome-copilot ADR skill loaded** — `create-architectural-decision-record/SKILL.md` via MCP
 - [ ] **Template used** — Documenter reads `.design/ADR-TEMPLATE.md` (SDLC template takes precedence)
@@ -196,7 +196,7 @@ delegate to the Documenter to save it as an ADR.
 - [ ] **ADR file created** — `docs/adr/ADR-001-customer-feedback-api.md` (or similar)
 - [ ] **ADR structure correct** — matches SDLC template: Context, Problem, Design, Alternatives, Testing, RAI, SDLC Impact
 - [ ] **Status set** — `Proposed`
-- [ ] **Progressive config** — Sassy fills `<ARCH_STYLE>` in `copilot-instructions.md`
+- [ ] **Progressive config** — Harness fills `<ARCH_STYLE>` in `copilot-instructions.md`
 
 ### Verification:
 
@@ -215,11 +215,11 @@ ___________________________________________________________________________
 
 ## Step 3 — Phase 3: Repo Structure & CI/CD (Scaffolder)
 
-### Prompt to send to `@Sassy`:
+### Prompt to send to `@Harness`:
 
 ```
 Scaffold the project structure for the Customer Feedback API based on the design.
-We need a layered architecture following the GSA pattern:
+We need a layered architecture following the application pattern:
 - CustomerFeedbackAPI — FastAPI backend (API layer)
 - CustomerFeedbackBusiness — shared domain models, repositories, services (Business layer)
 - CustomerFeedbackWeb — React frontend (Web layer)
@@ -285,7 +285,7 @@ ___________________________________________________________________________
 
 ## Step 4 — Phase 3+8: Deployment & Infrastructure (Deployer)
 
-### Prompt to send to `@Sassy`:
+### Prompt to send to `@Harness`:
 
 ```
 Set up Azure infrastructure for the Customer Feedback API:
@@ -304,7 +304,7 @@ Set up Azure infrastructure for the Customer Feedback API:
 - [ ] **GitHub MCP auth gate** — Deployer probes reference repos
 - [ ] **awesome-copilot loaded (via skill)** — `azure-deployment-preflight` + `update-avm-modules-in-bicep` + `bicep-code-best-practices`
 - [ ] **Azure MCP Bicep tools used** — AVM module discovery, resource type schemas
-- [ ] **Existing Bicep patterns fetched** — from GSA repos via GitHub MCP
+- [ ] **Existing Bicep patterns fetched** — from application repos via GitHub MCP
 - [ ] **Azure MCP used** — resource validation (if configured)
 - [ ] **MS Learn MCP used** — AVM module documentation
 
@@ -321,7 +321,7 @@ Set up Azure infrastructure for the Customer Feedback API:
 - [ ] WAF toggle parameters: `enablePrivateNetworking`, `enableMonitoring`, `enableRedundancy`, `enableScalability`
 - [ ] `azure.yaml` — `azd` configuration with service mappings
 - [ ] Standard tags on all resources: `azd-env-name`, `TemplateName`, `CreatedBy`
-- [ ] **Progressive config** — Sassy fills `<OTHER_AZURE_SERVICES>` in `copilot-instructions.md`
+- [ ] **Progressive config** — Harness fills `<OTHER_AZURE_SERVICES>` in `copilot-instructions.md`
 
 ### Verification:
 
@@ -341,7 +341,7 @@ ___________________________________________________________________________
 
 ## Step 5 — Phase 4: Implementation & Tests (Implementer)
 
-### Prompt to send to `@Sassy`:
+### Prompt to send to `@Harness`:
 
 ```
 Implement the Customer Feedback API according to the design.
@@ -430,7 +430,7 @@ ___________________________________________________________________________
 
 ## Step 6 — Phase 5: Documentation (Documenter)
 
-### Prompt to send to `@Sassy`:
+### Prompt to send to `@Harness`:
 
 ```
 Update documentation for the Customer Feedback API:
@@ -467,7 +467,7 @@ ___________________________________________________________________________
 
 ## Step 7 — Phase 6: QA Activities (QA Coordinator + 8 Reviewers)
 
-### Prompt to send to `@Sassy`:
+### Prompt to send to `@Harness`:
 
 ```
 Run a full QA review on the Customer Feedback API implementation.
@@ -476,7 +476,7 @@ Review all code, tests, infrastructure, and documentation.
 
 ### Expected behavior:
 
-- [ ] **Sassy delegates to QA Coordinator**
+- [ ] **Harness delegates to QA Coordinator**
 - [ ] **QA Coordinator launches 8 reviewers IN PARALLEL** (not sequentially)
 
 ### 8 Parallel Reviewers — what each should do:
@@ -575,7 +575,7 @@ ___________________________________________________________________________
 
 ## Step 8 — Phase 7: RAI Review (RAI Reviewer)
 
-### Prompt to send to `@Sassy`:
+### Prompt to send to `@Harness`:
 
 ```
 Run an RAI (Responsible AI) review on the Customer Feedback API.
@@ -612,7 +612,7 @@ ___________________________________________________________________________
 
 ## Step 9 — Phase 8-9: Release & Publish (Release Manager)
 
-### Prompt to send to `@Sassy`:
+### Prompt to send to `@Harness`:
 
 ```
 Prepare the release for the Customer Feedback API.
@@ -644,7 +644,7 @@ Create a release checklist, changelog, and prepare the PR.
   - [ ] Testing summary
   - [ ] Quality checklist
   - [ ] Documentation artifacts listed
-- [ ] **Progressive config** — Sassy fills any remaining placeholders (`<LOGGER_ABSTRACTION>`)
+- [ ] **Progressive config** — Harness fills any remaining placeholders (`<LOGGER_ABSTRACTION>`)
 
 ### Final verification:
 
@@ -669,7 +669,7 @@ ___________________________________________________________________________
 
 | Step | Phase   | Agent(s)           | Result              | Notes |
 | ---- | ------- | ------------------ | ------------------- | ----- |
-| 0    | Init    | Sassy              | [ ] PASS / [ ] FAIL |       |
+| 0    | Init    | Harness              | [ ] PASS / [ ] FAIL |       |
 | 1    | 1-2     | Analyst            | [ ] PASS / [ ] FAIL |       |
 | 2    | 2 (ADR) | Documenter (auto)  | [ ] PASS / [ ] FAIL |       |
 | 3    | 3       | Scaffolder         | [ ] PASS / [ ] FAIL |       |
@@ -684,7 +684,7 @@ ___________________________________________________________________________
 
 | Agent                     | Tested | MCP Integrations Verified                                 | Skills Activated                                            |
 | ------------------------- | ------ | --------------------------------------------------------- | ----------------------------------------------------------- |
-| Sassy (Coordinator)       | [ ]    | GitHub MCP (auth gate), progressive config                | (orchestrator — delegates to skill-enabled agents)          |
+| Harness (Coordinator)       | [ ]    | GitHub MCP (auth gate), progressive config                | (orchestrator — delegates to skill-enabled agents)          |
 | Analyst                   | [ ]    | GitHub MCP, awesome-copilot, Context7, ADO MCP            | (reads skill-aligned patterns in design output)             |
 | Scaffolder                | [ ]    | GitHub MCP, awesome-copilot, Context7, ADO MCP            | `sdlc-project-scaffolding`                                   |
 | Deployer                  | [ ]    | GitHub MCP, awesome-copilot, Azure MCP, MS Learn, ADO MCP | `sdlc-azure-deployment`                                      |
@@ -707,7 +707,7 @@ ___________________________________________________________________________
 
 | MCP Server      | Used By                                                                                                         | Verified |
 | --------------- | --------------------------------------------------------------------------------------------------------------- | -------- |
-| GitHub MCP      | Sassy, Analyst, Scaffolder, Deployer, Implementer, Documenter, Arch Reviewer, Azure Compliance, Release Manager | [ ]      |
+| GitHub MCP      | Harness, Analyst, Scaffolder, Deployer, Implementer, Documenter, Arch Reviewer, Azure Compliance, Release Manager | [ ]      |
 | awesome-copilot | Analyst, Scaffolder, Deployer, Implementer, Code Quality, Security, Test Coverage, RAI, Azure Compliance        | [ ]      |
 | Context7        | Analyst, Scaffolder, Implementer                                                                                | [ ]      |
 | Azure MCP       | Deployer                                                                                                        | [ ]      |
@@ -769,10 +769,10 @@ These should be verified across all steps:
 
 | Problem                            | Likely Cause                                        | Fix                                                    |
 | ---------------------------------- | --------------------------------------------------- | ------------------------------------------------------ |
-| Sassy doesn't detect placeholders  | `copilot-instructions.md` already filled            | Reset placeholders to `<PROJECT_NAME>` etc.            |
+| Harness doesn't detect placeholders  | `copilot-instructions.md` already filled            | Reset placeholders to `<PROJECT_NAME>` etc.            |
 | GitHub MCP auth fails              | Copilot not signed in with `mcaps-microsoft` access | Sign in with correct account, check `.vscode/mcp.json` |
 | Agent doesn't use awesome-copilot  | MCP server not configured or not responding         | Verify `awesome-copilot` in `.vscode/mcp.json`         |
-| ADR not auto-created after Analyst | Sassy didn't follow ADR generation rule             | Manually ask: "Create an ADR from this design"         |
+| ADR not auto-created after Analyst | Harness didn't follow ADR generation rule             | Manually ask: "Create an ADR from this design"         |
 | QA reviewers run sequentially      | QA Coordinator not parallelizing                    | Check if subagent tool supports parallel calls         |
 | Deployer doesn't use AVM           | awesome-copilot Bicep practices not loaded          | Verify the instruction loaded; check Bicep output      |
 | Implementer uses raw CosmosClient  | Live patterns not fetched from GitHub MCP           | Check auth, fallback to reference-catalog.md patterns  |
@@ -838,6 +838,6 @@ infra/
 └── main.waf.parameters.json                  ← Step 4
 azure.yaml                                    ← Step 4
 .github/copilot-instructions.md               ← All placeholders filled
-TRANSPARENCY_FAQ.md                           ← GSA compliance
+TRANSPARENCY_FAQ.md                           ← application compliance
 CODE_OF_CONDUCT.md, CONTRIBUTING.md, SECURITY.md, SUPPORT.md, LICENSE
 ```

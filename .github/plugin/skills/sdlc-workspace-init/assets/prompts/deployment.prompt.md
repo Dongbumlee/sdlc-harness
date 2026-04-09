@@ -219,7 +219,7 @@ output AZURE_COSMOS_ENDPOINT string = cosmosDb.outputs.endpoint
 output AZURE_STORAGE_ACCOUNT_NAME string = storage.outputs.name
 ```
 
-**Module pattern** (follow GSA accelerator style — each module wraps AVM):
+**Module pattern** (follow application accelerator style — each module wraps AVM):
 
 ```bicep
 // modules/cosmosDb.bicep
@@ -290,7 +290,7 @@ module webApp 'br/public:avm/res/app/container-app:<VERSION>' = {
 
 ### 3. Configure `azure.yaml` for `azd`
 
-Generate the `azure.yaml` at repo root (follow GSA accelerator pattern):
+Generate the `azure.yaml` at repo root (follow application accelerator pattern):
 
 ```yaml
 # yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
@@ -377,7 +377,7 @@ CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
 
 ### 5. Configure Dev Containers (per-service isolation)
 
-Following the GSA accelerator pattern (see [Content Processing GSA](https://github.com/microsoft/content-processing-solution-accelerator)
+Following the application accelerator pattern (see [Content Processing application](https://github.com/microsoft/content-processing-solution-accelerator)
 for a production reference), each service under `src/` gets its **own** `.devcontainer/` with
 service-specific tooling and dependencies. This per-service isolation ensures that engineers
 working on one layer can build, test, and run independently — without pulling in dependencies

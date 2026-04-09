@@ -32,7 +32,7 @@ argument-hint: "Describe the documentation to create or update"
  Before starting, load these resources for accurate documentation:
 
  1. **ADR examples** — `mcp_github_get_file_contents` → browse `docs/` folders in existing
-    GSA repos for ADR format and style reference
+    application repos for ADR format and style reference
  2. **Documentation templates** — read the local templates in `.design/`:
     - ADR: `.design/ADR-TEMPLATE.md`
     - API docs: `.design/API-DOC-TEMPLATE.md`
@@ -63,7 +63,7 @@ argument-hint: "Describe the documentation to create or update"
         `/docs/api/orders-history.md`, or a `README.md` section).
       - Doc type (ADR, design overview, API docs, runbook, RAI note).
     - For project READMEs:
-      - Follow the GSA solution accelerator README structure in `.design/README.template.md`.
+      - Follow the application solution accelerator README structure in `.design/README.template.md`.
       - Include: Solution Overview, Quick Deploy (with Codespaces/DevContainer badges,
         `azd up` instructions, AVM Bicep infrastructure), Business Scenario,
         Supporting Documentation, RAI Transparency FAQ, and Disclaimers.

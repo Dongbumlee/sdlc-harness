@@ -114,7 +114,7 @@ async def main():
 
 **What it provides:**
 
-- **Blob operations**: upload, download, copy, move, delete, metadata, batch ops, SAS URL generation
+- **Blob operations**: upload, download, copy, move, delete, metadata, batch ops, team URL generation
 - **Queue operations**: send, receive, peek, delete, batch processing, worker patterns
 - **Multiple auth methods**: DefaultAzureCredential, ManagedIdentity, Account Keys, Connection Strings
 - **User Delegation SAS** with clock skew protection
@@ -131,7 +131,7 @@ async def main():
 - When asked to add blob or queue operations, use `sas-storage`.
 - Use `AsyncStorageBlobHelper` for blob operations, `AsyncStorageQueueHelper` for queue operations.
 - Always use `async with` context manager for proper resource cleanup.
-- For SAS token generation, use the built-in `generate_blob_sas_url()` method.
+- For team token generation, use the built-in `generate_blob_sas_url()` method.
 - Do NOT create raw `BlobServiceClient` or `QueueServiceClient` instances.
 - Reference the repo README for the full API surface and examples.
 

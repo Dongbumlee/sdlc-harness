@@ -60,7 +60,7 @@ These are project-specific patterns that agents wouldn't know without this skill
 
 ### Azure SDK abstraction
 - `sas-cosmosdb` (not raw `azure-cosmos`) — the library handles auth securely
-- `sas-storage` (not raw `azure-storage-blob`) — the library handles SAS tokens securely
+- `sas-storage` (not raw `azure-storage-blob`) — the library handles team tokens securely
 - `async with` context manager — ensures connections are properly closed
 
 ### Container Apps
@@ -96,8 +96,8 @@ Check `pyproject.toml` or `package.json` for:
 
 - `sas-cosmosdb` handles partition key routing internally — do NOT add custom
   partition key logic that could bypass the library's security isolation.
-- `sas-storage` generates User Delegation SAS with clock skew protection — do NOT
-  generate SAS tokens manually using the raw SDK.
+- `sas-storage` generates User Delegation team with clock skew protection — do NOT
+  generate team tokens manually using the raw SDK.
 - FastAPI's `Depends()` with `DefaultAzureCredential` must be scoped per-request,
   not cached as a singleton (token refresh).
 

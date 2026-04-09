@@ -17,9 +17,9 @@ Agents should read their own agent files (.github/agents/*.agent.md), the refere
 
 This guide walks you through the complete SDLC lifecycle using a real sample application.
 By following every step, you'll see how the **subagent system** and **prompt files** work
-together to deliver a production-ready GSA.
+together to deliver a production-ready application.
 
-> **Two ways to work:** Each step shows the **agent-driven** approach (using Sassy, the SDLC Agent Coordinator)
+> **Two ways to work:** Each step shows the **agent-driven** approach (using Harness, the SDLC Agent Coordinator)
 > and the **manual prompt** approach (using prompt files directly). Both produce the same result —
 > choose whichever fits your workflow.
 
@@ -81,14 +81,14 @@ Open `.github/copilot-instructions.md` and replace **only** the project name:
 | Placeholder              | Value for this project   | When it's filled                              |
 | ------------------------ | ------------------------ | --------------------------------------------- |
 | `<PROJECT_NAME>`         | `document-manager`       | **Now** (you always know this)                |
-| `<BUSINESS_DOMAIN>`      | *(leave as placeholder)* | Sassy fills after your first task description |
+| `<BUSINESS_DOMAIN>`      | *(leave as placeholder)* | Harness fills after your first task description |
 | `<TECH_STACK>`           | *(leave as placeholder)* | Analyst fills during Phase 2 design           |
 | `<ARCH_STYLE>`           | *(leave as placeholder)* | Analyst fills during Phase 2 design           |
 | `<OTHER_AZURE_SERVICES>` | *(leave as placeholder)* | Deployer fills during Phase 3 infra           |
 | `<LOGGER_ABSTRACTION>`   | *(leave as placeholder)* | Implementer fills during Phase 4              |
 
 > **Why only the project name?** The remaining values are discovered during the SDLC process.
-> When you first talk to `@Sassy`, it detects unfilled placeholders, asks you 2-3 quick
+> When you first talk to `@Harness`, it detects unfilled placeholders, asks you 2-3 quick
 > questions, and fills what it can. As each phase completes, agents progressively update
 > the remaining values from actual design decisions — not guesses.
 
@@ -113,8 +113,8 @@ code .
 Verify Copilot is active and the MCP servers are configured (`.vscode/mcp.json` should list
 GitHub, awesome-copilot, Azure, Microsoft Learn, and Context7).
 
-Also verify the **Sassy** agent is available in Copilot Chat's agent dropdown
-(it reads from `.github/agents/sassy.agent.md`).
+Also verify the **Harness** agent is available in Copilot Chat's agent dropdown
+(it reads from `.github/agents/harness.agent.md`).
 
 | ![VS Code with repo structure](./images/guide/01-repo-structure.png)                                                  |
 | --------------------------------------------------------------------------------------------------------------------- |
@@ -126,16 +126,16 @@ Also verify the **Sassy** agent is available in Copilot Chat's agent dropdown
 
 ### Option A: Agent-driven (recommended)
 
-In Copilot Chat, select the **Sassy** agent and describe the task:
+In Copilot Chat, select the **Harness** agent and describe the task:
 
 ```text
-@Sassy Design a Document Manager application that allows users to
+@Harness Design a Document Manager application that allows users to
 upload, browse, download, and delete documents (PDF, DOCX, images) with metadata.
 Include an AI agent that summarizes content and answers questions via chat.
 Use sas-cosmosdb for metadata, sas-storage for files, and deploy to Container Apps.
 ```
 
-Sassy will delegate to the **Analyst** agent, which:
+Harness will delegate to the **Analyst** agent, which:
 1. Fetches the latest template structures from GitHub MCP
 2. Loads planning tools from awesome-copilot
 3. Checks the reference catalog for approved libraries
@@ -197,7 +197,7 @@ Save the design as `docs/adr/ADR-001-document-manager-design.md`.
 ### Option A: Agent-driven
 
 ```text
-@Sassy Set up the repo structure for the Document Manager.
+@Harness Set up the repo structure for the Document Manager.
 API: Python FastAPI, Agent: AI agent framework, Web: React TypeScript.
 All 3 services deploy to Container Apps in a shared environment.
 Follow the design in docs/adr/ADR-001-document-manager-design.md.
@@ -336,7 +336,7 @@ document-manager/
 ### Option A: Agent-driven
 
 ```text
-@Sassy Create the deployment infrastructure for the Document Manager.
+@Harness Create the deployment infrastructure for the Document Manager.
 We need Cosmos DB, Blob Storage, Container Apps (3 services), Container Registry,
 Azure AI Foundry, Key Vault, and monitoring. Use AVM modules with WAF toggles.
 Deploy to East US.
@@ -345,7 +345,7 @@ Deploy to East US.
 The Coordinator delegates to the **Deployer** agent, which:
 1. Fetches team AVM/Bicep standards from the ADO wiki (all 7 Bicep-development subsections — **checked first**)
 2. Uses Azure MCP Bicep tools for AVM module discovery and validation
-3. Fetches Bicep patterns from existing GSA repos via GitHub MCP
+3. Fetches Bicep patterns from existing application repos via GitHub MCP
 4. Loads additional best practices from awesome-copilot
 5. Validates Azure resource configs via Azure MCP
 6. Gets AVM module documentation from Microsoft Learn MCP
@@ -411,14 +411,14 @@ azd up
 ### Option A: Agent-driven
 
 ```text
-@Sassy Implement the Document Manager API with these endpoints:
+@Harness Implement the Document Manager API with these endpoints:
 POST /api/documents, GET /api/documents, GET /api/documents/{id},
 GET /api/documents/{id}/download, DELETE /api/documents/{id}.
 Use sas-cosmosdb and sas-storage. Follow ADR-001.
 ```
 
 The Coordinator delegates to the **Implementer** agent, which:
-1. Fetches the latest SAS dev reusable component patterns from GitHub MCP
+1. Fetches the latest team dev reusable component patterns from GitHub MCP
 2. Loads current FastAPI + Pydantic docs via Context7 MCP
 3. Reads the reference catalog to verify approved libraries
 4. **Follows strict code → unit test → next step sequence:**
@@ -814,10 +814,10 @@ cd ../..
 
 ### Option A: Agent-driven 8-perspective review (recommended)
 
-After implementation, ask Sassy to run a full QA review:
+After implementation, ask Harness to run a full QA review:
 
 ```text
-@Sassy Run a full QA review on the Document Manager implementation.
+@Harness Run a full QA review on the Document Manager implementation.
 ```
 
 The Coordinator delegates to the **QA Coordinator**, which spawns **8 parallel reviewer subagents**:
@@ -898,12 +898,12 @@ cd web && npm run test -- --coverage
 ### Option A: Agent-driven
 
 ```text
-@Sassy Create SDLC-aligned documentation for the Document Manager.
-Include a GSA-template README, API docs, and update the ADR with implementation details.
+@Harness Create SDLC-aligned documentation for the Document Manager.
+Include a application-template README, API docs, and update the ADR with implementation details.
 ```
 
 The Coordinator delegates to the **Documenter** agent, which fetches ADR examples from
-existing GSA repos via GitHub MCP and creates documentation following the standard structure.
+existing application repos via GitHub MCP and creates documentation following the standard structure.
 
 ### Option B: Manual prompt file
 
@@ -914,7 +914,7 @@ Use .github/prompts/repo-documentation.prompt.md to create SDLC-aligned document
 for the Document Manager application.
 
 Create:
-1. Project README.md following the GSA template in .design/README.template.md
+1. Project README.md following the application template in .design/README.template.md
 2. API documentation for the /api/documents endpoints
 3. Update the ADR with implementation details
 
@@ -923,7 +923,7 @@ Target audience: internal developers and operations team.
 
 ### Expected output
 
-- ✅ `README.md` — GSA-aligned with Solution Overview, Quick Deploy, Business Scenario
+- ✅ `README.md` — application-aligned with Solution Overview, Quick Deploy, Business Scenario
 - ✅ `docs/api/documents.md` — API endpoint documentation
 - ✅ Updated `docs/adr/ADR-001-document-manager-design.md`
 - ✅ SDLC Exit Criteria Check (Phase 5)
@@ -936,7 +936,7 @@ Target audience: internal developers and operations team.
 
 For the RAI review:
 ```text
-@Sassy Run a RAI review on the Document Manager.
+@Harness Run a RAI review on the Document Manager.
 The agent service uses Azure AI Foundry for document summarization and Q&A.
 ```
 
@@ -945,7 +945,7 @@ from awesome-copilot and assesses prompt injection risks, data leakage, and bias
 
 For release preparation:
 ```text
-@Sassy Prepare a release for the Document Manager.
+@Harness Prepare a release for the Document Manager.
 Create a PR with changelog targeting the main branch.
 ```
 
@@ -995,7 +995,7 @@ git commit -m "feat: Document Manager - full-stack implementation
 - React TypeScript frontend with chat panel
 - Bicep/AVM infrastructure with Container Apps
 - Unit tests + integration tests
-- GSA-aligned README + ADR documentation
+- application-aligned README + ADR documentation
 
 SDLC Phases: 1-9 complete"
 
@@ -1055,7 +1055,7 @@ After completing all steps, verify:
 | `src/DocumentManagerWeb/src/components/ChatPanel.tsx`                    | 4     | `implementation-and-tests.prompt.md`                    |
 | `src/DocumentManagerAPI/tests/unit/*.py`                                 | 4     | `implementation-and-tests.prompt.md`                    |
 | `src/DocumentManagerWeb/src/**/*.test.tsx`                               | 4     | `implementation-and-tests.prompt.md`                    |
-| `README.md` (GSA-aligned)                                 | 5     | `repo-documentation.prompt.md`                          |
+| `README.md` (application-aligned)                                 | 5     | `repo-documentation.prompt.md`                          |
 | `docs/api/documents.md`                                   | 5     | `repo-documentation.prompt.md`                          |
 
 ### Quality standards verified
@@ -1088,7 +1088,7 @@ After completing all steps, verify:
 
 ### Agents used (if agent-driven workflow)
 
-- [ ] **Sassy** — orchestrated all phases
+- [ ] **Harness** — orchestrated all phases
 - [ ] **Analyst** — Phase 1–2 design
 - [ ] **Scaffolder** — Phase 3 repo structure
 - [ ] **Deployer** — Phase 3+8 infrastructure

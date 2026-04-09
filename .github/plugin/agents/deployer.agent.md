@@ -106,7 +106,7 @@ and release automation following Azure Verified Modules (AVM) and Landing Zone p
    - Get Azure deployment best practices: use Azure MCP `bestpractices` tool for
      IaC rules, deployment guidance, and WAF alignment.
 
-4. **Fetch Bicep patterns from existing GSA repos via GitHub MCP:**
+4. **Fetch Bicep patterns from existing application repos via GitHub MCP:**
    - Use `mcp_github_get_file_contents` to fetch `infra/main.bicep` from
      `microsoft/content-processing-solution-accelerator` or `microsoft/Container-Migration-Solution-Accelerator`.
    - Align with their AVM module versions and patterns.

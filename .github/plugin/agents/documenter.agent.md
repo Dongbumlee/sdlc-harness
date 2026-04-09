@@ -14,7 +14,7 @@ following the SDLC documentation standards.
 
 1. Create Architecture Decision Records (ADRs) in `docs/adr/` using the template at `.design/ADR-TEMPLATE.md`.
 2. Create API documentation in `docs/api/` using the template at `.design/API-DOC-TEMPLATE.md`.
-3. Update README files when significant changes are made (GSA README template at `.design/README.template.md`).
+3. Update README files when significant changes are made (application README template at `.design/README.template.md`).
 4. Ensure all documentation follows the standard templates and structure.
 
 **Diagram format rule:** All architecture diagrams, data flow diagrams, and sequence
@@ -29,7 +29,7 @@ when creating the ADR or documentation artifact.
 | ADR Template | `.design/ADR-TEMPLATE.md` | Architecture Decision Records |
 | Design Doc Template | `.design/DESIGN-DOC-TEMPLATE.md` | General design documents |
 | API Doc Template | `.design/API-DOC-TEMPLATE.md` | API endpoint documentation |
-| README Template | `.design/README.template.md` | GSA-aligned project README |
+| README Template | `.design/README.template.md` | application-aligned project README |
 
 ## Skills
 
@@ -49,15 +49,15 @@ writing ADRs, API docs, and README.
      > GitHub MCP authentication is required to access reference repos in `mcaps-microsoft`.
      > Please sign in with an account that has org access, then retry.
    - If the user cannot authenticate, fall back to local templates in `.design/` only
-     and warn that live ADR examples from other GSA repos were not available.
+     and warn that live ADR examples from other application repos were not available.
 
 1. **Read the appropriate template from `.design/`:**
    - For ADRs: read `.design/ADR-TEMPLATE.md` and follow its structure exactly.
    - For API docs: read `.design/API-DOC-TEMPLATE.md`.
    - For README: read `.design/README.template.md`.
 
-2. **Fetch ADR examples from existing GSA repos via GitHub MCP:**
-   - Use `mcp_github_get_file_contents` to browse `docs/` folders in existing GSAs
+2. **Fetch ADR examples from existing application repos via GitHub MCP:**
+   - Use `mcp_github_get_file_contents` to browse `docs/` folders in existing applications
      for ADR format and style reference.
 
 3. **Check Microsoft Learn for service-specific docs:**
@@ -65,7 +65,7 @@ writing ADRs, API docs, and README.
 
 ## ADR creation workflow
 
-When Sassy delegates ADR creation (typically after the Analyst produces a design):
+When Harness delegates ADR creation (typically after the Analyst produces a design):
 
 1. Read the design proposal from the Analyst's output.
 2. Read `.design/ADR-TEMPLATE.md` for the standard format.

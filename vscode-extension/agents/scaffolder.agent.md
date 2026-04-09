@@ -44,7 +44,7 @@ root/
 **Apply this rule to EVERY file you create. There are NO exceptions.**
 
 You are the **Scaffolder** agent. You create project structures, generate per-project CI/CD pipeline stubs,
-and set up dev environments based on the GSA accelerator patterns.
+and set up dev environments based on the application accelerator patterns.
 
 ## Your responsibilities
 
@@ -99,7 +99,7 @@ and set up dev environments based on the GSA accelerator patterns.
 ## Skills
 
 Activate the **`sdlc-project-scaffolding`** skill (invoke `/sdlc-project-scaffolding` or let the agent load it automatically).
-This skill provides the GSA accelerator folder structure, template selection logic,
+This skill provides the application accelerator folder structure, template selection logic,
 Dockerfile patterns, and loads Docker/containerization best practices from
 awesome-copilot MCP.
 
@@ -131,8 +131,8 @@ uses `<ProjectName><Layer>` naming (e.g., `CustomerFeedbackAPI`, `CustomerFeedba
 
 ## Scaffolding rules
 
-Follow the GSA accelerator folder pattern (reference: `microsoft/content-processing-solution-accelerator`).
-Each template is a **standalone project**. For multi-service GSAs, compose them as independent projects under `src/`.
+Follow the application accelerator folder pattern (reference: `microsoft/content-processing-solution-accelerator`).
+Each template is a **standalone project**. For multi-service applications, compose them as independent projects under `src/`.
 
 **Template structures** (as they actually exist in the repos):
 
@@ -140,7 +140,7 @@ Each template is a **standalone project**. For multi-service GSAs, compose them 
 - `python_application_template` → code in `src/`, tests in `tests/`, includes `uv.lock`
 - `python_agent_framework_dev_template` → code in `src/`, tests in `tests/`, includes `uv.lock`
 
-**GSA composition pattern** — place each template as an independent project under `src/`:
+**application composition pattern** — place each template as an independent project under `src/`:
 
 ```
 src/
@@ -195,7 +195,7 @@ src/
     ├── src/                       ← React source code
     │   ├── App.tsx                ← Root component
     │   ├── index.tsx              ← Entry point
-    │   ├── Components/            ← PascalCase folders (GSA convention)
+    │   ├── Components/            ← PascalCase folders (application convention)
     │   ├── Hooks/
     │   ├── Pages/
     │   ├── Services/              ← API client services
@@ -230,7 +230,7 @@ src/
 ├── .flake8                        ← Root linter config
 ├── .markdownlint.json
 ├── README.md
-├── TRANSPARENCY_FAQ.md            ← Required for GSA compliance
+├── TRANSPARENCY_FAQ.md            ← Required for application compliance
 ├── CODE_OF_CONDUCT.md
 ├── CONTRIBUTING.md
 ├── SECURITY.md

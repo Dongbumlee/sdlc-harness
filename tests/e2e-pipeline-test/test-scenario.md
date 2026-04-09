@@ -1,7 +1,7 @@
 # SDLC Full Pipeline E2E Test Script
 
 End-to-end validation of all 18 agents and 11 skills across the complete
-9-phase SDLC lifecycle. Each step sends a prompt to `@Sassy`, validates
+9-phase SDLC lifecycle. Each step sends a prompt to `@Harness`, validates
 outputs, and feeds into the next step.
 
 ## Test Scenario
@@ -18,7 +18,7 @@ This scenario exercises all agents and all skills in sequential order.
 
 ## Prerequisites
 
-- VS Code with GitHub Copilot Chat and Sassy agent available
+- VS Code with GitHub Copilot Chat and Harness agent available
 - MCP servers configured in `.vscode/mcp.json`
 - GitHub MCP authenticated with `mcaps-microsoft` org access
 - awesome-copilot MCP running (Docker Desktop required)
@@ -26,21 +26,21 @@ This scenario exercises all agents and all skills in sequential order.
 
 ---
 
-## Step 0: MCP Readiness (Sassy)
+## Step 0: MCP Readiness (Harness)
 
 ### Prompt
 ```
-@Sassy Hello, I want to build a new accelerator called SmartDoc Analyzer.
+@Harness Hello, I want to build a new accelerator called SmartDoc Analyzer.
 ```
 
 ### Expected behavior
-- [ ] Sassy runs MCP server readiness check (Step 0)
+- [ ] Harness runs MCP server readiness check (Step 0)
 - [ ] Reports status table for: awesome-copilot, GitHub MCP (libraries), GitHub MCP (templates), Context7
 - [ ] Detects placeholders in `copilot-instructions.md` and asks for project details
 - [ ] Fills `<PROJECT_NAME>` → "SmartDoc Analyzer"
 
 ### Agents validated
-- [x] **Sassy** — MCP readiness check, placeholder detection, progressive config
+- [x] **Harness** — MCP readiness check, placeholder detection, progressive config
 
 ### Skills validated
 - (none — orchestration only)
@@ -59,7 +59,7 @@ MCP Server Status|awesome-copilot|GitHub MCP|Context7|PROJECT_NAME|SmartDoc
 
 ### Prompt
 ```
-@Sassy Analyze requirements for SmartDoc Analyzer.
+@Harness Analyze requirements for SmartDoc Analyzer.
 It needs:
 - Upload PDF/DOCX documents to Azure Blob Storage
 - Index documents with Azure AI Search for RAG
@@ -70,7 +70,7 @@ Target users: enterprise knowledge workers.
 ```
 
 ### Expected behavior
-- [ ] Sassy delegates to **Analyst**
+- [ ] Harness delegates to **Analyst**
 - [ ] Analyst probes GitHub MCP, awesome-copilot, ADO MCP
 - [ ] Loads planning best practices from awesome-copilot
 - [ ] Fetches reference catalog from GitHub MCP
@@ -98,10 +98,10 @@ architecture|sas-cosmosdb|sas-storage|python_api_application_template|Azure Open
 
 ---
 
-## Step 2: ADR Creation (Documenter — auto-triggered by Sassy)
+## Step 2: ADR Creation (Documenter — auto-triggered by Harness)
 
-### Expected behavior (no new prompt needed — Sassy auto-delegates after Analyst)
-- [ ] Sassy auto-delegates to **Documenter** to create ADR from the design proposal
+### Expected behavior (no new prompt needed — Harness auto-delegates after Analyst)
+- [ ] Harness auto-delegates to **Documenter** to create ADR from the design proposal
 - [ ] Documenter reads `.design/ADR-TEMPLATE.md` template
 - [ ] Creates ADR file at `docs/adr/ADR-001-smartdoc-analyzer-architecture.md`
 
@@ -127,12 +127,12 @@ ADR|Architecture Decision Record|Context|Decision|Consequences|sas-cosmosdb|Acce
 
 ### Prompt
 ```
-@Sassy Scaffold the SmartDoc Analyzer project based on ADR-001.
+@Harness Scaffold the SmartDoc Analyzer project based on ADR-001.
 It needs a FastAPI backend, React frontend, and shared infrastructure.
 ```
 
 ### Expected behavior
-- [ ] Sassy delegates to **Scaffolder**
+- [ ] Harness delegates to **Scaffolder**
 - [ ] Scaffolder probes GitHub MCP for template structure
 - [ ] Loads Docker/CI-CD best practices from awesome-copilot
 - [ ] Fetches template structure from `mcaps-microsoft/python_api_application_template`
@@ -165,16 +165,16 @@ src/SmartDocAnalyzer|pyproject.toml|Dockerfile|project-manifest|python_api_appli
 
 ### Prompt
 ```
-@Sassy Create Azure infrastructure for SmartDoc Analyzer.
+@Harness Create Azure infrastructure for SmartDoc Analyzer.
 We need: Cosmos DB, Blob Storage, Azure OpenAI, AI Search, Container Apps.
 Use AVM modules with WAF toggles.
 ```
 
 ### Expected behavior
-- [ ] Sassy delegates to **Deployer**
+- [ ] Harness delegates to **Deployer**
 - [ ] Deployer probes GitHub MCP, awesome-copilot, ADO MCP
 - [ ] Loads Bicep best practices from awesome-copilot
-- [ ] Fetches AVM patterns from GitHub MCP (existing GSA repos)
+- [ ] Fetches AVM patterns from GitHub MCP (existing application repos)
 - [ ] Creates `infra/main.bicep` with AVM modules (`br/public:avm/res/...`)
 - [ ] Includes WAF parameters (`enablePrivateNetworking`, `enableMonitoring`)
 - [ ] Creates `azure.yaml` for azd orchestration
@@ -204,14 +204,14 @@ br/public:avm/res|enablePrivateNetworking|enableMonitoring|azure.yaml|Cosmos|Ope
 
 ### Prompt
 ```
-@Sassy Implement the document upload and chat features for SmartDoc Analyzer.
+@Harness Implement the document upload and chat features for SmartDoc Analyzer.
 Follow the patterns from ADR-001 and the project manifest.
 Use sas-cosmosdb for Cosmos DB and sas-storage for Blob Storage.
 Include unit tests for all new code.
 ```
 
 ### Expected behavior
-- [ ] Sassy delegates to **Implementer**
+- [ ] Harness delegates to **Implementer**
 - [ ] Implementer reads `.sdlc/project-manifest.md` for template patterns
 - [ ] Probes GitHub MCP for live SDK patterns
 - [ ] Fetches sas-cosmosdb README + HANDS_ON_GUIDE for Repository Pattern
@@ -249,13 +249,13 @@ RootEntityBase|RepositoryBase|sas-cosmosdb|sas-storage|async with|AsyncStorageBl
 
 ### Prompt
 ```
-@Sassy Update documentation for SmartDoc Analyzer.
+@Harness Update documentation for SmartDoc Analyzer.
 Create API docs for the document upload and chat endpoints.
 Update the README with deployment and usage instructions.
 ```
 
 ### Expected behavior
-- [ ] Sassy delegates to **Documenter**
+- [ ] Harness delegates to **Documenter**
 - [ ] Documenter reads `.design/API-DOC-TEMPLATE.md` and `.design/README.template.md`
 - [ ] Creates API docs at `docs/api/`
 - [ ] Updates project README with proper sections
@@ -281,12 +281,12 @@ docs/api|Prerequisites|Deployment|Usage|Configuration|Troubleshooting|Known Issu
 
 ### Prompt
 ```
-@Sassy Run a full QA review on the SmartDoc Analyzer implementation.
+@Harness Run a full QA review on the SmartDoc Analyzer implementation.
 Review all code, tests, infrastructure, and documentation.
 ```
 
 ### Expected behavior
-- [ ] Sassy delegates to **QA Coordinator**
+- [ ] Harness delegates to **QA Coordinator**
 - [ ] QA Coordinator runs MCP readiness check (Step 0)
 - [ ] Launches 8 reviewers IN PARALLEL
 - [ ] Synthesizes findings from all 8 perspectives
@@ -306,7 +306,7 @@ Review all code, tests, infrastructure, and documentation.
 
 ### Skills validated (4 skills)
 - [x] **sdlc-accelerator-qa** — 10-category product QA checklist
-- [x] **sdlc-security-review** — OWASP Top 10 + SAS Azure patterns
+- [x] **sdlc-security-review** — OWASP Top 10 + team Azure patterns
 - [x] **sdlc-code-quality** — naming, docstrings, commenting patterns
 - [x] **sdlc-architecture-review** — layering rules, pattern reuse
 
@@ -328,13 +328,13 @@ QA Review Summary|Critical Issues|Important Issues|Suggestions|Overall Verdict|S
 
 ### Prompt
 ```
-@Sassy Run an RAI review on SmartDoc Analyzer.
+@Harness Run an RAI review on SmartDoc Analyzer.
 The system uses Azure OpenAI for document Q&A — assess AI risks,
 prompt injection, data leakage, and bias.
 ```
 
 ### Expected behavior
-- [ ] Sassy delegates to **RAI Reviewer**
+- [ ] Harness delegates to **RAI Reviewer**
 - [ ] RAI Reviewer probes awesome-copilot for AI safety review
 - [ ] Loads `ai-prompt-engineering-safety-review` instruction
 - [ ] Assesses: prompt injection, data leakage, bias, transparency, human oversight, data retention, hallucination
@@ -363,12 +363,12 @@ RAI|Responsible AI|Risk Level|prompt injection|data leakage|bias|transparency|ha
 
 ### Prompt
 ```
-@Sassy Prepare a release for SmartDoc Analyzer v1.0.
+@Harness Prepare a release for SmartDoc Analyzer v1.0.
 Create a changelog, verify exit criteria, and prepare the PR.
 ```
 
 ### Expected behavior
-- [ ] Sassy delegates to **Release Manager**
+- [ ] Harness delegates to **Release Manager**
 - [ ] Release Manager probes GitHub MCP
 - [ ] Gathers commit history
 - [ ] Generates changelog
@@ -429,7 +429,7 @@ Bug Checklist|Blocker|Warning|sourced from|bugs|Deployment|Identity|RBAC|post-de
 
 | Step | Phase | Agent(s) | Skills Validated | Result |
 |---|---|---|---|---|
-| 0 | Init | Sassy | — | [ ] PASS / [ ] FAIL |
+| 0 | Init | Harness | — | [ ] PASS / [ ] FAIL |
 | 1 | 1-2 | Analyst | sdlc-project-manifest | [ ] PASS / [ ] FAIL |
 | 2 | 2 (auto) | Documenter | sdlc-adr-authoring | [ ] PASS / [ ] FAIL |
 | 3 | 3 | Scaffolder | sdlc-project-scaffolding, sdlc-project-manifest | [ ] PASS / [ ] FAIL |
@@ -445,7 +445,7 @@ Bug Checklist|Blocker|Warning|sourced from|bugs|Deployment|Identity|RBAC|post-de
 
 | Agent | Step | Tested |
 |---|---|---|
-| Sassy (Coordinator) | 0-9 | [ ] |
+| Harness (Coordinator) | 0-9 | [ ] |
 | Analyst | 1 | [ ] |
 | Documenter | 2, 6 | [ ] |
 | Scaffolder | 3 | [ ] |

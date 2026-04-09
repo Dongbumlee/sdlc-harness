@@ -1,5 +1,5 @@
 ---
-description: "Set up or restructure repository layout, CI/CD pipelines, Dockerfiles, and devcontainers following GSA scaffolding templates."
+description: "Set up or restructure repository layout, CI/CD pipelines, Dockerfiles, and devcontainers following application scaffolding templates."
 agent: "Scaffolder"
 argument-hint: "Describe the project type and deployment target"
 ---
@@ -104,7 +104,7 @@ Based on the project type, choose the matching template from `.github/reference-
 
 ### 2. Create layered folder structure under `src/`
 
-Follow the GSA accelerator pattern (reference: `microsoft/content-processing-solution-accelerator`).
+Follow the application accelerator pattern (reference: `microsoft/content-processing-solution-accelerator`).
 Each layer is an **independent project** under `src/` with its own devcontainer, Dockerfile, and dependencies:
 
 ```
@@ -138,7 +138,7 @@ src/
     ├── src/                       ← React source code
     │   ├── App.tsx
     │   ├── index.tsx
-    │   ├── Components/            ← PascalCase folders (GSA convention)
+    │   ├── Components/            ← PascalCase folders (application convention)
     │   ├── Hooks/
     │   ├── Pages/
     │   ├── Services/              ← API client services

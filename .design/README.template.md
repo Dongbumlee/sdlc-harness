@@ -2,7 +2,7 @@
 
 <!-- 
   README Template for SDLC-aligned projects
-  Based on GSA Solution Accelerator standards + SDLC lifecycle integration
+  Based on application Solution Accelerator standards + SDLC lifecycle integration
   
   Instructions:
   1. Replace all <PLACEHOLDER> values with your project-specific content

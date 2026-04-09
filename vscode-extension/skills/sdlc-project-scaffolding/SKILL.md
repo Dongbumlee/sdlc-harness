@@ -1,18 +1,18 @@
 ---
 name: sdlc-project-scaffolding
 description: >-
-  Scaffold new GSA project structures from templates with CI/CD pipelines,
+  Scaffold new application project structures from templates with CI/CD pipelines,
   Dockerfiles, and devcontainers. Use when creating a new service, restructuring
   a project, or setting up CI/CD. Triggers on scaffold, new project, new service,
   project structure, CI/CD pipeline, or Dockerfile requests.
 ---
 
-# SDLC Project Scaffolding — GSA Accelerator Pattern
+# SDLC Project Scaffolding — application Accelerator Pattern
 
 ## When to use
 
 - Starting a new Python API, business layer, agent, or web frontend
-- Adding a new service to an existing GSA project
+- Adding a new service to an existing application project
 - Setting up CI/CD pipelines for a project
 - Creating Dockerfiles or devcontainer configurations
 
@@ -262,7 +262,7 @@ Project folders use `<ProjectName><Layer>` format:
 For a single-service project with only an API, still use the naming convention:
 `src/CustomerFeedbackAPI/` — never just `src/` as the code root.
 
-### Multi-project layout (GSA standard)
+### Multi-project layout (application standard)
 
 ```
 src/
@@ -296,7 +296,7 @@ src/
 │   └── .devcontainer/
 └── <Name>Web/               ← React + TypeScript
     ├── src/
-    │   ├── Components/      ← PascalCase (GSA convention)
+    │   ├── Components/      ← PascalCase (application convention)
     │   ├── Pages/
     │   └── Services/
     ├── Dockerfile

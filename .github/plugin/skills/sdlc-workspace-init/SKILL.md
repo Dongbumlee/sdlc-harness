@@ -9,7 +9,7 @@ description: "Initialize a new repository with SDLC workspace files — copilot-
 
 - Setting up a new repository for SDLC-driven development
 - After installing the SDLC Agent Template plugin into a repo that has no `.github/copilot-instructions.md`
-- When Sassy detects missing workspace files during first-run initialization
+- When Harness detects missing workspace files during first-run initialization
 
 ## What this skill does
 
@@ -89,6 +89,6 @@ Copy each file from `assets/prompts/` to `.github/prompts/`:
 
 **Next steps:**
 1. Review `.github/copilot-instructions.md` and adjust if needed.
-2. Use `@Sassy` to start your first SDLC task.
+2. Use `@Harness` to start your first SDLC task.
 3. Use `/requirement-and-design` to begin Phase 1-2.
 ```

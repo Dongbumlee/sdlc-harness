@@ -1,7 +1,7 @@
 # Expected Findings — Agent E2E Canary Test
 
 This file documents ALL planted issues ("canaries") in the test project.
-After running a full QA review via `@Sassy`, compare the agent output against
+After running a full QA review via `@Harness`, compare the agent output against
 this list to measure reviewer detection rates.
 
 ## Scoring
@@ -139,7 +139,7 @@ this list to measure reviewer detection rates.
 ## How to run
 
 ```text
-@Sassy Run a full QA review on the e2e agent test project at tests/e2e-agent-test/.
+@Harness Run a full QA review on the e2e agent test project at tests/e2e-agent-test/.
 Review all code, infrastructure, and documentation.
 ```
 

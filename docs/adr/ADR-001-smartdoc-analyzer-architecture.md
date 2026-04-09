@@ -3,7 +3,7 @@
 > **Status:** Accepted
 > **SDLC Phase:** 1-2 (Requirements & Design)
 > **Date:** 2026-04-05
-> **Author:** @Sassy (Analyst Agent)
+> **Author:** @Harness (Analyst Agent)
 
 ---
 
@@ -568,20 +568,20 @@ flowchart TD
 ### Alternative 1: Raw Azure SDK instead of sas-cosmosdb / sas-storage
 
 - **Pros:** Direct control, no library dependency
-- **Cons:** More boilerplate, no Repository Pattern, inconsistent with GSA standards
+- **Cons:** More boilerplate, no Repository Pattern, inconsistent with application standards
 - **Rejected because:** Reference catalog mandates sas-cosmosdb and sas-storage
 
 ### Alternative 2: LangChain for RAG orchestration
 
 - **Pros:** Rich ecosystem, many integrations
 - **Cons:** Heavy dependency, abstractions can obscure Azure-specific tuning, not in reference catalog
-- **Rejected because:** Direct Azure AI Search + OpenAI SDK gives better control and aligns with GSA patterns. Simpler dependency chain.
+- **Rejected because:** Direct Azure AI Search + OpenAI SDK gives better control and aligns with application patterns. Simpler dependency chain.
 
 ### Alternative 3: Cosmos DB MongoDB API instead of SQL API
 
 - **Pros:** Familiar MongoDB query syntax
 - **Cons:** SQL API has richer integration with Azure ecosystem, sas-cosmosdb supports both
-- **Rejected because:** SQL API is the standard for new GSA projects; better indexing control
+- **Rejected because:** SQL API is the standard for new application projects; better indexing control
 
 ### Alternative 4: Next.js full-stack instead of React SPA + FastAPI
 

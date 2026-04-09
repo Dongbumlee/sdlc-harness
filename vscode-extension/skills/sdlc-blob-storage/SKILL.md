@@ -13,7 +13,7 @@ description: >-
 
 - Uploading or downloading files to/from Azure Blob Storage
 - Listing, copying, moving, or deleting blobs
-- Generating SAS URLs for blob access
+- Generating team URLs for blob access
 - Sending or receiving messages from Azure Queue Storage
 - Reviewing code that interacts with Azure Storage
 
@@ -47,7 +47,7 @@ async def download_document(account_name: str, container: str, name: str) -> byt
         return await helper.download_blob(container, name)
 
 async def generate_read_url(account_name: str, container: str, name: str) -> str:
-    """Generate a time-limited read-only SAS URL."""
+    """Generate a time-limited read-only team URL."""
     async with AsyncStorageBlobHelper(account_name=account_name) as helper:
         return await helper.generate_blob_sas_url(
             container_name=container,
@@ -124,7 +124,7 @@ class TestDocumentStorage:
 - **Always use `async with`** — this ensures proper resource cleanup. Forgetting it
   causes connection leaks.
 - **SAS URL generation uses User Delegation SAS** with clock skew protection — do NOT
-  generate SAS tokens manually.
+  generate team tokens manually.
 - **Large file uploads** support progress tracking and chunked upload — use the
   library's built-in support, do NOT implement custom chunking.
 - **Storage operations go in the Business layer** — the API layer calls Business

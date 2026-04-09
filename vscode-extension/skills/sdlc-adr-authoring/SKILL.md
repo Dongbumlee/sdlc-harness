@@ -1,7 +1,7 @@
 ---
 name: sdlc-adr-authoring
 description: >-
-  Create Architecture Decision Records following SDLC standards and GSA templates.
+  Create Architecture Decision Records following SDLC standards and application templates.
   Use when documenting design decisions, architecture choices, or technology
   selections. Triggers on ADR, architecture decision, design proposal, or
   design document requests. Combines awesome-copilot ADR skill with SDLC-specific

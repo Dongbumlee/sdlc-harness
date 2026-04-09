@@ -67,7 +67,7 @@ and produce structured design proposals. You **never edit code** — you only re
 ## Output format
 
 Return a structured design proposal following the ADR template at `.design/ADR-TEMPLATE.md`.
-Your output should be **ADR-ready** — Sassy will automatically delegate to the Documenter
+Your output should be **ADR-ready** — Harness will automatically delegate to the Documenter
 to save it as `docs/adr/ADR-XXX-<topic>.md`.
 
 **Diagram format rule:** All architecture diagrams, data flow diagrams, and sequence
@@ -91,16 +91,16 @@ Structure your output with these sections:
 ## Progressive configuration output
 
 At the end of your design proposal, include a **Project Configuration** section.
-Sassy uses this to progressively fill `.github/copilot-instructions.md` placeholders.
+Harness uses this to progressively fill `.github/copilot-instructions.md` placeholders.
 
 ```
-## Project Configuration (for Sassy)
+## Project Configuration (for Harness)
 - TECH_STACK: [recommended tech stack, e.g., "Python 3.12, FastAPI, React, TypeScript"]
 - ARCH_STYLE: [recommended architecture, e.g., "Layered architecture with API + Web frontend"]
 - OTHER_AZURE_SERVICES: [Azure services identified, e.g., "Azure Container Apps, Azure AI Foundry"]
 ```
 
-This section is consumed by Sassy and does not appear in the final ADR.
+This section is consumed by Harness and does not appear in the final ADR.
 
 ## Self-evaluation before handoff
 

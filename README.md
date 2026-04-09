@@ -1,14 +1,14 @@
- # SDLC Agent Template — SAS Dev Practices
+ # SDLC Agent Template — SDLC Harness
 
- > **An agent-driven SDLC template that accelerates GSA development with guaranteed quality,
+ > **An agent-driven SDLC template that accelerates application development with guaranteed quality,
  > reusability, and zero fragmentation from our dev standards.**
 
  This repository is the **SDLC (Software Development Lifecycle) Agent Template** — a ready-to-adopt
- configuration package that enables teams to build [Global Solution Accelerators (GSAs)](https://accelerators.ms)
- at production speed while maintaining full compliance with SAS development standards.
+ configuration package that enables teams to build [production-ready applications](https://accelerators.ms)
+ at production speed while maintaining full compliance with team development standards.
 
  It combines **GitHub Copilot Agent mode**, structured prompt files, and reusable quality
- instructions so that every new GSA or Azure-based service starts from proven patterns — not
+ instructions so that every new application or Azure-based service starts from proven patterns — not
  from scratch — and stays aligned throughout its lifecycle.
 
  **What this template provides:**
@@ -18,11 +18,11 @@
  - **Harness-quality QA** — inspired by [Anthropic's harness design research](https://www.anthropic.com/engineering/harness-design-long-running-apps),
    the QA system uses adversarial evaluation, numeric scoring with hard fail thresholds,
    and iterative feedback loops (QA → fix → re-QA) to catch issues that single-pass reviews miss.
- - **GSA quality guarantee** — enforced architecture, Azure SDK abstractions, and code/test
+ - **application quality guarantee** — enforced architecture, Azure SDK abstractions, and code/test
    quality standards ensure every repository meets the same production bar.
  - **Zero fragmentation** — standardized scaffolding templates, shared libraries, and consistent
    patterns eliminate divergence across teams and repositories.
- - **Reusability at scale** — SAS Dev Templates and reusable components (`sas-cosmosdb`,
+ - **Reusability at scale** — Scaffolding Templates and reusable components (`sas-cosmosdb`,
    `sas-storage`, Bicep/AVM modules) reduce duplication and accelerate delivery.
  - **Azure best practices built in** — identity management, infrastructure-as-code, resource
    governance, and Well-Architected Framework alignment are embedded, not bolted on.
@@ -54,12 +54,12 @@
     - Use approved Azure SDK abstractions (`sas-cosmosdb`, `sas-storage`) instead of raw SDK clients.
     - Follow identity management, infrastructure-as-code, and resource governance conventions.
 
- 5. **Promote SAS Dev Template and reusable components**
+ 5. **Promote Scaffolding Template and reusable components**
     - Scaffold new projects from standardized templates (base app, FastAPI, AI agent).
     - Reuse shared libraries and proven patterns to reduce duplication across repositories.
 
- 6. **Prevent fragmentation across GSAs**
-    - Ensure every new GSA or service starts from the same template, instructions, and quality bar.
+ 6. **Prevent fragmentation across applications**
+    - Ensure every new application or service starts from the same template, instructions, and quality bar.
     - Eliminate team-by-team divergence in architecture, SDK usage, testing, and documentation patterns.
     - Maintain a single source of truth for dev standards that evolves with the organization.
 
@@ -85,13 +85,13 @@
 
  ### First use
 
- Open your project and invoke Sassy — it auto-detects a new repo and bootstraps everything:
+ Open your project and invoke Harness — it auto-detects a new repo and bootstraps everything:
 
  ```
- @Sassy help me set up this project
+ @Harness help me set up this project
  ```
 
- Sassy will ask for your project name and domain, then generate all workspace files
+ Harness will ask for your project name and domain, then generate all workspace files
  (`copilot-instructions.md`, quality instructions, prompt files) customized for your project.
 
  > **What you get instantly:** 18 agents (including 9 parallel QA reviewers), 12 domain skills,
@@ -124,11 +124,11 @@
 
  | Agent | Self-evaluation | Acceptance criteria | Feedback loop |
  |---|---|---|---|
- | **Analyst** | ✅ Design completeness, testability, scope control, NFR coverage | — (produces criteria for others) | Design revision loop via Sassy |
- | **Scaffolder** | ✅ Template fidelity, file existence, dependency correctness | ✅ Required files checklist | Structure validation via Sassy |
- | **Deployer** | ✅ AVM versions, compilation, no hardcoded values, diagnostics, WAF | ✅ Infrastructure quality checklist | Bicep fix loop via Sassy |
+ | **Analyst** | ✅ Design completeness, testability, scope control, NFR coverage | — (produces criteria for others) | Design revision loop via Harness |
+ | **Scaffolder** | ✅ Template fidelity, file existence, dependency correctness | ✅ Required files checklist | Structure validation via Harness |
+ | **Deployer** | ✅ AVM versions, compilation, no hardcoded values, diagnostics, WAF | ✅ Infrastructure quality checklist | Bicep fix loop via Harness |
  | **Implementer** | ✅ Acceptance criteria coverage table | ✅ Sprint contract before coding | QA re-review loop (up to 3 rounds) |
- | **Documenter** | ✅ Template compliance, code accuracy, no placeholders, link integrity | — | Revision loop via Sassy |
+ | **Documenter** | ✅ Template compliance, code accuracy, no placeholders, link integrity | — | Revision loop via Harness |
  | **QA Reviewers** | — (they ARE the evaluators) | — | Adversarial scoring with thresholds |
 
  ---
@@ -173,13 +173,13 @@
  ## Agent Architecture
 
  This template includes a **multi-agent subagent system** powered by VS Code's Copilot subagent
- capability. A single user-facing agent — **Sassy** (SAS Dev Engineer's agent for helping
+ capability. A single user-facing agent — **Harness** (Your SDLC Orchestrator for helping
  and accelerating building solution accelerators based on SDLC) — orchestrates specialized
  worker agents, each scoped to a specific SDLC Phase with least-privilege tool access.
 
  ```mermaid
  flowchart TD
-     Request["🧑‍💻 Engineer Request"] --> Coordinator["🎯 Sassy"]
+     Request["🧑‍💻 Engineer Request"] --> Coordinator["🎯 Harness"]
 
      Coordinator --> Analyst["📋 Analyst<br/>Phase 1-2"]
      Coordinator --> Scaffolder["🏗️ Scaffolder<br/>Phase 3"]
@@ -214,9 +214,9 @@
  - **Least-privilege tools** — reviewers get read-only; implementer gets full edit + terminal.
  - **MCP-powered** — agents leverage GitHub MCP, awesome-copilot, Azure MCP, Microsoft Learn MCP,
    and Context7 for live patterns, fresh best practices, and authoritative documentation.
- - **Worker agents are hidden** — only **Sassy** appears in the agent dropdown.
+ - **Worker agents are hidden** — only **Harness** appears in the agent dropdown.
 
- All agent files live in `.github/agents/` and are copyable to any GSA repo.
+ All agent files live in `.github/agents/` and are copyable to any application repo.
 
  ### How engineers and agents work together
 
@@ -226,21 +226,21 @@
  #### Step 1: Engineer opens a task
 
  An engineer receives a GitHub issue, a feature request, or identifies a bug. They open
- VS Code, switch to the **Sassy** agent in Copilot Chat, and describe the task:
+ VS Code, switch to the **Harness** agent in Copilot Chat, and describe the task:
 
  ```text
- @Sassy Implement the order history API from ADR-012.
+ @Harness Implement the order history API from ADR-012.
  It needs Cosmos DB for order data and Blob Storage for invoice PDFs.
  ```
 
- #### Step 2: Sassy identifies the phase and delegates
+ #### Step 2: Harness identifies the phase and delegates
 
  The Coordinator reads the request, identifies this as a **Phase 4 (Implementation)** task,
  and checks whether a design exists. If an ADR is referenced, it proceeds. If not, it first
  delegates to the **Analyst** agent for a design proposal.
 
  ```
- Sassy
+ Harness
   └─ "This is a Phase 4 task with an existing ADR. Delegating to Implementer."
      └─ Implementer (subagent) starts working...
  ```
@@ -249,7 +249,7 @@
 
  The **Implementer** agent doesn't work from stale knowledge — it actively fetches live context:
 
- 1. **Fetches the latest SAS dev reusable components and patterns** from GitHub MCP
+ 1. **Fetches the latest team dev reusable components and patterns** from GitHub MCP
     (e.g., `sas-cosmosdb` Repository Pattern, `sas-storage` context manager usage)
  2. **Loads current framework documentation** via Context7 MCP (FastAPI, Pydantic, React, etc.)
  3. **Reads the project's reference catalog** to verify approved libraries and scaffolding templates
@@ -309,7 +309,7 @@
  ### Overall Verdict: ⛔ Request changes — Security score below threshold
  ```
 
- If the verdict is ⛔, Sassy enters the **iterative QA loop**: delegates fixes to the
+ If the verdict is ⛔, Harness enters the **iterative QA loop**: delegates fixes to the
  Implementer, then re-runs only the failing reviewers. This continues up to 3 rounds
  until all domains pass their thresholds.
 
@@ -330,7 +330,7 @@
  ```mermaid
  sequenceDiagram
      participant E as 🧑‍💻 Engineer
-     participant C as 🎯 Sassy
+     participant C as 🎯 Harness
      participant I as ⚡ Implementer
      participant Q as 🔍 QA Coordinator
      participant D as 📝 Documenter
@@ -375,12 +375,12 @@
  - **Agents are transparent** — every subagent call is visible in Chat as a collapsible tool call.
    Expand it to see exactly what the agent read, searched, and changed.
  - **Quality is automatic** — the 9-perspective QA review runs on every change with numeric
-   scoring and hard fail thresholds. If any domain fails, Sassy runs an iterative fix loop
+   scoring and hard fail thresholds. If any domain fails, Harness runs an iterative fix loop
    (up to 3 rounds). The QA Coordinator also emits a **manual QA checklist** for items
    requiring human testing and can **file bugs in Azure DevOps** with user confirmation.
  - **Context is live** — agents don't rely on stale training data. They fetch current patterns,
    documentation, and best practices from MCP servers on every run.
- - **The SDLC process is enforced** — Sassy ensures no phase is skipped and quality
+ - **The SDLC process is enforced** — Harness ensures no phase is skipped and quality
    standards are met before release.
 
  #### MCP data flow — how agents leverage external tools
@@ -409,7 +409,7 @@
      Sec -->|"load OWASP Top 10"| AC
      Sec -->|"scan dependencies"| GH
 
-     Deploy -->|"fetch Bicep patterns from GSAs"| GH
+     Deploy -->|"fetch Bicep patterns from applications"| GH
      Deploy -->|"load Bicep best practices"| AC
      Deploy -->|"validate Azure resources"| AZ
      Deploy -->|"get AVM module docs"| MD
@@ -435,7 +435,7 @@
  > permissions to create resource groups, resources, and role assignments (Contributor + RBAC at
  > subscription or resource group level). Verify quota availability for Azure OpenAI models before deployment.
 
- > **Dev Containers:** Following the [GSA accelerator pattern](https://accelerators.ms),
+ > **Dev Containers:** Following the [application accelerator pattern](https://accelerators.ms),
  > each service under `src/` provides its **own** `.devcontainer/` with service-specific tooling.
  > This per-service isolation ensures that engineers working on one layer (e.g., backend API,
  > processor, frontend) can build, test, and run independently — without pulling in dependencies
@@ -511,7 +511,7 @@
 
  ---
 
- ## SAS Dev Template and Practices
+ ## Scaffolding Template and Practices
 
  The team maintains a **Reference Catalog** at `.github/reference-catalog.md` with detailed documentation,
  API examples, and Copilot behavior rules for all libraries and templates.
@@ -548,7 +548,7 @@
 
  This SDLC uses four mechanisms to steer Copilot:
 
- 1. **Multi-agent subagent system** (agent-driven workflows via Sassy — see [Agent Architecture](#agent-architecture) above)
+ 1. **Multi-agent subagent system** (agent-driven workflows via Harness — see [Agent Architecture](#agent-architecture) above)
  2. **Repo-level instructions** (always active)
  3. **Language-specific quality instructions** (auto-applied by file type)
  4. **Prompt files** (reusable workflows invoked manually)
@@ -622,10 +622,10 @@
  | `deployment` | **Deployer** | read, search, edit, terminal, Azure MCP |
  | `implementation-and-tests` | **Implementer** | edit, execute, terminal, all coding MCPs |
  | `repo-documentation` | **Documenter** | read, search, edit, GitHub MCP |
- | `qa-rai-release` | **Sassy** | agent (orchestrates QA + RAI + Release subagents) |
+ | `qa-rai-release` | **Harness** | agent (orchestrates QA + RAI + Release subagents) |
 
  This means engineers get the **same behavior and tool access** whether they invoke
- `@Sassy implement the order API` or use `/implementation-and-tests`.
+ `@Harness implement the order API` or use `/implementation-and-tests`.
 
  #### How to use prompt files in VS Code
 
@@ -654,10 +654,10 @@ Recommended structure for this “SDLC & Copilot” configuration repo (or for e
  .
  ├── README.md
  ├── .design/                                  ← SDLC design templates and guidance
- │   ├── ADR-TEMPLATE.md                      ← Standard ADR format for all GSAs
+ │   ├── ADR-TEMPLATE.md                      ← Standard ADR format for all applications
  │   ├── DESIGN-DOC-TEMPLATE.md               ← General design document template
  │   ├── API-DOC-TEMPLATE.md                  ← API documentation template
- │   ├── README.template.md                   ← GSA-aligned project README template
+ │   ├── README.template.md                   ← application-aligned project README template
  │   └── hands-on-guide.md                    ← Step-by-step SDLC walkthrough
  ├── docs/                                     ← App documentation (created by engineers + agents)
  │   ├── adr/                                 ← Architecture Decision Records
@@ -680,8 +680,8 @@ Recommended structure for this “SDLC & Copilot” configuration repo (or for e
  │   └── test-quality-tsx.instructions.md      ← React test quality (auto: **/*.test.tsx)
  ├── .vscode/
  │   └── mcp.json                              ← MCP servers (GitHub, awesome-copilot, Azure, MS Learn, Context7)
- ├── .github/agents/                                    ← Subagent system (Sassy coordinator + phase workers + QA reviewers)
- │   ├── sassy.agent.md                         ← User-facing orchestrator ("@Sassy")
+ ├── .github/agents/                                    ← Subagent system (Harness coordinator + phase workers + QA reviewers)
+ │   ├── harness.agent.md                         ← User-facing orchestrator ("@Harness")
  │   ├── analyst.agent.md                      ← Phase 1-2: Requirements & Design
  │   ├── scaffolder.agent.md                   ← Phase 3: Repo Structure & CI/CD
  │   ├── deployer.agent.md                     ← Phase 3+8: Deployment & Infrastructure
@@ -731,7 +731,7 @@ Recommended structure for this “SDLC & Copilot” configuration repo (or for e
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-How to Adopt This Template in a New GSA / App Repo
+How to Adopt This Template in a New application / App Repo
 
 ### Option A: Install as a Plugin (recommended)
 
@@ -765,13 +765,13 @@ How to Adopt This Template in a New GSA / App Repo
 
  #### After installing the plugin
 
- Open any project repo and invoke Sassy:
+ Open any project repo and invoke Harness:
 
  ```
- @Sassy help me set up this project
+ @Harness help me set up this project
  ```
 
- Sassy detects that `.github/copilot-instructions.md` is missing and automatically
+ Harness detects that `.github/copilot-instructions.md` is missing and automatically
  runs the `sdlc-workspace-init` skill, which:
 
  1. Asks for your project name, domain, and tech stack.
@@ -814,7 +814,7 @@ How to Adopt This Template in a New GSA / App Repo
       (this activates the PR form enforcement).
  2 Customize for your project
     • Set `<PROJECT_NAME>` in .github/copilot-instructions.md (the only manual edit needed).
-    • Sassy progressively fills `<BUSINESS_DOMAIN>`, `<TECH_STACK>`, `<ARCH_STYLE>`,
+    • Harness progressively fills `<BUSINESS_DOMAIN>`, `<TECH_STACK>`, `<ARCH_STYLE>`,
       `<OTHER_AZURE_SERVICES>`, and `<LOGGER_ABSTRACTION>` from actual design decisions.
     • Select quality instruction files matching your stack:
        • Python → code-quality-py.instructions.md + test-quality.instructions.md
@@ -840,7 +840,7 @@ Adoption Checklist
 #### Plugin install (Option A)
 
  • [ ] Install the plugin via VS Code (`Chat: Install Plugin From Source`) or CLI (`copilot plugin install gim-home/sdl_with_agent`).
- • [ ] Run `@Sassy` or `/sdlc-workspace-init` in the target repo to generate workspace files.
+ • [ ] Run `@Harness` or `/sdlc-workspace-init` in the target repo to generate workspace files.
  • [ ] Review the generated `.github/copilot-instructions.md` and adjust if needed.
  • [ ] Copy `.github/pr-form-validation.workflow.yml` to `.github/workflows/pr-form-validation.yml`.
  • [ ] Enable **branch protection** on `main` and add `Validate PR Form` as a required status check.
@@ -849,7 +849,7 @@ Adoption Checklist
 
  • [ ] Copy `.github/`, `.github/prompts/`, `.github/agents/`, `.design/`, `.vscode/mcp.json` into the target repo.
  • [ ] Set `<PROJECT_NAME>` in `.github/copilot-instructions.md` (the only placeholder you need to fill manually —
-       Sassy progressively fills the remaining values as design decisions are made during the SDLC process).
+       Harness progressively fills the remaining values as design decisions are made during the SDLC process).
  • [ ] Copy `.github/pr-form-validation.workflow.yml` to `.github/workflows/pr-form-validation.yml`.
  • [ ] Enable **branch protection** on `main` and add `Validate PR Form` as a required status check.
  • [ ] Select and keep only the quality instruction files matching the repo's language stack.
@@ -864,5 +864,5 @@ Adoption Checklist
  • [ ] Socialize this README and `.github/SDLC-with-Copilot-and-Azure.md` with all engineers and leads.
 
 Once adopted, every engineer can open the repo, use Copilot Agent mode with the prompt files, and work through
-a consistent SDLC from requirements to release — with guaranteed GSA quality, full reusability, and zero
+a consistent SDLC from requirements to release — with guaranteed application quality, full reusability, and zero
 fragmentation from the team's dev standards.

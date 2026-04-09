@@ -2,14 +2,14 @@
 name: sdlc-architecture-review
 description: >-
   Review code for architecture and design consistency following SDLC layering rules
-  and GSA accelerator patterns. Use when reviewing PRs, checking dependency
+  and application accelerator patterns. Use when reviewing PRs, checking dependency
   boundaries, or validating pattern reuse. Triggers on architecture review,
   layering check, design review, or pattern compliance requests.
 ---
 
 # SDLC Architecture Review
 
-Review code for structural alignment with SDLC architecture rules and GSA patterns.
+Review code for structural alignment with SDLC architecture rules and application patterns.
 
 ## Step 1: Load architecture guidance
 
@@ -33,7 +33,7 @@ mcp_github_search_code(
 
 ## Step 2: Verify layering rules
 
-The GSA accelerator uses a strict layered architecture:
+The application accelerator uses a strict layered architecture:
 
 ```
 ┌─────────────────────────────────────────┐
@@ -79,7 +79,7 @@ Before new code introduces a new pattern, verify:
 
 1. Does a similar pattern already exist in this repo? Search for it.
 2. Does the reference catalog (`.github/reference-catalog.md`) prescribe a pattern?
-3. Do other GSA repos use a different approach? Check via GitHub MCP.
+3. Do other application repos use a different approach? Check via GitHub MCP.
 
 **Prefer extending existing patterns over inventing new ones.**
 
@@ -97,6 +97,6 @@ Verify the project follows the correct scaffolding template:
 
 Return findings as:
 - **Critical**: Layering violations, architectural shortcuts
-- **Important**: Pattern deviations, inconsistencies with other GSAs
+- **Important**: Pattern deviations, inconsistencies with other applications
 - **Suggestion**: Minor structural improvements
 - **Positive**: Architecture aspects done well

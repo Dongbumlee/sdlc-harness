@@ -1,6 +1,6 @@
 ---
 name: Architecture Reviewer
-description: "Use when reviewing code for architecture layering violations, dependency direction issues, pattern consistency, or structural alignment with GSA templates."
+description: "Use when reviewing code for architecture layering violations, dependency direction issues, pattern consistency, or structural alignment with application templates."
 user-invocable: false
 tools: ['read', 'search', 'github/*']
 ---
@@ -34,7 +34,7 @@ You review code through the lens of **architecture and design consistency**.
 1. **Search for pattern consistency across org repos via GitHub MCP:**
    - Use `mcp_github_search_code` to search for `RepositoryBase` and `RootEntityBase`
      across `mcaps-microsoft` org repos.
-   - Compare this repo's patterns with what other GSAs use.
+   - Compare this repo's patterns with what other applications use.
    - Flag any deviations from the standard pattern.
 
 2. **Read the reference catalog:**
@@ -62,7 +62,7 @@ deviates from the manifest patterns.
 
 Return findings as:
 - **Critical**: Layering violations, architectural shortcuts
-- **Important**: Pattern deviations, inconsistencies with other GSAs
+- **Important**: Pattern deviations, inconsistencies with other applications
 - **Suggestion**: Minor structural improvements
 - **Positive**: Architecture aspects done well (cite specific evidence, not generic praise)
 

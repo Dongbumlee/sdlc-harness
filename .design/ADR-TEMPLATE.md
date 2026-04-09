@@ -3,7 +3,7 @@
 > **Status:** Proposed | Accepted | Deprecated | Superseded
 > **SDLC Phase:** 1-2 (Requirements & Design)
 > **Date:** YYYY-MM-DD
-> **Author:** [Name or @Sassy]
+> **Author:** [Name or @Harness]
 
 ---
 

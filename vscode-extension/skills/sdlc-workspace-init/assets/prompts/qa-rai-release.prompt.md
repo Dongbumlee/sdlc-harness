@@ -1,6 +1,6 @@
 ---
 description: "Run QA review, RAI assessment, and release preparation for implemented features. Covers automated review, manual QA checklists, and release scripts."
-agent: "Sassy"
+agent: "Harness"
 argument-hint: "Describe the feature or change to review and release"
 ---
  <!--

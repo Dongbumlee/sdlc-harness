@@ -336,6 +336,6 @@ Example:
 ## Data Source
 
 - **338 bugs** from CSACTOSOL Azure DevOps organization
-- **9 projects**: CSA Solutioning (309), Multi-Agent BiB (10), Modernize Code v2 (5), Content Processing (4), Document Processing (4), Modernize Code Generic (2), MAAG Data Foundation (2), Agentic Content Processing (1), GSA Landing Page (1)
+- **9 projects**: CSA Solutioning (309), Multi-Agent BiB (10), Modernize Code v2 (5), Content Processing (4), Document Processing (4), Modernize Code Generic (2), MAAG Data Foundation (2), Agentic Content Processing (1), application Landing Page (1)
 - **Time range**: October 2024 – April 2026
 - **Detail level**: Repro steps, actual error messages, Azure error codes, and fix patterns extracted from bug work items

@@ -2,7 +2,7 @@
 
 > **SDLC Phase:** 2 (Design)
 > **Date:** YYYY-MM-DD
-> **Author:** [Name or @Sassy → Analyst agent]
+> **Author:** [Name or @Harness → Analyst agent]
 
 ---
 

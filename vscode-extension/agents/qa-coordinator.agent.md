@@ -48,7 +48,7 @@ reviewers are available. Run these probe calls and report status to the user:
   Add a note:
   > ⚠️ Azure DevOps MCP was unavailable. Bug work items were not created.
   > Please file bugs manually using the summary above.
-- **Neither is a hard blocker** — QA review must always proceed. Only Sassy's GitHub MCP
+- **Neither is a hard blocker** — QA review must always proceed. Only Harness's GitHub MCP
   check is a hard blocker (because agents need template/SDK patterns to function correctly).
 
 ## Critical: Adversarial QA posture (anti-leniency)

@@ -5,7 +5,7 @@ Multi-agent system for building Azure solution accelerators with production-qual
 ## What's Included
 
 ### 18 Agents
-- **Sassy** — SDLC orchestrator coordinating all phases
+- **Harness** — SDLC orchestrator coordinating all phases
 - **Analyst, Scaffolder, Implementer, Deployer, Documenter, Release Manager** — Phase workers
 - **QA Coordinator** + 8 specialized reviewers (Architecture, Code Quality, Security, Test Coverage, UX/Accessibility, LLM Behavior, Deployment Readiness, Azure Compliance, RAI, QA Bug Checklist)
 
@@ -15,6 +15,6 @@ Multi-agent system for building Azure solution accelerators with production-qual
 ## Usage
 
 After installing, agents and skills are available in GitHub Copilot Chat:
-- Type `@Sassy` to start an SDLC workflow
+- Type `@Harness` to start an SDLC workflow
 - Type `/sdlc-workspace-init` to initialize a new project
 - Type `/sdlc-code-quality` for code quality review procedures
