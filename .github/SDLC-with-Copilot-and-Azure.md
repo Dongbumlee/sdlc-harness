@@ -34,22 +34,22 @@
 
  **Cosmos DB**
 
- - Use **`sas-cosmosdb`** (PyPI) for all Cosmos DB access (SQL API and MongoDB API).
-   - Install: `uv add sas-cosmosdb`
-   - Source: [mcaps-microsoft/python_cosmosdb_helper](https://github.com/mcaps-microsoft/python_cosmosdb_helper)
+ - Use **`your-cosmosdb-lib`** (PyPI) for all Cosmos DB access (SQL API and MongoDB API).
+   - Install: `uv add your-cosmosdb-lib  # replace with your library`
+   - Source: [your-org/your-cosmosdb-library](https://github.com/your-org/your-cosmosdb-library)
  - Pattern: Repository Pattern with `RepositoryBase[TEntity, TKey]` and Pydantic entities via
    `RootEntityBase["EntityName", KeyType]`.
- - Do **NOT** use raw `azure-cosmos` SDK or `pymongo` directly when `sas-cosmosdb` covers the use case.
- - Namespace: `from sas.cosmosdb.sql import RootEntityBase, RepositoryBase`
+ - Do **NOT** use raw `azure-cosmos` SDK or `pymongo` directly when `your-cosmosdb-lib` covers the use case.
+ - Namespace: `from your_org.cosmosdb.sql import RootEntityBase, RepositoryBase`
 
  **Azure Blob Storage & Queue**
 
- - Use **`sas-storage`** (PyPI) for all blob and queue operations.
-   - Install: `uv add sas-storage`
-   - Source: [mcaps-microsoft/python_storageaccount_helper](https://github.com/mcaps-microsoft/python_storageaccount_helper)
+ - Use **`your-storage-lib`** (PyPI) for all blob and queue operations.
+   - Install: `uv add your-storage-lib  # replace with your library`
+   - Source: [your-org/your-storage-library](https://github.com/your-org/your-storage-library)
  - Pattern: `AsyncStorageBlobHelper` / `AsyncStorageQueueHelper` with `async with` context manager.
  - Do **NOT** use raw `azure-storage-blob` or `azure-storage-queue` SDK directly.
- - Namespace: `from sas.storage.blob import AsyncStorageBlobHelper`
+ - Namespace: `from your_org.storage.blob import AsyncStorageBlobHelper`
 
  **Other Azure services** (examples, tailor as needed):
 
@@ -58,7 +58,7 @@
  - Key Vault: `azure-keyvault-secrets` / `azure-identity`
  - App Configuration: `azure-appconfiguration` (used by scaffolding templates)
 
- **Rule:** New code MUST use the `sas-cosmosdb` and `sas-storage` libraries and their patterns rather than
+ **Rule:** New code MUST use the `your-cosmosdb-lib` and `your-storage-lib` libraries and their patterns rather than
  raw Azure SDK clients. See `.github/reference-catalog.md` for detailed API examples.
 
  ---
@@ -72,16 +72,16 @@
 
  | Library                                                                                         | PyPI Package   | Use for                                         |
  | ----------------------------------------------------------------------------------------------- | -------------- | ----------------------------------------------- |
- | [python_cosmosdb_helper](https://github.com/mcaps-microsoft/python_cosmosdb_helper)             | `sas-cosmosdb` | Cosmos DB SQL + MongoDB with Repository Pattern |
- | [python_storageaccount_helper](https://github.com/mcaps-microsoft/python_storageaccount_helper) | `sas-storage`  | Azure Blob Storage + Queue operations           |
+ | [python_cosmosdb_helper](https://github.com/your-org/your-cosmosdb-library)             | `your-cosmosdb-lib` | Cosmos DB SQL + MongoDB with Repository Pattern |
+ | [python_storageaccount_helper](https://github.com/your-org/your-storage-library) | `your-storage-lib`  | Azure Blob Storage + Queue operations           |
 
  **Scaffolding templates (clone to start a new project)**
 
  | Template                                                                                                      | Use for                                                                           |
  | ------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
- | [python_application_template](https://github.com/mcaps-microsoft/python_application_template)                 | Base app (console, worker, pipeline, CLI) with AppContext + DI + Azure App Config |
- | [python_api_application_template](https://github.com/mcaps-microsoft/python_api_application_template)         | FastAPI service with advanced DI, routers, health probes                          |
- | [python_agent_framework_dev_template](https://github.com/mcaps-microsoft/python_agent_framework_dev_template) | AI agent apps with Azure AI Foundry, MCP tools, multi-agent workflows             |
+ | [python_application_template](https://github.com/your-org/your-app-template)                 | Base app (console, worker, pipeline, CLI) with AppContext + DI + Azure App Config |
+ | [python_api_application_template](https://github.com/your-org/your-api-template)         | FastAPI service with advanced DI, routers, health probes                          |
+ | [python_agent_framework_dev_template](https://github.com/your-org/your-agent-template) | AI agent apps with Azure AI Foundry, MCP tools, multi-agent workflows             |
 
  **Internal patterns in this repo**
 
@@ -181,7 +181,7 @@
    - Which layers are involved (API, Application, Domain, Infrastructure, UI).
    - Which Azure services are needed (Cosmos DB, Blob, Service Bus, etc.).
  - Map:
-   - Which existing patterns will be reused (e.g., `sas-cosmosdb` repositories, `sas-storage` helpers).
+   - Which existing patterns will be reused (e.g., `your-cosmosdb-lib` repositories, `your-storage-lib` helpers).
    - When a new service/module is required, align it with internal patterns and/or template repositories.
 
  - Produce:
@@ -206,8 +206,8 @@
 
  - Design is documented (ADR/design doc) and agreed by the team.
  - Azure library choices are explicit and compliant:
-   - Cosmos: `sas-cosmosdb` (PyPI).
-   - Blob/Queue: `sas-storage` (PyPI).
+   - Cosmos: `your-cosmosdb-lib` (PyPI).
+   - Blob/Queue: `your-storage-lib` (PyPI).
  - Reuse of internal patterns and/or external templates is identified, not left to chance.
 
  ---
@@ -264,16 +264,16 @@
 
  - Implement feature in small, reviewable increments:
    - Routers/endpoints, services, domain logic.
-   - Data access using `sas-cosmosdb` repository pattern and `sas-storage` helpers.
+   - Data access using `your-cosmosdb-lib` repository pattern and `your-storage-lib` helpers.
  - For Cosmos DB:
-   - Use `sas-cosmosdb` with `RepositoryBase[Entity, KeyType]`.
+   - Use `your-cosmosdb-lib` with `RepositoryBase[Entity, KeyType]`.
    - Follow the patterns in the reference catalog and `python_cosmosdb_helper` repo for:
      - Partition keys and entity definitions.
      - Predicate-based queries.
      - Error handling and async patterns.
 
  - For Blob Storage / Queue:
-   - Use `sas-storage` with `AsyncStorageBlobHelper` / `AsyncStorageQueueHelper`.
+   - Use `your-storage-lib` with `AsyncStorageBlobHelper` / `AsyncStorageQueueHelper`.
    - Always use `async with` context manager for proper resource cleanup.
  - Implement tests:
    - Unit tests for core logic and services.

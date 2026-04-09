@@ -1,13 +1,13 @@
 ---
 name: sdlc-blob-storage
 description: >-
-  Implement Azure Blob Storage and Queue operations using sas-storage library.
+  Implement Azure Blob Storage and Queue operations using your-storage-lib library.
   Use when uploading, downloading, listing, or managing blobs and queues.
   Triggers on blob, storage, file upload, queue, or Azure Storage requests.
-  Never use raw azure-storage-blob or azure-storage-queue — always use sas-storage.
+  Never use raw azure-storage-blob or azure-storage-queue — always use your-storage-lib.
 ---
 
-# Azure Blob Storage & Queue — sas-storage Library
+# Azure Blob Storage & Queue — your-storage-lib Library
 
 ## When to use
 
@@ -23,7 +23,7 @@ Fetch the latest patterns from GitHub MCP:
 
 ```
 mcp_github_get_file_contents(
-  owner: "mcaps-microsoft",
+  owner: "your-org",
   repo: "python_storageaccount_helper",
   path: "README.md"
 )
@@ -34,7 +34,7 @@ mcp_github_get_file_contents(
 Always use `AsyncStorageBlobHelper` with `async with` context manager:
 
 ```python
-from sas.storage.blob import AsyncStorageBlobHelper
+from your_org.storage.blob import AsyncStorageBlobHelper
 
 async def upload_document(account_name: str, container: str, name: str, data: bytes):
     """Upload a document to blob storage."""
@@ -67,7 +67,7 @@ async def list_all_blobs(account_name: str, container: str) -> list:
 Use `AsyncStorageQueueHelper` with `async with` context manager:
 
 ```python
-from sas.storage.queue import AsyncStorageQueueHelper
+from your_org.storage.queue import AsyncStorageQueueHelper
 
 async def send_message(account_name: str, queue_name: str, message: str):
     """Send a message to the queue."""
@@ -119,7 +119,7 @@ class TestDocumentStorage:
 
 ## Gotchas
 
-- **Never create raw `BlobServiceClient` or `QueueServiceClient`** — `sas-storage`
+- **Never create raw `BlobServiceClient` or `QueueServiceClient`** — `your-storage-lib`
   manages connection lifecycle, retry policies, and auth.
 - **Always use `async with`** — this ensures proper resource cleanup. Forgetting it
   causes connection leaks.

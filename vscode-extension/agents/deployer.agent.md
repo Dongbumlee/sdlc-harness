@@ -22,9 +22,9 @@ and release automation following Azure Verified Modules (AVM) and Landing Zone p
 
 0. **Verify GitHub MCP authentication (required):**
    - Perform a probe call: use `mcp_github_get_file_contents` to fetch `README.md` from
-     `mcaps-microsoft/python_application_template`.
+     `your-org/your-app-template`.
    - If the call **fails or returns an auth error**, STOP and inform the user:
-     > GitHub MCP authentication is required to access reference repos in `mcaps-microsoft`.
+     > GitHub MCP authentication is required to access reference repos in `your-org`.
      > Please sign in with an account that has org access, then retry.
    - If the user cannot authenticate, fall back to patterns in `.github/reference-catalog.md`
      and warn that live verification was not possible.

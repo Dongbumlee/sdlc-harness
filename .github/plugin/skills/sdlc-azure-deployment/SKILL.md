@@ -66,7 +66,7 @@ If ADO MCP authentication fails, proceed with the rules below.
 **⛔ NEVER write raw Azure resource declarations (`resource ... 'Microsoft.xxx'`).**
 **✅ ALWAYS use AVM modules (`br/public:avm/res/...`) for every resource.**
 
-This is the same rule as "never use raw CosmosClient — always use sas-cosmosdb".
+This is the same rule as "never use raw CosmosClient — always use your-cosmosdb-lib".
 AVM modules handle security defaults, diagnostics, RBAC, and WAF alignment automatically.
 
 **WRONG — raw resource declaration:**
@@ -189,7 +189,7 @@ hooks:
 
 - **NEVER use raw `resource` declarations** when an AVM module exists — this is the #1
   mistake. Always use `module ... 'br/public:avm/res/...'`. The same way you never use
-  raw `CosmosClient` when `sas-cosmosdb` exists.
+  raw `CosmosClient` when `your-cosmosdb-lib` exists.
 - **AVM module versions change** — always check the registry for the latest version
   before hardcoding a version number.
 - **ALL resources need AVM** — including Log Analytics, App Insights, and Container Registry.

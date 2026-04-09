@@ -39,8 +39,8 @@
 
 | Service | Library | Purpose |
 |---|---|---|
-| Cosmos DB | `sas-cosmosdb` | |
-| Blob Storage | `sas-storage` | |
+| Cosmos DB | `your-cosmosdb-lib` | |
+| Blob Storage | `your-storage-lib` | |
 
 ### Data Model
 

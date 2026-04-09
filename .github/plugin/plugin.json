@@ -1,20 +1,20 @@
 {
-  "name": "sdlc-agent-template",
-  "description": "SDLC Agent Template - multi-agent system for building Azure solution accelerators with production-quality standards. Includes Harness orchestrator, 8 QA reviewers, and 11 domain skills.",
+  "name": "sdlc-harness",
+  "description": "SDLC Harness — an agent-driven multi-agent system that orchestrates your entire software development lifecycle with harness-quality QA, 14 specialized agents, and 12 domain skills.",
   "version": "1.0.0",
   "author": {
-    "name": "SDLC Harness Team"
+    "name": "SDLC Harness Contributors"
   },
   "license": "MIT",
   "keywords": [
     "sdlc",
+    "harness",
     "azure",
     "copilot-agents",
     "code-quality",
     "qa-review",
-    "cosmos-db",
-    "fastapi",
-    "react",
+    "multi-agent",
+    "orchestrator",
     "agent-skills"
   ],
   "agents": "agents/",

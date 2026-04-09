@@ -1,9 +1,12 @@
 # Reference Catalog: Libraries and Scaffolding Templates
 
+> **📋 TEMPLATE:** This file ships with example entries showing the expected format.
+> Replace them with your team's actual libraries, templates, and conventions.
+
 > **SDLC alignment:** This catalog supports all SDLC phases, especially **Phase 2 (Design)**, **Phase 3 (Repo Structure)**,
 > and **Phase 4 (Implementation)**. Consult it when choosing how to scaffold a new project or which libraries to use.
 
-This document is the authoritative registry of reusable libraries and scaffolding templates maintained by the team.
+This document is the authoritative registry of reusable libraries and scaffolding templates maintained by your team.
 Copilot and engineers MUST consult this catalog before introducing new dependencies or inventing new patterns.
 
 ---
@@ -28,7 +31,7 @@ Copilot and engineers MUST consult this catalog before introducing new dependenc
 │                  │                                            │
 │  2. Add libraries as needed:                                 │
 │  ┌──────────────┐ ┌──────────────┐ ┌────────────────────┐   │
-│  │ sas-cosmosdb │ │ sas-storage  │ │ (future libraries) │   │
+│  │ your-cosmosdb-lib │ │ your-storage-lib  │ │ (future libraries) │   │
 │  │ uv add       │ │ uv add       │ │                    │   │
 │  └──────────────┘ └──────────────┘ └────────────────────┘   │
 └──────────────────────────────────────────────────────────────┘
@@ -41,13 +44,13 @@ Copilot and engineers MUST consult this catalog before introducing new dependenc
 These are **dependencies** — install them into any project that needs their functionality.
 They do NOT define project structure; they provide building blocks.
 
-### 1.1 sas-cosmosdb — Azure Cosmos DB Helper
+### 1.1 your-cosmosdb-lib — Azure Cosmos DB Helper
 
 |                  |                                                                                                     |
 | ---------------- | --------------------------------------------------------------------------------------------------- |
-| **Repository**   | [mcaps-microsoft/python_cosmosdb_helper](https://github.com/mcaps-microsoft/python_cosmosdb_helper) |
-| **PyPI package** | `sas-cosmosdb`                                                                                      |
-| **Install**      | `uv add sas-cosmosdb`                                                                               |
+| **Repository**   | [your-org/your-cosmosdb-library](https://github.com/your-org/your-cosmosdb-library) |
+| **PyPI package** | `your-cosmosdb-lib`                                                                                      |
+| **Install**      | `uv add your-cosmosdb-lib  # replace with your library`                                                                               |
 | **Python**       | 3.12+                                                                                               |
 | **API support**  | Cosmos DB SQL API + MongoDB API                                                                     |
 
@@ -67,17 +70,17 @@ They do NOT define project structure; they provide building blocks.
 
 **Copilot behavior:**
 
-- When asked to add Cosmos DB access, use `sas-cosmosdb` and follow the Repository Pattern.
+- When asked to add Cosmos DB access, use `your-cosmosdb-lib` and follow the Repository Pattern.
 - Define entities extending `RootEntityBase["EntityName", KeyType]` (type variables are mandatory).
 - Define repositories extending `RepositoryBase[Entity, KeyType]`.
 - For complex queries, use `query_raw_dynamic_cursor_async()` for raw SQL.
 - Do NOT create raw `CosmosClient` instances; use the library's repository abstractions.
-- Reference the [API Reference](https://github.com/mcaps-microsoft/python_cosmosdb_helper/blob/main/API_REFERENCE.md) and [Hands-On Guide](https://github.com/mcaps-microsoft/python_cosmosdb_helper/blob/main/HANDS_ON_GUIDE.md) for patterns.
+- Reference the [API Reference](https://github.com/your-org/your-cosmosdb-library/blob/main/API_REFERENCE.md) and [Hands-On Guide](https://github.com/your-org/your-cosmosdb-library/blob/main/HANDS_ON_GUIDE.md) for patterns.
 
 **Quick example:**
 
 ```python
-from sas.cosmosdb.sql import RootEntityBase, RepositoryBase
+from your_org.cosmosdb.sql import RootEntityBase, RepositoryBase
 
 class Customer(RootEntityBase["Customer", str]):
     name: str
@@ -102,13 +105,13 @@ async def main():
 
 ---
 
-### 1.2 sas-storage — Azure Storage Blob & Queue Helper
+### 1.2 your-storage-lib — Azure Storage Blob & Queue Helper
 
 |                  |                                                                                                                 |
 | ---------------- | --------------------------------------------------------------------------------------------------------------- |
-| **Repository**   | [mcaps-microsoft/python_storageaccount_helper](https://github.com/mcaps-microsoft/python_storageaccount_helper) |
-| **PyPI package** | `sas-storage`                                                                                                   |
-| **Install**      | `uv add sas-storage`                                                                                            |
+| **Repository**   | [your-org/your-storage-library](https://github.com/your-org/your-storage-library) |
+| **PyPI package** | `your-storage-lib`                                                                                                   |
+| **Install**      | `uv add your-storage-lib  # replace with your library`                                                                                            |
 | **Python**       | 3.12+                                                                                                           |
 | **Services**     | Azure Blob Storage + Azure Queue Storage                                                                        |
 
@@ -128,7 +131,7 @@ async def main():
 
 **Copilot behavior:**
 
-- When asked to add blob or queue operations, use `sas-storage`.
+- When asked to add blob or queue operations, use `your-storage-lib`.
 - Use `AsyncStorageBlobHelper` for blob operations, `AsyncStorageQueueHelper` for queue operations.
 - Always use `async with` context manager for proper resource cleanup.
 - For team token generation, use the built-in `generate_blob_sas_url()` method.
@@ -138,7 +141,7 @@ async def main():
 **Quick example:**
 
 ```python
-from sas.storage.blob import AsyncStorageBlobHelper
+from your_org.storage.blob import AsyncStorageBlobHelper
 
 async def example():
     async with AsyncStorageBlobHelper(account_name="myaccount") as helper:
@@ -163,7 +166,7 @@ then add libraries from Section 1 as needed.
 
 |                     |                                                                                                               |
 | ------------------- | ------------------------------------------------------------------------------------------------------------- |
-| **Repository**      | [mcaps-microsoft/python_application_template](https://github.com/mcaps-microsoft/python_application_template) |
+| **Repository**      | [your-org/your-app-template](https://github.com/your-org/your-app-template) |
 | **Type**            | General-purpose Python application                                                                            |
 | **Python**          | 3.12+                                                                                                         |
 | **Package manager** | UV                                                                                                            |
@@ -210,7 +213,7 @@ tests/                               # pytest suite
 
 |                     |                                                                                                                       |
 | ------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| **Repository**      | [mcaps-microsoft/python_api_application_template](https://github.com/mcaps-microsoft/python_api_application_template) |
+| **Repository**      | [your-org/your-api-template](https://github.com/your-org/your-api-template) |
 | **Type**            | FastAPI web API                                                                                                       |
 | **Python**          | 3.12+                                                                                                                 |
 | **Framework**       | FastAPI + Uvicorn                                                                                                     |
@@ -261,7 +264,7 @@ tests/                               # pytest suite
 
 |                     |                                                                                                                               |
 | ------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| **Repository**      | [mcaps-microsoft/python_agent_framework_dev_template](https://github.com/mcaps-microsoft/python_agent_framework_dev_template) |
+| **Repository**      | [your-org/your-agent-template](https://github.com/your-org/your-agent-template) |
 | **Type**            | Azure AI Agent Framework application                                                                                          |
 | **Python**          | 3.12+                                                                                                                         |
 | **Framework**       | Azure AI Agent Framework + MCP                                                                                                |

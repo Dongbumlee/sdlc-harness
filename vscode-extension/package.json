@@ -3,11 +3,11 @@
   "displayName": "SDLC Agent Template",
   "description": "Multi-agent system for building Azure solution accelerators with production-quality standards. Includes Harness orchestrator, 8 QA reviewers, and 11 domain skills.",
   "version": "1.0.0",
-  "publisher": "gim-home",
+  "publisher": "your-org",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/gim-home/sdl_with_agent"
+    "url": "https://github.com/your-org/sdlc-harness"
   },
   "engines": {
     "vscode": "^1.100.0"

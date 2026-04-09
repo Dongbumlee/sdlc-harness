@@ -66,8 +66,8 @@ flowchart LR
 
     A -->|HTTPS| B
     B -->|Inference| C
-    B -->|Repository Pattern<br/>sas-cosmosdb| D
-    B -->|Blob/Queue<br/>sas-storage| E
+    B -->|Repository Pattern<br/>your-cosmosdb-lib| D
+    B -->|Blob/Queue<br/>your-storage-lib| E
     B -->|Managed Identity| F
     B -->|Telemetry| G
 ```
@@ -95,8 +95,8 @@ flowchart LR
 | Language         | Python 3.12+                                         |
 | Framework        | <FastAPI / Azure AI Agent Framework / Custom>        |
 | Package Manager  | UV                                                   |
-| Data Access      | `sas-cosmosdb` (PyPI) — Cosmos DB Repository Pattern |
-| Storage          | `sas-storage` (PyPI) — Azure Blob + Queue            |
+| Data Access      | `your-cosmosdb-lib` (PyPI) — Cosmos DB Repository Pattern |
+| Storage          | `your-storage-lib` (PyPI) — Azure Blob + Queue            |
 | Containerization | Docker (mandatory)                                   |
 | Hosting          | Azure Container Apps                                 |
 | Infrastructure   | Bicep (AVM modules)                                  |

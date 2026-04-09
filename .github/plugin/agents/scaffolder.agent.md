@@ -58,9 +58,9 @@ and set up dev environments based on the application accelerator patterns.
 
 0. **Verify GitHub MCP authentication (required):**
    - Perform a probe call: use `mcp_github_get_file_contents` to fetch `README.md` from
-     `mcaps-microsoft/python_application_template`.
+     `your-org/your-app-template`.
    - If the call **fails or returns an auth error**, STOP and inform the user:
-     > GitHub MCP authentication is required to access template repos in `mcaps-microsoft`.
+     > GitHub MCP authentication is required to access template repos in `your-org`.
      > Please sign in with an account that has org access, then retry.
    - If the user cannot authenticate, fall back to patterns in `.github/reference-catalog.md`
      and warn that live verification was not possible.
@@ -73,9 +73,9 @@ and set up dev environments based on the application accelerator patterns.
 
 1. **Fetch the latest template structure from GitHub MCP:**
    - Use `mcp_github_get_file_contents` to get the directory structure from the matching template repo.
-   - Base app → `mcaps-microsoft/python_application_template`
-   - FastAPI → `mcaps-microsoft/python_api_application_template`
-   - AI agent → `mcaps-microsoft/python_agent_framework_dev_template`
+   - Base app → `your-org/your-app-template`
+   - FastAPI → `your-org/your-api-template`
+   - AI agent → `your-org/your-agent-template`
 
 2. **Load containerization and CI/CD best practices from awesome-copilot** (skip if unavailable):
    - Use `mcp_awesome-copil_load_instruction` to load `"containerization-docker-best-practices"` — multi-stage
@@ -269,7 +269,7 @@ src/
    - `.devcontainer/devcontainer.json`
    - `tests/` directory with `conftest.py` or test config
    - `.gitignore` and `.dockerignore`
-3. **Dependency correctness** — Are `sas-cosmosdb`, `sas-storage`, and `pytest-asyncio`
+3. **Dependency correctness** — Are `your-cosmosdb-lib`, `your-storage-lib`, and `pytest-asyncio`
    in the correct dependency groups? No raw Azure SDK packages?
 4. **No leaked business logic** — Did you accidentally generate service implementations,
    domain models, or test cases? Those belong in Phase 4.

@@ -1,13 +1,13 @@
 ---
 name: sdlc-cosmos-repository
 description: >-
-  Implement Azure Cosmos DB data access using sas-cosmosdb library with Repository
+  Implement Azure Cosmos DB data access using your-cosmosdb-lib library with Repository
   Pattern. Use when creating entities, repositories, or any Cosmos DB CRUD operations.
   Triggers on Cosmos DB, database, entity, repository, data model, or data access
-  requests. Never use raw azure-cosmos SDK — always use sas-cosmosdb.
+  requests. Never use raw azure-cosmos SDK — always use your-cosmosdb-lib.
 ---
 
-# Azure Cosmos DB — Repository Pattern with sas-cosmosdb
+# Azure Cosmos DB — Repository Pattern with your-cosmosdb-lib
 
 ## When to use
 
@@ -31,7 +31,7 @@ For live SDK patterns, fetch the latest from GitHub MCP:
 
 ```
 mcp_github_get_file_contents(
-  owner: "mcaps-microsoft",
+  owner: "your-org",
   repo: "python_cosmosdb_helper",
   path: "README.md"
 )
@@ -42,7 +42,7 @@ mcp_github_get_file_contents(
 Entities MUST extend `RootEntityBase` with explicit type variables:
 
 ```python
-from sas.cosmosdb.sql import RootEntityBase
+from your_org.cosmosdb.sql import RootEntityBase
 
 class Customer(RootEntityBase["Customer", str]):
     """Customer entity stored in Cosmos DB.
@@ -69,7 +69,7 @@ class Customer(RootEntityBase["Customer", str]):
 Repositories MUST extend `RepositoryBase` with matching type variables:
 
 ```python
-from sas.cosmosdb.sql import RepositoryBase
+from your_org.cosmosdb.sql import RepositoryBase
 
 class CustomerRepository(RepositoryBase[Customer, str]):
     """Repository for Customer CRUD operations."""
@@ -141,7 +141,7 @@ class TestCustomerRepository:
 
 ## Gotchas
 
-- **Never create raw `CosmosClient`** — `sas-cosmosdb` manages connection pooling,
+- **Never create raw `CosmosClient`** — `your-cosmosdb-lib` manages connection pooling,
   retry policies, and auth internally.
 - **Partition key is handled automatically** by `RepositoryBase` — do not add custom
   partition key routing.

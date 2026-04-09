@@ -40,7 +40,7 @@ argument-hint: "Describe the feature or change to review and release"
  4. **RAI safety review** — `mcp_awesome-copil_load_instruction` → `"ai-prompt-engineering-safety-review"`
     (when the change involves AI/data — prompt injection, bias, hallucination checks)
  5. **Live SDK verification** — `mcp_github_get_file_contents` → fetch latest `README.md`
-    from `mcaps-microsoft/python_cosmosdb_helper` and `python_storageaccount_helper`
+    from `your-org/your-cosmosdb-library` and `python_storageaccount_helper`
     to verify code follows current API patterns
  6. **Release automation** — Use **GitHub MCP** (`mcp_github_list_commits`) to gather
     recent commit history for changelog generation
@@ -81,7 +81,7 @@ argument-hint: "Describe the feature or change to review and release"
     | Perspective | What to check |
     |---|---|
     | **Architecture** | Layering (API → Application → Domain), dependency direction, pattern reuse, template alignment |
-    | **Azure Compliance** | Uses `sas-cosmosdb`/`sas-storage` (not raw SDK), Repository Pattern, `async with`, Managed Identity, AVM modules, tags, diagnostics |
+    | **Azure Compliance** | Uses `your-cosmosdb-lib`/`your-storage-lib` (not raw SDK), Repository Pattern, `async with`, Managed Identity, AVM modules, tags, diagnostics |
     | **Code Quality** | Naming, docstrings, dead code, comment quality, import organization, copyright headers |
     | **Security** | OWASP Top 10 mapped review, no secrets in code, parameterized queries, CORS config, security headers |
     | **Test Coverage** | Tests exist for new code, Arrange–Act–Assert structure, proper mocking, coverage thresholds |

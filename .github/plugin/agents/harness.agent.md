@@ -37,11 +37,11 @@ Run these probe calls and report the status to the user:
 | # | MCP Server | Probe Call | Required For |
 |---|---|---|---|
 | 1 | **awesome-copilot** | `mcp_awesome-copil_search_instructions(keywords: "security")` | Skills loading (OWASP, Docker, Bicep, ADR best practices) |
-| 2 | **GitHub MCP (libraries)** | `mcp_github_get_file_contents(owner: "mcaps-microsoft", repo: "python_cosmosdb_helper", path: "README.md")` | sas-cosmosdb / sas-storage SDK patterns |
-| 3 | **GitHub MCP (templates)** | `mcp_github_get_file_contents(owner: "mcaps-microsoft", repo: "python_api_application_template", path: "README.md")` | Scaffolding templates (CRITICAL for project structure) |
+| 2 | **GitHub MCP (libraries)** | `mcp_github_get_file_contents(owner: "your-org", repo: "python_cosmosdb_helper", path: "README.md")` | your-cosmosdb-lib / your-storage-lib SDK patterns |
+| 3 | **GitHub MCP (templates)** | `mcp_github_get_file_contents(owner: "your-org", repo: "python_api_application_template", path: "README.md")` | Scaffolding templates (CRITICAL for project structure) |
 | 4 | **Context7** | `mcp_context7_resolve-library-id(libraryName: "fastapi")` | Framework documentation |
 
-**Run probes 2 and 3 in parallel** — they test access to two different private repos in `mcaps-microsoft`.
+**Run probes 2 and 3 in parallel** — they test access to two different private repos in `your-org`.
 
 **Report results to the user as a status table:**
 
@@ -50,7 +50,7 @@ Run these probe calls and report the status to the user:
 > | Server | Status | Impact if unavailable |
 > |---|---|---|
 > | awesome-copilot | ✅ Ready / ⛔ Not running | Skills cannot load best practices (OWASP, Docker, Bicep) |
-> | GitHub MCP (libraries) | ✅ Ready / ⛔ Auth failed | Cannot fetch sas-cosmosdb/sas-storage SDK patterns |
+> | GitHub MCP (libraries) | ✅ Ready / ⛔ Auth failed | Cannot fetch your-cosmosdb-lib/your-storage-lib SDK patterns |
 > | GitHub MCP (templates) | ✅ Ready / ⛔ Auth failed | Cannot fetch scaffolding template structure — will generate WRONG folder layout |
 > | Context7 | ✅ Ready / ⛔ Not running | Cannot load framework docs (FastAPI, React, etc.) |
 >
@@ -71,20 +71,20 @@ Run these probe calls and report the status to the user:
 - **GitHub MCP (templates OR libraries) fails → STOP and guide user through login.** Tell the user:
   > ⛔ **GitHub MCP authentication required — you must sign in before I can proceed.**
   >
-  > All engineers using Harness **must** have access to the `mcaps-microsoft` GitHub org.
+  > All engineers using Harness **must** have access to the `your-org` GitHub org.
   > I need these private repos to fetch the correct project templates and SDK patterns.
   >
   > **Please complete these steps now:**
   >
   > 1. **Click the GitHub Copilot icon** in the VS Code bottom status bar (or go to
   >    `View → Command Palette → GitHub Copilot: Sign In`).
-  > 2. **Sign in with your Microsoft-linked GitHub account** that has `mcaps-microsoft` org access.
+  > 2. **Sign in with your Microsoft-linked GitHub account** that has `your-org` org access.
   > 3. **Start the GitHub MCP server**: open `.vscode/mcp.json` and click the **"Start"**
   >    button above the `"github"` server definition.
   > 4. **Tell me "ready"** and I'll re-run the check.
   >
-  > If you're unsure whether your GitHub account has `mcaps-microsoft` access, visit:
-  > https://github.com/orgs/mcaps-microsoft/people — if you can see the members list, you have access.
+  > If you're unsure whether your GitHub account has `your-org` access, visit:
+  > https://github.com/orgs/your-org/people — if you can see the members list, you have access.
 
   After the user confirms they've signed in, **re-run the GitHub MCP probes** (both libraries
   and templates). Only proceed when both pass.
@@ -261,7 +261,7 @@ This ensures every design decision is captured as a permanent, reviewable record
 GitHub MCP authentication by performing a lightweight probe:
 
 1. **Probe call:** Use `mcp_github_get_file_contents` to fetch `README.md` from
-   `mcaps-microsoft/python_cosmosdb_helper` (owner: `mcaps-microsoft`, repo: `python_cosmosdb_helper`, path: `README.md`).
+   `your-org/your-cosmosdb-library` (owner: `your-org`, repo: `python_cosmosdb_helper`, path: `README.md`).
 
 2. **If the probe succeeds:** Proceed normally — delegate to the worker agent.
 
@@ -273,12 +273,12 @@ GitHub MCP authentication by performing a lightweight probe:
      >
      > Please sign in now:
      > 1. Click the **GitHub Copilot icon** in the VS Code status bar (or `Ctrl+Shift+P` → "GitHub Copilot: Sign In").
-     > 2. Use your **Microsoft-linked GitHub account** with `mcaps-microsoft` org access.
+     > 2. Use your **Microsoft-linked GitHub account** with `your-org` org access.
      > 3. Open `.vscode/mcp.json` and click **"Start"** on the `"github"` server.
      > 4. Say **"ready"** and I'll re-check.
 
    - **Re-run the probe** after the user confirms. Only proceed when it passes.
-   - **No degraded mode** — `mcaps-microsoft` access is mandatory for all SDLC workflows.
+   - **No degraded mode** — `your-org` access is mandatory for all SDLC workflows.
 
 **Agents that require this auth gate** (all use `mcp_github_get_file_contents` or `mcp_github_search_code`):
 - Analyst, Scaffolder, Deployer, Implementer, Documenter

@@ -35,11 +35,11 @@ After scaffolding, create `.SDLC/project-manifest.md` with this exact format:
 | src/<Name>Business/ | python_application_template | src/ | Python 3.12 |
 | src/<Name>Web/ | React + TypeScript | src/ | TypeScript |
 
-## Template Patterns (fetched from mcaps-microsoft repos)
+## Template Patterns (fetched from your-org repos)
 
 ### API Project: <Name>API
 
-**Template:** `mcaps-microsoft/python_api_application_template`
+**Template:** `your-org/your-api-template`
 
 **Entry point pattern:**
 - `app/main.py` uses `Application()` factory (from `application.py`)
@@ -67,8 +67,8 @@ After scaffolding, create `.SDLC/project-manifest.md` with this exact format:
 - Registered via DI in `Application._register_dependencies()`
 
 **Data access pattern:**
-- Entities: `RootEntityBase["EntityName", KeyType]` (from `sas-cosmosdb`)
-- Repositories: `RepositoryBase[Entity, KeyType]` (from `sas-cosmosdb`)
+- Entities: `RootEntityBase["EntityName", KeyType]` (from `your-cosmosdb-lib`)
+- Repositories: `RepositoryBase[Entity, KeyType]` (from `your-cosmosdb-lib`)
 - Location: `app/domain/` or `app/business_component/`
 
 **Dockerfile pattern:**
@@ -83,7 +83,7 @@ After scaffolding, create `.SDLC/project-manifest.md` with this exact format:
 
 ### Business Project: <Name>Business
 
-**Template:** `mcaps-microsoft/python_application_template`
+**Template:** `your-org/your-app-template`
 [Fill with patterns from that template]
 
 ### Web Project: <Name>Web
@@ -95,8 +95,8 @@ After scaffolding, create `.SDLC/project-manifest.md` with this exact format:
 
 | Library | Package | Used For | Pattern |
 |---|---|---|---|
-| sas-cosmosdb | `sas-cosmosdb` | Cosmos DB | `RootEntityBase` + `RepositoryBase` |
-| sas-storage | `sas-storage` | Blob/Queue | `AsyncStorageBlobHelper` with `async with` |
+| your-cosmosdb-lib | `your-cosmosdb-lib` | Cosmos DB | `RootEntityBase` + `RepositoryBase` |
+| your-storage-lib | `your-storage-lib` | Blob/Queue | `AsyncStorageBlobHelper` with `async with` |
 
 ## Naming Conventions
 

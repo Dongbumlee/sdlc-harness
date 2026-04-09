@@ -35,7 +35,7 @@ flowchart TD
 
 **Responsibility:**
 
-**Pattern:** (e.g., Repository Pattern via `sas-cosmosdb`)
+**Pattern:** (e.g., Repository Pattern via `your-cosmosdb-lib`)
 
 **Key interfaces:**
 
@@ -63,8 +63,8 @@ flowchart TD
 
 | Service | Library | Configuration |
 |---|---|---|
-| Cosmos DB | `sas-cosmosdb` | |
-| Blob Storage | `sas-storage` | |
+| Cosmos DB | `your-cosmosdb-lib` | |
+| Blob Storage | `your-storage-lib` | |
 | Container Apps | AVM module | |
 
 ## Error Handling & Logging
@@ -90,8 +90,8 @@ flowchart TD
 
 | Dependency | Version | Source |
 |---|---|---|
-| `sas-cosmosdb` | latest | Reference catalog |
-| `sas-storage` | latest | Reference catalog |
+| `your-cosmosdb-lib` | latest | Reference catalog |
+| `your-storage-lib` | latest | Reference catalog |
 
 ## Open Questions
 

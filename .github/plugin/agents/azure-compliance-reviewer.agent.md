@@ -1,6 +1,6 @@
 ---
 name: Azure Compliance Reviewer
-description: "Use when reviewing Azure SDK usage, verifying sas-cosmosdb/sas-storage patterns, checking Bicep/AVM compliance, validating identity management, or auditing infrastructure configuration."
+description: "Use when reviewing Azure SDK usage, verifying your-cosmosdb-lib/your-storage-lib patterns, checking Bicep/AVM compliance, validating identity management, or auditing infrastructure configuration."
 user-invocable: false
 tools: ['read', 'search', 'github/*', 'awesome-copilot/*']
 ---
@@ -25,18 +25,18 @@ and identity management**.
 
 0. **Verify GitHub MCP authentication (required):**
    - Perform a probe call: use `mcp_github_get_file_contents` to fetch `README.md` from
-     `mcaps-microsoft/python_cosmosdb_helper`.
+     `your-org/your-cosmosdb-library`.
    - If the call **fails or returns an auth error**, STOP and inform the user:
-     > GitHub MCP authentication is required to verify live SDK APIs from `mcaps-microsoft` repos.
+     > GitHub MCP authentication is required to verify live SDK APIs from `your-org` repos.
      > Please sign in with an account that has org access, then retry.
    - If the user cannot authenticate, fall back to patterns in `.github/reference-catalog.md`
      and note in your review that live API verification was not possible.
 
 1. **Fetch latest SDK APIs from GitHub MCP** (skip if GitHub MCP auth failed):
    - Use `mcp_github_get_file_contents` to fetch `README.md` from
-     `mcaps-microsoft/python_cosmosdb_helper` — verify the code follows current API patterns.
+     `your-org/your-cosmosdb-library` — verify the code follows current API patterns.
    - Use `mcp_github_get_file_contents` to fetch `README.md` from
-     `mcaps-microsoft/python_storageaccount_helper` — verify Blob/Queue patterns.
+     `your-org/your-storage-library` — verify Blob/Queue patterns.
 
 2. **Load Bicep best practices from awesome-copilot** (skip if unavailable):
    - Use `mcp_awesome-copil_load_instruction` to load `"bicep-code-best-practices"`.
@@ -47,8 +47,8 @@ and identity management**.
 
 ## Review checklist
 
-- [ ] **SDK abstraction** — Uses `sas-cosmosdb` for Cosmos DB, NOT raw `azure-cosmos`?
-- [ ] **SDK abstraction** — Uses `sas-storage` for Blob/Queue, NOT raw `azure-storage-blob`?
+- [ ] **SDK abstraction** — Uses `your-cosmosdb-lib` for Cosmos DB, NOT raw `azure-cosmos`?
+- [ ] **SDK abstraction** — Uses `your-storage-lib` for Blob/Queue, NOT raw `azure-storage-blob`?
 - [ ] **Repository Pattern** — Entities extend `RootEntityBase`, repos extend `RepositoryBase`?
 - [ ] **Context manager** — `async with` used for all storage operations?
 - [ ] **Identity** — `DefaultAzureCredential` or `ManagedIdentityCredential`, never connection string auth?

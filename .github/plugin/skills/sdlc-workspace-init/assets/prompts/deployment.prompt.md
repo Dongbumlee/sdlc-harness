@@ -694,8 +694,8 @@ Example invocation for engineers:
 
 "Copilot, use `.github/prompts/deployment.prompt.md` to create the deployment
  infrastructure for our order processing FastAPI service. We need:
- - Cosmos DB (SQL API) for order data via sas-cosmosdb
- - Blob Storage for invoice PDFs via sas-storage
+ - Cosmos DB (SQL API) for order data via your-cosmosdb-lib
+ - Blob Storage for invoice PDFs via your-storage-lib
  - Container Apps for hosting
  - AI Foundry for agent integration
  - Private endpoints for all data services

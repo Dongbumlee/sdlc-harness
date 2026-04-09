@@ -26,7 +26,7 @@ For cross-repo pattern consistency, search via GitHub MCP:
 
 ```
 mcp_github_search_code(
-  q: "RepositoryBase RootEntityBase org:mcaps-microsoft",
+  q: "RepositoryBase RootEntityBase org:your-org",
   per_page: 5
 )
 ```

@@ -25,25 +25,25 @@ For API projects, fetch these key files and use them as the basis for scaffoldin
 
 ```
 # 1. Read the app entry point pattern
-mcp_github_get_file_contents(owner: "mcaps-microsoft", repo: "python_api_application_template", path: "app/main.py")
+mcp_github_get_file_contents(owner: "your-org", repo: "python_api_application_template", path: "app/main.py")
 
 # 2. Read the Application class (core framework pattern)
-mcp_github_get_file_contents(owner: "mcaps-microsoft", repo: "python_api_application_template", path: "app/application.py")
+mcp_github_get_file_contents(owner: "your-org", repo: "python_api_application_template", path: "app/application.py")
 
 # 3. Read the libs/ framework structure
-mcp_github_get_file_contents(owner: "mcaps-microsoft", repo: "python_api_application_template", path: "app/libs")
+mcp_github_get_file_contents(owner: "your-org", repo: "python_api_application_template", path: "app/libs")
 
 # 4. Read the DI pattern with Protocol interfaces
-mcp_github_get_file_contents(owner: "mcaps-microsoft", repo: "python_api_application_template", path: "app/services")
+mcp_github_get_file_contents(owner: "your-org", repo: "python_api_application_template", path: "app/services")
 
 # 5. Read the Dockerfile pattern
-mcp_github_get_file_contents(owner: "mcaps-microsoft", repo: "python_api_application_template", path: "Dockerfile")
+mcp_github_get_file_contents(owner: "your-org", repo: "python_api_application_template", path: "Dockerfile")
 
 # 6. Read the pyproject.toml pattern
-mcp_github_get_file_contents(owner: "mcaps-microsoft", repo: "python_api_application_template", path: "pyproject.toml")
+mcp_github_get_file_contents(owner: "your-org", repo: "python_api_application_template", path: "pyproject.toml")
 
 # 7. Read the health probes router
-mcp_github_get_file_contents(owner: "mcaps-microsoft", repo: "python_api_application_template", path: "app/routers/http_probes.py")
+mcp_github_get_file_contents(owner: "your-org", repo: "python_api_application_template", path: "app/routers/http_probes.py")
 ```
 
 **Read each file's content, then adapt it for the new project.** Do not skip this step.
@@ -51,7 +51,7 @@ mcp_github_get_file_contents(owner: "mcaps-microsoft", repo: "python_api_applica
 ## Step 2: Template patterns you MUST follow
 
 These are the exact patterns from `python_api_application_template`. Follow them
-the same way you follow `RootEntityBase` for sas-cosmosdb.
+the same way you follow `RootEntityBase` for your-cosmosdb-lib.
 
 ### main.py — Application factory pattern (NOT bare FastAPI)
 
@@ -176,8 +176,8 @@ dependencies = [
     "pydantic>=2.11.5",
     "pydantic-settings>=2.9.1",
     "azure-identity>=1.23.0",
-    "sas-cosmosdb>=1.0.0",          # Add if Cosmos DB needed
-    "sas-storage>=1.0.0",           # Add if Blob/Queue needed
+    "your-cosmosdb-lib>=1.0.0",          # Add if Cosmos DB needed
+    "your-storage-lib>=1.0.0",           # Add if Blob/Queue needed
 ]
 
 [dependency-groups]

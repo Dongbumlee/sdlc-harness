@@ -1,11 +1,14 @@
- # SDLC Agent Template — SDLC Harness
+ # 🔗 SDLC Harness
 
- > **An agent-driven SDLC template that accelerates application development with guaranteed quality,
- > reusability, and zero fragmentation from our dev standards.**
+ > *One agent to drive them all. From first commit to final release, Harness orchestrates
+ > your entire software development lifecycle — so you can focus on building what matters.*
 
- This repository is the **SDLC (Software Development Lifecycle) Agent Template** — a ready-to-adopt
- configuration package that enables teams to build [production-ready applications](https://accelerators.ms)
- at production speed while maintaining full compliance with team development standards.
+ **SDLC Harness** is an agent-driven SDLC template that accelerates application development
+ with guaranteed quality, reusability, and zero fragmentation from your dev standards.
+
+ This repository is a ready-to-adopt configuration package that enables teams to build
+ production-ready applications at production speed while maintaining full compliance
+ with your team's development standards.
 
  It combines **GitHub Copilot Agent mode**, structured prompt files, and reusable quality
  instructions so that every new application or Azure-based service starts from proven patterns — not
@@ -13,20 +16,20 @@
 
  **What this template provides:**
 
- - **Agent-driven development** — Copilot Agent mode and Copilot Coding Agent (CCA) automate
+ - **🤖 Agent-driven development** — Copilot Agent mode and Copilot Coding Agent (CCA) automate
    implementation, testing, and documentation across all 9 SDLC phases.
- - **Harness-quality QA** — inspired by [Anthropic's harness design research](https://www.anthropic.com/engineering/harness-design-long-running-apps),
+ - **🔄 Harness-quality QA** — inspired by [Anthropic's harness design research](https://www.anthropic.com/engineering/harness-design-long-running-apps),
    the QA system uses adversarial evaluation, numeric scoring with hard fail thresholds,
    and iterative feedback loops (QA → fix → re-QA) to catch issues that single-pass reviews miss.
- - **application quality guarantee** — enforced architecture, Azure SDK abstractions, and code/test
+ - **🛡️ Quality guarantee** — enforced architecture, SDK abstractions, and code/test
    quality standards ensure every repository meets the same production bar.
- - **Zero fragmentation** — standardized scaffolding templates, shared libraries, and consistent
+ - **🧩 Zero fragmentation** — standardized scaffolding templates, shared libraries, and consistent
    patterns eliminate divergence across teams and repositories.
- - **Reusability at scale** — Scaffolding Templates and reusable components (`sas-cosmosdb`,
-   `sas-storage`, Bicep/AVM modules) reduce duplication and accelerate delivery.
- - **Azure best practices built in** — identity management, infrastructure-as-code, resource
+ - **♻️ Reusability at scale** — scaffolding templates and reusable components reduce duplication
+   and accelerate delivery.
+ - **☁️ Azure best practices built in** — identity management, infrastructure-as-code, resource
    governance, and Well-Architected Framework alignment are embedded, not bolted on.
- - **One-command install** — distributed as an [Agent Plugin](#quick-start--install-in-any-repo)
+ - **⚡ One-command install** — distributed as an [Agent Plugin](#quick-start--install-in-any-repo)
    for both VS Code and GitHub Copilot CLI. No manual file copying needed.
 
  > **New here?** Start with the [Hands-On Guide](.design/hands-on-guide.md) for a step-by-step walkthrough of the SDLC workflow with practical examples.
@@ -51,7 +54,7 @@
     - Maintain predictable documentation (ADRs, API docs) using common structure and locations.
 
  4. **Standardize Azure best practices**
-    - Use approved Azure SDK abstractions (`sas-cosmosdb`, `sas-storage`) instead of raw SDK clients.
+    - Use approved Azure SDK abstractions (`your-cosmosdb-lib`, `your-storage-lib`) instead of raw SDK clients.
     - Follow identity management, infrastructure-as-code, and resource governance conventions.
 
  5. **Promote Scaffolding Template and reusable components**
@@ -74,13 +77,13 @@
 
  ```
  Command Palette (Ctrl+Shift+P) → Chat: Install Plugin From Source
- → https://github.com/gim-home/sdl_with_agent
+ → https://github.com/your-org/sdlc-harness
  ```
 
  ### GitHub Copilot CLI
 
  ```bash
- copilot plugin install gim-home/sdl_with_agent
+ copilot plugin install your-org/sdlc-harness
  ```
 
  ### First use
@@ -250,7 +253,7 @@
  The **Implementer** agent doesn't work from stale knowledge — it actively fetches live context:
 
  1. **Fetches the latest team dev reusable components and patterns** from GitHub MCP
-    (e.g., `sas-cosmosdb` Repository Pattern, `sas-storage` context manager usage)
+    (e.g., `your-cosmosdb-lib` Repository Pattern, `your-storage-lib` context manager usage)
  2. **Loads current framework documentation** via Context7 MCP (FastAPI, Pydantic, React, etc.)
  3. **Reads the project's reference catalog** to verify approved libraries and scaffolding templates
  4. Writes the implementation following established patterns, creates entities, repositories, and endpoints
@@ -267,7 +270,7 @@
  ```
  QA Coordinator (adversarial posture — never downgrade findings)
   ├─ Architecture Reviewer      → checks layering rules, dependency boundaries
-  ├─ Azure Compliance Reviewer  → verifies sas-cosmosdb usage, no raw SDK calls
+  ├─ Azure Compliance Reviewer  → verifies your-cosmosdb-lib usage, no raw SDK calls
   ├─ Code Quality Reviewer      → checks naming, docstrings, dead code
   ├─ Security Reviewer          → scans for secrets, injection, auth issues (loads OWASP fresh)
   ├─ Test Coverage Reviewer     → runs pytest, checks coverage, validates assertions
@@ -300,7 +303,7 @@
 
  ### Critical Issues (must fix)
  - [Security] Endpoint /orders/{id} missing authorization check
- - [Azure Compliance] Using raw CosmosClient instead of sas-cosmosdb RepositoryBase
+ - [Azure Compliance] Using raw CosmosClient instead of your-cosmosdb-lib RepositoryBase
 
  ### Important Issues (should fix)
  - [Code Quality] Missing docstring on OrderRepository class
@@ -340,7 +343,7 @@
      C->>C: Identify phase, verify ADR exists
      C->>I: Delegate implementation
 
-     Note over I: Fetch sas-cosmosdb patterns (GitHub MCP)<br/>Load FastAPI docs (Context7)<br/>Read reference catalog<br/>Write code + tests
+     Note over I: Fetch your-cosmosdb-lib patterns (GitHub MCP)<br/>Load FastAPI docs (Context7)<br/>Read reference catalog<br/>Write code + tests
 
      I-->>C: Implementation complete
 
@@ -402,7 +405,7 @@
          Analyst2["Analyst"]
      end
 
-     Impl -->|"fetch sas-cosmosdb patterns"| GH
+     Impl -->|"fetch your-cosmosdb-lib patterns"| GH
      Impl -->|"load React/FastAPI docs"| C7
      Impl -->|"load Python MCP instructions"| AC
 
@@ -435,7 +438,7 @@
  > permissions to create resource groups, resources, and role assignments (Contributor + RBAC at
  > subscription or resource group level). Verify quota availability for Azure OpenAI models before deployment.
 
- > **Dev Containers:** Following the [application accelerator pattern](https://accelerators.ms),
+ > **Dev Containers:** Following the [application accelerator pattern](https://your-apps-portal.example.com),
  > each service under `src/` provides its **own** `.devcontainer/` with service-specific tooling.
  > This per-service isolation ensures that engineers working on one layer (e.g., backend API,
  > processor, frontend) can build, test, and run independently — without pulling in dependencies
@@ -520,21 +523,21 @@
 
  | Library                                                                                         | PyPI Package   | Use for                                         |
  | ----------------------------------------------------------------------------------------------- | -------------- | ----------------------------------------------- |
- | [python_cosmosdb_helper](https://github.com/mcaps-microsoft/python_cosmosdb_helper)             | `sas-cosmosdb` | Cosmos DB SQL + MongoDB with Repository Pattern |
- | [python_storageaccount_helper](https://github.com/mcaps-microsoft/python_storageaccount_helper) | `sas-storage`  | Azure Blob Storage + Queue operations           |
+ | [python_cosmosdb_helper](https://github.com/your-org/your-cosmosdb-library)             | `your-cosmosdb-lib` | Cosmos DB SQL + MongoDB with Repository Pattern |
+ | [python_storageaccount_helper](https://github.com/your-org/your-storage-library) | `your-storage-lib`  | Azure Blob Storage + Queue operations           |
 
  **Mandatory usage rules:**
 
- - Use `sas-cosmosdb` for all Cosmos DB access. Do **not** use the raw `azure-cosmos` SDK.
- - Use `sas-storage` for all Blob and Queue access. Do **not** use the raw `azure-storage-blob` SDK.
+ - Use `your-cosmosdb-lib` for all Cosmos DB access. Do **not** use the raw `azure-cosmos` SDK.
+ - Use `your-storage-lib` for all Blob and Queue access. Do **not** use the raw `azure-storage-blob` SDK.
 
  ### Scaffolding templates (clone to start a new project)
 
  | Template                                                                                                      | Use for                                   |
  | ------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
- | [python_application_template](https://github.com/mcaps-microsoft/python_application_template)                 | Base app (console, worker, pipeline, CLI) |
- | [python_api_application_template](https://github.com/mcaps-microsoft/python_api_application_template)         | FastAPI service with advanced DI          |
- | [python_agent_framework_dev_template](https://github.com/mcaps-microsoft/python_agent_framework_dev_template) | AI agent apps with Azure AI Foundry + MCP |
+ | [python_application_template](https://github.com/your-org/your-app-template)                 | Base app (console, worker, pipeline, CLI) |
+ | [python_api_application_template](https://github.com/your-org/your-api-template)         | FastAPI service with advanced DI          |
+ | [python_agent_framework_dev_template](https://github.com/your-org/your-agent-template) | AI agent apps with Azure AI Foundry + MCP |
 
  ### Internal patterns
 
@@ -743,21 +746,21 @@ How to Adopt This Template in a New application / App Repo
  #### VS Code
 
  ```
- Command Palette → Chat: Install Plugin From Source → https://github.com/gim-home/sdl_with_agent
+ Command Palette → Chat: Install Plugin From Source → https://github.com/your-org/sdlc-harness
  ```
 
  Or configure this repo as a marketplace in your VS Code settings:
 
  ```json
  // .vscode/settings.json
- "chat.plugins.marketplaces": ["gim-home/sdl_with_agent"]
+ "chat.plugins.marketplaces": ["your-org/sdlc-harness"]
  ```
 
  #### GitHub Copilot CLI
 
  ```bash
  # Install directly from the GitHub repo
- copilot plugin install gim-home/sdl_with_agent
+ copilot plugin install your-org/sdlc-harness
 
  # Verify installation
  copilot plugin list
@@ -839,7 +842,7 @@ Adoption Checklist
 
 #### Plugin install (Option A)
 
- • [ ] Install the plugin via VS Code (`Chat: Install Plugin From Source`) or CLI (`copilot plugin install gim-home/sdl_with_agent`).
+ • [ ] Install the plugin via VS Code (`Chat: Install Plugin From Source`) or CLI (`copilot plugin install your-org/sdlc-harness`).
  • [ ] Run `@Harness` or `/sdlc-workspace-init` in the target repo to generate workspace files.
  • [ ] Review the generated `.github/copilot-instructions.md` and adjust if needed.
  • [ ] Copy `.github/pr-form-validation.workflow.yml` to `.github/workflows/pr-form-validation.yml`.

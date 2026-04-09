@@ -114,7 +114,7 @@ src/
 │   ├── app/                       ← routers/, services/, models/
 │   ├── tests/
 │   ├── Dockerfile
-│   ├── pyproject.toml             ← Independent deps (fastapi, sas-cosmosdb, sas-storage)
+│   ├── pyproject.toml             ← Independent deps (fastapi, your-cosmosdb-lib, your-storage-lib)
 │   ├── .gitignore, .dockerignore, .env.example
 │   └── .python-version
 ├── <ProjectName>Business/         ← Business logic / domain services layer
@@ -122,7 +122,7 @@ src/
 │   ├── app/                       ← domain models, business rules, repositories, shared services
 │   ├── tests/
 │   ├── Dockerfile
-│   ├── pyproject.toml             ← Independent deps (sas-cosmosdb, sas-storage, pydantic)
+│   ├── pyproject.toml             ← Independent deps (your-cosmosdb-lib, your-storage-lib, pydantic)
 │   └── .env.example
 ├── <ProjectName>Agent/            ← AI agent service (if applicable)
 │   ├── .devcontainer/
@@ -305,7 +305,7 @@ Example invocation for engineers:
 
 "Copilot, use `.github/prompts/repo-structure-and-cicd.prompt.md` to:
  Set up a new FastAPI service for order processing. It uses Cosmos DB via
- sas-cosmosdb and Blob Storage via sas-storage. Deploy to Azure Container Apps.
+ your-cosmosdb-lib and Blob Storage via your-storage-lib. Deploy to Azure Container Apps.
  I need both GitHub Actions and ADO pipelines. Use the python_api_application_template
  as the base structure."
 -->

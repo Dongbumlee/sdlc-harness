@@ -36,8 +36,8 @@ Enterprise knowledge workers need a tool to upload documents (PDF, DOCX), search
 
 ### Constraints
 
-- Must use `sas-cosmosdb` for Cosmos DB access (no raw `azure-cosmos`)
-- Must use `sas-storage` for Blob Storage access (no raw `azure-storage-blob`)
+- Must use `your-cosmosdb-lib` for Cosmos DB access (no raw `azure-cosmos`)
+- Must use `your-storage-lib` for Blob Storage access (no raw `azure-storage-blob`)
 - Python 3.12+ for backend, React 18 + TypeScript 5 for frontend
 - All source code under `src/<ProjectName><Layer>/`
 - FastAPI backend scaffolded from `python_api_application_template`
@@ -80,8 +80,8 @@ flowchart TD
     end
 
     subgraph Infra["Infrastructure Layer"]
-        CosmosDB["sas-cosmosdb\n(Cosmos DB SQL API)"]
-        BlobStorage["sas-storage\n(Azure Blob Storage)"]
+        CosmosDB["your-cosmosdb-lib\n(Cosmos DB SQL API)"]
+        BlobStorage["your-storage-lib\n(Azure Blob Storage)"]
         AISearch["azure-search-documents\n(Azure AI Search)"]
         OpenAI["openai SDK\n(Azure OpenAI GPT-4o)"]
         DocIntel["azure-ai-documentintelligence\n(Text Extraction)"]
@@ -112,7 +112,7 @@ flowchart LR
     Web["React Frontend"] -->|"HTTP"| APILayer["API Layer\n(Routers)"]
     APILayer -->|"calls"| AppLayer["Application Layer\n(Services)"]
     AppLayer -->|"uses"| DomainLayer["Domain Layer\n(Entities, Protocols)"]
-    InfraLayer["Infrastructure Layer\n(sas-cosmosdb, sas-storage,\nAI Search, OpenAI)"] -->|"implements"| DomainLayer
+    InfraLayer["Infrastructure Layer\n(your-cosmosdb-lib, your-storage-lib,\nAI Search, OpenAI)"] -->|"implements"| DomainLayer
 
     style DomainLayer fill:#2d6a4f,stroke:#1b4332,color:#fff
     style APILayer fill:#264653,stroke:#1d3557,color:#fff
@@ -132,8 +132,8 @@ flowchart LR
 
 | Service | Library | Purpose |
 |---|---|---|
-| Azure Cosmos DB (SQL API) | `sas-cosmosdb` (PyPI) | Conversation history, user sessions, document metadata |
-| Azure Blob Storage | `sas-storage` (PyPI) | Document storage (PDF/DOCX) |
+| Azure Cosmos DB (SQL API) | `your-cosmosdb-lib` (PyPI) | Conversation history, user sessions, document metadata |
+| Azure Blob Storage | `your-storage-lib` (PyPI) | Document storage (PDF/DOCX) |
 | Azure AI Search | `azure-search-documents` | Document indexing and RAG retrieval |
 | Azure OpenAI Service | `openai` (with Azure config) | GPT-4o chat completions with citations |
 | Azure AI Document Intelligence | `azure-ai-documentintelligence` | PDF/DOCX text extraction for indexing |
@@ -286,7 +286,7 @@ classDiagram
 **`Document` Entity**
 
 ```python
-from sas.cosmosdb.sql import RootEntityBase
+from your_org.cosmosdb.sql import RootEntityBase
 
 class Document(RootEntityBase["Document", str]):
     """Uploaded document metadata."""
@@ -338,7 +338,7 @@ class ChatMessage(RootEntityBase["ChatMessage", str]):
 #### Repository Definitions (Domain Layer)
 
 ```python
-from sas.cosmosdb.sql import RepositoryBase
+from your_org.cosmosdb.sql import RepositoryBase
 
 class DocumentRepository(RepositoryBase[Document, str]):
     def __init__(self, connection_string: str, database_name: str):
@@ -421,7 +421,7 @@ erDiagram
 
 | Service | Responsibility |
 |---|---|
-| `DocumentService` | Upload to Blob Storage (sas-storage), save metadata to Cosmos DB, trigger indexing |
+| `DocumentService` | Upload to Blob Storage (your-storage-lib), save metadata to Cosmos DB, trigger indexing |
 | `IndexingService` | Extract text via Document Intelligence, push to Azure AI Search index |
 | `ChatService` | Retrieve relevant docs from AI Search, call GPT-4o, persist messages, return citations |
 | `ConversationService` | CRUD for sessions — create, list, delete, rename |
@@ -448,8 +448,8 @@ sequenceDiagram
     participant Frontend as React Frontend
     participant API as FastAPI<br/>document_router
     participant DocSvc as DocumentService
-    participant Blob as sas-storage<br/>(Azure Blob)
-    participant DB as sas-cosmosdb<br/>(Cosmos DB)
+    participant Blob as your-storage-lib<br/>(Azure Blob)
+    participant DB as your-cosmosdb-lib<br/>(Cosmos DB)
     participant IdxSvc as IndexingService
     participant DocIntel as Azure Document<br/>Intelligence
     participant Search as Azure AI Search
@@ -487,7 +487,7 @@ sequenceDiagram
     participant Frontend as React Frontend
     participant API as FastAPI<br/>chat_router
     participant ChatSvc as ChatService
-    participant DB as sas-cosmosdb<br/>(Cosmos DB)
+    participant DB as your-cosmosdb-lib<br/>(Cosmos DB)
     participant Search as Azure AI Search
     participant LLM as Azure OpenAI<br/>GPT-4o
 
@@ -565,11 +565,11 @@ flowchart TD
 
 ## Alternatives Considered
 
-### Alternative 1: Raw Azure SDK instead of sas-cosmosdb / sas-storage
+### Alternative 1: Raw Azure SDK instead of your-cosmosdb-lib / your-storage-lib
 
 - **Pros:** Direct control, no library dependency
 - **Cons:** More boilerplate, no Repository Pattern, inconsistent with application standards
-- **Rejected because:** Reference catalog mandates sas-cosmosdb and sas-storage
+- **Rejected because:** Reference catalog mandates your-cosmosdb-lib and your-storage-lib
 
 ### Alternative 2: LangChain for RAG orchestration
 
@@ -580,13 +580,13 @@ flowchart TD
 ### Alternative 3: Cosmos DB MongoDB API instead of SQL API
 
 - **Pros:** Familiar MongoDB query syntax
-- **Cons:** SQL API has richer integration with Azure ecosystem, sas-cosmosdb supports both
+- **Cons:** SQL API has richer integration with Azure ecosystem, your-cosmosdb-lib supports both
 - **Rejected because:** SQL API is the standard for new application projects; better indexing control
 
 ### Alternative 4: Next.js full-stack instead of React SPA + FastAPI
 
 - **Pros:** SSR, single deployment, built-in API routes
-- **Cons:** All approved templates are Python-based; would lose FastAPI DI patterns, sas-cosmosdb/sas-storage Python libraries
+- **Cons:** All approved templates are Python-based; would lose FastAPI DI patterns, your-cosmosdb-lib/your-storage-lib Python libraries
 - **Rejected because:** Python backend is required for approved library usage; separate API + SPA aligns with template structure
 
 ---
@@ -638,6 +638,6 @@ flowchart TD
 - Design proposal: [outputs/step-1-design-proposal.md](../../outputs/step-1-design-proposal.md)
 - Reference catalog: [.github/reference-catalog.md](../../.github/reference-catalog.md)
 - ADR template: [.design/ADR-TEMPLATE.md](../../.design/ADR-TEMPLATE.md)
-- sas-cosmosdb: [mcaps-microsoft/python_cosmosdb_helper](https://github.com/mcaps-microsoft/python_cosmosdb_helper)
-- sas-storage: [mcaps-microsoft/python_storageaccount_helper](https://github.com/mcaps-microsoft/python_storageaccount_helper)
-- API template: [mcaps-microsoft/python_api_application_template](https://github.com/mcaps-microsoft/python_api_application_template)
+- your-cosmosdb-lib: [your-org/your-cosmosdb-library](https://github.com/your-org/your-cosmosdb-library)
+- your-storage-lib: [your-org/your-storage-library](https://github.com/your-org/your-storage-library)
+- API template: [your-org/your-api-template](https://github.com/your-org/your-api-template)

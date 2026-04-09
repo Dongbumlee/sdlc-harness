@@ -77,9 +77,9 @@ Step 6: Run all tests                             → `uv run pytest --cov`
 
 1. **Verify GitHub MCP authentication (required):**
    - Perform a probe call: use `mcp_github_get_file_contents` to fetch `README.md` from
-     `mcaps-microsoft/python_cosmosdb_helper`.
+     `your-org/your-cosmosdb-library`.
    - If the call **fails or returns an auth error**, STOP and inform the user:
-     > GitHub MCP authentication is required to access reference repos in `mcaps-microsoft`.
+     > GitHub MCP authentication is required to access reference repos in `your-org`.
      > Please sign in with an account that has org access, then retry.
    - If the user cannot authenticate, fall back to patterns in `.github/reference-catalog.md`
      and warn that live verification was not possible.
@@ -92,15 +92,15 @@ Step 6: Run all tests                             → `uv run pytest --cov`
 
 2. **Fetch live SDK patterns from GitHub MCP:**
    - For Cosmos DB: use `mcp_github_get_file_contents` to fetch `README.md` and `HANDS_ON_GUIDE.md`
-     from `mcaps-microsoft/python_cosmosdb_helper`. Follow the Repository Pattern exactly.
-   - For Blob/Queue: fetch patterns from `mcaps-microsoft/python_storageaccount_helper`.
+     from `your-org/your-cosmosdb-library`. Follow the Repository Pattern exactly.
+   - For Blob/Queue: fetch patterns from `your-org/your-storage-library`.
    - Your implementation MUST follow these patterns. Do NOT create raw `CosmosClient` or `BlobServiceClient`.
 
 2a. **AI/chat features MUST use Microsoft Agent Framework** (when applicable):
    - If the feature involves AI chat, LLM calls, agents, or chatbots, fetch patterns from
-     `mcaps-microsoft/python_agent_framework_dev_template` via GitHub MCP:
+     `your-org/your-agent-template` via GitHub MCP:
      ```
-     mcp_github_get_file_contents(owner: "mcaps-microsoft",
+     mcp_github_get_file_contents(owner: "your-org",
        repo: "python_agent_framework_dev_template",
        path: "src/libs/agent_framework")
      ```
@@ -218,8 +218,8 @@ Even single-project repos use `src/<Name>API/` as the project folder.
 - **Web** calls API via HTTP — no direct dependency on Python layers
 
 **Data access locations:**
-- Cosmos DB: look for existing `RepositoryBase` subclasses in the **Business** project using `sas-cosmosdb`
-- Blob/Queue: look for existing `AsyncStorageBlobHelper` / `AsyncStorageQueueHelper` in **Business** via `sas-storage`
+- Cosmos DB: look for existing `RepositoryBase` subclasses in the **Business** project using `your-cosmosdb-lib`
+- Blob/Queue: look for existing `AsyncStorageBlobHelper` / `AsyncStorageQueueHelper` in **Business** via `your-storage-lib`
 
 ## Skills
 
@@ -237,8 +237,8 @@ Activate these skills based on the task (they are available via the installed pl
 
 - Follow the patterns from `.SDLC/project-manifest.md` — they take precedence.
 - Async methods: suffix with `Async` where idiomatic.
-- Use `sas-cosmosdb` for all Cosmos DB access via Repository Pattern.
-- Use `sas-storage` for all Blob and Queue access via `async with` context manager.
+- Use `your-cosmosdb-lib` for all Cosmos DB access via Repository Pattern.
+- Use `your-storage-lib` for all Blob and Queue access via `async with` context manager.
 - Define entities extending `RootEntityBase["EntityName", KeyType]`.
 - Define repositories extending `RepositoryBase[Entity, KeyType]`.
 - Use Pydantic `BaseSettings` for configuration, not raw `os.getenv()`.
@@ -307,6 +307,6 @@ At the end of your implementation, include an **SDLC Exit Criteria Check** secti
 ## What you must NOT do
 
 - Never skip writing tests for new code.
-- Never use raw Azure SDK clients when `sas-cosmosdb` or `sas-storage` covers the use case.
+- Never use raw Azure SDK clients when `your-cosmosdb-lib` or `your-storage-lib` covers the use case.
 - Never introduce new dependencies without checking the reference catalog first.
 - Never call infrastructure directly from UI/Controllers.

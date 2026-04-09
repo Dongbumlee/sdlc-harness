@@ -70,8 +70,8 @@ argument-hint: "Describe the feature or requirement to analyze"
       - Identify which layers are involved (routers/endpoints, services, domain logic, data access).
       - Identify which Azure services are relevant (Cosmos DB, Blob Storage, etc.).
       - Point to existing patterns/components that should be reused:
-        - Cosmos DB: `sas-cosmosdb` with `RepositoryBase[Entity, KeyType]` pattern.
-        - Blob/Queue: `sas-storage` with `AsyncStorageBlobHelper` / `AsyncStorageQueueHelper`.
+        - Cosmos DB: `your-cosmosdb-lib` with `RepositoryBase[Entity, KeyType]` pattern.
+        - Blob/Queue: `your-storage-lib` with `AsyncStorageBlobHelper` / `AsyncStorageQueueHelper`.
         - Scaffolding templates from `.github/reference-catalog.md`.
 
  3. **Propose a design**
@@ -127,6 +127,6 @@ argument-hint: "Describe the feature or requirement to analyze"
 
  "Copilot, use the requirement-and-design prompt file to design a feature:
  Allow customers to download their order history. Orders should be stored in Cosmos DB
- using sas-cosmosdb repository pattern, and PDF invoices should be stored in Azure Blob
- Storage using sas-storage AsyncStorageBlobHelper."
+ using your-cosmosdb-lib repository pattern, and PDF invoices should be stored in Azure Blob
+ Storage using your-storage-lib AsyncStorageBlobHelper."
  -->
