@@ -113,15 +113,21 @@ Copy each file from `assets/instructions/` to `.github/instructions/`:
 - [code-quality-py.instructions.md](./assets/instructions/code-quality-py.instructions.md)
 - [code-quality-ts.instructions.md](./assets/instructions/code-quality-ts.instructions.md)
 - [code-quality-tsx.instructions.md](./assets/instructions/code-quality-tsx.instructions.md)
+- [code-quality-java.instructions.md](./assets/instructions/code-quality-java.instructions.md)
+- [code-quality-csharp.instructions.md](./assets/instructions/code-quality-csharp.instructions.md)
 - [test-quality.instructions.md](./assets/instructions/test-quality.instructions.md)
 - [test-quality-ts.instructions.md](./assets/instructions/test-quality-ts.instructions.md)
 - [test-quality-tsx.instructions.md](./assets/instructions/test-quality-tsx.instructions.md)
+- [test-quality-java.instructions.md](./assets/instructions/test-quality-java.instructions.md)
+- [test-quality-csharp.instructions.md](./assets/instructions/test-quality-csharp.instructions.md)
 
 Only copy instruction files matching the project's language stack:
 - Python project → copy `code-quality-py` + `test-quality`
 - TypeScript project → copy `code-quality-ts` + `test-quality-ts`
 - React project → copy all TypeScript + TSX files
-- Full stack → copy all 6 files
+- Java project → copy `code-quality-java` + `test-quality-java`
+- C# project → copy `code-quality-csharp` + `test-quality-csharp`
+- Full stack → copy all applicable files
 
 ### Step 7: Deploy prompt files
 
