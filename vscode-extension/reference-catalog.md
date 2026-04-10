@@ -368,17 +368,44 @@ Pick the cell that matches your language + application type:
 | **Framework**       | FastAPI + Uvicorn                                                                                                     |
 | **Package manager** | UV                                                                                                                    |
 
-**What it provides:** Everything from `python_application_template`, plus FastAPI with OpenAPI docs, advanced DI container (singleton/transient/scoped), Protocol-based interfaces, router pattern, health probes, and Docker support.
+**What it provides:**
 
-**When to use:** New REST APIs or web services needing endpoint routing and OpenAPI docs.
+Everything from `python_application_template`, plus:
 
-**Project structure:** `app/main.py` → `app/routers/` + `app/business_component/` + `app/libs/` + `infra/` + `tests/`
+- **FastAPI** with automatic OpenAPI docs
+- **Advanced DI container** — C#-style with singleton, transient, and auto-scoped lifetimes
+- **Protocol-based interfaces** for type-safe service contracts
+- **Router pattern** with modular route modules
+- **Health/readiness probes** built in
+- **Docker-ready** containerization support
+
+**When to use:**
+
+- Starting a **new REST API or web service**
+- When you need endpoint routing, OpenAPI docs, and HTTP-level patterns
+
+**Project structure:**
+
+```
+app/
+├── main.py                          # FastAPI app + DI setup
+├── routers/                         # Route modules
+│   ├── http_probes.py               # Health/readiness
+│   ├── router_one.py                # Business endpoints
+│   └── router_di.py                 # DI demo routes
+├── business_component/              # Business logic layer
+└── libs/                            # Framework libraries (same base as application_template)
+infra/                               # Bicep templates
+tests/                               # pytest suite
+```
 
 **Copilot behavior:**
 
-- Scaffold from this template for "create a new API/endpoint/microservice" requests.
-- Register services via `add_singleton()`/`add_transient()`, resolve via `get_service(IMyService)`.
-- Define interfaces as `Protocol` classes. One router file per resource/domain area.
+- When asked to "create a new API/endpoint/microservice", scaffold from this template.
+- Register services via `app_context.add_singleton()` / `add_transient()`.
+- Resolve services via `await app_context.get_service(IMyService)`.
+- Define interfaces as Python `Protocol` classes.
+- Follow the router pattern: one file per resource/domain area under `routers/`.
 
 ---
 
