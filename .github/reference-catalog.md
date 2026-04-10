@@ -244,7 +244,34 @@ var credential = new DefaultAzureCredential();
 
 ---
 
-### 1.4 Azure OpenAI — AI & LLM
+### 1.4 AI & Agents — Microsoft Agent Framework (Primary) + Azure OpenAI SDK (Fallback)
+
+> **Guidance:** Use **Microsoft Agent Framework** as the primary choice for building AI agents
+> and LLM-powered applications. Fall back to **Azure OpenAI SDK** only for direct model access
+> (e.g., simple chat completions, embeddings) where the Agent Framework is overkill.
+> Use Semantic Kernel or LangChain **only** when there are specific requirements that the
+> Agent Framework does not cover (e.g., existing SK/LC codebase, specific orchestration patterns).
+
+#### Primary: Microsoft Agent Framework
+
+| Language | Library | Package | Install |
+|----------|---------|---------|---------|
+| Python | azure-ai-projects | `azure-ai-projects` | `pip install azure-ai-projects` |
+| C# | Azure.AI.Projects | `Azure.AI.Projects` | `dotnet add package Azure.AI.Projects` |
+| TypeScript | @azure/ai-projects | `@azure/ai-projects` | `npm install @azure/ai-projects` |
+| Java | azure-ai-projects | `com.azure:azure-ai-projects` | Maven/Gradle |
+
+**What it provides:**
+
+- Multi-agent orchestration with tool/function calling
+- Built-in MCP (Model Context Protocol) tool integration
+- Azure AI Foundry project lifecycle management
+- File search, code interpreter, and custom tool agents
+- Streaming, async execution, and enterprise-grade observability
+
+**When to use:** Any project that builds AI agents, chatbots, multi-agent workflows, or RAG applications.
+
+#### Fallback: Azure OpenAI SDK (Direct Model Access)
 
 | Language | Library | Package | Install |
 |----------|---------|---------|---------|
@@ -254,25 +281,40 @@ var credential = new DefaultAzureCredential();
 | Go | azopenai | `github.com/Azure/azure-sdk-for-go/sdk/ai/azopenai` | `go get` |
 | TypeScript | openai / @azure/openai | `openai` or `@azure/openai` | `npm install openai` |
 
-**What it provides:**
-
-- Chat completions, embeddings, and image generation via Azure OpenAI endpoints
-- Streaming responses for real-time UX
-- Function calling / tool-use integration
-- Content filtering and responsible AI controls (Azure-hosted)
-
-**When to use:** Any project that integrates LLM capabilities (chat, summarization, RAG, agents).
+**When to use:** Simple, direct model calls (chat completions, embeddings, image generation)
+where agent orchestration is not needed.
 
 **Copilot behavior:**
 
-- For Azure-hosted models, use the Azure OpenAI client with `DefaultAzureCredential` — not API keys.
-- Set `api_version` explicitly; do not rely on defaults.
-- Always handle streaming with proper error/cancellation logic.
-- For RAG patterns, combine with Azure AI Search — do not build custom vector stores.
+1. **Default to Microsoft Agent Framework** for any AI/agent task.
+2. Fall back to Azure OpenAI SDK only for simple, single-model interactions.
+3. Do NOT introduce Semantic Kernel or LangChain unless the user explicitly requests it
+   or the project already uses it.
+4. For Azure-hosted models, always use `DefaultAzureCredential` — not API keys.
+5. Set `api_version` explicitly; do not rely on defaults.
+6. For RAG patterns, combine with Azure AI Search — do not build custom vector stores.
 
 **Quick examples:**
 
-<details><summary>Python</summary>
+<details><summary>Python — Agent Framework (Primary)</summary>
+
+```python
+from azure.ai.projects import AIProjectClient
+from azure.identity import DefaultAzureCredential
+
+project = AIProjectClient(
+    credential=DefaultAzureCredential(),
+    endpoint="https://my-project.services.ai.azure.com",
+)
+agent = project.agents.create_agent(
+    model="gpt-4o",
+    name="my-assistant",
+    instructions="You are a helpful assistant.",
+)
+```
+</details>
+
+<details><summary>Python — Azure OpenAI SDK (Fallback)</summary>
 
 ```python
 from openai import AzureOpenAI
@@ -286,28 +328,17 @@ response = client.chat.completions.create(model="gpt-4o",
 ```
 </details>
 
-<details><summary>Java</summary>
-
-```java
-OpenAIClient client = new OpenAIClientBuilder()
-    .endpoint("https://my-resource.openai.azure.com")
-    .credential(new DefaultAzureCredentialBuilder().build())
-    .buildClient();
-ChatCompletions completions = client.getChatCompletions("gpt-4o",
-    new ChatCompletionsOptions(List.of(new ChatRequestUserMessage("Hello!"))));
-```
-</details>
-
-<details><summary>C#</summary>
+<details><summary>C# — Agent Framework (Primary)</summary>
 
 ```csharp
-using Azure.AI.OpenAI;
+using Azure.AI.Projects;
 using Azure.Identity;
 
-var client = new AzureOpenAIClient(new Uri("https://my-resource.openai.azure.com"),
+var client = new AIProjectClient(
+    new Uri("https://my-project.services.ai.azure.com"),
     new DefaultAzureCredential());
-var chatClient = client.GetChatClient("gpt-4o");
-var response = await chatClient.CompleteChatAsync([new UserChatMessage("Hello!")]);
+var agent = await client.Agents.CreateAgentAsync("gpt-4o",
+    name: "my-assistant", instructions: "You are a helpful assistant.");
 ```
 </details>
 
@@ -324,12 +355,16 @@ Pick the cell that matches your language + application type:
 
 | Stack | Web API | Base App | AI Agent |
 |-------|---------|----------|----------|
-| **Python** | FastAPI + Uvicorn | Application_Base (UV) | Azure AI Agent Framework |
-| **Java** | Spring Boot | Spring CLI | Spring AI |
-| **C#** | ASP.NET Core Minimal API | .NET Worker Service | Semantic Kernel |
-| **Go** | Gin / Echo / Chi | Cobra CLI | LangChainGo |
-| **TypeScript** | Express / NestJS | Node.js CLI | LangChain.js |
-| **Rust** | Actix-web / Axum | Clap CLI | — |
+| **Python** | FastAPI + Uvicorn | Application_Base (UV) | Microsoft Agent Framework |
+| **Java** | Spring Boot | Spring CLI | Microsoft Agent Framework |
+| **C#** | ASP.NET Core Minimal API | .NET Worker Service | Microsoft Agent Framework |
+| **Go** | Gin / Echo / Chi | Cobra CLI | Microsoft Agent Framework (via REST) |
+| **TypeScript** | Express / NestJS | Node.js CLI | Microsoft Agent Framework |
+| **Rust** | Actix-web / Axum | Clap CLI | Microsoft Agent Framework (via REST) |
+
+> **AI Agent column:** Microsoft Agent Framework is the primary choice for all languages.
+> For Go and Rust, use the REST API or Python/C#/TS SDK via sidecar.
+> Use Semantic Kernel or LangChain only when there are specific requirements.
 
 > **Note:** The detailed templates below are Python examples. Teams should add equivalent
 > entries for their language stack following the same format.
