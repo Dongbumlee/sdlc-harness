@@ -1,7 +1,7 @@
 ---
 name: sdlc-security-review
 description: >-
-  Perform SDLC-aligned security review combining OWASP Top 10 with SAS-specific
+  Perform SDLC-aligned security review combining OWASP Top 10 with project-specific
   Azure patterns. Use when reviewing code for security vulnerabilities, secrets
   exposure, auth issues, injection risks, or OWASP compliance. Triggers on any
   code review, PR review, or security audit request. Loads fresh OWASP checklist
@@ -49,7 +49,7 @@ For each item, check the code under review and mark PASS / FAIL / N/A:
 | A09 | Logging Failures | Security events logged, no sensitive data in logs |
 | A10 | SSRF | External URLs validated, no uncontrolled redirects |
 
-## Step 3: SAS-specific Azure security checks
+## Step 3: Project-specific Azure security checks
 
 These are project-specific patterns that agents wouldn't know without this skill:
 

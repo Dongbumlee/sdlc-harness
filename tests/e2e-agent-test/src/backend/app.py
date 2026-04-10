@@ -3,8 +3,8 @@
 import os
 import json
 from fastapi import FastAPI
-from azure.cosmos import CosmosClient  # CANARY: Raw SDK — should use sas-cosmosdb
-from azure.storage.blob import BlobServiceClient  # CANARY: Raw SDK — should use sas-storage
+from azure.cosmos import CosmosClient  # CANARY: Raw SDK — should use your-cosmosdb-lib
+from azure.storage.blob import BlobServiceClient  # CANARY: Raw SDK — should use your-storage-lib
 
 app = FastAPI()
 
@@ -25,7 +25,7 @@ def get_cosmos_client():
 
 
 def get_blob_client():
-    """CANARY: Raw BlobServiceClient — should use sas-storage with async with."""
+    """CANARY: Raw BlobServiceClient — should use your-storage-lib with async with."""
     return BlobServiceClient.from_connection_string(
         "DefaultEndpointsProtocol=https;AccountName=myaccount;AccountKey=abc123=="
     )

@@ -1,7 +1,7 @@
 ---
 name: sdlc-accelerator-qa
 description: >-
-  Comprehensive product QA checklist for solution accelerators and AI agents,
+  Comprehensive product QA checklist for enterprise applications and AI agents,
   covering UX/accessibility, core functionality, LLM behavior, data handling,
   error resilience, security, performance, deployment hygiene, and observability.
   Use when performing full product QA, pre-release validation, or generating
@@ -12,7 +12,7 @@ description: >-
 
 # SDLC Accelerator QA Checklist
 
-Comprehensive product-level QA checklist for solution accelerators and AI agents.
+Comprehensive product-level QA checklist for enterprise applications and AI agents.
 Distilled from years of accelerator QA work — test plans, bug logs, bug bash sessions,
 and QA knowledge documentation.
 

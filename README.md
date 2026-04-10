@@ -140,7 +140,7 @@
  > **What you get instantly:** 18 agents (including 9 parallel QA reviewers), 12 domain skills,
  > and the full SDLC workflow — from requirements to release.
  >
- > See [How to Adopt This Template](#how-to-adopt-this-template-in-a-new-gsa--app-repo)
+ > See [How to Adopt This Template](#how-to-adopt-this-template-in-a-new-application-repo)
  > for detailed options including manual file copy.
 
  ---
@@ -217,7 +217,7 @@
 
  This template includes a **multi-agent subagent system** powered by VS Code's Copilot subagent
  capability. A single user-facing agent — **Harness** (Your SDLC Orchestrator for helping
- and accelerating building solution accelerators based on SDLC) — orchestrates specialized
+ and accelerating building enterprise applications based on SDLC) — orchestrates specialized
  worker agents, each scoped to a specific SDLC Phase with least-privilege tool access.
 
  ```mermaid
@@ -783,7 +783,7 @@ Recommended structure for this “SDLC & Copilot” configuration repo (or for e
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-How to Adopt This Template in a New application / App Repo
+How to Adopt This Template in a New Application Repo
 
 ### Option A: Install as a Plugin (recommended)
 

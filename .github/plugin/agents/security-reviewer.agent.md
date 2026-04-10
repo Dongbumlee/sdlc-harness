@@ -26,7 +26,7 @@ and OWASP compliance**.
 ## Skills
 
 Activate the **`sdlc-security-review`** skill (invoke `/sdlc-security-review` or let the agent load it automatically).
-This skill provides the complete OWASP Top 10 checklist, SAS-specific Azure security
+This skill provides the complete OWASP Top 10 checklist, project-specific Azure security
 patterns, secrets scanning procedures, and dependency audit steps. It also loads
 fresh OWASP guidance from awesome-copilot MCP on every review.
 
@@ -35,7 +35,7 @@ fresh OWASP guidance from awesome-copilot MCP on every review.
 > **MCP note:** The QA Coordinator checks awesome-copilot availability before launching
 > reviewers. If awesome-copilot is unavailable, skip MCP load calls below and use the
 > local skill file (`sdlc-security-review` from the installed plugin) instead. The local
-> skill contains the full OWASP checklist and SAS-specific patterns. Note this in your output:
+> skill contains the full OWASP checklist and project-specific patterns. Note this in your output:
 > _"⚠️ awesome-copilot unavailable — OWASP review based on local skill checklist only."_
 
 1. **Load the SDLC security review skill** — invoke `/sdlc-security-review`

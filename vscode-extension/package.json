@@ -1,7 +1,7 @@
 {
   "name": "sdlc-agent-template",
   "displayName": "SDLC Agent Template",
-  "description": "Multi-agent system for building Azure solution accelerators with production-quality standards. Includes Harness orchestrator, 8 QA reviewers, and 11 domain skills.",
+  "description": "Multi-agent system for building enterprise applications with production-quality standards. Includes Harness orchestrator, 8 QA reviewers, and 11 domain skills.",
   "version": "1.0.0",
   "publisher": "your-org",
   "license": "MIT",

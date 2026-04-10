@@ -63,7 +63,7 @@ argument-hint: "Describe the documentation to create or update"
         `/docs/api/orders-history.md`, or a `README.md` section).
       - Doc type (ADR, design overview, API docs, runbook, RAI note).
     - For project READMEs:
-      - Follow the application solution accelerator README structure in `.design/README.template.md`.
+      - Follow the enterprise application README structure in `.design/README.template.md`.
       - Include: Solution Overview, Quick Deploy (with Codespaces/DevContainer badges,
         `azd up` instructions, AVM Bicep infrastructure), Business Scenario,
         Supporting Documentation, RAI Transparency FAQ, and Disclaimers.

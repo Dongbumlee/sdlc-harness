@@ -507,7 +507,7 @@ Review all code, tests, infrastructure, and documentation.
 #### 4. Security Reviewer
 - [ ] **`sdlc-security-review` skill activated** — reads `.github/skills/sdlc-security-review/SKILL.md`
 - [ ] awesome-copilot loaded (via skill): `"security-and-owasp"` (fresh every review)
-- [ ] SAS-specific Azure checks applied: Managed Identity, Key Vault, your-cosmosdb-lib/your-storage-lib auth
+- [ ] Project-specific Azure checks applied: Managed Identity, Key Vault, your-cosmosdb-lib/your-storage-lib auth
 - [ ] Checks: OWASP Top 10 mapped, secrets, credentials, CORS, headers, input validation, dependencies
 - [ ] Output: Critical / Important / Suggestion / Positive findings
 

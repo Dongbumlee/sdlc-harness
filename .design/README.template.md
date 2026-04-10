@@ -2,7 +2,7 @@
 
 <!-- 
   README Template for SDLC-aligned projects
-  Based on application Solution Accelerator standards + SDLC lifecycle integration
+  Based on enterprise application standards + SDLC lifecycle integration
   
   Instructions:
   1. Replace all <PLACEHOLDER> values with your project-specific content
@@ -285,7 +285,7 @@ Recommended additional security measures:
 
 ### Cross References
 
-| Solution Accelerator    | Description   |
+| Related Project         | Description   |
 | ----------------------- | ------------- |
 | <RELATED_ACCELERATOR_1> | <DESCRIPTION> |
 | <RELATED_ACCELERATOR_2> | <DESCRIPTION> |

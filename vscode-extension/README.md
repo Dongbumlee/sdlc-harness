@@ -1,6 +1,6 @@
 # SDLC Agent Template
 
-Multi-agent system for building Azure solution accelerators with production-quality standards.
+Multi-agent system for building enterprise applications with production-quality standards.
 
 ## What's Included
 
