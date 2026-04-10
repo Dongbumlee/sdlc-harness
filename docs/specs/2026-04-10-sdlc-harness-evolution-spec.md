@@ -172,6 +172,44 @@ The orchestrator follows a fixed protocol:
 4. On completion → produce final report
 ```
 
+**Orchestrator Bootstrap & Gates (preserving current @Harness mechanisms):**
+
+The current `@Harness` coordinator implements critical mechanisms that the evolved orchestrator MUST preserve:
+
+**Step 0 — MCP Readiness Check:**
+
+Before any phase execution, probe required MCP servers:
+
+| Server | Transport | Failure Mode |
+|---|---|---|
+| awesome-copilot | Docker (`ghcr.io/microsoft/mcp-dotnet-samples/awesome-copilot:latest`) | **Hard stop** — skills depend on live OWASP/best-practice data |
+| GitHub MCP | HTTP (`api.githubcopilot.com/mcp/`) | **Hard stop** — reference repos, templates, cross-repo search unavailable |
+| Context7 | npx (`@upstash/context7-mcp@latest`) | **Warn** — continue with degraded library/framework docs |
+| Azure DevOps MCP | npx (`@azure-devops/mcp`) | **Warn** — ADO wiki, work items, pipelines unavailable |
+| Azure MCP | npx (`@azure/mcp@latest`) | **Warn** — Azure resource management unavailable |
+| Microsoft Learn | HTTP (`learn.microsoft.com/api/mcp`) | **Warn** — official docs unavailable |
+
+**Progressive Placeholder Filling:**
+
+The workspace bootstrap template (`copilot-instructions.md`) contains `{{PLACEHOLDER}}` tokens filled progressively:
+
+| Token | Filled When | Source |
+|---|---|---|
+| `{{PROJECT_NAME}}` | Requirements phase | User input or repo name |
+| `{{BUSINESS_DOMAIN}}` | Requirements phase | User input or inferred from intent |
+| `{{TECH_STACK}}` | Design phase | Analyst recommendation + user confirmation |
+| `{{ARCH_STYLE}}` | Design phase | Analyst recommendation (e.g., "Clean Architecture") |
+| `{{ORG_NAME}}` | Bootstrap | `harness-config.yml` or user input |
+
+**Inter-Phase Gates:**
+
+| Gate | Trigger | Action |
+|---|---|---|
+| ADR Gate | After every Analyst (design) output | Auto-delegate to Documenter for ADR authoring before proceeding to implementation |
+| Reference Catalog Gate | Before Implement phase artifacts are accepted | Verify no libraries introduced that aren't in `.github/reference-catalog.md` |
+| QA Feedback Loop | After QA phase identifies issues | Route back to Implementer for fixes, re-run only failing QA domains (max 3 rounds) |
+| GitHub MCP Auth Gate | Before ANY worker that needs reference repos | Verify org-level GitHub MCP authentication; no degraded mode |
+
 ### 2.2 Planner Agent
 
 **Role:** Strategic decomposition — turns user intent into an ordered execution plan.
@@ -207,7 +245,7 @@ The orchestrator follows a fixed protocol:
 | Intent Type | Phases Activated |
 |---|---|
 | New project | All 9 phases |
-| New feature (existing project) | Skip scaffold, maybe skip deploy |
+| New feature (existing project) | Skip scaffold, maybe skip deploy (Planner decides based on project context; skip policy is overridable via `harness-config.yml` `orchestrator.skip_policy`) |
 | Bug fix | Requirements (clarify) → implement → QA → release |
 | Documentation update | Document → QA (doc review only) → release |
 | Infrastructure change | Design → deploy → QA → release |
@@ -218,51 +256,57 @@ The orchestrator follows a fixed protocol:
 
 **Role:** Phase execution — takes a single phase from the plan and produces artifacts.
 
-**Evolves from:** The current phase-specific worker agents (analyst, architect, scaffolder, deployer, implementer, documenter, QA coordinator, RAI reviewer, release manager).
+**Evolves from:** The current phase-specific worker agents (analyst, scaffolder, deployer, implementer, documenter, QA coordinator, RAI reviewer, release manager) — 8 phase workers total, plus 8 parallel QA reviewer sub-agents and 1 standalone bug-checklist reviewer (17 sub-agents + 1 orchestrator = 18 agents).
 
 The Generator is a coordinator that delegates to phase-specific sub-agents:
 
 ```yaml
 sub_agents_by_phase:
   requirements:
-    primary: analyst
+    primary: analyst               # Analyst handles BOTH requirements and design
     skills: [sdlc-workspace-init]
   design:
-    primary: architect
-    skills: [sdlc-adr-authoring, sdlc-design-review]
+    primary: analyst               # Same agent; design is a continuation of analysis
+    post_gate: documenter          # ADR Gate: auto-delegate ADR authoring after design
+    skills: [sdlc-adr-authoring]
   scaffold:
     primary: scaffolder
-    skills: [sdlc-project-scaffolding]
-  deploy:
-    primary: deployer              # cloud-specific variant
-    skills: [sdlc-deployment]      # cloud-specific variant
+    skills: [sdlc-project-scaffolding, sdlc-project-manifest]
+    entry_gate: reference-catalog  # Must check approved SDKs before scaffolding
+  deploy:                          # Dual-phase: runs at Phase 3+8 (scaffold-adjacent AND release-adjacent)
+    primary: deployer              # Cloud-specific variant
+    skills: [sdlc-azure-deployment]  # Cloud-specific; swap for AWS/GCP skill packs
   implement:
     primary: implementer
-    supporting: [code-quality-reviewer]
-    skills: [sdlc-code-quality, sdlc-implementation]
+    skills: [sdlc-code-quality, sdlc-cosmos-repository, sdlc-blob-storage]  # Stack-specific skills loaded dynamically
+    entry_gate: reference-catalog  # Must check approved SDKs before introducing libraries
   document:
     primary: documenter
-    skills: [sdlc-api-documentation]
+    skills: [sdlc-adr-authoring, sdlc-project-manifest]
   qa:
-    primary: qa-coordinator
-    supporting:                    # 9 parallel reviewers
-      - architecture-reviewer
-      - security-reviewer
-      - code-quality-reviewer
-      - test-coverage-reviewer
-      - ux-accessibility-reviewer
-      - llm-behavior-reviewer
-      - deployment-readiness-reviewer
-      - cloud-compliance-reviewer  # cloud-specific
-      - performance-reviewer
-    skills: [sdlc-code-quality, sdlc-test-execution]
+    primary: qa-coordinator        # Dual role: phase worker AND sub-agent orchestrator
+    supporting:                    # 8 parallel reviewers (dispatched simultaneously)
+      - architecture-reviewer      # Layering, dependency direction, pattern consistency
+      - azure-compliance-reviewer  # Cloud-specific SDK usage, AVM, identity, tags
+      - code-quality-reviewer      # Naming, docstrings, dead code, type safety
+      - security-reviewer          # OWASP Top 10, secrets, auth (threshold: 8/10, not 7)
+      - test-coverage-reviewer     # pytest, coverage, Playwright e2e
+      - ux-accessibility-reviewer  # ARIA, keyboard nav, contrast, responsive, dark mode
+      - llm-behavior-reviewer      # Prompt injection, grounding, token limits, content filters
+      - deployment-readiness-reviewer  # Health endpoints, error handling, observability, perf
+    standalone:                    # User-invocable, NOT auto-dispatched by QA Coordinator
+      - qa-bug-checklist-reviewer  # 338 real production bugs across 9 projects (7 checklists)
+    skills: [sdlc-code-quality, sdlc-security-review, sdlc-accelerator-qa, sdlc-qa-bug-checklist]
   rai:
     primary: rai-reviewer
-    skills: [sdlc-rai-review]
+    skills: [ai-prompt-engineering-safety-review]  # Via awesome-copilot MCP
   release:
     primary: release-manager
-    skills: [sdlc-release-management]
+    supporting: [deployer]         # Deployer returns for release-adjacent infrastructure (Phase 8)
+    skills: []                     # Uses GitHub MCP tools directly
 ```
+
+**QA Coordinator dual role:** The QA Coordinator is unique in the system — it acts as both a phase worker (orchestrated by the Generator) and a sub-agent orchestrator (dispatching 8 parallel reviewers). The QA Bug Checklist Reviewer is standalone and user-invocable — it is NOT dispatched by the QA Coordinator but can be invoked directly by users for targeted bug-pattern validation.
 
 **Context reset protocol:** Each phase starts with a fresh LLM context. No conversation history from previous phases. Only structured artifacts bridge the context gap. Within a phase, sub-agents share context.
 
@@ -320,16 +364,43 @@ sub_agents_by_phase:
 | **Model-based (LLM-as-judge)** | Rubric scoring, natural language assertions, pairwise comparison | Captures nuance, subjective quality |
 | **Human graders** | SME review, spot-check, calibration | Gold standard, calibrating model-based graders |
 
-**Verdict decision logic:**
-- **PASS**: Overall score ≥ threshold, no dimension below minimum
-- **FAIL**: Score below threshold → retry with feedback (max 3 attempts)
-- **CRITICAL_FAIL**: Score critically low or fundamental scope mismatch → escalate to Planner for re-planning
+**Verdict decision logic (1-10 scale):**
+
+| Verdict | Condition | Action |
+|---|---|---|
+| **PASS** | Overall ≥ 7.0, no dimension below minimum (Security ≥ 8, others ≥ 7), no Critical findings | Advance to next phase |
+| **FAIL** | Score 5.0-6.9, or one dimension below minimum | Retry with feedback (max 3 attempts); targeted re-evaluation on failing dimensions only |
+| **CRITICAL_FAIL** | Overall < 5.0, security vulnerability, or fundamental scope mismatch | Escalate to Planner for re-planning |
+
+#### 2.4.1 Adversarial QA Protocol
+
+**Evolves from:** The current QA Coordinator's adversarial review directive, preserved and generalized to all Evaluator invocations during the QA phase.
+
+Every QA reviewer receives a mandatory preamble:
+
+> *"Do NOT be generous, do NOT give the benefit of the doubt, do NOT talk yourself into approving issues you've identified."*
+
+**Anti-leniency scoring rules:**
+- Reviewers may **never downgrade** a finding's severity; the coordinator may only **maintain or upgrade**
+- Any reviewer returning only positive findings with a score ≥ 9 is flagged as ⚠️ **"Suspiciously positive — may indicate superficial review"**
+- The Evaluator may reject a reviewer's output and request a deeper pass
+- Any **Critical** finding from any reviewer = automatic ❌ regardless of composite score
+
+**Iterative fix loop (QA phase only):**
+
+```
+Round 1: Full QA → all 8 reviewers
+Round 2 (if FAIL): Targeted → only failing domains re-evaluated
+Round 3 (if still FAIL): Targeted → last chance before CRITICAL_FAIL escalation
+```
+
+Maximum 3 rounds. After 3 failures, the Evaluator issues CRITICAL_FAIL and the Planner re-scopes.
 
 ### 2.5 Structured Artifact Bridging
 
 Artifacts bridge context windows between phases. All inter-phase communication happens through structured files, not conversation history.
 
-**Artifact types:**
+**Core artifact types** (illustrative — individual phases may produce additional artifacts as specified in §4):
 - **Feature list** (JSON): Machine-readable list of features with status
 - **Progress notes** (Markdown): Human-readable summary of what's been done
 - **Evaluation reports** (JSON): Per-phase scores and feedback
@@ -425,7 +496,39 @@ harness generate --target all               # all supported platforms
 
 **Sync verification:** CI check compares generated files against source IR. Fails if out of sync. Eliminates the current duplication between `vscode-extension/` and `.github/plugin/`.
 
-### 3.4 Agent Lifecycle
+### 3.4 Skill Taxonomy
+
+**Current skills (12)** mapped to the universal schema:
+
+| Skill ID | Scope | Phases | Used By | Stack-Specific? |
+|---|---|---|---|---|
+| `sdlc-workspace-init` | global | All (bootstrap) | Harness | No |
+| `sdlc-project-manifest` | global | All (cross-agent read) | Architecture Reviewer, Code Quality Reviewer, Documenter | No |
+| `sdlc-project-scaffolding` | phase | Scaffold | Scaffolder | No (templates are stack-specific) |
+| `sdlc-adr-authoring` | phase | Design | Analyst, Documenter | No |
+| `sdlc-architecture-review` | phase | QA | Architecture Reviewer | No |
+| `sdlc-code-quality` | phase | Implement, QA, Release | Code Quality Reviewer | No (multi-language rules) |
+| `sdlc-security-review` | phase | QA | Security Reviewer, QA Bug Checklist Reviewer | No |
+| `sdlc-accelerator-qa` | phase | QA | UX Reviewer, LLM Behavior Reviewer, Deployment Readiness Reviewer, QA Bug Checklist Reviewer | No |
+| `sdlc-qa-bug-checklist` | phase | QA | QA Bug Checklist Reviewer | No (project-derived patterns) |
+| `sdlc-azure-deployment` | phase | Deploy | Deployer, QA Bug Checklist Reviewer | **Yes — Azure** |
+| `sdlc-cosmos-repository` | phase | Implement | Implementer | **Yes — Azure Cosmos DB** |
+| `sdlc-blob-storage` | phase | Implement | Implementer | **Yes — Azure Blob Storage** |
+
+**Project Manifest (`sdlc-project-manifest`):** A cross-agent consistency mechanism. The Scaffolder writes `.SDLC/project-manifest.md` recording which templates, stacks, and patterns were chosen. ALL subsequent agents must read it first. This ensures design decisions made during scaffolding are honored throughout the lifecycle.
+
+**Stack-Specific Skill Packs:** Azure-specific skills (`sdlc-azure-deployment`, `sdlc-cosmos-repository`, `sdlc-blob-storage`) form the first "skill pack." The genericization path adds parallel packs:
+
+| Pack | Skills | Status |
+|---|---|---|
+| **Azure** | sdlc-azure-deployment, sdlc-cosmos-repository, sdlc-blob-storage | Implemented |
+| **AWS** | sdlc-aws-deployment, sdlc-dynamodb-repository, sdlc-s3-storage | Planned |
+| **GCP** | sdlc-gcp-deployment, sdlc-firestore-repository, sdlc-gcs-storage | Planned |
+| **Minimal** | (no cloud-specific skills) | Implicit |
+
+Skill packs are loaded based on `harness-config.yml` `cloud_provider` setting. The phase workflow tables in §4 reference the abstract capability; the skill pack resolves to the concrete skill.
+
+### 3.5 Agent Lifecycle
 
 1. **Author** in universal IR format (`agents/*.agent.yaml`)
 2. **Validate** against schema (`harness validate`)
@@ -481,7 +584,7 @@ Each phase follows a consistent template with co-located details.
 | **Entry conditions** | Design phase PASS |
 | **Primary agent** | scaffolder |
 | **Skills** | sdlc-project-scaffolding |
-| **MCP capabilities** | code-search (required), artifact-storage (optional) |
+| **MCP capabilities** | code-search (required), live-best-practices (optional) |
 | **Input artifacts** | design-doc.md, feature-list.json |
 | **Output artifacts** | Project structure, dependency manifests, linter/formatter configs, test framework setup |
 | **Quality gate** | Structure correctness, dependency manifest valid, linter config present |
@@ -550,7 +653,7 @@ Each phase follows a consistent template with co-located details.
 | **MCP capabilities** | code-search (required), compliance-checking (required) |
 | **Input artifacts** | All previous phase artifacts |
 | **Output artifacts** | Per-reviewer reports, consolidated report, canary scores (if canary test) |
-| **Quality gate** | Per-reviewer ≥ 80%, overall ≥ 90%, security reviewer ≥ 80% (hard) |
+| **Quality gate** | Per-reviewer ≥ 80% (PASS), 70-79% (FAIL/retry), < 70% (CRITICAL_FAIL/replan). Overall ≥ 90%. Security reviewer uses same thresholds. |
 | **Benchmark dimensions** | Canary detection rate, false positive rate, severity accuracy, review thoroughness |
 | **Stack variations** | Review criteria adapt per stack |
 | **Cloud variations** | Cloud compliance reviewer is cloud-specific |
