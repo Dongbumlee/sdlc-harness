@@ -115,11 +115,15 @@ Copy each file from `assets/instructions/` to `.github/instructions/`:
 - [code-quality-tsx.instructions.md](./assets/instructions/code-quality-tsx.instructions.md)
 - [code-quality-java.instructions.md](./assets/instructions/code-quality-java.instructions.md)
 - [code-quality-csharp.instructions.md](./assets/instructions/code-quality-csharp.instructions.md)
+- [code-quality-go.instructions.md](./assets/instructions/code-quality-go.instructions.md)
+- [code-quality-rust.instructions.md](./assets/instructions/code-quality-rust.instructions.md)
 - [test-quality.instructions.md](./assets/instructions/test-quality.instructions.md)
 - [test-quality-ts.instructions.md](./assets/instructions/test-quality-ts.instructions.md)
 - [test-quality-tsx.instructions.md](./assets/instructions/test-quality-tsx.instructions.md)
 - [test-quality-java.instructions.md](./assets/instructions/test-quality-java.instructions.md)
 - [test-quality-csharp.instructions.md](./assets/instructions/test-quality-csharp.instructions.md)
+- [test-quality-go.instructions.md](./assets/instructions/test-quality-go.instructions.md)
+- [test-quality-rust.instructions.md](./assets/instructions/test-quality-rust.instructions.md)
 
 Only copy instruction files matching the project's language stack:
 - Python project → copy `code-quality-py` + `test-quality`
@@ -127,6 +131,8 @@ Only copy instruction files matching the project's language stack:
 - React project → copy all TypeScript + TSX files
 - Java project → copy `code-quality-java` + `test-quality-java`
 - C# project → copy `code-quality-csharp` + `test-quality-csharp`
+- Go project → copy `code-quality-go` + `test-quality-go`
+- Rust project → copy `code-quality-rust` + `test-quality-rust`
 - Full stack → copy all applicable files
 
 ### Step 7: Deploy prompt files

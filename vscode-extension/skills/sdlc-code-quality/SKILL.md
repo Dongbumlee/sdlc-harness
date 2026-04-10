@@ -2,10 +2,10 @@
 name: sdlc-code-quality
 description: >-
   Review and enforce code quality standards for Python, TypeScript, React,
-  Java, and C# following SDLC quality instruction files. Use when performing
-  code quality reviews, cleaning up code, or enforcing naming and documentation
-  standards. Triggers on code quality, code review, naming, docstring, dead
-  code, or comment cleanup requests.
+  Java, C#, Go, and Rust following SDLC quality instruction files. Use when
+  performing code quality reviews, cleaning up code, or enforcing naming and
+  documentation standards. Triggers on code quality, code review, naming,
+  docstring, dead code, or comment cleanup requests.
 ---
 
 # SDLC Code Quality Review
@@ -53,6 +53,8 @@ Read the applicable quality instruction file:
 | React/TSX | `.github/instructions/code-quality-tsx.instructions.md` |
 | Java | `.github/instructions/code-quality-java.instructions.md` |
 | C# | `.github/instructions/code-quality-csharp.instructions.md` |
+| Go | `.github/instructions/code-quality-go.instructions.md` |
+| Rust | `.github/instructions/code-quality-rust.instructions.md` |
 
 These files auto-apply when editing files of the matching type, but load them
 explicitly during quality reviews for the full checklist.
@@ -100,6 +102,8 @@ explicitly during quality reviews for the full checklist.
 - [ ] React: typed props interfaces, no inline type assertions
 - [ ] Java: no raw generic types, use `Optional<T>` for nullable returns
 - [ ] C#: nullable reference types enabled, `?` annotations on nullable members
+- [ ] Go: exported names PascalCase, error values always checked, `go vet` clean
+- [ ] Rust: no `unwrap()` in production, proper `Result<T,E>` propagation, `clippy` clean
 
 ### Error handling
 - [ ] Uses project's logging abstraction (not `print()`)
@@ -115,6 +119,8 @@ After editing each folder:
 - **React:** `npx tsc --noEmit` + verify no ESLint errors
 - **Java:** `mvn compile -q` (Maven) or `gradle compileJava` (Gradle)
 - **C#:** `dotnet build --no-restore -q`
+- **Go:** `go build ./...` and `go vet ./...`
+- **Rust:** `cargo check` and `cargo clippy`
 
 ## Working process for quality passes
 
