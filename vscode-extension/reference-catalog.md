@@ -368,44 +368,17 @@ Pick the cell that matches your language + application type:
 | **Framework**       | FastAPI + Uvicorn                                                                                                     |
 | **Package manager** | UV                                                                                                                    |
 
-**What it provides:**
+**What it provides:** Everything from `python_application_template`, plus FastAPI with OpenAPI docs, advanced DI container (singleton/transient/scoped), Protocol-based interfaces, router pattern, health probes, and Docker support.
 
-Everything from `python_application_template`, plus:
+**When to use:** New REST APIs or web services needing endpoint routing and OpenAPI docs.
 
-- **FastAPI** with automatic OpenAPI docs
-- **Advanced DI container** — C#-style with singleton, transient, and auto-scoped lifetimes
-- **Protocol-based interfaces** for type-safe service contracts
-- **Router pattern** with modular route modules
-- **Health/readiness probes** built in
-- **Docker-ready** containerization support
-
-**When to use:**
-
-- Starting a **new REST API or web service**
-- When you need endpoint routing, OpenAPI docs, and HTTP-level patterns
-
-**Project structure:**
-
-```
-app/
-├── main.py                          # FastAPI app + DI setup
-├── routers/                         # Route modules
-│   ├── http_probes.py               # Health/readiness
-│   ├── router_one.py                # Business endpoints
-│   └── router_di.py                 # DI demo routes
-├── business_component/              # Business logic layer
-└── libs/                            # Framework libraries (same base as application_template)
-infra/                               # Bicep templates
-tests/                               # pytest suite
-```
+**Project structure:** `app/main.py` → `app/routers/` + `app/business_component/` + `app/libs/` + `infra/` + `tests/`
 
 **Copilot behavior:**
 
-- When asked to "create a new API/endpoint/microservice", scaffold from this template.
-- Register services via `app_context.add_singleton()` / `add_transient()`.
-- Resolve services via `await app_context.get_service(IMyService)`.
-- Define interfaces as Python `Protocol` classes.
-- Follow the router pattern: one file per resource/domain area under `routers/`.
+- Scaffold from this template for "create a new API/endpoint/microservice" requests.
+- Register services via `add_singleton()`/`add_transient()`, resolve via `get_service(IMyService)`.
+- Define interfaces as `Protocol` classes. One router file per resource/domain area.
 
 ---
 
@@ -419,46 +392,17 @@ tests/                               # pytest suite
 | **Framework**       | Azure AI Agent Framework + MCP                                                                                                |
 | **Package manager** | UV                                                                                                                            |
 
-**What it provides:**
+**What it provides:** Azure AI Foundry integration, TaskGroup-safe `MCPContext`, middleware system (debug/logging/observation), GroupChat multi-agent orchestrator, 7+ sample agents, and cross-agent tool sharing.
 
-- **Azure AI Foundry** integration for intelligent agent development
-- **TaskGroup-safe MCP context manager** (`MCPContext`) with AsyncExitStack
-- **Comprehensive middleware system** — debugging, logging, input observation
-- **Multi-agent workflow support** with GroupChat orchestrator
-- **7+ sample agents** (basic, function calling, code interpreter, image analysis, MCP, threads, multi-agent)
-- **Tool sharing** across multiple agents without scope violations
+**When to use:** AI agent applications with Azure AI Foundry, MCP tools, or multi-agent orchestration.
 
-**When to use:**
-
-- Building **AI agent applications** with Azure AI Foundry
-- Working with **Model Context Protocol (MCP)** tools
-- Implementing **multi-agent orchestration** workflows
-
-**Project structure:**
-
-```
-src/
-├── libs/
-│   └── agent_framework/            # Core framework
-│       ├── mcp_context.py           # TaskGroup-safe MCP manager
-│       ├── middleware/              # Debugging, logging, observation
-│       └── README_ORCHESTRATOR.md   # GroupChat docs
-├── samples/                        # 7+ working agent examples
-│   ├── basic/
-│   ├── function_calling/
-│   ├── code_interpreter/
-│   └── workflow/groupchat/
-infra/                               # Bicep templates
-tests/                               # 48+ tests
-```
+**Project structure:** `src/libs/agent_framework/{mcp_context.py, middleware/}` + `src/samples/` (7+ examples) + `infra/` + `tests/`
 
 **Copilot behavior:**
 
-- When asked to "create an AI agent/chatbot/assistant", scaffold from this template.
-- Use `MCPContext` for MCP tool lifecycle management (never manage tool scopes manually).
-- Apply middleware for debugging and logging (do not add ad-hoc print statements).
-- For multi-agent scenarios, use the GroupChat orchestrator pattern.
-- Follow the sample agent patterns for new agent implementations.
+- Scaffold from this template for "create an AI agent/chatbot/assistant" requests.
+- Use `MCPContext` for MCP lifecycle (never manage tool scopes manually).
+- Apply middleware for debugging/logging. Use GroupChat for multi-agent scenarios.
 
 ---
 

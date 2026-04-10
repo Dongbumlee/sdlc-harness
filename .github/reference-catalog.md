@@ -392,46 +392,17 @@ Pick the cell that matches your language + application type:
 | **Framework**       | Azure AI Agent Framework + MCP                                                                                                |
 | **Package manager** | UV                                                                                                                            |
 
-**What it provides:**
+**What it provides:** Azure AI Foundry integration, TaskGroup-safe `MCPContext`, middleware system (debug/logging/observation), GroupChat multi-agent orchestrator, 7+ sample agents, and cross-agent tool sharing.
 
-- **Azure AI Foundry** integration for intelligent agent development
-- **TaskGroup-safe MCP context manager** (`MCPContext`) with AsyncExitStack
-- **Comprehensive middleware system** — debugging, logging, input observation
-- **Multi-agent workflow support** with GroupChat orchestrator
-- **7+ sample agents** (basic, function calling, code interpreter, image analysis, MCP, threads, multi-agent)
-- **Tool sharing** across multiple agents without scope violations
+**When to use:** AI agent applications with Azure AI Foundry, MCP tools, or multi-agent orchestration.
 
-**When to use:**
-
-- Building **AI agent applications** with Azure AI Foundry
-- Working with **Model Context Protocol (MCP)** tools
-- Implementing **multi-agent orchestration** workflows
-
-**Project structure:**
-
-```
-src/
-├── libs/
-│   └── agent_framework/            # Core framework
-│       ├── mcp_context.py           # TaskGroup-safe MCP manager
-│       ├── middleware/              # Debugging, logging, observation
-│       └── README_ORCHESTRATOR.md   # GroupChat docs
-├── samples/                        # 7+ working agent examples
-│   ├── basic/
-│   ├── function_calling/
-│   ├── code_interpreter/
-│   └── workflow/groupchat/
-infra/                               # Bicep templates
-tests/                               # 48+ tests
-```
+**Project structure:** `src/libs/agent_framework/{mcp_context.py, middleware/}` + `src/samples/` (7+ examples) + `infra/` + `tests/`
 
 **Copilot behavior:**
 
-- When asked to "create an AI agent/chatbot/assistant", scaffold from this template.
-- Use `MCPContext` for MCP tool lifecycle management (never manage tool scopes manually).
-- Apply middleware for debugging and logging (do not add ad-hoc print statements).
-- For multi-agent scenarios, use the GroupChat orchestrator pattern.
-- Follow the sample agent patterns for new agent implementations.
+- Scaffold from this template for "create an AI agent/chatbot/assistant" requests.
+- Use `MCPContext` for MCP lifecycle (never manage tool scopes manually).
+- Apply middleware for debugging/logging. Use GroupChat for multi-agent scenarios.
 
 ---
 
