@@ -1,6 +1,6 @@
 ---
 name: sdlc-workspace-init
-description: "Initialize a new repository with SDLC workspace files — copilot-instructions.md, quality instructions, and prompt files. Use when setting up a new project, bootstrapping SDLC, onboarding a repo, or when .github/copilot-instructions.md is missing."
+description: "Initialize a new repository with SDLC workspace files — MCP config, copilot-instructions.md, quality instructions, and prompt files. Use when setting up a new project, bootstrapping SDLC, onboarding a repo, or when Harness detects missing workspace files."
 ---
 
 # SDLC Workspace Initialization
@@ -14,60 +14,142 @@ description: "Initialize a new repository with SDLC workspace files — copilot-
 ## What this skill does
 
 Copies workspace-specific files from the skill's `assets/` folder into the target repo's
-`.github/` directory. These files cannot be distributed via the plugin system because they
-require per-project customization.
+`.github/` and `.vscode/` directories. These files cannot be distributed via the plugin
+system because they require per-project customization or live outside `.github/plugin/`.
+
+> **This skill is the ONLY place that deploys `.vscode/mcp.json`.**
+> No other agent or skill should deploy mcp.json to avoid duplicate writes.
 
 ## Files deployed
 
 | Source (skill assets) | Target (workspace) | Customized? |
 |---|---|---|
+| `assets/mcp.template.json` | `.vscode/mcp.json` | No — copied as-is (MCP server definitions) |
 | `assets/copilot-instructions.template.md` | `.github/copilot-instructions.md` | Yes — project name, domain, stack |
 | `assets/instructions/*.instructions.md` | `.github/instructions/` | No — copied as-is |
 | `assets/prompts/*.prompt.md` | `.github/prompts/` | No — copied as-is |
 
 ## Procedure
 
-### Step 1: Check if already initialized
+### Step 1: Check workspace state
 
-Check if `.github/copilot-instructions.md` exists in the workspace.
+Check what already exists in the workspace:
 
-- **If found** → Report: _"Workspace already initialized. Skipping."_ and stop.
-- **If NOT found** → Continue to Step 2.
+- `.vscode/mcp.json` — MCP server config
+- `.github/copilot-instructions.md` — project-specific Copilot instructions
+- `.github/instructions/` — quality instruction files (check if directory has files, not just exists)
+- `.github/prompts/` — SDLC prompt files (check if directory has files, not just exists)
 
-### Step 2: Gather project information
+If ALL four are present and populated → Report: _"Workspace already initialized. Skipping."_ and stop.
+If any are missing or empty → continue and deploy **only the missing pieces**.
+
+### Step 2: Create directory structure
+
+**Before writing any files**, create the required directories using the terminal.
+These directories may not exist in a fresh workspace:
+
+```bash
+mkdir -p .github/instructions .github/prompts .vscode
+```
+
+**This step is mandatory** — do NOT skip it. File writes will fail silently in
+directories that don't exist.
+
+### Step 3: Deploy MCP server configuration
+
+> **This is the ONLY place mcp.json should be deployed.** Do NOT deploy it anywhere else.
+> **CRITICAL: Use the terminal to write this file — do NOT use create/edit tools.**
+> LLM file tools sometimes append instead of overwrite, producing invalid JSON.
+
+1. Check if `.vscode/mcp.json` exists in the workspace.
+2. **If NOT found** → deploy using the terminal:
+   a. Read [mcp.template.json](./assets/mcp.template.json) to get the content.
+   b. **Delete any partial file** and write fresh using the terminal:
+      ```bash
+      rm -f .vscode/mcp.json
+      ```
+      Then write the content using a heredoc redirect (which ALWAYS overwrites):
+      ```bash
+      cat > .vscode/mcp.json << 'MCPEOF'
+      <paste the exact content of mcp.template.json here>
+      MCPEOF
+      ```
+   c. **Validate the file is valid JSON:**
+      ```bash
+      python3 -c "import json; json.load(open('.vscode/mcp.json')); print('✅ mcp.json is valid JSON')"
+      ```
+      If validation fails → `rm -f .vscode/mcp.json` and retry from step (b) once.
+3. **If found** → validate it anyway:
+   ```bash
+   python3 -c "import json; json.load(open('.vscode/mcp.json')); print('✅ mcp.json is valid JSON')"
+   ```
+   If valid → Skip. Report: _"Existing `.vscode/mcp.json` found — keeping current config."_
+   If invalid → `rm -f .vscode/mcp.json` and deploy fresh from step (b).
+
+After deploying (or confirming it exists), tell the user:
+> ✅ `.vscode/mcp.json` — 7 MCP server definitions ready.
+> Please start all MCP servers: open `.vscode/mcp.json` and click **"Start"** on each.
+
+### Step 4: Gather project information
 
 Ask the user for:
 1. **Project name** (required) — e.g., "SmartDoc Analyzer"
 2. **Business domain** (required) — e.g., "Intelligent document processing"
-3. **Tech stack** (optional, default: "Python 3.12, FastAPI, React 18, TypeScript 5, Vite")
+3. **Tech stack** (required) — e.g., "Python, FastAPI, React, TypeScript"
+4. **Primary language(s)** (derived from tech stack) — used to filter instruction files and reference catalog
 
-### Step 3: Deploy copilot-instructions.md
+### Step 5: Deploy copilot-instructions.md
 
 1. Read [copilot-instructions.template.md](./assets/copilot-instructions.template.md).
 2. Replace these placeholders:
    - `{{PROJECT_NAME}}` → user's project name
    - `{{BUSINESS_DOMAIN}}` → user's business domain
-   - `{{TECH_STACK}}` → user's tech stack (or default)
+   - `{{TECH_STACK}}` → user's tech stack
 3. Write the result to `.github/copilot-instructions.md`.
 
-### Step 4: Deploy instruction files
+### Step 6: Deploy filtered reference catalog
+
+1. Read `.github/reference-catalog.md` from the skill assets.
+2. Based on the **primary language(s)** from Step 4, generate a **project-specific** version:
+   - Keep all language-agnostic sections (intro, how to use, adding entries).
+   - In SDK tables (§1.1–1.4), **highlight the project's language rows** and keep others as reference.
+   - In the Template Matrix, **bold the row(s)** matching the project's language.
+   - In detailed templates (§2.1–2.4), include only the language-specific entries that apply.
+3. Write the filtered catalog to `.github/reference-catalog.md`.
+
+> **Why filter?** A Java team doesn't need to read through Python/Rust/Go details on every lookup.
+> The full catalog stays in the skill assets; the deployed version is focused on the project's stack.
+
+### Step 7: Deploy instruction files
 
 Copy each file from `assets/instructions/` to `.github/instructions/`:
 
 - [code-quality-py.instructions.md](./assets/instructions/code-quality-py.instructions.md)
 - [code-quality-ts.instructions.md](./assets/instructions/code-quality-ts.instructions.md)
 - [code-quality-tsx.instructions.md](./assets/instructions/code-quality-tsx.instructions.md)
+- [code-quality-java.instructions.md](./assets/instructions/code-quality-java.instructions.md)
+- [code-quality-csharp.instructions.md](./assets/instructions/code-quality-csharp.instructions.md)
+- [code-quality-go.instructions.md](./assets/instructions/code-quality-go.instructions.md)
+- [code-quality-rust.instructions.md](./assets/instructions/code-quality-rust.instructions.md)
 - [test-quality.instructions.md](./assets/instructions/test-quality.instructions.md)
 - [test-quality-ts.instructions.md](./assets/instructions/test-quality-ts.instructions.md)
 - [test-quality-tsx.instructions.md](./assets/instructions/test-quality-tsx.instructions.md)
+- [test-quality-java.instructions.md](./assets/instructions/test-quality-java.instructions.md)
+- [test-quality-csharp.instructions.md](./assets/instructions/test-quality-csharp.instructions.md)
+- [test-quality-go.instructions.md](./assets/instructions/test-quality-go.instructions.md)
+- [test-quality-rust.instructions.md](./assets/instructions/test-quality-rust.instructions.md)
 
 Only copy instruction files matching the project's language stack:
 - Python project → copy `code-quality-py` + `test-quality`
 - TypeScript project → copy `code-quality-ts` + `test-quality-ts`
 - React project → copy all TypeScript + TSX files
-- Full stack → copy all 6 files
+- Java project → copy `code-quality-java` + `test-quality-java`
+- C# project → copy `code-quality-csharp` + `test-quality-csharp`
+- Go project → copy `code-quality-go` + `test-quality-go`
+- Rust project → copy `code-quality-rust` + `test-quality-rust`
+- Full stack → copy all applicable files
 
-### Step 5: Deploy prompt files
+### Step 8: Deploy prompt files
 
 Copy each file from `assets/prompts/` to `.github/prompts/`:
 
@@ -78,17 +160,20 @@ Copy each file from `assets/prompts/` to `.github/prompts/`:
 - [repo-documentation.prompt.md](./assets/prompts/repo-documentation.prompt.md)
 - [qa-rai-release.prompt.md](./assets/prompts/qa-rai-release.prompt.md)
 
-### Step 6: Report
+### Step 9: Report
 
 ```
-## SDLC Workspace Initialized
+## ✅ SDLC Workspace Initialized
 
+- ✅ `.vscode/mcp.json` — 7 MCP server definitions deployed
 - ✅ `.github/copilot-instructions.md` — customized for "{{PROJECT_NAME}}"
 - ✅ `.github/instructions/` — X quality instruction files deployed
 - ✅ `.github/prompts/` — 6 SDLC prompt files deployed
 
 **Next steps:**
-1. Review `.github/copilot-instructions.md` and adjust if needed.
-2. Use `@Harness` to start your first SDLC task.
-3. Use `/requirement-and-design` to begin Phase 1-2.
+1. **Start MCP servers** — open `.vscode/mcp.json` and click "Start" on each server.
+   All 7 servers are required.
+2. Review `.github/copilot-instructions.md` and adjust if needed.
+3. Use `@Harness` to start your first SDLC task.
+4. Use `/requirement-and-design` to begin Phase 1-2.
 ```

@@ -1,11 +1,11 @@
 ---
 name: sdlc-code-quality
 description: >-
-  Review and enforce code quality standards for Python, TypeScript, and React
-  following SDLC quality instruction files. Use when performing code quality
-  reviews, cleaning up code, or enforcing naming and documentation standards.
-  Triggers on code quality, code review, naming, docstring, dead code, or
-  comment cleanup requests.
+  Review and enforce code quality standards for Python, TypeScript, React,
+  Java, C#, Go, and Rust following SDLC quality instruction files. Use when
+  performing code quality reviews, cleaning up code, or enforcing naming and
+  documentation standards. Triggers on code quality, code review, naming,
+  docstring, dead code, or comment cleanup requests.
 ---
 
 # SDLC Code Quality Review
@@ -51,6 +51,10 @@ Read the applicable quality instruction file:
 | Python | `.github/instructions/code-quality-py.instructions.md` |
 | TypeScript | `.github/instructions/code-quality-ts.instructions.md` |
 | React/TSX | `.github/instructions/code-quality-tsx.instructions.md` |
+| Java | `.github/instructions/code-quality-java.instructions.md` |
+| C# | `.github/instructions/code-quality-csharp.instructions.md` |
+| Go | `.github/instructions/code-quality-go.instructions.md` |
+| Rust | `.github/instructions/code-quality-rust.instructions.md` |
 
 These files auto-apply when editing files of the matching type, but load them
 explicitly during quality reviews for the full checklist.
@@ -67,8 +71,11 @@ explicitly during quality reviews for the full checklist.
 ### Naming
 - [ ] Clear, intention-revealing names (no unexplained abbreviations)
 - [ ] Async methods suffixed with `Async` where idiomatic
-- [ ] Test files mirror source: `src/utils/foo.py` → `tests/unit/utils/test_foo.py`
-- [ ] Test classes use `TestPascalCase`, test methods use `test_snake_case`
+- [ ] Test files mirror source structure:
+  - Python: `src/utils/foo.py` → `tests/unit/utils/test_foo.py`
+  - Java: `src/main/java/.../Foo.java` → `src/test/java/.../FooTest.java`
+  - C#: `src/Project/Foo.cs` → `tests/Project.Tests/FooTests.cs`
+- [ ] Test classes use `TestPascalCase`, test methods use language-appropriate convention
 
 ### Comment cleanup — REMOVE these
 - Redundant inline comments that restate the code
@@ -84,8 +91,8 @@ explicitly during quality reviews for the full checklist.
 - Contract/protocol comments about external API behavior
 
 ### Dead code
-- [ ] No unused imports
-- [ ] No `pass` in `else` blocks holding deleted comments
+- [ ] No unused imports / unused usings
+- [ ] No `pass` in `else` blocks (Python), empty catch blocks (Java/C#)
 - [ ] No redundant assignments (`x = x`)
 - [ ] No duplicate imports (module-level AND inside function)
 
@@ -93,6 +100,10 @@ explicitly during quality reviews for the full checklist.
 - [ ] Python: proper type annotations on public functions
 - [ ] TypeScript: strict mode, no `any` unless justified
 - [ ] React: typed props interfaces, no inline type assertions
+- [ ] Java: no raw generic types, use `Optional<T>` for nullable returns
+- [ ] C#: nullable reference types enabled, `?` annotations on nullable members
+- [ ] Go: exported names PascalCase, error values always checked, `go vet` clean
+- [ ] Rust: no `unwrap()` in production, proper `Result<T,E>` propagation, `clippy` clean
 
 ### Error handling
 - [ ] Uses project's logging abstraction (not `print()`)
@@ -106,6 +117,10 @@ After editing each folder:
 - **Python:** `python -m py_compile <file>` on every edited file
 - **TypeScript:** `npx tsc --noEmit` to verify type correctness
 - **React:** `npx tsc --noEmit` + verify no ESLint errors
+- **Java:** `mvn compile -q` (Maven) or `gradle compileJava` (Gradle)
+- **C#:** `dotnet build --no-restore -q`
+- **Go:** `go build ./...` and `go vet ./...`
+- **Rust:** `cargo check` and `cargo clippy`
 
 ## Working process for quality passes
 
