@@ -88,14 +88,54 @@
 
  ### First use
 
- Open your project and invoke Harness — it auto-detects a new repo and bootstraps everything:
+ > [!CAUTION]
+ > **These two VS Code settings are REQUIRED before using Harness. Without them, initialization will fail and MCP servers will not be detected.**
+ >
+ > | # | Setting | Value | Why |
+ > |---|---------|-------|-----|
+ > | 1 | `chat.agent.defaultApproval` | **autopilot** | Without this, every tool call requires manual approval — the agent workflow breaks immediately. |
+ > | 2 | `github.copilot.chat.virtualTools.threshold` | **0** | Harness uses 7 MCP servers (~150+ tools). The default limit (128) hides excess tools, causing 3+ servers to show "⛔ No tools found" and **all downstream steps fail**. |
+ >
+ > **How to apply:**
+ > ```
+ > Settings (Ctrl+,) → search "defaultApproval"  → set to "autopilot"
+ > Settings (Ctrl+,) → search "virtualTools"      → set Threshold to 0
+ > ```
+ > After changing, **open a new chat session** (`Ctrl+L`) for the settings to take effect.
+
+ Open your project and invoke Harness — it auto-detects a fresh workspace and bootstraps everything:
 
  ```
- @Harness help me set up this project
+ @Harness initialize workspace
  ```
 
- Harness will ask for your project name and domain, then generate all workspace files
- (`copilot-instructions.md`, quality instructions, prompt files) customized for your project.
+ Harness will deploy MCP server config, quality instruction files, and SDLC prompt files.
+ Once the workspace is ready and MCP servers are started, Harness will ask for your project
+ details (name, domain, stack) and generate `copilot-instructions.md`.
+
+ > **💡 First-time setup note:** After Harness deploys `.vscode/mcp.json` and you start the
+ > MCP servers, **open a new chat session** (`Ctrl+L`) before telling Harness "ready".
+ > VS Code registers MCP tools when a chat session starts — servers started mid-session
+ > may not be visible until you start a fresh one.
+
+ #### MCP Servers — 7 tools deployed automatically
+
+ The workspace-init skill deploys `.vscode/mcp.json` with all 7 MCP servers.
+ Each server provides agents with live, external context:
+
+ | # | Server | Type | Purpose | Used by |
+ |---|--------|------|---------|---------|
+ | 1 | **GitHub MCP** | HTTP | Fetch patterns from reference repos, search code, read files | Implementer, Scaffolder, Analyst |
+ | 2 | **Awesome-Copilot** | Docker | Load OWASP Top 10, Bicep best practices, Python standards | Security Reviewer, Deployer, Implementer |
+ | 3 | **Azure MCP** | stdio | Validate Azure resources, manage subscriptions | Deployer, Azure Compliance Reviewer |
+ | 4 | **Azure DevOps MCP** | stdio | Access ADO wikis, pipelines, work items, repositories | QA Coordinator, Deployer |
+ | 5 | **Microsoft Learn MCP** | HTTP | Get AVM module docs, Azure service documentation | Deployer, Documenter |
+ | 6 | **Context7** | stdio | Load current framework docs (FastAPI, React, Pydantic, etc.) | Implementer, Analyst |
+ | 7 | **Playwright** | stdio | Browser automation for E2E testing | QA Coordinator |
+
+ > **All 7 servers are required.** After `.vscode/mcp.json` is deployed, open the file
+ > and click **"Start"** on each server. If any server shows "⛔ No tools found",
+ > check that `github.copilot.chat.virtualTools.threshold` is set to **0**.
 
  > **What you get instantly:** 18 agents (including 9 parallel QA reviewers), 12 domain skills,
  > and the full SDLC workflow — from requirements to release.
@@ -394,8 +434,10 @@
          GH["🐙 GitHub MCP"]
          AC["⭐ Awesome-Copilot"]
          AZ["☁️ Azure MCP"]
+         ADO["🔧 Azure DevOps MCP"]
          MD["📚 MS Learn MCP"]
          C7["📖 Context7"]
+         PW["🎭 Playwright"]
      end
 
      subgraph "Agents"
@@ -403,6 +445,7 @@
          Sec["Security Reviewer"]
          Deploy["Deployer"]
          Analyst2["Analyst"]
+         QA["QA Coordinator"]
      end
 
      Impl -->|"fetch your-cosmosdb-lib patterns"| GH
@@ -416,16 +459,22 @@
      Deploy -->|"load Bicep best practices"| AC
      Deploy -->|"validate Azure resources"| AZ
      Deploy -->|"get AVM module docs"| MD
+     Deploy -->|"read pipeline definitions"| ADO
 
      Analyst2 -->|"fetch template structures"| GH
      Analyst2 -->|"load planning prompts"| AC
      Analyst2 -->|"get framework docs"| C7
 
+     QA -->|"file bugs in ADO"| ADO
+     QA -->|"run E2E browser tests"| PW
+
      style GH fill:#333,color:#fff
      style AC fill:#E74C3C,color:#fff
      style AZ fill:#0078D4,color:#fff
+     style ADO fill:#0078D4,color:#fff
      style MD fill:#68217A,color:#fff
      style C7 fill:#16A085,color:#fff
+     style PW fill:#2EAD33,color:#fff
  ```
 
  ---
