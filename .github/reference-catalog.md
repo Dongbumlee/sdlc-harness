@@ -353,14 +353,17 @@ then add libraries from Section 1 as needed.
 
 Pick the cell that matches your language + application type:
 
-| Stack | Web API | Base App | AI Agent |
-|-------|---------|----------|----------|
-| **Python** | FastAPI + Uvicorn | Application_Base (UV) | Microsoft Agent Framework |
-| **Java** | Spring Boot | Spring CLI | Microsoft Agent Framework |
-| **C#** | ASP.NET Core Minimal API | .NET Worker Service | Microsoft Agent Framework |
-| **Go** | Gin / Echo / Chi | Cobra CLI | Microsoft Agent Framework (via REST) |
-| **TypeScript** | Express / NestJS | Node.js CLI | Microsoft Agent Framework |
-| **Rust** | Actix-web / Axum | Clap CLI | Microsoft Agent Framework (via REST) |
+| Stack | Web App (Frontend) | Web API (Backend) | Base App | AI Agent |
+|-------|-------------------|-------------------|----------|----------|
+| **TypeScript** | React / Next.js / Angular | Express / NestJS | Node.js CLI | Microsoft Agent Framework |
+| **Python** | Streamlit / Gradio | FastAPI + Uvicorn | Application_Base (UV) | Microsoft Agent Framework |
+| **Java** | Vaadin / Thymeleaf | Spring Boot | Spring CLI | Microsoft Agent Framework |
+| **C#** | Blazor / Razor Pages | ASP.NET Core Minimal API | .NET Worker Service | Microsoft Agent Framework |
+| **Go** | Templ + HTMX | Gin / Echo / Chi | Cobra CLI | Microsoft Agent Framework (via REST) |
+| **Rust** | Leptos / Yew / Dioxus | Actix-web / Axum | Clap CLI | Microsoft Agent Framework (via REST) |
+
+> **Web App column:** TypeScript (React/Next.js/Angular) is the most common enterprise choice for SPAs.
+> Other languages offer SSR or hybrid options for teams preferring a single-language stack.
 
 > **AI Agent column:** Microsoft Agent Framework is the primary choice for all languages.
 > For Go and Rust, use the REST API or Python/C#/TS SDK via sidecar.
@@ -408,7 +411,47 @@ Pick the cell that matches your language + application type:
 
 ---
 
-### 2.2 Web API Template
+### 2.2 Web App Template (Frontend / Full-Stack)
+
+|                     |                                                                 |
+| ------------------- | --------------------------------------------------------------- |
+| **Repository**      | *Register your team's web app template here*                    |
+| **Type**            | Single-page application (SPA), server-rendered, or full-stack   |
+
+**What it provides:**
+
+- Frontend framework with component architecture and routing
+- State management (client-side or server-side)
+- API client integration (REST or GraphQL) with authentication
+- Build tooling, bundling, and dev server with hot reload
+- Accessibility (WCAG 2.1 AA) and responsive layout scaffolding
+- Unit + integration test setup (component testing)
+- CI/CD-ready build output (static assets or container)
+
+**Typical framework by language:**
+
+| Language | SPA Framework | SSR / Hybrid | Build tool | Test framework |
+|----------|--------------|-------------|------------|----------------|
+| TypeScript | React + Vite / Angular | Next.js / Nuxt | Vite / Webpack | Vitest + Testing Library |
+| Python | — | Streamlit / Gradio | pip | pytest |
+| Java | — | Vaadin / Thymeleaf | Maven / Gradle | JUnit + Selenium |
+| C# | Blazor WebAssembly | Blazor Server / Razor Pages | dotnet CLI | bUnit / Playwright |
+| Go | — | Templ + HTMX | go build | go test + Playwright |
+| Rust | Leptos / Yew / Dioxus | Leptos SSR | Trunk / cargo-leptos | wasm-bindgen-test |
+
+**When to use:** Any user-facing web application — dashboards, portals, admin UIs, chat interfaces.
+
+**Copilot behavior:**
+
+- Scaffold from the team's registered web app template for "create a new UI/dashboard/portal" requests.
+- TypeScript (React/Next.js) is the default recommendation for SPAs unless the team specifies otherwise.
+- Follow component-based architecture: one component per file, co-located styles and tests.
+- Use the project's API client pattern for backend calls — do not use raw `fetch()` without abstraction.
+- Ensure all interactive elements meet WCAG 2.1 AA accessibility standards.
+
+---
+
+### 2.3 Web API Template
 
 |                     |                                                                 |
 | ------------------- | --------------------------------------------------------------- |
@@ -446,7 +489,7 @@ Everything from the Base Application Template, plus:
 
 ---
 
-### 2.3 AI Agent Template
+### 2.4 AI Agent Template
 
 |                     |                                                                 |
 | ------------------- | --------------------------------------------------------------- |
