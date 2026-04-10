@@ -95,7 +95,8 @@ After deploying (or confirming it exists), tell the user:
 Ask the user for:
 1. **Project name** (required) — e.g., "SmartDoc Analyzer"
 2. **Business domain** (required) — e.g., "Intelligent document processing"
-3. **Tech stack** (optional, default: "Python 3.12, FastAPI, React 18, TypeScript 5, Vite")
+3. **Tech stack** (required) — e.g., "Python, FastAPI, React, TypeScript"
+4. **Primary language(s)** (derived from tech stack) — used to filter instruction files and reference catalog
 
 ### Step 5: Deploy copilot-instructions.md
 
@@ -103,10 +104,23 @@ Ask the user for:
 2. Replace these placeholders:
    - `{{PROJECT_NAME}}` → user's project name
    - `{{BUSINESS_DOMAIN}}` → user's business domain
-   - `{{TECH_STACK}}` → user's tech stack (or default)
+   - `{{TECH_STACK}}` → user's tech stack
 3. Write the result to `.github/copilot-instructions.md`.
 
-### Step 6: Deploy instruction files
+### Step 6: Deploy filtered reference catalog
+
+1. Read `.github/reference-catalog.md` from the skill assets.
+2. Based on the **primary language(s)** from Step 4, generate a **project-specific** version:
+   - Keep all language-agnostic sections (intro, how to use, adding entries).
+   - In SDK tables (§1.1–1.4), **highlight the project's language rows** and keep others as reference.
+   - In the Template Matrix, **bold the row(s)** matching the project's language.
+   - In detailed templates (§2.1–2.4), include only the language-specific entries that apply.
+3. Write the filtered catalog to `.github/reference-catalog.md`.
+
+> **Why filter?** A Java team doesn't need to read through Python/Rust/Go details on every lookup.
+> The full catalog stays in the skill assets; the deployed version is focused on the project's stack.
+
+### Step 7: Deploy instruction files
 
 Copy each file from `assets/instructions/` to `.github/instructions/`:
 
@@ -135,7 +149,7 @@ Only copy instruction files matching the project's language stack:
 - Rust project → copy `code-quality-rust` + `test-quality-rust`
 - Full stack → copy all applicable files
 
-### Step 7: Deploy prompt files
+### Step 8: Deploy prompt files
 
 Copy each file from `assets/prompts/` to `.github/prompts/`:
 
@@ -146,7 +160,7 @@ Copy each file from `assets/prompts/` to `.github/prompts/`:
 - [repo-documentation.prompt.md](./assets/prompts/repo-documentation.prompt.md)
 - [qa-rai-release.prompt.md](./assets/prompts/qa-rai-release.prompt.md)
 
-### Step 8: Report
+### Step 9: Report
 
 ```
 ## ✅ SDLC Workspace Initialized

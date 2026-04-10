@@ -244,15 +244,16 @@ var credential = new DefaultAzureCredential();
 
 ---
 
-### 1.4 AI & Agents — Microsoft Agent Framework (Primary) + Azure OpenAI SDK (Fallback)
+### 1.4 AI & Agents — Framework Selection by Language
 
-> **Guidance:** Use **Microsoft Agent Framework** as the primary choice for building AI agents
-> and LLM-powered applications. Fall back to **Azure OpenAI SDK** only for direct model access
-> (e.g., simple chat completions, embeddings) where the Agent Framework is overkill.
-> Use Semantic Kernel or LangChain **only** when there are specific requirements that the
-> Agent Framework does not cover (e.g., existing SK/LC codebase, specific orchestration patterns).
+> **Selection priority:**
+>
+> 1. **Microsoft Agent Framework** — primary where native SDK exists (Python, C#)
+> 2. **LangChain ecosystem** — recommended for languages without MS Agent Framework SDK
+> 3. **Semantic Kernel** — alternative for C#/Python/TypeScript if project already uses it
+> 4. **Azure OpenAI SDK** — fallback for simple, direct model calls only
 
-#### Primary: Microsoft Agent Framework
+#### Tier 1: Microsoft Agent Framework (Python, C# — 1.0 Stable)
 
 | Language | Library | Package | Install |
 |----------|---------|---------|---------|
@@ -271,7 +272,22 @@ var credential = new DefaultAzureCredential();
 
 **When to use:** Any project that builds AI agents, chatbots, multi-agent workflows, or RAG applications.
 
-#### Fallback: Azure OpenAI SDK (Direct Model Access)
+
+#### Tier 2: LangChain Ecosystem (Java, TypeScript, Go, Rust)
+
+For languages where MS Agent Framework has no native SDK:
+
+| Language | Library | Package | Install |
+|----------|---------|---------|---------|
+| Java | LangChain4j | `dev.langchain4j:langchain4j` | Maven/Gradle |
+| TypeScript | LangChain.js | `langchain` | `npm install langchain` |
+| Go | LangChainGo | `github.com/tmc/langchaingo` | `go get` |
+| Rust | LangChainRust | `langchain-rust` | `cargo add langchain-rust` |
+
+**What it provides:** LLM orchestration, RAG pipelines, agent tooling, vector store integration,
+and multi-provider support (Azure OpenAI, OpenAI, Anthropic, local models).
+
+#### Tier 3: Azure OpenAI SDK (Direct Model Access — All Languages)
 
 | Language | Library | Package | Install |
 |----------|---------|---------|---------|
@@ -286,10 +302,9 @@ where agent orchestration is not needed.
 
 **Copilot behavior:**
 
-1. **Default to Microsoft Agent Framework** for any AI/agent task.
+1. **Check the language first** — use MS Agent Framework for Python/C#, LangChain for Java/Go/Rust/TS.
 2. Fall back to Azure OpenAI SDK only for simple, single-model interactions.
-3. Do NOT introduce Semantic Kernel or LangChain unless the user explicitly requests it
-   or the project already uses it.
+3. Do NOT mix frameworks in the same project unless explicitly justified.
 4. For Azure-hosted models, always use `DefaultAzureCredential` — not API keys.
 5. Set `api_version` explicitly; do not rely on defaults.
 6. For RAG patterns, combine with Azure AI Search — do not build custom vector stores.
@@ -355,19 +370,23 @@ Pick the cell that matches your language + application type:
 
 | Stack | Web App (Frontend) | Web API (Backend) | Base App | AI Agent |
 |-------|-------------------|-------------------|----------|----------|
-| **TypeScript** | React / Next.js / Angular | Express / NestJS | Node.js CLI | Microsoft Agent Framework |
-| **Python** | Streamlit / Gradio | FastAPI + Uvicorn | Application_Base (UV) | Microsoft Agent Framework |
-| **Java** | Vaadin / Thymeleaf | Spring Boot | Spring CLI | Microsoft Agent Framework |
-| **C#** | Blazor / Razor Pages | ASP.NET Core Minimal API | .NET Worker Service | Microsoft Agent Framework |
-| **Go** | Templ + HTMX | Gin / Echo / Chi | Cobra CLI | Microsoft Agent Framework (via REST) |
-| **Rust** | Leptos / Yew / Dioxus | Actix-web / Axum | Clap CLI | Microsoft Agent Framework (via REST) |
+| **Python** | Streamlit / Gradio | FastAPI + Uvicorn | Application_Base (UV) | MS Agent Framework (1.0 ✅) |
+| **C#** | Blazor / Razor Pages | ASP.NET Core Minimal API | .NET Worker Service | MS Agent Framework (1.0 ✅) |
+| **Java** | Vaadin / Thymeleaf | Spring Boot | Spring CLI | LangChain4j ✅ |
+| **TypeScript** | React / Next.js / Angular | Express / NestJS | Node.js CLI | LangChain.js ✅ / Semantic Kernel |
+| **Go** | Templ + HTMX | Gin / Echo / Chi | Cobra CLI | LangChainGo ✅ |
+| **Rust** | Leptos / Yew / Dioxus | Actix-web / Axum | Clap CLI | LangChainRust ✅ |
+
+> **AI Agent column — selection priority:**
+>
+> 1. **Microsoft Agent Framework** — primary choice where SDK is available (Python, C# — both 1.0 stable)
+> 2. **LangChain ecosystem** — recommended for Java (LangChain4j), Go (LangChainGo), Rust (LangChainRust),
+>    and TypeScript (LangChain.js) where MS Agent Framework has no native SDK
+> 3. **Semantic Kernel** — alternative for C# and TypeScript/Python if the project already uses it
+> 4. **Azure OpenAI SDK direct** — fallback for simple, single-model interactions only
 
 > **Web App column:** TypeScript (React/Next.js/Angular) is the most common enterprise choice for SPAs.
 > Other languages offer SSR or hybrid options for teams preferring a single-language stack.
-
-> **AI Agent column:** Microsoft Agent Framework is the primary choice for all languages.
-> For Go and Rust, use the REST API or Python/C#/TS SDK via sidecar.
-> Use Semantic Kernel or LangChain only when there are specific requirements.
 
 > **Note:** The detailed templates below describe **patterns**, not specific Python repos.
 > Teams should register their own language-specific template repos following this format.
@@ -494,33 +513,35 @@ Everything from the Base Application Template, plus:
 |                     |                                                                 |
 | ------------------- | --------------------------------------------------------------- |
 | **Repository**      | *Register your team's agent template here*                      |
-| **Type**            | AI agent application (Microsoft Agent Framework)                |
+| **Type**            | AI agent application                                            |
 
 **What it provides:**
 
-- Microsoft Agent Framework integration with Azure AI Foundry
+- LLM-powered agent orchestration with tool/function calling
 - MCP (Model Context Protocol) tool lifecycle management
 - Middleware system for debugging, logging, and observability
 - Multi-agent orchestration patterns (group chat, handoff)
-- Sample agents demonstrating common patterns
+- RAG pipeline integration with Azure AI Search
 
-**Typical structure by language:**
+**Recommended framework by language (see §1.4 for details):**
 
-| Language | Agent SDK | MCP support | Multi-agent |
-|----------|-----------|-------------|-------------|
-| Python | azure-ai-projects | Native | GroupChat orchestrator |
-| C# | Azure.AI.Projects | Native | AgentGroupChat |
-| TypeScript | @azure/ai-projects | Native | Custom orchestration |
-| Java | azure-ai-projects | Native | Custom orchestration |
-| Go / Rust | REST API | Via HTTP | Custom orchestration |
+| Language | Primary Framework | Package | Multi-agent | MCP support |
+|----------|------------------|---------|-------------|-------------|
+| Python | MS Agent Framework | `azure-ai-projects` | GroupChat orchestrator | Native |
+| C# | MS Agent Framework | `Azure.AI.Projects` | AgentGroupChat | Native |
+| Java | LangChain4j | `dev.langchain4j:langchain4j` | Custom orchestration | Via tools |
+| TypeScript | LangChain.js | `langchain` | AgentExecutor / custom | Via tools |
+| Go | LangChainGo | `github.com/tmc/langchaingo` | Custom orchestration | Via HTTP |
+| Rust | LangChainRust | `langchain-rust` | Custom orchestration | Via HTTP |
 
 **When to use:** AI agent applications, chatbots, RAG systems, or multi-agent workflows.
 
 **Copilot behavior:**
 
 - Scaffold from the team's registered agent template for "create an AI agent/chatbot/assistant" requests.
-- Use Microsoft Agent Framework as the primary approach (see §1.4).
-- Use MCP context managers for tool lifecycle — never manage tool scopes manually.
+- **Check the project language first** to pick the right framework (see table above and §1.4).
+- For Python/C#: use MS Agent Framework with MCP context managers — never manage tool scopes manually.
+- For Java/TS/Go/Rust: use the LangChain ecosystem with the appropriate language port.
 - Apply middleware for debugging/logging. Use multi-agent orchestration for complex workflows.
 
 ---
