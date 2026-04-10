@@ -1,6 +1,11 @@
  # Repository Custom Instructions for GitHub Copilot
 
- You are GitHub Copilot assisting engineers working on the `SmartDoc Analyzer` repository.
+ > **📋 TEMPLATE:** This file ships with the SDLC harness as a generic default.
+ > Replace `{{PLACEHOLDER}}` tokens with your project's actual values.
+ > See `assets/copilot-instructions.template.md` in the workspace-init for the
+ > token-based source that generates this file.
+
+ You are GitHub Copilot assisting engineers working on the `{{PROJECT_NAME}}` repository.
 
  Your primary goals are:
  1. Reduce implementation time.
@@ -13,8 +18,9 @@
 
  ## 1. Project context
 
- - Domain: `Intelligent document processing and analysis`
- - Tech stack: `Python 3.12, FastAPI, React 18, TypeScript 5, Vite`
+ - Project: `{{PROJECT_NAME}}`
+ - Domain: `{{BUSINESS_DOMAIN}}`  <!-- e.g., Intelligent document processing -->
+ - Tech stack: `{{TECH_STACK}}`  <!-- e.g., Python 3.12 / FastAPI, Java 21 / Spring Boot, C# / .NET 8, Go 1.22 -->
  - Cloud: Azure
  - Primary data stores and services:
    - Azure Cosmos DB
@@ -27,7 +33,7 @@
 
  ## 2. Architecture & layering
 
- **Architecture style**: `Layered architecture (API → Application → Domain ← Infrastructure) with React SPA frontend`
+ **Architecture style**: `{{ARCH_STYLE}}`
  (e.g., layered / clean architecture, hexagonal, microservices, monolith with modular boundaries)
 
  **Layers (example – adjust to repo):**
@@ -59,10 +65,10 @@
 
  - **Naming**
    - Use clear, intention-revealing names.
-   - Async methods: suffix with `Async` where idiomatic.
+   - Async methods: suffix with `Async` where idiomatic (C#, TypeScript). Python uses `async def` convention.
    - Avoid unexplained abbreviations.
  - **Error handling & logging**
-   - Use `<LOGGER_ABSTRACTION>` for logging, not `print()` or ad-hoc logging.
+   - Use the project's standard logging abstraction, not raw `print()`, `console.log()`, or `System.out`.
    - Include correlation IDs or request IDs from the existing context when useful.
  - **Security**
    - Never log secrets or credentials.
@@ -71,44 +77,19 @@
 
  ### 3.2 Azure resource usage
 
- When generating or modifying code that interacts with Azure resources, follow these rules.
- The full details and examples are in `.github/reference-catalog.md`.
+ When generating or modifying code that interacts with Azure resources, follow these rules:
 
- #### Cosmos DB
+ 1. **Consult `.github/reference-catalog.md`** for the approved SDK or wrapper library
+    for your language and Azure service. The catalog lists approved libraries for each
+    supported language (Python, Java, C#, Go, TypeScript, etc.).
+ 2. **Use the approved library** — do NOT create raw Azure SDK clients (e.g., raw
+    `CosmosClient`, `BlobServiceClient`, `ServiceBusClient`) when an approved wrapper exists.
+ 3. **Follow the pattern documented in the catalog** (e.g., Repository Pattern for Cosmos DB,
+    context-manager/disposable pattern for Storage).
+ 4. **Install using the project's package manager** (e.g., `uv add` / `pip install` for Python,
+    `dotnet add package` for C#, `mvn dependency:add` for Java, `go get` for Go, `npm install` for TypeScript).
 
- - **Use this library:** `your-cosmosdb-lib` (PyPI) from
-   [your-org/your-cosmosdb-library](https://github.com/your-org/your-cosmosdb-library).
- - **Pattern:** Repository Pattern with `RepositoryBase[TEntity, TKey]` and Pydantic entities via
-   `RootEntityBase["EntityName", KeyType]`.
- - **Install:** `uv add your-cosmosdb-lib  # replace with your library`
- - **Copilot behavior:**
-   - When asked to add Cosmos DB access, use `your-cosmosdb-lib` and follow the Repository Pattern.
-   - Define entities extending `RootEntityBase["EntityName", KeyType]` (type variables are mandatory).
-   - Define repositories extending `RepositoryBase[Entity, KeyType]`.
-   - Do NOT create raw `CosmosClient` instances; use the library's repository abstractions.
-
- #### Azure Blob Storage & Queue
-
- - **Use this library:** `your-storage-lib` (PyPI) from
-   [your-org/your-storage-library](https://github.com/your-org/your-storage-library).
- - **Pattern:** `AsyncStorageBlobHelper` / `AsyncStorageQueueHelper` with `async with` context manager.
- - **Install:** `uv add your-storage-lib  # replace with your library`
- - **Copilot behavior:**
-   - When asked to add blob or queue operations, use `your-storage-lib`.
-   - Always use `async with` context manager for proper resource cleanup.
-   - Do NOT create raw `BlobServiceClient` or `QueueServiceClient` instances.
-
- #### Other Azure services (examples)
-
- Adjust to your repo:
-
- - Messaging:
-   - Service Bus: `azure-servicebus`
-   - Event Hubs: `azure-eventhub`
- - Secrets:
-   - Key Vault: `azure-keyvault-secrets` with `azure-identity`.
-
- If the user asks to use a different SDK than the ones listed above, warn them and ask whether the deviation is intentional.
+ If the user asks to use a different SDK than what the catalog prescribes, warn them and ask whether the deviation is intentional.
 
  ---
 
@@ -117,38 +98,36 @@
  This repository maintains a **Reference Catalog** at `.github/reference-catalog.md`.
  That catalog is the authoritative registry of all reusable libraries and scaffolding templates.
 
- ### 4.1 Reusable libraries (install via PyPI)
+ ### 4.1 Reusable libraries
 
- | Library | PyPI Package | Use for |
- |---------|-------------|--------|
- | [python_cosmosdb_helper](https://github.com/your-org/your-cosmosdb-library) | `your-cosmosdb-lib` | Cosmos DB SQL + MongoDB with Repository Pattern |
- | [python_storageaccount_helper](https://github.com/your-org/your-storage-library) | `your-storage-lib` | Azure Blob Storage + Queue operations |
+ Consult `.github/reference-catalog.md` for the full multi-language catalog of approved
+ libraries, their package coordinates, and API usage patterns. The catalog covers:
+ - Data access (Cosmos DB, Storage, SQL)
+ - Messaging (Service Bus, Event Hubs)
+ - AI and search services
+ - Cross-cutting concerns (logging, configuration, health checks)
 
  **Copilot behavior:**
- - When the user needs Azure data access, check this table and use the listed library.
- - Do NOT introduce raw Azure SDK calls when a library above covers the use case.
- - See `.github/reference-catalog.md` for detailed API patterns and examples.
+ - When the user needs Azure data access, check the catalog and use the listed library for the project's language.
+ - Do NOT introduce raw Azure SDK calls when an approved library covers the use case.
 
  ### 4.2 Scaffolding templates (clone to start a new project)
 
- | Template | Use for |
- |----------|--------|
- | [python_application_template](https://github.com/your-org/your-app-template) | Base app (console, worker, pipeline, CLI) with AppContext + DI + Azure App Config |
- | [python_api_application_template](https://github.com/your-org/your-api-template) | FastAPI service with advanced DI, routers, health probes |
- | [python_agent_framework_dev_template](https://github.com/your-org/your-agent-template) | AI agent apps with Azure AI Foundry, MCP tools, multi-agent workflows |
+ Consult `.github/reference-catalog.md` for the full list of scaffolding templates.
+ Templates are organized by language and project type. When the user asks to
+ "create a new service/API/app/agent", use this decision tree:
+
+ - **General app / worker / CLI** → use the base application template for the project's language.
+ - **REST API / web service** → use the API template for the project's language.
+ - **AI agent / chatbot / MCP** → use the agent framework template for the project's language.
 
  **Copilot behavior:**
 
- - When the user asks to "create a new service/API/app/agent", pick the matching template:
-   - General app / worker / CLI -> `python_application_template`
-   - REST API / web service -> `python_api_application_template`
-   - AI agent / chatbot / MCP -> `python_agent_framework_dev_template`
  - **MANDATORY: All projects MUST be placed under `src/<ProjectName><Layer>/`.**
    The `src/` directory at the repo root is a PROJECT CONTAINER — never put source code
-   files (`main.py`, `models/`, `routers/`, `pyproject.toml`) directly at the repo root or
-   directly inside `src/`. Always create a named project folder first:
-   - WRONG: `root/app/main.py` or `root/src/main.py`
-   - CORRECT: `root/src/CustomerFeedbackAPI/app/main.py`
+   files directly at the repo root or directly inside `src/`. Always create a named project folder first:
+   - WRONG: `root/app/main.py` or `root/src/main.py` or `root/src/Program.cs`
+   - CORRECT: `root/src/CustomerFeedbackAPI/app/main.py` or `root/src/CustomerFeedbackAPI/src/Program.cs`
  - Follow the template's folder layout INSIDE the project folder, not at the repo root.
  - See `.github/reference-catalog.md` for template details and project structure reference.
  - See `.github/plugin/skills/sdlc-project-scaffolding/SKILL.md` for the full scaffolding skill.
@@ -172,8 +151,12 @@
      - Python: pytest with pytest-asyncio for async tests (see `.github/instructions/test-quality.instructions.md`)
      - TypeScript: Vitest (see `.github/instructions/test-quality-ts.instructions.md`)
      - React components: Vitest + React Testing Library (see `.github/instructions/test-quality-tsx.instructions.md`)
+     - Java: JUnit 5 + Mockito
+     - C#: xUnit / NUnit + Moq / NSubstitute
+     - Go: standard `testing` package + testify
+     - Rust: built-in `#[cfg(test)]` + mockall
    - Follow existing naming and folder structure (e.g., `tests/unit/`,
-     or co-located `*.test.ts` / `*.test.tsx` for TypeScript/React).
+     co-located `*.test.ts` / `*.test.tsx`, or `*_test.go`).
    - Use clear Arrange–Act–Assert structure.
 
  - **Integration tests**
@@ -263,33 +246,32 @@
 
  ## 8. GitHub MCP authentication & reference repo access
 
- Several agents and workflows use **GitHub MCP** (`mcp_github_get_file_contents`, `mcp_github_search_code`, etc.)
- to fetch live patterns from private reference repositories in the `your-org` organization:
+ <!-- TEMPLATE: Replace {{ORG_NAME}} with your GitHub organization name -->
 
- - `your-org/your-cosmosdb-library` (your-cosmosdb-lib)
- - `your-org/your-storage-library` (your-storage-lib)
- - `your-org/your-app-template`
- - `your-org/your-api-template`
- - `your-org/your-agent-template`
+ Several agents and workflows use **GitHub MCP** (`mcp_github_get_file_contents`, `mcp_github_search_code`, etc.)
+ to fetch live patterns from private reference repositories in the `{{ORG_NAME}}` organization.
+
+ The specific repos are listed in `.github/reference-catalog.md`. They typically include
+ approved SDK wrapper libraries and scaffolding templates.
 
  **Authentication is required.** These repos are not publicly accessible. The GitHub MCP server
- authenticates via the user's GitHub Copilot session, which must have access to the `your-org` org.
+ authenticates via the user's GitHub Copilot session, which must have access to the `{{ORG_NAME}}` org.
 
  **Rules for Copilot and all agents:**
 
  1. **Verify access before relying on fetched content.** Before any workflow that depends on
     reference repo content, perform a lightweight probe call (e.g., fetch `README.md` from one
-    of the repos above). If the call fails or returns an auth error:
+    of the catalog repos). If the call fails or returns an auth error:
     - **Stop** the current workflow step.
-    - **Inform the user** that GitHub MCP authentication is required to access `your-org` repos.
+    - **Inform the user** that GitHub MCP authentication is required to access `{{ORG_NAME}}` repos.
     - **Provide remediation steps:**
-      1. Ensure the GitHub Copilot extension is signed in with an account that has access to the `your-org` organization.
+      1. Ensure the GitHub Copilot extension is signed in with an account that has access to the `{{ORG_NAME}}` organization.
       2. If using GitHub Copilot Chat, confirm the GitHub MCP server is listed and enabled in `.vscode/mcp.json`.
-      3. Try running a manual GitHub MCP call (e.g., ask Copilot to "fetch README.md from your-org/your-cosmosdb-library") to verify access.
+      3. Try running a manual GitHub MCP call to verify access.
     - **Do NOT proceed with stale or invented patterns** — the reference repos are the source of truth.
 
- 2. **No degraded mode — `your-org` access is mandatory.** Every engineer using this
-    template MUST have access to the `your-org` GitHub organization. If authentication
+ 2. **No degraded mode — `{{ORG_NAME}}` access is mandatory.** Every engineer using this
+    template MUST have access to the `{{ORG_NAME}}` GitHub organization. If authentication
     fails, STOP the workflow and require the user to sign in with a valid account.
     Do NOT fall back to local patterns — the reference repos are the authoritative source
     for project structure, SDK patterns, and template layouts.

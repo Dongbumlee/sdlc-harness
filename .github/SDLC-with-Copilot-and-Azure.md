@@ -1,96 +1,108 @@
+<!-- TEMPLATE: Customize this SDLC document for your organization. Replace placeholder
+     references (e.g., approved SDK names, template repos) with your own. See comments
+     marked "CUSTOMIZE" for sections that typically need tailoring. -->
+
 # Software Development Lifecycle (SDLC) with GitHub Copilot, Azure Standards, and Reference Repos
 
- ## 0. Scope and Preconditions
+## 0. Scope and Preconditions
 
- This SDLC applies to all engineering work in this project, from initial requirements through release to GitHub. It assumes:
+This SDLC applies to all engineering work in this project, from initial requirements through release to GitHub.
+It is **language-agnostic** — the same phases and gates apply whether the project uses Python, TypeScript, Java,
+C#, Go, Rust, or any other supported language. It assumes:
 
- - Engineers use **VS Code** with **GitHub Copilot** (Chat + coding agents).
- - **Copilot CLI** is available for terminal-based workflows.
- - The repository defines:
-   - A **Copilot instructions file**: `.github/copilot-instructions.md`.
-   - **Language-specific quality instruction files** in `.github/instructions/` (auto-applied by file type):
-     - `.github/instructions/code-quality-py.instructions.md` — Python code quality (`**.py`)
-     - `.github/instructions/code-quality-ts.instructions.md` — TypeScript code quality (`**/*.ts`)
-     - `.github/instructions/code-quality-tsx.instructions.md` — React component quality (`**/*.tsx`)
-     - `.github/instructions/test-quality.instructions.md` — Python test quality (`tests/**`)
-     - `.github/instructions/test-quality-ts.instructions.md` — TypeScript test quality (`**/*.test.ts`)
-     - `.github/instructions/test-quality-tsx.instructions.md` — React test quality (`**/*.test.tsx`)
-   - **Prompt files** in `.github/prompts/` (invoked manually per phase):
-     - `.github/prompts/requirement-and-design.prompt.md` — Phase 1–2
-     - `.github/prompts/repo-structure-and-cicd.prompt.md` — Phase 3
-     - `.github/prompts/deployment.prompt.md` — Phase 3 + 8 (Bicep/AVM/azd)
-     - `.github/prompts/implementation-and-tests.prompt.md` — Phase 4
-     - `.github/prompts/repo-documentation.prompt.md` — Phase 5
-     - `.github/prompts/qa-rai-release.prompt.md` — Phase 6–8
- - CI/CD is implemented in **Azure DevOps (ADO)** or **GitHub Actions**, and code is published to **GitHub**.
-
- ---
-
- ## 1. Global Technology and Reference Rules
-
- These rules apply across all phases. Copilot MUST follow them unless the team explicitly agrees to deviate.
-
- ### 1.1 Azure library standards
-
- **Cosmos DB**
-
- - Use **`your-cosmosdb-lib`** (PyPI) for all Cosmos DB access (SQL API and MongoDB API).
-   - Install: `uv add your-cosmosdb-lib  # replace with your library`
-   - Source: [your-org/your-cosmosdb-library](https://github.com/your-org/your-cosmosdb-library)
- - Pattern: Repository Pattern with `RepositoryBase[TEntity, TKey]` and Pydantic entities via
-   `RootEntityBase["EntityName", KeyType]`.
- - Do **NOT** use raw `azure-cosmos` SDK or `pymongo` directly when `your-cosmosdb-lib` covers the use case.
- - Namespace: `from your_org.cosmosdb.sql import RootEntityBase, RepositoryBase`
-
- **Azure Blob Storage & Queue**
-
- - Use **`your-storage-lib`** (PyPI) for all blob and queue operations.
-   - Install: `uv add your-storage-lib  # replace with your library`
-   - Source: [your-org/your-storage-library](https://github.com/your-org/your-storage-library)
- - Pattern: `AsyncStorageBlobHelper` / `AsyncStorageQueueHelper` with `async with` context manager.
- - Do **NOT** use raw `azure-storage-blob` or `azure-storage-queue` SDK directly.
- - Namespace: `from your_org.storage.blob import AsyncStorageBlobHelper`
-
- **Other Azure services** (examples, tailor as needed):
-
- - Service Bus: `azure-servicebus`
- - Event Hubs: `azure-eventhub`
- - Key Vault: `azure-keyvault-secrets` / `azure-identity`
- - App Configuration: `azure-appconfiguration` (used by scaffolding templates)
-
- **Rule:** New code MUST use the `your-cosmosdb-lib` and `your-storage-lib` libraries and their patterns rather than
- raw Azure SDK clients. See `.github/reference-catalog.md` for detailed API examples.
+- Engineers use **VS Code** with **GitHub Copilot** (Chat + coding agents).
+- **Copilot CLI** is available for terminal-based workflows.
+- The repository defines:
+  - A **Copilot instructions file**: `.github/copilot-instructions.md`.
+  - **Language-specific quality instruction files** in `.github/instructions/` (auto-applied by file type).
+    Add or remove entries to match the languages used in your repo:
+    - Python: `code-quality-py.instructions.md` (`**/*.py`), `test-quality.instructions.md` (`tests/**`)
+    - TypeScript: `code-quality-ts.instructions.md` (`**/*.ts`), `test-quality-ts.instructions.md` (`**/*.test.ts`)
+    - React/TSX: `code-quality-tsx.instructions.md` (`**/*.tsx`), `test-quality-tsx.instructions.md` (`**/*.test.tsx`)
+    - _Other languages_: create a `code-quality-<lang>.instructions.md` following the same pattern.
+  - **Prompt files** in `.github/prompts/` (invoked manually per phase):
+    - `.github/prompts/requirement-and-design.prompt.md` — Phase 1–2
+    - `.github/prompts/repo-structure-and-cicd.prompt.md` — Phase 3
+    - `.github/prompts/deployment.prompt.md` — Phase 3 + 8 (Bicep/AVM/azd)
+    - `.github/prompts/implementation-and-tests.prompt.md` — Phase 4
+    - `.github/prompts/repo-documentation.prompt.md` — Phase 5
+    - `.github/prompts/qa-rai-release.prompt.md` — Phase 6–8
+- CI/CD is implemented in **Azure DevOps (ADO)** or **GitHub Actions**, and code is published to **GitHub**.
 
  ---
 
- ### 1.2 Reference implementation and scaffolding sources
+## 1. Global Technology and Reference Rules
 
- The team maintains a **Reference Catalog** at `.github/reference-catalog.md`.
- That catalog is the authoritative registry of all reusable libraries and scaffolding templates.
+These rules apply across all phases. Copilot MUST follow them unless the team explicitly agrees to deviate.
 
- **Reusable libraries (install via PyPI)**
+### 1.1 Azure library standards
 
- | Library                                                                                         | PyPI Package   | Use for                                         |
- | ----------------------------------------------------------------------------------------------- | -------------- | ----------------------------------------------- |
- | [python_cosmosdb_helper](https://github.com/your-org/your-cosmosdb-library)             | `your-cosmosdb-lib` | Cosmos DB SQL + MongoDB with Repository Pattern |
- | [python_storageaccount_helper](https://github.com/your-org/your-storage-library) | `your-storage-lib`  | Azure Blob Storage + Queue operations           |
+<!-- CUSTOMIZE: Register your organization's approved SDK wrappers in reference-catalog.md
+     and update the examples below. -->
 
- **Scaffolding templates (clone to start a new project)**
+**Cosmos DB**
 
- | Template                                                                                                      | Use for                                                                           |
- | ------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
- | [python_application_template](https://github.com/your-org/your-app-template)                 | Base app (console, worker, pipeline, CLI) with AppContext + DI + Azure App Config |
- | [python_api_application_template](https://github.com/your-org/your-api-template)         | FastAPI service with advanced DI, routers, health probes                          |
- | [python_agent_framework_dev_template](https://github.com/your-org/your-agent-template) | AI agent apps with Azure AI Foundry, MCP tools, multi-agent workflows             |
+- Use the **approved Cosmos DB SDK wrapper/library** for your language (see `.github/reference-catalog.md`).
+- Install via your language's package manager (e.g., `pip`, `npm`, `dotnet add`, `go get`, `cargo add`).
+- Follow the **Repository Pattern** documented in the reference catalog (entities, partition keys, queries).
+- Do **NOT** use raw Azure Cosmos SDKs directly when an approved wrapper exists for your language.
 
- **Internal patterns in this repo**
+**Azure Blob Storage & Queue**
 
- When adding similar functionality, look at existing code first and follow the same patterns.
- If the repo has existing code, prefer extending those patterns over the templates above.
+- Use the **approved Storage SDK wrapper/library** for your language (see `.github/reference-catalog.md`).
+- Follow the patterns documented in the reference catalog (helpers, context managers / disposables).
+- Do **NOT** use raw Azure Storage SDKs directly when an approved wrapper exists for your language.
 
- **Rule:**
- If you need a new service or module, follow the structure of these templates and the internal patterns; do not invent a new
- structure in isolation. See `.github/reference-catalog.md` for detailed API patterns, examples, and Copilot behavior rules.
+**Other Azure services** (examples — tailor as needed):
+
+- Service Bus, Event Hubs: use the official Azure SDK for your language.
+- Key Vault: use Azure Identity + Key Vault Secrets SDK for your language.
+- App Configuration: use the Azure App Configuration SDK (used by scaffolding templates).
+
+**Rule:** New code MUST use the approved SDK wrappers listed in `.github/reference-catalog.md` rather than
+raw Azure SDK clients. If no approved wrapper exists for your language + service combination, document the
+gap and use the official Azure SDK directly while following the patterns in the reference catalog.
+
+ ---
+
+### 1.2 Reference implementation and scaffolding sources
+
+The team maintains a **Reference Catalog** at `.github/reference-catalog.md`.
+That catalog is the authoritative registry of all reusable libraries and scaffolding templates,
+organized by language.
+
+<!-- CUSTOMIZE: Populate reference-catalog.md with your organization's approved libraries and
+     templates for each language. The tables below are illustrative examples. -->
+
+**Reusable libraries** — install via your language's package manager
+
+| Language   | Service          | Catalog entry                                                        |
+| ---------- | ---------------- | -------------------------------------------------------------------- |
+| Python     | Cosmos DB        | See `.github/reference-catalog.md` → Python → Cosmos DB wrapper      |
+| Python     | Blob / Queue     | See `.github/reference-catalog.md` → Python → Storage wrapper        |
+| TypeScript | Cosmos DB        | See `.github/reference-catalog.md` → TypeScript → Cosmos DB wrapper  |
+| C# / .NET  | Cosmos DB        | See `.github/reference-catalog.md` → .NET → Cosmos DB wrapper        |
+| Java       | Cosmos DB        | See `.github/reference-catalog.md` → Java → Cosmos DB wrapper        |
+| _Other_    | _Any service_    | Check `.github/reference-catalog.md` for your language               |
+
+**Scaffolding templates** — clone to start a new project
+
+Pick the template matching your language and application type from `.github/reference-catalog.md`. Common categories:
+
+| App type                         | Description                                                              |
+| -------------------------------- | ------------------------------------------------------------------------ |
+| Base application                 | Console, worker, pipeline, or CLI with DI + App Configuration            |
+| API / web service                | REST API with DI, routers, health probes (e.g., FastAPI, Express, ASP.NET) |
+| AI agent framework               | AI agent apps with Azure AI Foundry, MCP tools, multi-agent workflows    |
+
+**Internal patterns in this repo**
+
+When adding similar functionality, look at existing code first and follow the same patterns.
+If the repo has existing code, prefer extending those patterns over the templates above.
+
+**Rule:**
+If you need a new service or module, follow the structure of the applicable template and internal patterns; do not invent a new
+structure in isolation. See `.github/reference-catalog.md` for detailed API patterns, examples, and Copilot behavior rules.
 
  ---
 
@@ -181,8 +193,8 @@
    - Which layers are involved (API, Application, Domain, Infrastructure, UI).
    - Which Azure services are needed (Cosmos DB, Blob, Service Bus, etc.).
  - Map:
-   - Which existing patterns will be reused (e.g., `your-cosmosdb-lib` repositories, `your-storage-lib` helpers).
-   - When a new service/module is required, align it with internal patterns and/or template repositories.
+   - Which existing patterns will be reused (e.g., approved Cosmos DB / Storage wrappers from the reference catalog).
+   - When a new service/module is required, align it with internal patterns and/or the appropriate language template.
 
  - Produce:
    - A design or ADR describing:
@@ -199,15 +211,13 @@
      - Map tasks to SDLC phases.
  - **Recommended:**
    - If a new service repo is needed, explicitly tell Copilot:
-     - Which **template repo** to follow (e.g. `python_api_application_template`).
+     - Which **template repo** to follow (select from `.github/reference-catalog.md` by language + app type).
      - It should mirror that template's layout and patterns.
 
  **Exit criteria**
 
  - Design is documented (ADR/design doc) and agreed by the team.
- - Azure library choices are explicit and compliant:
-   - Cosmos: `your-cosmosdb-lib` (PyPI).
-   - Blob/Queue: `your-storage-lib` (PyPI).
+ - Azure library choices are explicit and compliant with the approved wrappers in `.github/reference-catalog.md`.
  - Reuse of internal patterns and/or external templates is identified, not left to chance.
 
  ---
@@ -239,7 +249,7 @@
  - **Recommended:** Use `.github/prompts/repo-structure-and-cicd.prompt.md`:
    - To scaffold repo structure aligned with reference catalog templates.
    - To generate CI/CD pipelines (GitHub Actions and/or ADO) with quality gates.
-   - To configure project files (`pyproject.toml`, `.gitignore`, `Dockerfile`, etc.).
+   - To configure project files (e.g., `pyproject.toml`, `package.json`, `*.csproj`, `go.mod`, `.gitignore`, `Dockerfile`).
  - Copilot CLI:
    - Plan mode to draft pipeline changes and file layout.
    - Autopilot to apply straightforward scaffolding (with human review via git diff).
@@ -264,17 +274,17 @@
 
  - Implement feature in small, reviewable increments:
    - Routers/endpoints, services, domain logic.
-   - Data access using `your-cosmosdb-lib` repository pattern and `your-storage-lib` helpers.
+   - Data access using the approved Cosmos DB and Storage SDK wrappers per `.github/reference-catalog.md`.
  - For Cosmos DB:
-   - Use `your-cosmosdb-lib` with `RepositoryBase[Entity, KeyType]`.
-   - Follow the patterns in the reference catalog and `python_cosmosdb_helper` repo for:
+   - Use the approved Cosmos DB wrapper for your language with the Repository Pattern.
+   - Follow the patterns in the reference catalog for:
      - Partition keys and entity definitions.
      - Predicate-based queries.
      - Error handling and async patterns.
 
  - For Blob Storage / Queue:
-   - Use `your-storage-lib` with `AsyncStorageBlobHelper` / `AsyncStorageQueueHelper`.
-   - Always use `async with` context manager for proper resource cleanup.
+   - Use the approved Storage wrapper for your language.
+   - Follow proper resource cleanup patterns (e.g., `async with`, `using`, `try-with-resources`, `defer`).
  - Implement tests:
    - Unit tests for core logic and services.
    - Integration tests for critical API flows and data access.
@@ -289,10 +299,8 @@
  - **Required:** Use `.github/prompts/implementation-and-tests.prompt.md`:
    - To generate a step-by-step implementation plan with associated tests.
    - To ensure each step includes a test update.
- - **Auto-applied:** Language-specific quality instruction files:
-   - Python: `.github/instructions/code-quality-py.instructions.md`, `.github/instructions/test-quality.instructions.md`
-   - TypeScript: `.github/instructions/code-quality-ts.instructions.md`, `.github/instructions/test-quality-ts.instructions.md`
-   - React: `.github/instructions/code-quality-tsx.instructions.md`, `.github/instructions/test-quality-tsx.instructions.md`
+ - **Auto-applied:** Language-specific quality instruction files from `.github/instructions/` activate by file type.
+   Copilot applies the matching `code-quality-<lang>` and `test-quality-<lang>` instructions automatically.
  - **Recommended:**
    - Smart Actions (VS Code) for **Generate Tests** on selected functions.
    - Copilot CLI Plan/Autopilot for repetitive refactors or broad pattern application (e.g., adding logging across multiple
@@ -500,10 +508,10 @@
    - Always active when Copilot assists in this repo.
 
  - **Quality Instruction Files** (auto-applied by file type)
-   - Code quality: `code-quality-py.instructions.md`, `code-quality-ts.instructions.md`, `code-quality-tsx.instructions.md`
-   - Test quality: `test-quality.instructions.md`, `test-quality-ts.instructions.md`, `test-quality-tsx.instructions.md`
+   - Code quality: `code-quality-<lang>.instructions.md` (one per language, e.g., `-py`, `-ts`, `-tsx`)
+   - Test quality: `test-quality-<lang>.instructions.md` (one per language)
    - Auto-applied during Phase 4 (implementation), Phase 6 (QA), and Phase 9 (final PR edits).
-   - No manual invocation needed.
+   - No manual invocation needed. Add files for additional languages as needed.
 
  - **Prompt files** (VS Code Copilot — invoked manually per phase)
    - Requirements & Design:
