@@ -366,78 +366,119 @@ Pick the cell that matches your language + application type:
 > For Go and Rust, use the REST API or Python/C#/TS SDK via sidecar.
 > Use Semantic Kernel or LangChain only when there are specific requirements.
 
-> **Note:** The detailed templates below are Python examples. Teams should add equivalent
-> entries for their language stack following the same format.
+> **Note:** The detailed templates below describe **patterns**, not specific Python repos.
+> Teams should register their own language-specific template repos following this format.
 
 ---
 
-### 2.1 python_application_template — Base Application
+### 2.1 Base Application Template
 
-|                     |                                                                                                               |
-| ------------------- | ------------------------------------------------------------------------------------------------------------- |
-| **Repository**      | [your-org/your-app-template](https://github.com/your-org/your-app-template) |
-| **Type**            | General-purpose Python application                                                                            |
-| **Python**          | 3.12+                                                                                                         |
-| **Package manager** | UV                                                                                                            |
+|                     |                                                                 |
+| ------------------- | --------------------------------------------------------------- |
+| **Repository**      | *Register your team's base app template here*                   |
+| **Type**            | General-purpose application (console, worker, pipeline, CLI)    |
 
-**What it provides:** `Application_Base` abstract pattern, `AppContext` DI, Azure App Configuration integration, Pydantic settings, `DefaultAzureCredential`, Bicep IaC, and a pytest suite.
+**What it provides:**
 
-**When to use:** Any new Python app (console, worker, pipeline, CLI) that does NOT need a web API framework.
+- Application entry point with lifecycle management (startup, run, shutdown)
+- Dependency injection / service container
+- Configuration management (Azure App Configuration, env vars, config files)
+- Azure authentication via `DefaultAzureCredential`
+- Infrastructure-as-Code (Bicep) for Azure resource provisioning
+- Test suite scaffolding
 
-**Project structure:** `src/main.py` → `src/libs/{application, azure, base}` + `infra/` (Bicep) + `tests/`
+**Typical structure by language:**
+
+| Language | Entry point | DI/Config | Package manager |
+|----------|-------------|-----------|-----------------|
+| Python | `src/main.py` | AppContext + Pydantic BaseSettings | UV / pip |
+| Java | `src/main/java/.../Application.java` | Spring DI + `application.yml` | Maven / Gradle |
+| C# | `Program.cs` | `IHost` + `IConfiguration` | dotnet CLI |
+| Go | `cmd/app/main.go` | Wire / manual DI + Viper | go modules |
+| TypeScript | `src/index.ts` | tsyringe / InversifyJS | npm / pnpm |
+| Rust | `src/main.rs` | Manual DI + config crate | Cargo |
+
+**When to use:** Any new application that does NOT need a web API framework.
 
 **Copilot behavior:**
 
-- Scaffold from this template for "create a new Python app/service/worker" requests.
-- Follow `Application_Base` → concrete `Application` pattern. Use `AppContext` for DI, Pydantic `BaseSettings` for config.
+- Scaffold from the team's registered base template for "create a new app/service/worker" requests.
+- Follow the project's DI pattern — do not introduce ad-hoc globals.
+- Use the language's standard config approach, not raw environment variable reads.
 
 ---
 
-### 2.2 python_api_application_template — FastAPI Service
+### 2.2 Web API Template
 
-|                     |                                                                                                                       |
-| ------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| **Repository**      | [your-org/your-api-template](https://github.com/your-org/your-api-template) |
-| **Type**            | FastAPI web API                                                                                                       |
-| **Python**          | 3.12+                                                                                                                 |
-| **Framework**       | FastAPI + Uvicorn                                                                                                     |
-| **Package manager** | UV                                                                                                                    |
+|                     |                                                                 |
+| ------------------- | --------------------------------------------------------------- |
+| **Repository**      | *Register your team's API template here*                        |
+| **Type**            | REST API / web service                                          |
 
-**What it provides:** Everything from `python_application_template`, plus FastAPI with OpenAPI docs, advanced DI container (singleton/transient/scoped), Protocol-based interfaces, router pattern, health probes, and Docker support.
+**What it provides:**
 
-**When to use:** New REST APIs or web services needing endpoint routing and OpenAPI docs.
+Everything from the Base Application Template, plus:
 
-**Project structure:** `app/main.py` → `app/routers/` + `app/business_component/` + `app/libs/` + `infra/` + `tests/`
+- Web framework with automatic API docs (OpenAPI/Swagger)
+- Router/controller pattern with modular route registration
+- Health/readiness probes (`/health`, `/ready`)
+- Request validation and error handling middleware
+- Docker-ready containerization
+
+**Typical framework by language:**
+
+| Language | Framework | API docs | Health probes |
+|----------|-----------|----------|---------------|
+| Python | FastAPI + Uvicorn | Built-in OpenAPI | Custom router |
+| Java | Spring Boot | springdoc-openapi | Spring Actuator |
+| C# | ASP.NET Core Minimal API | Swashbuckle / NSwag | `MapHealthChecks()` |
+| Go | Gin / Echo / Chi | swaggo/swag | Custom handler |
+| TypeScript | Express / NestJS | swagger-jsdoc / @nestjs/swagger | Custom middleware |
+| Rust | Actix-web / Axum | utoipa | Custom handler |
+
+**When to use:** New REST APIs, microservices, or web services needing endpoint routing.
 
 **Copilot behavior:**
 
-- Scaffold from this template for "create a new API/endpoint/microservice" requests.
-- Register services via `add_singleton()`/`add_transient()`, resolve via `get_service(IMyService)`.
-- Define interfaces as `Protocol` classes. One router file per resource/domain area.
+- Scaffold from the team's registered API template for "create a new API/endpoint/microservice" requests.
+- Follow the router/controller pattern: one module per resource/domain area.
+- Define service interfaces/contracts for testability.
 
 ---
 
-### 2.3 python_agent_framework_dev_template — AI Agent Application
+### 2.3 AI Agent Template
 
-|                     |                                                                                                                               |
-| ------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| **Repository**      | [your-org/your-agent-template](https://github.com/your-org/your-agent-template) |
-| **Type**            | Azure AI Agent Framework application                                                                                          |
-| **Python**          | 3.12+                                                                                                                         |
-| **Framework**       | Azure AI Agent Framework + MCP                                                                                                |
-| **Package manager** | UV                                                                                                                            |
+|                     |                                                                 |
+| ------------------- | --------------------------------------------------------------- |
+| **Repository**      | *Register your team's agent template here*                      |
+| **Type**            | AI agent application (Microsoft Agent Framework)                |
 
-**What it provides:** Azure AI Foundry integration, TaskGroup-safe `MCPContext`, middleware system (debug/logging/observation), GroupChat multi-agent orchestrator, 7+ sample agents, and cross-agent tool sharing.
+**What it provides:**
 
-**When to use:** AI agent applications with Azure AI Foundry, MCP tools, or multi-agent orchestration.
+- Microsoft Agent Framework integration with Azure AI Foundry
+- MCP (Model Context Protocol) tool lifecycle management
+- Middleware system for debugging, logging, and observability
+- Multi-agent orchestration patterns (group chat, handoff)
+- Sample agents demonstrating common patterns
 
-**Project structure:** `src/libs/agent_framework/{mcp_context.py, middleware/}` + `src/samples/` (7+ examples) + `infra/` + `tests/`
+**Typical structure by language:**
+
+| Language | Agent SDK | MCP support | Multi-agent |
+|----------|-----------|-------------|-------------|
+| Python | azure-ai-projects | Native | GroupChat orchestrator |
+| C# | Azure.AI.Projects | Native | AgentGroupChat |
+| TypeScript | @azure/ai-projects | Native | Custom orchestration |
+| Java | azure-ai-projects | Native | Custom orchestration |
+| Go / Rust | REST API | Via HTTP | Custom orchestration |
+
+**When to use:** AI agent applications, chatbots, RAG systems, or multi-agent workflows.
 
 **Copilot behavior:**
 
-- Scaffold from this template for "create an AI agent/chatbot/assistant" requests.
-- Use `MCPContext` for MCP lifecycle (never manage tool scopes manually).
-- Apply middleware for debugging/logging. Use GroupChat for multi-agent scenarios.
+- Scaffold from the team's registered agent template for "create an AI agent/chatbot/assistant" requests.
+- Use Microsoft Agent Framework as the primary approach (see §1.4).
+- Use MCP context managers for tool lifecycle — never manage tool scopes manually.
+- Apply middleware for debugging/logging. Use multi-agent orchestration for complex workflows.
 
 ---
 
