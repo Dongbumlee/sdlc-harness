@@ -1,138 +1,29 @@
-# SDLC Harness Evolution Specification
+# SDLC Harness Specification
 
 **Version:** 1.0.0-draft
 **Date:** 2026-04-10
 **Status:** Draft
-**Scope:** sdlc-harness-dev (framework) + sdlc-bench (benchmarking)
+**Scope:** sdlc-harness (Dongbumlee/sdlc-harness)
 
----
-
-## Document Purpose
-
-This specification defines the evolution of sdlc-harness from a Copilot-specific, Azure-locked SDLC template into a platform-agnostic, benchmark-driven, multi-cloud orchestration framework aligned with 2025-2026 edge technologies.
-
-It serves as both a strategic guide and a detailed implementation specification. Each section is self-contained and maps to a specific work stream, allowing parallel implementation.
-
-### Repository Boundaries
-
-| Repo | Purpose | Spec Sections |
-|---|---|---|
-| **sdlc-harness-dev** | The framework: agents, skills, orchestration, config, platform generation | §2 Architecture, §3 Agent Format, §5 MCP, §7 Configuration, §4 Per-Phase Specs |
-| **sdlc-bench** | Evaluation & benchmarking: graders, canary system, trend tracking, CI integration | §6 Evaluation & Benchmarking |
-| Both | Interoperability, spec import/export | §8 Interoperability |
+> **Companion document:** For industry research and landscape analysis, see [SDLC Harness Research & Analysis](2026-04-10-sdlc-harness-research-analysis.md).
 
 ---
 
 ## Table of Contents
 
-1. [Industry Landscape & Trends](#1-industry-landscape--trends)
-2. [Harness Architecture](#2-harness-architecture)
-3. [Universal Agent Format](#3-universal-agent-format)
-4. [Per-Phase Workflow Specifications](#4-per-phase-workflow-specifications)
-5. [MCP Capability Model](#5-mcp-capability-model)
-6. [Comprehensive Evaluation & Benchmarking](#6-comprehensive-evaluation--benchmarking)
-7. [Configuration & Bootstrapping](#7-configuration--bootstrapping)
-8. [Interoperability Layer](#8-interoperability-layer)
-9. [Migration & Adoption](#9-migration--adoption)
+1. [Architecture](#1-architecture)
+2. [Skill Reference](#2-skill-reference)
+3. [Per-Phase Workflow Specifications](#3-per-phase-workflow-specifications)
+4. [MCP Capability Model](#4-mcp-capability-model)
+5. [Evaluation & Benchmarking](#5-evaluation--benchmarking)
+6. [Configuration & Bootstrapping](#6-configuration--bootstrapping)
+7. [Migration & Adoption](#7-migration--adoption)
 
 ---
 
-## 1. Industry Landscape & Trends
+## 1. Architecture
 
-### 1.1 Current State of SDLC Agent Frameworks
-
-The AI-assisted SDLC landscape has matured rapidly from autocomplete to autonomous multi-hour development sessions. Agent mode has become the primary product, not a feature.
-
-**Open-Source Frameworks:**
-
-| Framework | Key Features | Significance |
-|---|---|---|
-| **OpenHands** (fmr. OpenDevin) | Sandboxed execution, REST+WebSocket APIs, agent delegation, MIT license, 68.6k+ stars | Enterprise-grade open-source leader |
-| **SWE-agent** | Clean research architecture, tool-use patterns, flexible model backends | Preferred research framework |
-| **Agentless** | No-agent approach: localization → repair → validation pipeline | Research baseline showing harness engineering matters as much as model capability |
-
-**Commercial Platforms:**
-
-| Platform | Differentiator |
-|---|---|
-| **GitHub Copilot** (Agent Mode) | Deep GitHub ecosystem integration, PR workflows, Actions |
-| **Cursor** | Superior codebase understanding, multi-file editing |
-| **Devin** (Cognition AI) | Parallel cloud SWE agents, Interactive Planning |
-| **OpenAI Codex** | Autonomous feature writing with GPT-5.3 |
-| **Claude Code** | Terminal-native, extended thinking, MCP integration |
-| **Google Gemini Code Assist** | Firebase integration, full-stack workflow |
-
-**Key trend:** Competition has shifted from autocomplete quality to autonomous task completion, context window management, and multi-session coherence.
-
-### 1.2 Harness Design Patterns
-
-Anthropic published two foundational engineering posts defining the state of the art:
-
-**Two-Agent Architecture (Nov 2025):** Initializer Agent (sets up environment) + Coding Agent (makes incremental progress). Solved four failure modes: premature victory declaration, undocumented progress, premature completion marking, and environment setup confusion.
-
-**Three-Agent GAN-Inspired Architecture (Mar 2026):** Evolved to Planner → Generator → Evaluator. Key innovations:
-- Generator-evaluator loop maps to code review/QA in SDLC
-- Context resets between sessions prevent drift
-- Structured artifacts (JSON feature lists, progress files) bridge context windows
-- The evaluator developed reliable "taste" for frontend design quality
-
-This Planner → Generator → Evaluator pattern is now a recognized industry design pattern and is the architectural foundation of this specification.
-
-### 1.3 Benchmarking Landscape
-
-**SWE-bench** remains the foundational benchmark (top scores ~78-81% on Verified), but is saturating and SWE-bench Pro reveals that models perform significantly worse on truly unseen codebases (memorization inflates Verified scores by 20-30+ percentage points).
-
-**Emerging specialized benchmarks:**
-
-| Benchmark | Focus | Significance |
-|---|---|---|
-| **SWT-Bench** | Test generation quality | Frontier models score under 45% |
-| **Terminal-Bench** | CLI/operational competence | Tests multi-step workflows |
-| **SlopCodeBench** (Mar 2026) | Long-horizon quality degradation | All agents show structural erosion over iterative sessions |
-| **SWE-EVO** | Sequential codebase evolution | Tests handling changes over time |
-| **GitTaskBench** | Cost-normalized performance | Alpha metric: quality + tokens + human labor cost |
-| **Context-Bench** | Context maintenance and memory | Surfaces cost-to-performance ratios |
-| **DPAI Arena** (JetBrains) | Cross-ecosystem multi-language | First truly cross-ecosystem benchmark |
-| **SWE-bench-Live** (Microsoft) | Contamination-resistant, monthly updates | Includes Windows-specific tasks |
-
-**Critical gap:** No existing benchmark evaluates the full SDLC pipeline. Individual benchmarks cover bug fixing, test generation, or CLI operations in isolation. The sdlc-bench project addresses this gap by benchmarking all 9 SDLC phases end-to-end.
-
-### 1.4 Key Technologies
-
-**MCP (Model Context Protocol):**
-- 5,000+ active servers, universal adoption across Claude, GPT, Gemini, Cursor, Windsurf
-- Called "the fastest-growing developer protocol since GraphQL"
-- Standardizes tool integration: stdio (local) and HTTP+SSE (remote)
-- Growing pains being addressed: auth, discovery, stateful sessions, rate limiting
-
-**Genericization Specifications:**
-- **AI-SDLC Framework** (ai-sdlc.io): Pipeline/AgentRole/QualityGate resources, Kubernetes-inspired Spec/Status pattern
-- **Open Agent Specification** (Oracle, Oct 2025): Framework-agnostic declarative language for agent portability
-- **Agentic SDLC Spec Kit** (tikalk): 12-factor methodology for agentic development workflows
-
-**Evaluation Frameworks:**
-- **Anthropic Eval Taxonomy** (Jan 2026): Code-based, model-based, and human graders; capability vs. regression evals
-- **LLM-as-Judge**: Mature pattern with Pydantic Evals, Braintrust AutoEvals, Langfuse
-- **Promptfoo** (acquired by OpenAI, Mar 2026): Red-teaming and eval infrastructure now considered core AI infrastructure
-
-### 1.5 Where sdlc-harness Positions Itself
-
-sdlc-harness occupies a unique position in this landscape:
-
-| Dimension | Industry Status | sdlc-harness Position |
-|---|---|---|
-| Full SDLC coverage | No framework covers all phases | 9-phase coverage with phase-specific agents |
-| Adversarial QA | Most tools do single-pass review | 9 parallel independent reviewers with hard thresholds |
-| Canary benchmarking | Novel approach (no equivalent in SWE-bench ecosystem) | 54 planted bugs with per-reviewer scoring |
-| Platform portability | Tools are locked to one platform | Moving to platform-neutral IR with multi-target generation |
-| Multi-cloud | Most frameworks are cloud-agnostic by omission | Actively supporting Azure, AWS, GCP with config-driven selection |
-| Harness architecture | Anthropic's 3-agent pattern is state of the art | Adopting as meta-layer over existing 9-phase structure |
-
----
-
-## 2. Harness Architecture
-
-### 2.1 The 3-Agent Meta-Layer
+### 1.1 The 3-Agent Meta-Layer
 
 The harness adopts Anthropic's Planner → Generator → Evaluator pattern as a meta-layer. The current 9-phase SDLC model becomes the Generator's internal structure.
 
@@ -210,7 +101,7 @@ The workspace bootstrap template (`copilot-instructions.md`) contains `{{PLACEHO
 | QA Feedback Loop | After QA phase identifies issues | Route back to Implementer for fixes, re-run only failing QA domains (max 3 rounds) |
 | GitHub MCP Auth Gate | Before ANY worker that needs reference repos | Verify org-level GitHub MCP authentication; no degraded mode |
 
-### 2.2 Planner Agent
+### 1.2 Planner Agent
 
 **Role:** Strategic decomposition — turns user intent into an ordered execution plan.
 
@@ -252,7 +143,7 @@ The workspace bootstrap template (`copilot-instructions.md`) contains `{{PLACEHO
 
 **Re-planning triggers:** Phase failed 3 consecutive times; Evaluator reports scope mismatch; new user input contradicts current plan.
 
-### 2.3 Generator Agent
+### 1.3 Generator Agent
 
 **Role:** Phase execution — takes a single phase from the plan and produces artifacts.
 
@@ -310,7 +201,7 @@ sub_agents_by_phase:
 
 **Context reset protocol:** Each phase starts with a fresh LLM context. No conversation history from previous phases. Only structured artifacts bridge the context gap. Within a phase, sub-agents share context.
 
-**Phase artifact schemas:** Each phase produces specific structured output (see §4 for per-phase details).
+**Phase artifact schemas:** Each phase produces specific structured output (see §3 for per-phase details).
 
 **Execution protocol per phase:**
 1. Read progress notes and previous artifacts
@@ -323,7 +214,7 @@ sub_agents_by_phase:
 8. Commit to git with descriptive message
 9. Return artifacts to orchestrator
 
-### 2.4 Evaluator Agent
+### 1.4 Evaluator Agent
 
 **Role:** Quality judgment — grades phase output against concrete, measurable criteria.
 
@@ -372,7 +263,7 @@ sub_agents_by_phase:
 | **FAIL** | Score 5.0-6.9, or one dimension below minimum | Retry with feedback (max 3 attempts); targeted re-evaluation on failing dimensions only |
 | **CRITICAL_FAIL** | Overall < 5.0, security vulnerability, or fundamental scope mismatch | Escalate to Planner for re-planning |
 
-#### 2.4.1 Adversarial QA Protocol
+#### 1.4.1 Adversarial QA Protocol
 
 **Evolves from:** The current QA Coordinator's adversarial review directive, preserved and generalized to all Evaluator invocations during the QA phase.
 
@@ -396,11 +287,11 @@ Round 3 (if still FAIL): Targeted → last chance before CRITICAL_FAIL escalatio
 
 Maximum 3 rounds. After 3 failures, the Evaluator issues CRITICAL_FAIL and the Planner re-scopes.
 
-### 2.5 Structured Artifact Bridging
+### 1.5 Structured Artifact Bridging
 
 Artifacts bridge context windows between phases. All inter-phase communication happens through structured files, not conversation history.
 
-**Core artifact types** (illustrative — individual phases may produce additional artifacts as specified in §4):
+**Core artifact types** (illustrative — individual phases may produce additional artifacts as specified in §3):
 - **Feature list** (JSON): Machine-readable list of features with status
 - **Progress notes** (Markdown): Human-readable summary of what's been done
 - **Evaluation reports** (JSON): Per-phase scores and feedback
@@ -410,9 +301,9 @@ Artifacts bridge context windows between phases. All inter-phase communication h
 
 ---
 
-## 3. Universal Agent Format
+## 2. Skill Reference
 
-### 3.1 Platform-Neutral Agent Schema
+### 2.1 Platform-Neutral Agent Schema
 
 All agents are authored in a platform-neutral IR (Internal Representation) format. Platform-specific files are generated from this source.
 
@@ -455,7 +346,7 @@ agent:
     amplifier: { ... }
 ```
 
-### 3.2 Platform-Neutral Skill Schema
+### 2.2 Platform-Neutral Skill Schema
 
 ```yaml
 skill:
@@ -477,7 +368,7 @@ skill:
   instructions: string         # the skill's core content
 ```
 
-### 3.3 Generation Targets
+### 2.3 Generation Targets
 
 | Universal Field | Copilot `.agent.md` | Claude Code `AGENTS.md` | Cursor `.cursorrules` | Amplifier bundle |
 |---|---|---|---|---|
@@ -496,7 +387,7 @@ harness generate --target all               # all supported platforms
 
 **Sync verification:** CI check compares generated files against source IR. Fails if out of sync. Eliminates the current duplication between `vscode-extension/` and `.github/plugin/`.
 
-### 3.4 Skill Taxonomy
+### 2.4 Skill Taxonomy
 
 **Current skills (12)** mapped to the universal schema:
 
@@ -526,9 +417,9 @@ harness generate --target all               # all supported platforms
 | **GCP** | sdlc-gcp-deployment, sdlc-firestore-repository, sdlc-gcs-storage | Planned |
 | **Minimal** | (no cloud-specific skills) | Implicit |
 
-Skill packs are loaded based on `harness-config.yml` `cloud_provider` setting. The phase workflow tables in §4 reference the abstract capability; the skill pack resolves to the concrete skill.
+Skill packs are loaded based on `harness-config.yml` `cloud_provider` setting. The phase workflow tables in §3 reference the abstract capability; the skill pack resolves to the concrete skill.
 
-### 3.5 Agent Lifecycle
+### 2.5 Agent Lifecycle
 
 1. **Author** in universal IR format (`agents/*.agent.yaml`)
 2. **Validate** against schema (`harness validate`)
@@ -540,11 +431,11 @@ Custom platform overrides allow platform-specific additions when the universal f
 
 ---
 
-## 4. Per-Phase Workflow Specifications
+## 3. Per-Phase Workflow Specifications
 
 Each phase follows a consistent template with co-located details.
 
-### 4.1 Requirements Phase
+### 3.1 Requirements Phase
 
 | Aspect | Detail |
 |---|---|
@@ -560,7 +451,7 @@ Each phase follows a consistent template with co-located details.
 | **Stack variations** | None (stack-agnostic phase) |
 | **Cloud variations** | None (cloud-agnostic phase) |
 
-### 4.2 Design Phase
+### 3.2 Design Phase
 
 | Aspect | Detail |
 |---|---|
@@ -576,7 +467,7 @@ Each phase follows a consistent template with co-located details.
 | **Stack variations** | Pattern recommendations differ per stack (e.g., repository pattern for Python, dependency injection for .NET) |
 | **Cloud variations** | Architecture patterns differ per cloud (e.g., event-driven with Azure Functions vs Lambda) |
 
-### 4.3 Scaffold Phase
+### 3.3 Scaffold Phase
 
 | Aspect | Detail |
 |---|---|
@@ -592,7 +483,7 @@ Each phase follows a consistent template with co-located details.
 | **Stack variations** | Python: pyproject.toml + uv, Node: package.json + pnpm, Go: go.mod, .NET: .csproj |
 | **Cloud variations** | Minimal (cloud specifics handled in Deploy phase) |
 
-### 4.4 Deploy Phase
+### 3.4 Deploy Phase
 
 | Aspect | Detail |
 |---|---|
@@ -608,7 +499,7 @@ Each phase follows a consistent template with co-located details.
 | **Stack variations** | Minimal |
 | **Cloud variations** | Azure: Bicep + AVM, AWS: Terraform/CDK, GCP: Terraform. CI/CD: GitHub Actions / Azure DevOps / GitLab CI |
 
-### 4.5 Implement Phase
+### 3.5 Implement Phase
 
 | Aspect | Detail |
 |---|---|
@@ -625,7 +516,7 @@ Each phase follows a consistent template with co-located details.
 | **Stack variations** | Python: ruff + pyright + pytest, Node: eslint + tsc + vitest, Go: golangci-lint + go test, .NET: dotnet format + dotnet test |
 | **Cloud variations** | SDK-specific patterns (Azure SDK, AWS SDK, GCP client libraries) |
 
-### 4.6 Document Phase
+### 3.6 Document Phase
 
 | Aspect | Detail |
 |---|---|
@@ -641,7 +532,7 @@ Each phase follows a consistent template with co-located details.
 | **Stack variations** | Python: docstrings + Sphinx/MkDocs, Node: JSDoc + TypeDoc, Go: godoc, .NET: XML docs |
 | **Cloud variations** | Cloud-specific configuration documentation |
 
-### 4.7 QA Phase
+### 3.7 QA Phase
 
 | Aspect | Detail |
 |---|---|
@@ -658,7 +549,7 @@ Each phase follows a consistent template with co-located details.
 | **Stack variations** | Review criteria adapt per stack |
 | **Cloud variations** | Cloud compliance reviewer is cloud-specific |
 
-### 4.8 RAI (Responsible AI) Phase
+### 3.8 RAI (Responsible AI) Phase
 
 | Aspect | Detail |
 |---|---|
@@ -674,7 +565,7 @@ Each phase follows a consistent template with co-located details.
 | **Stack variations** | None |
 | **Cloud variations** | Cloud-specific AI service compliance (Azure AI, AWS Bedrock, GCP Vertex) |
 
-### 4.9 Release Phase
+### 3.9 Release Phase
 
 | Aspect | Detail |
 |---|---|
@@ -692,9 +583,9 @@ Each phase follows a consistent template with co-located details.
 
 ---
 
-## 5. MCP Capability Model
+## 4. MCP Capability Model
 
-### 5.1 Abstract Capability Taxonomy
+### 4.1 Abstract Capability Taxonomy
 
 Instead of listing specific MCP servers, the harness defines abstract capabilities that phases require. Any MCP server that provides the capability can be used.
 
@@ -708,7 +599,7 @@ Instead of listing specific MCP servers, the harness defines abstract capabiliti
 | `artifact-storage` | Store/retrieve build artifacts | Azure Blob, S3, GCS |
 | `live-best-practices` | Fetch up-to-date patterns | awesome-copilot, Context7 |
 
-### 5.2 Capability-to-Phase Mapping
+### 4.2 Capability-to-Phase Mapping
 
 | Phase | Required Capabilities | Optional Capabilities |
 |---|---|---|
@@ -722,7 +613,7 @@ Instead of listing specific MCP servers, the harness defines abstract capabiliti
 | RAI | compliance-checking | documentation-lookup |
 | Release | ci-cd-integration, deployment-management | artifact-storage |
 
-### 5.3 Curated Default Server Sets
+### 4.3 Curated Default Server Sets
 
 | Profile | Servers |
 |---|---|
@@ -731,7 +622,7 @@ Instead of listing specific MCP servers, the harness defines abstract capabiliti
 | **GCP** | GitHub MCP, GCP MCP, awesome-copilot, Context7 |
 | **Minimal** | GitHub MCP, Context7 |
 
-### 5.4 Bootstrap Negotiation
+### 4.4 Bootstrap Negotiation
 
 At `harness init`:
 1. Check which MCP servers are available
@@ -742,11 +633,11 @@ At `harness init`:
 
 ---
 
-## 6. Comprehensive Evaluation & Benchmarking
+## 5. Evaluation & Benchmarking
 
-**Target repo:** sdlc-bench
+**Target directory:** bench/
 
-### 6.1 Evaluation Architecture
+### 5.1 Evaluation Architecture
 
 Three evaluation layers:
 
@@ -766,7 +657,7 @@ Layer 3: Trend Analysis (cross-run)
   └── Model comparison dashboards
 ```
 
-### 6.2 Grading Strategies by Phase
+### 5.2 Grading Strategies by Phase
 
 Each phase uses a combination of grader types:
 
@@ -815,7 +706,7 @@ Each phase uses a combination of grader types:
 - Model-based: readiness assessment (0-10), changelog quality
 - Threshold: all code-based pass and overall ≥ 7.0
 
-### 6.3 Canary System v2
+### 5.3 Canary System v2
 
 Evolution of the current 54-canary system:
 
@@ -853,7 +744,7 @@ Protocol:
   5. Randomize placement across files
 ```
 
-### 6.4 Metrics and Reporting
+### 5.4 Metrics and Reporting
 
 **Per-run benchmark report (JSON):**
 ```json
@@ -904,7 +795,7 @@ Protocol:
 | **Operational** | Wall-clock time, retry count, human intervention rate |
 | **Regression** | Score change vs. baseline, per-model trend lines, capability graduation tracking |
 
-### 6.5 CI/CD Integration
+### 5.5 CI/CD Integration
 
 **GitHub Actions workflow:**
 ```yaml
@@ -925,11 +816,11 @@ jobs:
 
 **PR-gated regression:** New agent/skill changes must not regress benchmark scores below threshold. Scores posted as PR comments for review.
 
-### 6.6 Differentiation Opportunities
+### 5.6 Differentiation Opportunities
 
-Areas where sdlc-bench fills gaps in the existing benchmark landscape:
+Areas where bench/ fills gaps in the existing benchmark landscape:
 
-| Gap | sdlc-bench Coverage |
+| Gap | bench/ Coverage |
 |---|---|
 | No full SDLC pipeline benchmark exists | End-to-end 9-phase benchmark |
 | No deployment/IaC correctness benchmark | Deploy phase evaluator with IaC validation |
@@ -941,9 +832,9 @@ Areas where sdlc-bench fills gaps in the existing benchmark landscape:
 
 ---
 
-## 7. Configuration & Bootstrapping
+## 6. Configuration & Bootstrapping
 
-### 7.1 harness-config.yml Schema
+### 6.1 harness-config.yml Schema
 
 Single source of truth for project configuration:
 
@@ -1014,7 +905,7 @@ templates:                               # optional scaffolding templates
     use_for: "REST API / web service"
 ```
 
-### 7.2 Profile System
+### 6.2 Profile System
 
 Pre-built profiles inherit from a base and override stack/cloud specifics:
 
@@ -1030,7 +921,7 @@ harness init --profile azure-python-fastapi  # instant setup
 harness init                                  # interactive wizard
 ```
 
-### 7.3 Bootstrap Pipeline
+### 6.3 Bootstrap Pipeline
 
 ```
 Config → IR generation → adapter generation → MCP config → verification
@@ -1046,9 +937,11 @@ Config → IR generation → adapter generation → MCP config → verification
 
 ---
 
-## 8. Interoperability Layer
+## 7. Migration & Adoption
 
-### 8.1 Harness IR as Canonical Format
+### 7.1 Interoperability Layer
+
+#### 7.1.1 Harness IR as Canonical Format
 
 ```
 External specs ──→ Import adapter ──→ Harness IR ──→ Export adapter ──→ External specs
@@ -1060,7 +953,7 @@ External specs ──→ Import adapter ──→ Harness IR ──→ Export ad
 
 The Harness Internal Representation (IR) is the canonical format for agents, skills, workflows, and evaluations. All external formats are imported/exported through adapters.
 
-### 8.2 Spec Import/Export Adapters
+#### 7.1.2 Spec Import/Export Adapters
 
 | Spec | Direction | Mapping |
 |---|---|---|
@@ -1068,7 +961,7 @@ The Harness Internal Representation (IR) is the canonical format for agents, ski
 | **Open Agent Specification** | Import/Export | Agent definition → agent IR, workflow → phase sequence |
 | **Custom specs** | Export SDK | Adapter interface for third-party specs |
 
-### 8.3 Adapter Interface
+#### 7.1.3 Adapter Interface
 
 ```python
 class SpecAdapter:
@@ -1085,18 +978,14 @@ class SpecAdapter:
         ...
 ```
 
-### 8.4 Cross-Repo Integration
+#### 7.1.4 Internal Directory Structure
 
-sdlc-harness-dev and sdlc-bench share the Harness IR:
-- **sdlc-harness-dev** owns: agent IR schemas, skill IR schemas, config schema, platform generators
-- **sdlc-bench** owns: evaluation report schemas, grader definitions, canary system, benchmark runners
+All components live in a single repository (`sdlc-harness`):
+- **Root** owns: agent definitions, skill definitions, config schema, platform generators
+- **bench/** owns: evaluation report schemas, grader definitions, canary system, benchmark runners
 - **Shared contract**: Evaluation report JSON schema, artifact format schemas
 
----
-
-## 9. Migration & Adoption
-
-### 9.1 Current → New File Mapping
+### 7.2 Current → New File Mapping
 
 | Current Location | New Location | Change |
 |---|---|---|
@@ -1105,11 +994,11 @@ sdlc-harness-dev and sdlc-bench share the Harness IR:
 | `vscode-extension/skills/*/SKILL.md` | Generated from `skills/*.skill.yaml` (IR) | Source becomes IR |
 | `.github/copilot-instructions.md` | Generated from `templates/copilot-instructions.md.tmpl` | Template-driven |
 | Hardcoded Azure/Python references | Driven by `harness-config.yml` | Config-driven |
-| `validate-findings.ps1` (keyword only) | Multi-strategy graders in sdlc-bench | Keyword + LLM-as-judge + AST |
-| `validate-pipeline.ps1` | Automated benchmark runner in sdlc-bench | CI-integrated |
+| `validate-findings.ps1` (keyword only) | Multi-strategy graders in bench/ | Keyword + LLM-as-judge + AST |
+| `validate-pipeline.ps1` | Automated benchmark runner in bench/ | CI-integrated |
 | Manual benchmark runs | GitHub Actions automated evaluation | PR-gated regression |
 
-### 9.2 Phased Transition Plan
+### 7.3 Phased Transition Plan
 
 **Phase 1: Architecture + Agent Format** (sdlc-harness-dev)
 - Define Harness IR schemas for agents and skills
@@ -1138,43 +1027,11 @@ sdlc-harness-dev and sdlc-bench share the Harness IR:
 - Implement deterministic orchestrator state machine
 - Evolve @Harness into Planner role
 - Implement Generator coordinator with sub-agent delegation
-- Integrate Evaluator with sdlc-bench graders
+- Integrate Evaluator with bench/ graders
 
-### 9.3 Backward Compatibility
+### 7.4 Backward Compatibility
 
 - Generated Copilot `.agent.md` files are functionally identical to current ones
 - Existing users see no behavior change until they opt into new features
 - Current canary benchmarks continue to work during v2 migration
 - No behavior change for users who don't adopt the new config system
-
----
-
-## References
-
-### Industry Sources
-- Anthropic: [Effective harnesses for long-running agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents) (Nov 2025)
-- Anthropic: [Harness design for long-running application development](https://www.anthropic.com/engineering/harness-design-long-running-apps) (Mar 2026)
-- Anthropic: [Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents) (Jan 2026)
-- AI-SDLC Framework: [ai-sdlc.io](https://ai-sdlc.io/docs/spec/spec)
-- Open Agent Specification: [arXiv:2510.04173](https://arxiv.org/abs/2510.04173)
-- Microsoft: [SWE-bench-Live](https://github.com/microsoft/SWE-bench-Live)
-
-### Benchmarks
-- [SWE-bench](https://www.swebench.com/)
-- [SWE-bench Pro](https://labs.scale.com/leaderboard/swe_bench_pro_public) (Scale AI)
-- [SlopCodeBench](https://arxiv.org/abs/2603.24755) — Long-horizon quality degradation
-- [SWE-EVO](https://arxiv.org/pdf/2512.18470) — Longitudinal codebase evolution
-- [GitTaskBench](https://arxiv.org/html/2508.18993v1) — Cost-normalized performance
-- [Terminal-Bench](https://ainativedev.io/news/8-benchmarks-shaping-the-next-generation-of-ai-agents) — CLI competence
-- [DPAI Arena](https://blog.jetbrains.com/blog/2025/10/28/introducing-developer-productivity-ai-arena-an-open-platform-for-ai-coding-agents-benchmarks/) (JetBrains)
-
-### Evaluation Platforms
-- [Braintrust](https://www.braintrust.dev) — CI/CD-integrated eval
-- [Langfuse](https://langfuse.com) — Open-source observability
-- [Pydantic Evals](https://ai.pydantic.dev/evals/) — Type-safe eval framework
-- [Promptfoo](https://github.com/promptfoo/promptfoo) — Red-teaming + eval (acquired by OpenAI Mar 2026)
-
-### Reports
-- Anthropic: [2026 Agentic Coding Trends Report](https://resources.anthropic.com/hubfs/2026+Agentic+Coding+Trends+Report.pdf)
-- PwC: [Agentic SDLC in Practice](https://www.pwc.com/m1/en/publications/2026/docs/future-of-solutions-dev-and-delivery-in-the-rise-of-gen-ai.pdf)
-- [State of AI-Assisted Coding in 2026](https://generativeprogrammer.com/p/state-of-ai-assisted-coding-in-2026)
