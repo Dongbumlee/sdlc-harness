@@ -1123,7 +1123,7 @@ sdlc-harness-dev and sdlc-bench share the Harness IR:
 - Convert hardcoded references to config-driven templates
 - Create pre-built profiles for Azure/AWS/GCP
 
-**Phase 3: Evaluation System** (sdlc-bench)
+**Phase 3: Evaluation System** (sdlc-harness `bench/`)
 - Implement multi-strategy graders per phase
 - Evolve canary system to v2 (difficulty tiers, LLM-as-judge)
 - Build benchmark report format and trend tracking
