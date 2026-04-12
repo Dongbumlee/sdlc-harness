@@ -1,4 +1,5 @@
 """Shared data models for benchmark grading."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -41,3 +42,27 @@ class CanarySpec:
     expected: dict[str, Any]
     graders: list[dict[str, Any]]
     metadata: dict[str, Any] = field(default_factory=dict)
+
+
+class Severity(str, Enum):
+    """Severity level for grading issues."""
+
+    INFO = "info"
+    WARNING = "warning"
+    ERROR = "error"
+    CRITICAL = "critical"
+
+
+@dataclass
+class GraderResult:
+    """Unified result type for the evaluation pipeline.
+
+    Used by the orchestrator/evaluator to aggregate scores
+    from multiple graders (both code and LLM-based).
+    """
+
+    grader: str = ""
+    score: float = 0.0
+    passed: bool = False
+    details: dict[str, Any] = field(default_factory=dict)
+    severity: Severity = Severity.INFO

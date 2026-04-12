@@ -1,0 +1,100 @@
+# Canary: API Documentation Generation
+id: doc-001-api-documentation
+phase: document
+title: "API Documentation Generation"
+description: >
+  Tests the AI agent's ability to produce comprehensive API documentation
+  including OpenAPI specification, usage examples, error reference,
+  authentication guide, and rate limiting details.
+
+prompt: |
+  You are a senior technical writer. Produce complete API documentation
+  for a user management REST API with the following endpoints and context:
+
+  API Overview:
+  - Base URL: https://api.example.com/v1
+  - Authentication: Bearer token (JWT) obtained via /auth/login
+  - Rate limiting: 100 requests/minute per API key, 1000/hour
+  - Response format: JSON with envelope pattern { data, meta, errors }
+  - API versioning via URL path prefix (/v1/)
+
+  Endpoints to Document:
+  1. POST /auth/login — authenticate user, returns access + refresh tokens
+  2. POST /auth/refresh — exchange refresh token for new access token
+  3. GET /users — list users with pagination (page, per_page), filtering
+     (role, status, created_after), and sorting (sort_by, order)
+  4. POST /users — create a new user (name, email, role, password)
+  5. GET /users/{id} — retrieve a single user by ID
+  6. PATCH /users/{id} — partial update of user fields
+  7. DELETE /users/{id} — soft-delete a user (sets status to inactive)
+  8. POST /users/{id}/avatar — upload user avatar (multipart/form-data)
+
+  For Each Endpoint Provide:
+  - HTTP method and path with path/query parameters
+  - Request headers (Authorization, Content-Type, X-Request-ID)
+  - Request body schema with field descriptions and validation rules
+  - Success response schema with example JSON
+  - Error responses (400, 401, 403, 404, 409, 422, 429, 500) with examples
+  - curl example showing a complete request
+  - SDK usage example in Python (using httpx)
+
+  Additional Sections:
+  - Getting started guide (obtain API key, first request)
+  - Authentication flow diagram (login → access token → refresh cycle)
+  - Error code reference table with descriptions and resolution steps
+  - Pagination guide explaining cursor-based vs offset pagination
+  - Changelog section with versioning policy
+
+expected:
+  keywords:
+    - OpenAPI
+    - authentication
+    - pagination
+    - rate limiting
+    - error codes
+    - curl
+    - request
+    - response
+
+graders:
+  - type: keyword
+    weight: 0.3
+    config:
+      required:
+        - authentication
+        - authorization
+        - pagination
+        - rate limiting
+        - error
+        - request
+        - response
+        - curl
+        - Bearer
+        - JSON
+      forbidden: ["TODO", "placeholder"]
+  - type: structural
+    weight: 0.3
+    config:
+      required_sections:
+        - getting started
+        - authentication
+        - endpoints
+        - error reference
+        - pagination
+        - rate limiting
+  - type: llm-judge
+    weight: 0.4
+    config:
+      criteria:
+        - completeness
+        - technical_accuracy
+        - clarity
+        - usability
+        - example_quality
+
+timeout_seconds: 120
+tags:
+  - document
+  - api
+  - openapi
+  - technical-writing

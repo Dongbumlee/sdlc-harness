@@ -1,0 +1,89 @@
+# Canary: FastAPI Project Scaffolding
+id: scf-001-fastapi-project
+phase: scaffold
+title: "FastAPI Project Scaffolding"
+description: >
+  Tests the AI agent's ability to scaffold a production-ready FastAPI project
+  with proper directory structure, configuration files, dependency management,
+  entry points, and development tooling.
+
+prompt: |
+  You are a senior Python engineer. Scaffold a production-ready FastAPI project
+  for a user management microservice with the following specifications:
+
+  Project Requirements:
+  - Service name: user-management-api
+  - Python 3.12+ with uv as the package manager
+  - FastAPI with async SQLAlchemy for database access
+  - PostgreSQL as the primary data store
+  - Pydantic v2 for request/response models
+  - JWT-based authentication with refresh tokens
+  - Alembic for database migrations
+
+  Expected Project Structure:
+  1. src/ layout with proper Python packaging (pyproject.toml)
+  2. Separate layers: routers, services, repositories, models, schemas
+  3. Configuration management using pydantic-settings with .env support
+  4. Health check and readiness endpoints
+  5. Structured logging with correlation ID middleware
+  6. Dockerfile with multi-stage build (builder + runtime)
+  7. docker-compose.yml for local development (app + postgres + redis)
+  8. Pre-commit hooks configuration (.pre-commit-config.yaml)
+  9. pytest configuration with async test support and fixtures
+  10. Makefile or justfile with common development commands
+
+  For each file generated, include appropriate comments explaining the
+  purpose. Ensure all imports are valid and the project can start with
+  `uvicorn` out of the box (aside from database provisioning).
+
+expected:
+  keywords:
+    - pyproject.toml
+    - Dockerfile
+    - docker-compose
+    - FastAPI
+    - SQLAlchemy
+    - Alembic
+    - pytest
+
+graders:
+  - type: keyword
+    weight: 0.3
+    config:
+      required:
+        - pyproject.toml
+        - Dockerfile
+        - FastAPI
+        - SQLAlchemy
+        - Alembic
+        - pytest
+        - uvicorn
+        - pydantic
+        - middleware
+      forbidden: ["TODO", "placeholder"]
+  - type: structural
+    weight: 0.3
+    config:
+      required_sections:
+        - project structure
+        - configuration
+        - entry point
+        - database
+        - testing
+        - containerization
+  - type: llm-judge
+    weight: 0.4
+    config:
+      criteria:
+        - completeness
+        - technical_accuracy
+        - clarity
+        - production_readiness
+        - best_practices
+
+timeout_seconds: 120
+tags:
+  - scaffold
+  - fastapi
+  - python
+  - project-structure

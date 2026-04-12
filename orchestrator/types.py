@@ -65,3 +65,18 @@ class OrchestratorConfig:
     parallel_phases: bool = False
     evaluation_mode: str = "comprehensive"
     canary_path: str | None = None
+
+
+# Backward-compat aliases
+Phase = SDLCPhase
+TaskStatus = PlanStatus
+
+
+@dataclass
+class TaskResult:
+    """Legacy result type kept for backward compatibility."""
+
+    phase: SDLCPhase
+    content: str = ""
+    status: PlanStatus = PlanStatus.COMPLETED
+    metadata: dict[str, Any] = field(default_factory=dict)

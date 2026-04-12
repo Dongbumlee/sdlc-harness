@@ -1,175 +1,165 @@
-"""Evaluator — scores artifacts using configurable grading strategies."""
-
+"""Evaluator module for orchestrating grading pipelines."""
 from __future__ import annotations
 
-import logging
 from dataclasses import dataclass, field
 from typing import Any
 
-from orchestrator.types import Phase, TaskResult, TaskStatus
-
-logger = logging.getLogger(__name__)
-
-
-@dataclass
-class EvalCriterion:
-    """A single evaluation criterion."""
-
-    name: str
-    description: str
-    weight: float = 1.0
-    threshold: float = 0.7
+from bench.graders.models import GraderResult
+from orchestrator.evaluator_config import EvaluatorConfig
 
 
 @dataclass
-class EvalScore:
-    """Score for a single criterion."""
+class EvaluationReport:
+    """Complete evaluation report for a single canary."""
 
-    criterion: str
-    score: float  # 0.0 - 1.0
-    rationale: str = ""
-    details: dict[str, Any] = field(default_factory=dict)
-
-    @property
-    def passed(self) -> bool:
-        return self.score >= 0.7  # default threshold
-
-
-@dataclass
-class EvalResult:
-    """Complete evaluation result."""
-
-    phase: Phase
-    scores: list[EvalScore]
-    overall_score: float
-    passed: bool
-    summary: str = ""
+    canary_id: str
+    results: list[GraderResult] = field(default_factory=list)
+    aggregate_score: float = 0.0
+    passed: bool = False
     metadata: dict[str, Any] = field(default_factory=dict)
 
 
 class Evaluator:
-    """Evaluate generated artifacts against quality criteria.
+    """Orchestrates grading pipelines for canary evaluation.
 
     Supports multiple grading strategies:
     - keyword: check for required terms/patterns
+    - ast: validate code structure via AST parsing
     - structural: validate document structure
-    - llm-judge: use LLM to assess quality
-    - rubric: score against a detailed rubric
+    - file: check for expected files/directories
+    - judge: LLM-based quality assessment
+    - consensus: multi-judge agreement
+    - rubric: detailed rubric scoring
     """
 
-    def __init__(self, criteria: list[EvalCriterion] | None = None) -> None:
-        self.criteria = criteria or self._default_criteria()
+    def __init__(self, config: EvaluatorConfig | None = None) -> None:
+        self.config = config or EvaluatorConfig()
 
-    def evaluate(self, result: TaskResult) -> EvalResult:
-        """Evaluate a task result against all criteria."""
-        scores = []
-        for criterion in self.criteria:
-            score = self._score_criterion(result, criterion)
-            scores.append(score)
+    def evaluate(self, canary_id: str, code: str, spec: dict[str, Any]) -> EvaluationReport:
+        """Run all configured graders against code output.
 
-        total_weight = sum(c.weight for c in self.criteria)
-        if total_weight > 0:
-            weighted = sum(
-                s.score * c.weight
-                for s, c in zip(scores, self.criteria)
-            )
-            overall = weighted / total_weight
-        else:
-            overall = 0.0
+        Args:
+            canary_id: Identifier for the canary spec
+            code: The generated code to evaluate
+            spec: The canary specification with expected criteria
 
-        passed = all(
-            s.score >= c.threshold
-            for s, c in zip(scores, self.criteria)
+        Returns:
+            Complete evaluation report with all grader results
+        """
+        results: list[GraderResult] = []
+
+        # Run code graders
+        for grader_name in self.config.code_graders:
+            result = self._run_code_grader(grader_name, code, spec)
+            results.append(result)
+
+        # Run LLM graders
+        for grader_name in self.config.llm_graders:
+            result = self._run_llm_grader(grader_name, code, spec)
+            results.append(result)
+
+        aggregate = self.aggregate_results(results)
+
+        return EvaluationReport(
+            canary_id=canary_id,
+            results=results,
+            aggregate_score=aggregate["weighted_score"],
+            passed=aggregate["passed"],
+            metadata={"config": self.config.__dict__},
         )
 
-        return EvalResult(
-            phase=result.phase,
-            scores=scores,
-            overall_score=overall,
-            passed=passed,
-            summary=self._build_summary(scores, overall, passed),
-        )
+    def aggregate_results(self, results: list[GraderResult]) -> dict[str, Any]:
+        """Aggregate multiple grader results into a weighted score.
 
-    def _score_criterion(
-        self, result: TaskResult, criterion: EvalCriterion
-    ) -> EvalScore:
-        """Score a result against a single criterion."""
-        content = result.content or ""
+        Args:
+            results: List of individual grader results
 
-        # Basic scoring: check content is non-empty and has structure
-        score = 0.0
-        rationale_parts = []
+        Returns:
+            Dict with weighted_score, passed, and per-grader breakdown
+        """
+        if not results:
+            return {"weighted_score": 0.0, "passed": False, "breakdown": {}}
 
-        if not content.strip():
-            rationale_parts.append("Content is empty")
-        else:
-            # Length check
-            if len(content) > 100:
-                score += 0.3
-                rationale_parts.append("Content has sufficient length")
-            else:
-                rationale_parts.append("Content is too short")
+        breakdown: dict[str, Any] = {}
+        total_weight = 0.0
+        weighted_sum = 0.0
 
-            # Structure check (headers, lists)
-            if "#" in content or "-" in content:
-                score += 0.3
-                rationale_parts.append("Content has structure")
+        for result in results:
+            weight = self.config.weights.get(result.grader, 1.0)
+            weighted_sum += result.score * weight
+            total_weight += weight
+            breakdown[result.grader] = {
+                "score": result.score,
+                "weight": weight,
+                "passed": result.passed,
+            }
 
-            # Phase-specific keywords
-            phase_keywords = self._phase_keywords(result.phase)
-            found = sum(1 for kw in phase_keywords if kw.lower() in content.lower())
-            if phase_keywords:
-                keyword_ratio = found / len(phase_keywords)
-                score += 0.4 * keyword_ratio
-                rationale_parts.append(
-                    f"Found {found}/{len(phase_keywords)} phase keywords"
-                )
+        weighted_score = weighted_sum / total_weight if total_weight > 0 else 0.0
+        passed = weighted_score >= self.config.pass_threshold
 
-        return EvalScore(
-            criterion=criterion.name,
-            score=min(score, 1.0),
-            rationale="; ".join(rationale_parts),
-        )
-
-    def _phase_keywords(self, phase: Phase) -> list[str]:
-        """Get expected keywords for each phase."""
-        keywords: dict[Phase, list[str]] = {
-            Phase.REQUIREMENTS: ["user story", "acceptance", "requirement"],
-            Phase.DESIGN: ["architecture", "component", "api"],
-            Phase.IMPLEMENT: ["function", "class", "import"],
-            Phase.QA: ["test", "security", "review"],
-            Phase.DEPLOY: ["deploy", "infrastructure", "config"],
-            Phase.RELEASE: ["changelog", "version", "release"],
+        return {
+            "weighted_score": round(weighted_score, 4),
+            "passed": passed,
+            "breakdown": breakdown,
         }
-        return keywords.get(phase, [])
 
-    def _build_summary(
-        self, scores: list[EvalScore], overall: float, passed: bool
-    ) -> str:
-        """Build a human-readable summary."""
-        status = "PASSED" if passed else "FAILED"
-        lines = [f"Evaluation {status} (overall: {overall:.2f})"]
-        for s in scores:
-            icon = "pass" if s.passed else "FAIL"
-            lines.append(f"  [{icon}] {s.criterion}: {s.score:.2f}")
-        return "\n".join(lines)
+    def _run_code_grader(self, name: str, code: str, spec: dict[str, Any]) -> GraderResult:
+        """Run a single code grader."""
+        from bench.graders.code import keyword_grader, ast_grader, structural_grader, file_grader
 
-    def _default_criteria(self) -> list[EvalCriterion]:
-        """Default evaluation criteria."""
-        return [
-            EvalCriterion(
-                name="completeness",
-                description="Artifact covers all required aspects",
-                weight=2.0,
-            ),
-            EvalCriterion(
-                name="correctness",
-                description="Content is technically accurate",
-                weight=2.0,
-            ),
-            EvalCriterion(
-                name="clarity",
-                description="Content is well-structured and readable",
-                weight=1.0,
-            ),
-        ]
+        graders = {
+            "keyword": keyword_grader.KeywordGrader,
+            "ast": ast_grader.ASTGrader,
+            "structural": structural_grader.StructuralGrader,
+            "file": file_grader.FileGrader,
+        }
+
+        grader_cls = graders.get(name)
+        if not grader_cls:
+            return GraderResult(
+                grader=name,
+                score=0.0,
+                passed=False,
+                details={"error": f"Unknown grader: {name}"},
+            )
+
+        grader = grader_cls()
+        return grader.grade(code, spec)
+
+    def _run_llm_grader(self, name: str, code: str, spec: dict[str, Any]) -> GraderResult:
+        """Run a single LLM grader."""
+        from bench.graders.llm import judge_grader, consensus_grader, rubric_grader
+
+        graders = {
+            "judge": judge_grader.JudgeGrader,
+            "consensus": consensus_grader.ConsensusGrader,
+            "rubric": rubric_grader.RubricGrader,
+        }
+
+        grader_cls = graders.get(name)
+        if not grader_cls:
+            return GraderResult(
+                grader=name,
+                score=0.0,
+                passed=False,
+                details={"error": f"Unknown grader: {name}"},
+            )
+
+        grader = grader_cls()
+        return grader.grade(code, spec)
+
+    def score(self, results: list[GraderResult]) -> float:
+        """Quick shortcut to get just the weighted score."""
+        return self.aggregate_results(results)["weighted_score"]
+
+    def create_report(
+        self, canary_id: str, results: list[GraderResult]
+    ) -> EvaluationReport:
+        """Create a report from pre-computed results."""
+        aggregate = self.aggregate_results(results)
+        return EvaluationReport(
+            canary_id=canary_id,
+            results=results,
+            aggregate_score=aggregate["weighted_score"],
+            passed=aggregate["passed"],
+        )

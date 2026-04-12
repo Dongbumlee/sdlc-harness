@@ -1,0 +1,94 @@
+# Canary: Changelog and Release Notes Generation
+id: rel-001-changelog-generation
+phase: release
+title: "Changelog and Release Notes Generation"
+description: >
+  Tests the AI agent's ability to generate a well-structured changelog
+  and release notes from a commit history, categorizing changes by type,
+  highlighting breaking changes, and producing user-facing summaries.
+
+prompt: |
+  You are a senior release engineer. Generate a changelog and release notes
+  for version 2.4.0 of a user management API based on the following commit
+  history since the previous release (v2.3.0):
+
+  Commit History (newest first):
+  - a1b2c3d feat(auth): add PKCE support for OAuth2 authorization code flow
+  - b2c3d4e fix(users): resolve race condition in concurrent profile updates
+  - c3d4e5f feat(users): add bulk user import endpoint (POST /users/bulk)
+  - d4e5f6g BREAKING: remove deprecated /users/search endpoint (use GET /users?q=)
+  - e5f6g7h perf(db): add composite index on (tenant_id, email) for faster lookups
+  - f6g7h8i fix(auth): refresh token rotation not invalidating old tokens
+  - g7h8i9j chore(deps): upgrade FastAPI 0.109 → 0.111, Pydantic 2.5 → 2.6
+  - h8i9j0k feat(admin): add user activity audit log endpoint
+  - i9j0k1l docs: update OpenAPI spec with new bulk import schema
+  - j0k1l2m fix(upload): avatar upload failing for HEIC image format
+  - k1l2m3n security: patch CVE-2024-1234 in JWT validation library
+  - l2m3n4o feat(users): support custom fields via JSON schema definition
+  - m3n4o5p test: add integration tests for bulk import edge cases
+  - n4o5p6q ci: add staging environment deployment to pipeline
+
+  Deliverables:
+  1. CHANGELOG.md entry following Keep a Changelog format with sections:
+     Added, Changed, Deprecated, Removed, Fixed, Security
+  2. GitHub-style release notes with user-facing summary (non-technical)
+  3. Migration guide for the breaking change (removed /users/search)
+  4. Dependency update summary with risk assessment
+  5. List of contributors (derive from commit prefixes)
+
+  Ensure breaking changes are prominently highlighted with migration steps.
+  Tag each entry with the relevant commit hash for traceability.
+
+expected:
+  keywords:
+    - CHANGELOG
+    - breaking change
+    - Added
+    - Fixed
+    - Security
+    - migration
+    - release notes
+
+graders:
+  - type: keyword
+    weight: 0.3
+    config:
+      required:
+        - CHANGELOG
+        - Added
+        - Fixed
+        - Security
+        - Removed
+        - breaking
+        - migration
+        - PKCE
+        - bulk import
+        - CVE
+      forbidden: ["TODO", "placeholder"]
+  - type: structural
+    weight: 0.3
+    config:
+      required_sections:
+        - Added
+        - Changed
+        - Removed
+        - Fixed
+        - Security
+        - migration guide
+        - release notes
+  - type: llm-judge
+    weight: 0.4
+    config:
+      criteria:
+        - completeness
+        - technical_accuracy
+        - clarity
+        - categorization_quality
+        - breaking_change_handling
+
+timeout_seconds: 120
+tags:
+  - release
+  - changelog
+  - versioning
+  - documentation

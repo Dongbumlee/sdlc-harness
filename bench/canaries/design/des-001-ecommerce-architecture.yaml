@@ -1,0 +1,88 @@
+# Canary: E-commerce System Architecture Design
+id: des-001-ecommerce-architecture
+phase: design
+title: "E-commerce System Architecture Design"
+description: >
+  Tests the AI agent's ability to produce a comprehensive system architecture
+  for an e-commerce platform, including component diagrams, data flow,
+  technology stack decisions, and scalability considerations.
+
+prompt: |
+  You are a senior solutions architect. Design the system architecture for
+  an e-commerce platform with the following requirements:
+
+  Business Context:
+  - Mid-size retailer moving from monolith to microservices
+  - Expected traffic: 50k concurrent users during peak sales events
+  - Must support multiple payment providers (Stripe, PayPal, Apple Pay)
+  - Product catalog of ~500k SKUs with real-time inventory tracking
+  - Multi-region deployment (US-East, EU-West) for low latency
+
+  Deliverables:
+  1. High-level component diagram showing all services and their interactions
+  2. Data flow diagram for the order placement workflow
+  3. Technology stack recommendations with justification for each choice
+  4. Database design strategy (which databases for which services)
+  5. API gateway and service mesh configuration approach
+  6. Caching strategy for product catalog and session data
+  7. Event-driven architecture for inventory updates and order processing
+  8. Scalability plan addressing horizontal scaling and auto-scaling triggers
+  9. Security architecture including authentication, authorization, and data encryption
+  10. Disaster recovery and failover strategy
+
+  For each decision, explain the trade-offs considered and why the chosen
+  approach is preferred. Include specific Azure services where applicable.
+
+expected:
+  keywords:
+    - microservices
+    - API gateway
+    - event-driven
+    - caching
+    - load balancer
+    - database
+    - authentication
+    - scalability
+
+graders:
+  - type: keyword
+    weight: 0.3
+    config:
+      required:
+        - microservices
+        - API gateway
+        - event-driven
+        - caching
+        - load balancer
+        - database
+        - authentication
+        - scalability
+        - inventory
+        - payment
+      forbidden: ["TODO", "placeholder"]
+  - type: structural
+    weight: 0.3
+    config:
+      required_sections:
+        - component diagram
+        - data flow
+        - technology stack
+        - database design
+        - caching strategy
+        - security architecture
+  - type: llm-judge
+    weight: 0.4
+    config:
+      criteria:
+        - completeness
+        - technical_accuracy
+        - clarity
+        - trade_off_analysis
+        - scalability_reasoning
+
+timeout_seconds: 120
+tags:
+  - design
+  - architecture
+  - e-commerce
+  - microservices

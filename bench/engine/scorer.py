@@ -6,7 +6,7 @@ import importlib
 from dataclasses import dataclass, field
 from typing import Any
 
-from bench.graders.models import GraderResult
+from bench.graders.models import GraderOutput
 
 
 @dataclass
@@ -16,7 +16,7 @@ class CanaryScore:
     canary_id: str
     phase: str
     overall_score: float
-    grader_results: list[GraderResult] = field(default_factory=list)
+    grader_results: list[GraderOutput] = field(default_factory=list)
     metadata: dict[str, Any] = field(default_factory=dict)
 
     @property
@@ -59,7 +59,7 @@ def score_canary(
         total = sum(weights)
         weights = [w / total for w in weights]
 
-    results: list[GraderResult] = []
+    results: list[GraderOutput] = []
     for spec in grader_specs:
         grader = _load_grader(spec)
         result = grader.grade(artifacts)

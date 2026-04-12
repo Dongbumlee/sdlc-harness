@@ -25,9 +25,12 @@ def load_profile(profile_name: str) -> dict:
         return yaml.safe_load(f)
 
 
-def discover_canaries(filter_phases: str | None = None) -> list[dict]:
+def discover_canaries(
+    filter_phases: str | None = None,
+    canary_dir: Path | None = None,
+) -> list[dict]:
     """Discover and load canary specifications."""
-    canary_dir = Path("bench/canaries")
+    canary_dir = canary_dir or Path("bench/canaries")
     if not canary_dir.exists():
         return []
 
@@ -50,29 +53,97 @@ def discover_canaries(filter_phases: str | None = None) -> list[dict]:
     return canaries
 
 
-def execute_canary(canary: dict, timeout: int = 300) -> dict:
-    """Execute a single canary test. Returns result dict.
+def execute_canary(
+    canary: dict,
+    timeout: int = 300,
+    provider_type: str = "mock",
+    model: str = "gpt-4o",
+) -> dict:
+    """Execute a single canary test against the LLM provider.
 
-    Note: This is a stub implementation. Real execution requires
-    integration with the AI agent provider (e.g., GitHub Copilot,
-    Azure OpenAI, or other configured agent).
+    Steps:
+        1. Extract prompt from the canary spec.
+        2. Call the LLM provider for a response.
+        3. Run each configured grader on the response.
+        4. Compute a weighted score across graders.
+        5. Return a result dict with status pass/fail/error.
     """
+    import asyncio
+    import importlib
+
+    from bench.engine.provider import create_provider
+
     start_time = time.time()
     canary_id = canary.get("id", "unknown")
 
-    # Stub: In production, this would send the prompt to the agent
-    # and evaluate the response using the configured graders
-    result = {
-        "canary_id": canary_id,
-        "status": "skipped",
-        "scores": {
-            "overall": 0.0,
-            "by_grader": [],
-        },
-        "duration_seconds": round(time.time() - start_time, 3),
-    }
+    try:
+        prompt = canary.get("prompt")
+        if not prompt:
+            raise ValueError("Canary spec is missing 'prompt' field")
 
-    return result
+        provider = create_provider(provider_type)
+        response = asyncio.run(provider.complete(prompt=prompt, model=model))
+
+        grader_specs = canary.get("graders", [])
+        grader_scores: list[dict] = []
+        weights: list[float] = []
+
+        builtin_graders = {
+            "keyword": ("bench.graders.code.keyword_grader", "KeywordGrader"),
+            "ast": ("bench.graders.code.ast_grader", "ASTGrader"),
+            "structural": ("bench.graders.code.structural_grader", "StructuralGrader"),
+            "file": ("bench.graders.code.file_grader", "FileGrader"),
+        }
+
+        for spec in grader_specs:
+            grader_type = spec.get("type", "")
+            config = spec.get("config", {})
+            weight = spec.get("weight", 1.0)
+
+            if grader_type in builtin_graders:
+                module_path, class_name = builtin_graders[grader_type]
+            else:
+                module_path = spec.get("module", "")
+                class_name = spec.get("class", grader_type)
+
+            mod = importlib.import_module(module_path)
+            grader_cls = getattr(mod, class_name)
+            grader = grader_cls(**config)
+            result = grader.grade(response)
+
+            grader_scores.append({
+                "grader": class_name,
+                "score": result.score,
+                "passed": result.passed,
+            })
+            weights.append(weight)
+
+        if grader_scores:
+            total_w = sum(weights)
+            overall = sum(
+                s["score"] * w / total_w for s, w in zip(grader_scores, weights)
+            )
+        else:
+            overall = 1.0 if response else 0.0
+
+        passed = overall >= 0.7
+        status = "pass" if passed else "fail"
+
+        return {
+            "canary_id": canary_id,
+            "status": status,
+            "scores": {"overall": round(overall, 4), "by_grader": grader_scores},
+            "duration_seconds": round(time.time() - start_time, 3),
+        }
+
+    except Exception as exc:
+        return {
+            "canary_id": canary_id,
+            "status": "error",
+            "scores": {"overall": 0.0, "by_grader": []},
+            "error": str(exc),
+            "duration_seconds": round(time.time() - start_time, 3),
+        }
 
 
 def generate_report(
@@ -117,6 +188,8 @@ def main() -> int:
     parser.add_argument("--profile", default="ci-quick", help="Benchmark profile")
     parser.add_argument("--filter", default="", help="Filter by phase (comma-separated)")
     parser.add_argument("--output", type=Path, help="Output report path")
+    parser.add_argument("--provider", default="mock", help="LLM provider (mock/openai)")
+    parser.add_argument("--model", default="gpt-4o", help="Model name")
     args = parser.parse_args()
 
     run_id = f"run-{uuid.uuid4().hex[:8]}"
@@ -139,7 +212,7 @@ def main() -> int:
         cid = canary.get("id", "unknown")
         print(f"  [{i}/{len(canaries)}] {cid}...", end=" ", flush=True)
         timeout = canary.get("timeout_seconds", profile.get("timeout_seconds", 300))
-        result = execute_canary(canary, timeout)
+        result = execute_canary(canary, timeout, args.provider, args.model)
         print(result["status"])
         results.append(result)
 

@@ -1,0 +1,99 @@
+# Canary: Azure Web App Deployment Configuration
+id: dep-001-azure-webapp
+phase: deploy
+title: "Azure Web App Deployment Configuration"
+description: >
+  Tests the AI agent's ability to generate Infrastructure as Code and CI/CD
+  pipeline configuration for deploying a containerized web application
+  to Azure App Service with proper networking, monitoring, and secrets management.
+
+prompt: |
+  You are a senior DevOps engineer. Generate the complete deployment
+  configuration for a containerized Python web application targeting
+  Azure App Service with the following requirements:
+
+  Application Context:
+  - Containerized FastAPI application (Linux, Python 3.12)
+  - Azure Container Registry (ACR) for image storage
+  - Azure App Service (Linux containers) as the compute target
+  - Azure Database for PostgreSQL Flexible Server as the data store
+  - Azure Key Vault for secrets management
+  - Azure Application Insights for monitoring and tracing
+
+  Infrastructure as Code (Bicep):
+  1. Resource group with consistent tagging (environment, owner, cost-center)
+  2. App Service Plan (Linux, P1v3 SKU for production, B1 for staging)
+  3. App Service with managed identity, VNet integration, and container config
+  4. PostgreSQL Flexible Server with private endpoint and firewall rules
+  5. Key Vault with RBAC-based access policies for the App Service identity
+  6. Application Insights workspace connected to the App Service
+  7. Virtual Network with subnets for app integration and database endpoints
+  8. Staging deployment slot for blue-green deployments
+
+  CI/CD Pipeline (Azure DevOps YAML):
+  1. Trigger on main branch and pull requests
+  2. Build stage: lint, test, build Docker image, push to ACR
+  3. Deploy to staging slot with health check validation
+  4. Manual approval gate before production swap
+  5. Swap staging to production slot
+  6. Post-deployment smoke tests against production URL
+  7. Rollback step if smoke tests fail
+
+  Include parameterized templates so the same config works for dev,
+  staging, and production environments. Add comments explaining each
+  resource and its configuration choices.
+
+expected:
+  keywords:
+    - Bicep
+    - App Service
+    - Container Registry
+    - Key Vault
+    - PostgreSQL
+    - pipeline
+    - deployment slot
+    - managed identity
+
+graders:
+  - type: keyword
+    weight: 0.3
+    config:
+      required:
+        - Bicep
+        - App Service
+        - Container Registry
+        - Key Vault
+        - PostgreSQL
+        - managed identity
+        - deployment slot
+        - Application Insights
+        - pipeline
+        - VNet
+      forbidden: ["TODO", "placeholder"]
+  - type: structural
+    weight: 0.3
+    config:
+      required_sections:
+        - infrastructure as code
+        - CI/CD pipeline
+        - networking
+        - secrets management
+        - monitoring
+        - deployment strategy
+  - type: llm-judge
+    weight: 0.4
+    config:
+      criteria:
+        - completeness
+        - technical_accuracy
+        - clarity
+        - security_posture
+        - operational_readiness
+
+timeout_seconds: 120
+tags:
+  - deploy
+  - azure
+  - bicep
+  - ci-cd
+  - infrastructure

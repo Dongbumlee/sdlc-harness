@@ -1,0 +1,112 @@
+# Canary: Responsible AI Bias Assessment
+id: rai-001-bias-assessment
+phase: rai
+title: "Responsible AI Bias Assessment"
+description: >
+  Tests the AI agent's ability to perform a responsible AI assessment
+  on a machine learning system, covering bias detection, fairness metrics,
+  data privacy considerations, transparency, and mitigation strategies.
+
+prompt: |
+  You are a senior Responsible AI engineer. Perform a comprehensive RAI
+  assessment for the following AI-powered feature being added to an
+  HR management platform:
+
+  Feature Description:
+  - Automated resume screening system that ranks job applicants
+  - Uses an NLP model fine-tuned on 50k historical hiring decisions
+  - Input: resume text (PDF/DOCX parsed), job description
+  - Output: match score (0-100), skill gap analysis, recommendation
+    (advance / hold / reject)
+  - Training data spans 5 years of hiring at a large tech company
+  - Model: fine-tuned BERT-based classifier with regression head
+
+  Assessment Requirements:
+  1. Bias Detection Analysis
+     - Identify potential sources of bias in training data (historical
+       hiring patterns, demographic imbalances, language bias)
+     - Assess proxy discrimination risks (zip code → race, name → gender,
+       university prestige → socioeconomic status)
+     - Evaluate disparate impact across protected categories (gender, race,
+       age, disability, veteran status)
+
+  2. Fairness Metrics
+     - Define appropriate fairness metrics for this use case (demographic
+       parity, equalized odds, predictive parity)
+     - Specify acceptance thresholds for each metric
+     - Propose a monitoring dashboard for ongoing fairness tracking
+
+  3. Data Privacy Assessment
+     - Identify PII in the data pipeline (names, addresses, dates of birth)
+     - Evaluate GDPR and CCPA compliance requirements
+     - Propose data minimization and anonymization strategies
+     - Assess right-to-explanation obligations for automated decisions
+
+  4. Transparency and Explainability
+     - Evaluate model interpretability (can decisions be explained?)
+     - Propose candidate-facing explanation format
+     - Define human-in-the-loop review triggers and escalation criteria
+
+  5. Mitigation Recommendations
+     - Propose concrete technical mitigations (re-sampling, adversarial
+       debiasing, calibration, threshold adjustment per group)
+     - Recommend process guardrails (audit cadence, red team exercises)
+     - Define go/no-go criteria for production deployment
+
+  Deliver a structured assessment report with severity ratings (critical,
+  high, medium, low) for each finding and prioritized remediation steps.
+
+expected:
+  keywords:
+    - bias
+    - fairness
+    - disparate impact
+    - PII
+    - GDPR
+    - explainability
+    - mitigation
+    - demographic parity
+
+graders:
+  - type: keyword
+    weight: 0.3
+    config:
+      required:
+        - bias
+        - fairness
+        - disparate impact
+        - PII
+        - GDPR
+        - explainability
+        - mitigation
+        - demographic parity
+        - proxy discrimination
+        - human-in-the-loop
+      forbidden: ["TODO", "placeholder"]
+  - type: structural
+    weight: 0.3
+    config:
+      required_sections:
+        - bias detection
+        - fairness metrics
+        - data privacy
+        - transparency
+        - explainability
+        - mitigation
+  - type: llm-judge
+    weight: 0.4
+    config:
+      criteria:
+        - completeness
+        - technical_accuracy
+        - clarity
+        - regulatory_awareness
+        - actionability
+
+timeout_seconds: 120
+tags:
+  - rai
+  - responsible-ai
+  - bias
+  - fairness
+  - privacy
