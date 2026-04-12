@@ -1,0 +1,99 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/Dongbumlee/sdlc-harness/schemas/harness-config.schema.json",
+  "title": "SDLC Harness Configuration",
+  "description": "Schema for harness-config.yml project configuration",
+  "type": "object",
+  "required": ["harness", "project"],
+  "properties": {
+    "harness": {
+      "type": "object",
+      "required": ["version"],
+      "properties": {
+        "version": { "type": "string", "pattern": "^\\d+\\.\\d+$" },
+        "profile": { "type": "string" }
+      }
+    },
+    "project": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "repo_url": { "type": "string", "format": "uri" }
+      }
+    },
+    "stack": {
+      "type": "object",
+      "properties": {
+        "language": { "type": "string", "enum": ["python", "typescript", "csharp", "java", "go", "rust"] },
+        "framework": { "type": "string", "enum": ["fastapi", "express", "aspnet", "springboot", "gin", "actix"] },
+        "test_framework": { "type": "string", "enum": ["pytest", "jest", "vitest", "xunit", "junit", "gotest"] },
+        "package_manager": { "type": "string", "enum": ["pip", "uv", "npm", "pnpm", "yarn", "nuget", "maven", "cargo"] }
+      }
+    },
+    "cloud": {
+      "type": "object",
+      "properties": {
+        "provider": { "type": "string", "enum": ["azure", "aws", "gcp"] },
+        "iac": { "type": "string", "enum": ["bicep", "terraform", "pulumi", "cdk"] },
+        "registry": { "type": "string", "enum": ["acr", "ecr", "gcr", "dockerhub"] },
+        "ci_cd": { "type": "string", "enum": ["github-actions", "azure-devops", "gitlab-ci", "jenkins"] }
+      }
+    },
+    "architecture": {
+      "type": "object",
+      "properties": {
+        "style": { "type": "string", "enum": ["microservices", "monolith", "modular-monolith", "serverless"] },
+        "api_style": { "type": "string", "enum": ["rest", "graphql", "grpc"] },
+        "database": { "type": "string" },
+        "messaging": { "type": "string" }
+      }
+    },
+    "mcp": {
+      "type": "object",
+      "properties": {
+        "servers": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "enabled": { "type": "boolean", "default": true },
+              "required": { "type": "boolean", "default": true },
+              "transport": { "type": "string", "enum": ["docker", "npx", "http"] }
+            }
+          }
+        }
+      }
+    },
+    "phases": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["requirements", "design", "scaffold", "deploy", "implement", "document", "qa", "rai", "release"]
+          }
+        }
+      }
+    },
+    "quality": {
+      "type": "object",
+      "properties": {
+        "thresholds": {
+          "type": "object",
+          "properties": {
+            "composite": { "type": "number", "minimum": 0, "maximum": 10 },
+            "security": { "type": "number", "minimum": 0, "maximum": 10 },
+            "code_quality": { "type": "number", "minimum": 0, "maximum": 10 },
+            "test_coverage": { "type": "number", "minimum": 0, "maximum": 10 },
+            "architecture": { "type": "number", "minimum": 0, "maximum": 10 },
+            "documentation": { "type": "number", "minimum": 0, "maximum": 10 }
+          }
+        },
+        "max_retries_per_phase": { "type": "integer", "minimum": 1, "maximum": 10, "default": 3 }
+      }
+    }
+  }
+}

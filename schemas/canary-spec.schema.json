@@ -1,0 +1,94 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Canary Specification",
+  "description": "Schema for SDLC Harness benchmark canary test specifications",
+  "type": "object",
+  "required": ["id", "name", "phase", "version", "prompt", "expected"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^(req|design|impl|qa|deploy|doc|rai|release|scaffold)-\\d{3}",
+      "description": "Unique canary identifier with phase prefix"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 3,
+      "description": "Human-readable canary name"
+    },
+    "phase": {
+      "type": "string",
+      "enum": ["requirements", "design", "implement", "qa", "deploy", "document", "rai", "release", "scaffold"],
+      "description": "SDLC phase this canary tests"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+$",
+      "description": "Canary specification version"
+    },
+    "prompt": {
+      "type": "string",
+      "minLength": 10,
+      "description": "The prompt to send to the AI agent"
+    },
+    "context": {
+      "type": "object",
+      "properties": {
+        "language": { "type": "string" },
+        "framework": { "type": "string" },
+        "project_type": { "type": "string" },
+        "files": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "description": "Additional context provided to the agent"
+    },
+    "expected": {
+      "type": "object",
+      "required": ["graders"],
+      "properties": {
+        "files": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Expected output files"
+        },
+        "keywords": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Keywords expected in output"
+        },
+        "structure": {
+          "type": "object",
+          "description": "Expected structural properties"
+        },
+        "graders": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["type", "weight"],
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": ["keyword", "ast", "structural", "file", "judge", "consensus", "rubric"]
+              },
+              "weight": { "type": "number", "minimum": 0, "maximum": 1 },
+              "config": { "type": "object" }
+            }
+          },
+          "description": "Grading pipeline configuration"
+        }
+      }
+    },
+    "timeout_seconds": {
+      "type": "integer",
+      "default": 300,
+      "description": "Maximum execution time"
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Categorization tags"
+    }
+  },
+  "additionalProperties": false
+}

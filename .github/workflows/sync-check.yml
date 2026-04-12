@@ -1,0 +1,33 @@
+name: Sync Check — Agent & Skill Drift Detection
+
+on:
+  pull_request:
+    branches: [dev, evo]
+  push:
+    branches: [dev, evo]
+
+jobs:
+  sync-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check agent directory sync
+        run: |
+          echo "=== Checking agent sync ==="
+          diff -r \
+            --exclude="plugin.json" \
+            --exclude="package.json" \
+            vscode-extension/agents/ .github/plugin/agents/ \
+            && echo "✅ Agents in sync" \
+            || { echo "❌ Agent directories have diverged!"; exit 1; }
+
+      - name: Check skill directory sync
+        run: |
+          echo "=== Checking skill sync ==="
+          diff -r \
+            --exclude="plugin.json" \
+            --exclude="package.json" \
+            vscode-extension/skills/ .github/plugin/skills/ \
+            && echo "✅ Skills in sync" \
+            || { echo "❌ Skill directories have diverged!"; exit 1; }

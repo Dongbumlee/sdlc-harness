@@ -1,0 +1,41 @@
+id: req-001-ecommerce-api
+phase: requirements
+title: "E-commerce API Requirements Generation"
+description: |
+  Given a business brief for an e-commerce platform, generate
+  a complete set of functional and non-functional requirements
+  covering authentication, product catalog, cart, and checkout.
+
+input:
+  business_brief: |
+    Build a REST API for an e-commerce platform supporting:
+    - User registration and JWT authentication
+    - Product catalog with search and filtering
+    - Shopping cart management
+    - Order placement with payment integration
+    Target: 10k concurrent users, 99.9% uptime SLA.
+
+expected_outputs:
+  - functional_requirements
+  - non_functional_requirements
+  - api_endpoint_list
+
+graders:
+  - module: bench.graders.code.keyword_grader
+    class: KeywordGrader
+    config:
+      required_keywords:
+        - authentication
+        - authorization
+        - rate limiting
+        - pagination
+        - error handling
+      min_match_ratio: 0.8
+  - module: bench.graders.llm.rubric_grader
+    class: RubricGrader
+    config:
+      rubric: |
+        Score the requirements on completeness (0-1):
+        - Are all four domains covered?
+        - Are NFRs specific and measurable?
+        - Are edge cases addressed?

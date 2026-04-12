@@ -1,0 +1,43 @@
+# SDLC Harness Configuration — AWS Node.js Profile
+harness:
+  version: "1.0"
+  profile: aws-node
+
+project:
+  name: ""
+  description: ""
+
+stack:
+  language: typescript
+  framework: express
+  test_framework: jest
+  package_manager: npm
+
+cloud:
+  provider: aws
+  iac: terraform
+  registry: ecr
+  ci_cd: github-actions
+
+mcp:
+  servers:
+    - name: awesome-copilot
+      required: true
+    - name: github-mcp
+      required: true
+    - name: context7
+      required: true
+    - name: aws-mcp
+      required: true
+
+phases:
+  enabled: [requirements, design, scaffold, deploy, implement, document, qa, rai, release]
+
+quality:
+  min_composite_score: 7.0
+  dimension_minimums:
+    security: 8.0
+    code_quality: 7.0
+    test_coverage: 7.0
+    architecture: 7.0
+    documentation: 6.0

@@ -1,0 +1,78 @@
+# Azure + Python Profile
+# Stack: Python/FastAPI/pytest on Azure with Bicep IaC
+
+harness:
+  version: "1.0"
+  profile: azure-python
+
+project:
+  name: ""
+  description: ""
+
+stack:
+  language: python
+  framework: fastapi
+  test_framework: pytest
+  package_manager: pip
+  runtime_version: "3.12"
+
+cloud:
+  provider: azure
+  iac: bicep
+  registry: acr
+  ci_cd: github_actions
+  region: eastus2
+
+architecture:
+  style: microservices
+  api_style: rest
+  database: cosmosdb
+  cache: redis
+
+mcp:
+  servers:
+    - name: awesome-copilot
+      transport: docker
+      image: "ghcr.io/microsoft/mcp-dotnet-samples/awesome-copilot:latest"
+      required: true
+    - name: github
+      transport: http
+      url: "api.githubcopilot.com/mcp/"
+      required: true
+    - name: context7
+      transport: npx
+      package: "@upstash/context7-mcp@latest"
+      required: true
+    - name: azure-devops
+      transport: npx
+      package: "@azure-devops/mcp"
+      required: true
+    - name: azure
+      transport: npx
+      package: "@azure/mcp@latest"
+      required: true
+    - name: microsoft-learn
+      transport: http
+      url: "learn.microsoft.com/api/mcp"
+      required: true
+
+phases:
+  requirements: true
+  design: true
+  scaffold: true
+  deploy: true
+  implement: true
+  document: true
+  qa: true
+  rai: true
+  release: true
+
+quality:
+  min_composite_score: 7.0
+  dimension_minimums:
+    security: 8.0
+    code_quality: 7.0
+    test_coverage: 7.0
+    architecture: 7.0
+    documentation: 6.0
+  max_retries_per_phase: 3

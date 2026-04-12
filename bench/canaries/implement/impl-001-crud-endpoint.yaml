@@ -1,0 +1,52 @@
+id: impl-001-crud-endpoint
+phase: implement
+title: "CRUD Endpoint Implementation"
+description: |
+  Given an API spec for a product resource, generate a complete
+  CRUD implementation with validation, error handling, and tests.
+
+input:
+  api_spec: |
+    Resource: Product
+    Fields:
+      - id: UUID (auto-generated)
+      - name: string (required, 1-200 chars)
+      - price: decimal (required, > 0)
+      - category: string (required, enum: electronics|clothing|food)
+      - created_at: datetime (auto)
+    Endpoints:
+      - POST /products — create
+      - GET /products/:id — read
+      - PUT /products/:id — update
+      - DELETE /products/:id — delete
+      - GET /products — list with pagination
+  language: python
+  framework: fastapi
+
+expected_outputs:
+  - implementation_code
+  - test_code
+  - validation_logic
+
+graders:
+  - module: bench.graders.code.ast_grader
+    class: ASTGrader
+    config:
+      required_constructs:
+        - class_definition
+        - function_definition
+        - error_handling
+      language: python
+  - module: bench.graders.code.structural_grader
+    class: StructuralGrader
+    config:
+      required_patterns:
+        - crud_endpoints
+        - input_validation
+        - error_responses
+  - module: bench.graders.code.file_grader
+    class: FileGrader
+    config:
+      expected_files:
+        - "*.py"
+      min_files: 2

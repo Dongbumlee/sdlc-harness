@@ -172,6 +172,10 @@
      - Python: pytest with pytest-asyncio for async tests (see `.github/instructions/test-quality.instructions.md`)
      - TypeScript: Vitest (see `.github/instructions/test-quality-ts.instructions.md`)
      - React components: Vitest + React Testing Library (see `.github/instructions/test-quality-tsx.instructions.md`)
+     - Java: JUnit 5 with Mockito + AssertJ (see `.github/instructions/test-quality-java.instructions.md`)
+     - C#: xUnit with Moq + FluentAssertions (see `.github/instructions/test-quality-csharp.instructions.md`)
+     - Go: go test with testify (see `.github/instructions/test-quality-go.instructions.md`)
+     - Rust: cargo test with mockall (see `.github/instructions/test-quality-rust.instructions.md`)
    - Follow existing naming and folder structure (e.g., `tests/unit/`,
      or co-located `*.test.ts` / `*.test.tsx` for TypeScript/React).
    - Use clear Arrange–Act–Assert structure.

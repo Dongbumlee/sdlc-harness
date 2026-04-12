@@ -127,6 +127,10 @@ Before starting, load these resources for accurate implementation:
      - **Python**: `.github/instructions/code-quality-py.instructions.md` and `.github/instructions/test-quality.instructions.md`
      - **TypeScript**: `.github/instructions/code-quality-ts.instructions.md` and `.github/instructions/test-quality-ts.instructions.md`
      - **React (TSX)**: `.github/instructions/code-quality-tsx.instructions.md` and `.github/instructions/test-quality-tsx.instructions.md`
+     - **Java**: `.github/instructions/code-quality-java.instructions.md` and `.github/instructions/test-quality-java.instructions.md`
+     - **C#**: `.github/instructions/code-quality-csharp.instructions.md` and `.github/instructions/test-quality-csharp.instructions.md`
+     - **Go**: `.github/instructions/code-quality-go.instructions.md` and `.github/instructions/test-quality-go.instructions.md`
+     - **Rust**: `.github/instructions/code-quality-rust.instructions.md` and `.github/instructions/test-quality-rust.instructions.md`
 
 4. **Write/update integration tests (after all code + unit tests)**
    - After all implementation steps are complete with unit tests:
