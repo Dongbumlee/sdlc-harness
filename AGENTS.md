@@ -50,18 +50,29 @@ Skills (12): `.github/plugin/skills/`
 
 ## Git Operations - Critical Lessons
 
+### GITHUB_TOKEN Conflict (ROOT CAUSE OF PUSH FAILURES)
+
+The `GITHUB_TOKEN` environment variable (loaded from `~/.amplifier/keys.env` for the GitHub MCP server) **conflicts with git's credential helper** and causes `git push` to silently fail — the command returns success output but nothing reaches the remote.
+
+**ALWAYS unset GITHUB_TOKEN before git push:**
+
+```bash
+# The working push pattern (REQUIRED)
+unset GITHUB_TOKEN && git add <files> && git commit -m "message" && git push origin evo
+```
+
+Without `unset GITHUB_TOKEN`, pushes appear to succeed but don't actually reach the remote. This was the root cause of all push failures in the 2026-04-12/13 session.
+
 ### Push Verification (ALWAYS DO THIS)
 
 Sub-agent git pushes are unreliable. Always push directly and verify:
 
 ```bash
-# 1. Switch auth
+# 1. Switch auth (if needed)
 gh auth switch --user Dongbumlee
 
-# 2. Stage, commit, push
-git add <files>
-git commit -m "message"
-git push origin evo
+# 2. Stage, commit, push (MUST unset GITHUB_TOKEN)
+unset GITHUB_TOKEN && git add <files> && git commit -m "message" && git push origin evo
 
 # 3. Verify from remote (REQUIRED)
 gh api repos/Dongbumlee/sdlc-harness/commits?sha=evo --jq '.[0] | "\(.sha[0:7]) \(.commit.message | split("\n")[0])"'
@@ -183,11 +194,46 @@ Note: The Python infrastructure code (items above) was built before the v2 archi
 ## Commits on `evo` Branch (Latest First)
 
 ```
-1a7f52d chore: add AGENTS.md for session context persistence
-68f75c9 docs: add v2 specification - agent-native evaluation, E2E canary testing
+5620d0f chore: add AGENTS.md for session context persistence
+22acfb7 docs: add v2 specification - agent-native evaluation, E2E canary testing
 14d0a5f fix: resolve type system mismatches and implement LLM provider pipeline
 49661cd fix: add Python packaging for testable module imports
 798779d feat: implement Phases 2-4 - benchmarking, orchestrator, CI/tooling
 31e0184 test: verify push works
 6cd9226 docs: split spec into research + specification, add implementation plan
 ```
+
+## IMPORTANT: Steps 1-5 NOT YET PUSHED
+
+Steps 1-5 from the implementation plan were developed during the 2026-04-12/13 session but **failed to push to remote** due to the GITHUB_TOKEN conflict. The work was lost from the local working directory. These steps need to be re-implemented in the next session:
+
+1. Clean codebase (remove orchestrator/, bench/graders/, bench/engine/, tools/, pyproject.toml, config/)
+2. Create `sdlc-reviewer-output-format` shared skill + update all 8 reviewer agents with YAML output blocks
+3. Create `sdlc-canary-runner` skill + add canary mode to harness agent + create bench/results/
+4. Strengthen harness evaluation gates (feedback templates, escalation protocol, phase-specific reviewer routing)
+5. Create `.github/workflows/canary-test.yml` + `tests/e2e-agent-test/run-canaries.sh`
+
+### Design Decisions for Steps 1-5 (from the session)
+
+**Step 2 - Reviewer Output:**
+- Add `---sdlc-review-output---` / `---end-sdlc-review-output---` delimiters for YAML block
+- Keep existing Markdown report for human readability, YAML block is additive
+- Each reviewer uses domain-specific finding categories
+- QA Coordinator updated to parse YAML blocks
+
+**Step 3 - Canary Runner:**
+- Canary mode uses SAME agents and SAME evaluation gates as production
+- Input comes from YAML specs instead of user
+- Output validated against expected results in canary spec
+- Results stored as structured JSON in `bench/results/`
+
+**Step 4 - Evaluation Gates:**
+- Score parsing: find `---sdlc-review-output---`, extract YAML, parse score/verdict/findings
+- Weighted scoring: security weight 1.5x, others 1.0x
+- 3-tier escalation: auto-retry → targeted retry → user decision
+- Phase-specific reviewer routing (not all phases need all 8 reviewers)
+
+**Step 5 - CI/CD:**
+- Triggered on PRs touching `agents/**` or `skills/**`
+- Runs harness in canary mode
+- Pass/fail gates PR merge
