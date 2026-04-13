@@ -10,7 +10,7 @@ How to use (VS Code):
 1. After design is agreed, open this prompt file.
 2. In Copilot Chat, say:
    "Use `.github/prompts/implementation-and-tests.prompt.md` for implementing:
-    'Order history API using your-cosmosdb-lib repository pattern and your-storage-lib blob helper.'"
+    'Order history API using the approved Cosmos DB library repository pattern and the approved Storage library blob helper.'"
 -->
 
 # Implementation and Tests Prompt (SDLC Phase 4)
@@ -42,10 +42,10 @@ The user will provide:
 Before starting, load these resources for accurate implementation:
 
 1. **Cosmos DB patterns** — `mcp_github_get_file_contents` → fetch `README.md` and
-   `HANDS_ON_GUIDE.md` from `your-org/your-cosmosdb-library`
+   `HANDS_ON_GUIDE.md` from `the project's Cosmos DB library repo (from copilot-instructions.md)`
    (Repository Pattern, entity definitions, query patterns)
 2. **Blob/Queue patterns** — `mcp_github_get_file_contents` → fetch `README.md` from
-   `your-org/your-storage-library`
+   `the project's Storage library repo (from copilot-instructions.md)`
    (AsyncStorageBlobHelper, context manager usage)
 3. **Framework docs** — Use **Context7 MCP** to load current documentation for:
    - FastAPI + Pydantic (for API services)
@@ -91,12 +91,12 @@ Before starting, load these resources for accurate implementation:
      - Agent depends on Business (shares domain models, uses repositories)
      - Business is the shared core — no dependency on API or Agent
      - Web calls API via HTTP — no direct dependency on Python layers\n   - For data access (lives in the **Business** layer):
-     - Cosmos DB: look for existing `RepositoryBase` subclasses using `your-cosmosdb-lib`.
-     - Blob/Queue: look for existing `AsyncStorageBlobHelper` / `AsyncStorageQueueHelper` usage via `your-storage-lib`.
+     - Cosmos DB: look for existing `RepositoryBase` subclasses using `the approved Cosmos DB library`.
+     - Blob/Queue: look for existing `AsyncStorageBlobHelper` / `AsyncStorageQueueHelper` usage via `the approved Storage library`.
    - For APIs and services (varies by template):
-     - `python_api_application_template`: `app/main.py`, `app/routers/`, `app/services/`, DI via `app_context`
-     - `python_application_template`: `src/main.py`, `src/libs/` (AppContext, config, Azure)
-     - `python_agent_framework_dev_template`: `src/libs/agent_framework/`, `src/samples/`
+     - `the API template repo`: `app/main.py`, `app/routers/`, `app/services/`, DI via `app_context`
+     - `the base app template repo`: `src/main.py`, `src/libs/` (AppContext, config, Azure)
+     - `the agent template repo`: `src/libs/agent_framework/`, `src/samples/`
 
 2. **Plan small steps (code → unit test → integration test)**
    - Break the implementation into 3–7 steps, following this strict order:
@@ -119,8 +119,8 @@ Before starting, load these resources for accurate implementation:
      - **Immediately after:** write the unit test for that code.
      - Do NOT batch all tests at the end — test each step as you go.
    - Use these Python libraries (do NOT use raw Azure SDKs):
-     - `your-cosmosdb-lib` via `RepositoryBase[Entity, KeyType]` pattern.
-     - `your-storage-lib` via `AsyncStorageBlobHelper` / `AsyncStorageQueueHelper` with `async with`.
+     - `the approved Cosmos DB library` via `RepositoryBase[Entity, KeyType]` pattern.
+     - `the approved Storage library` via `AsyncStorageBlobHelper` / `AsyncStorageQueueHelper` with `async with`.
    - Unit tests go in `tests/` at the project root (match existing folder structure).
    - Follow the language-specific quality standards:
      - **Python**: `.github/instructions/code-quality-py.instructions.md` and `.github/instructions/test-quality.instructions.md`
@@ -203,8 +203,8 @@ Example invocation for engineers:
 
 "Copilot, use `.github/prompts/implementation-and-tests.prompt.md` to implement:
  Add an /orders/{customerId}/history endpoint. Data comes from Cosmos DB using
- your-cosmosdb-lib with a CustomerOrderRepository extending RepositoryBase.
- PDF invoices should be retrieved via your-storage-lib AsyncStorageBlobHelper.
+ the approved Cosmos DB library with a CustomerOrderRepository extending RepositoryBase.
+ PDF invoices should be retrieved via the approved Storage library AsyncStorageBlobHelper.
  Make sure we have unit tests for the service and router,
  and an integration test for the API endpoint."
 -->

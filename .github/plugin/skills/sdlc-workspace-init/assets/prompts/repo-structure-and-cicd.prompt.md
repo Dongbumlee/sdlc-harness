@@ -48,8 +48,8 @@ If any of these are unclear, ask 1–2 focused questions before proceeding.
 Before starting, load these resources for authoritative patterns:
 
 1. **Template structure** — `mcp_github_get_file_contents` → fetch the directory structure
-   from the matching template repo (`python_application_template`, `python_api_application_template`,
-   or `python_agent_framework_dev_template`)
+   from the matching template repo (`the base app template repo`, `the API template repo`,
+   or `the agent template repo`)
 2. **Docker best practices** — `mcp_awesome-copil_load_instruction` → `"containerization-docker-best-practices"`
    (multi-stage builds, layer caching, image security)
 3. **Kubernetes best practices** — `mcp_awesome-copil_load_instruction` → `"kubernetes-deployment-best-practices"`
@@ -97,9 +97,9 @@ Based on the project type, choose the matching template from `.github/reference-
 
 | Layer | Template | Use for |
 |---|---|---|
-| API | `python_api_application_template` | REST endpoints (FastAPI + routers + DI) |
-| Business | `python_application_template` | Shared domain models, business services, repositories |
-| Agent | `python_agent_framework_dev_template` | AI agent with Azure AI Foundry + MCP tools |
+| API | `the API template repo` | REST endpoints (FastAPI + routers + DI) |
+| Business | `the base app template repo` | Shared domain models, business services, repositories |
+| Agent | `the agent template repo` | AI agent with Azure AI Foundry + MCP tools |
 | Web | React + Vite | Frontend UI |
 
 ### 2. Create layered folder structure under `src/`
@@ -114,7 +114,7 @@ src/
 │   ├── app/                       ← routers/, services/, models/
 │   ├── tests/
 │   ├── Dockerfile
-│   ├── pyproject.toml             ← Independent deps (fastapi, your-cosmosdb-lib, your-storage-lib)
+│   ├── pyproject.toml             ← Independent deps (fastapi, the approved Cosmos DB library, the approved Storage library)
 │   ├── .gitignore, .dockerignore, .env.example
 │   └── .python-version
 ├── <ProjectName>Business/         ← Business logic / domain services layer
@@ -122,7 +122,7 @@ src/
 │   ├── app/                       ← domain models, business rules, repositories, shared services
 │   ├── tests/
 │   ├── Dockerfile
-│   ├── pyproject.toml             ← Independent deps (your-cosmosdb-lib, your-storage-lib, pydantic)
+│   ├── pyproject.toml             ← Independent deps (the approved Cosmos DB library, the approved Storage library, pydantic)
 │   └── .env.example
 ├── <ProjectName>Agent/            ← AI agent service (if applicable)
 │   ├── .devcontainer/
@@ -305,7 +305,7 @@ Example invocation for engineers:
 
 "Copilot, use `.github/prompts/repo-structure-and-cicd.prompt.md` to:
  Set up a new FastAPI service for order processing. It uses Cosmos DB via
- your-cosmosdb-lib and Blob Storage via your-storage-lib. Deploy to Azure Container Apps.
- I need both GitHub Actions and ADO pipelines. Use the python_api_application_template
+ the approved Cosmos DB library and Blob Storage via the approved Storage library. Deploy to Azure Container Apps.
+ I need both GitHub Actions and ADO pipelines. Use the the API template repo
  as the base structure."
 -->

@@ -76,25 +76,25 @@
 
  #### Cosmos DB
 
- - **Use this library:** `your-cosmosdb-lib` (PyPI) from
-   [your-org/your-cosmosdb-library](https://github.com/your-org/your-cosmosdb-library).
+ - **Use this library:** `{{COSMOSDB_LIB_PACKAGE}}` (PyPI) from
+   [{{ORG_NAME}}/{{COSMOSDB_LIB_REPO}}](https://github.com/{{ORG_NAME}}/{{COSMOSDB_LIB_REPO}}).
  - **Pattern:** Repository Pattern with `RepositoryBase[TEntity, TKey]` and Pydantic entities via
    `RootEntityBase["EntityName", KeyType]`.
- - **Install:** `uv add your-cosmosdb-lib  # replace with your library`
+ - **Install:** `uv add {{COSMOSDB_LIB_PACKAGE}}  # replace with your library`
  - **Copilot behavior:**
-   - When asked to add Cosmos DB access, use `your-cosmosdb-lib` and follow the Repository Pattern.
+   - When asked to add Cosmos DB access, use `{{COSMOSDB_LIB_PACKAGE}}` and follow the Repository Pattern.
    - Define entities extending `RootEntityBase["EntityName", KeyType]` (type variables are mandatory).
    - Define repositories extending `RepositoryBase[Entity, KeyType]`.
    - Do NOT create raw `CosmosClient` instances; use the library's repository abstractions.
 
  #### Azure Blob Storage & Queue
 
- - **Use this library:** `your-storage-lib` (PyPI) from
-   [your-org/your-storage-library](https://github.com/your-org/your-storage-library).
+ - **Use this library:** `{{STORAGE_LIB_PACKAGE}}` (PyPI) from
+   [{{ORG_NAME}}/{{STORAGE_LIB_REPO}}](https://github.com/{{ORG_NAME}}/{{STORAGE_LIB_REPO}}).
  - **Pattern:** `AsyncStorageBlobHelper` / `AsyncStorageQueueHelper` with `async with` context manager.
- - **Install:** `uv add your-storage-lib  # replace with your library`
+ - **Install:** `uv add {{STORAGE_LIB_PACKAGE}}  # replace with your library`
  - **Copilot behavior:**
-   - When asked to add blob or queue operations, use `your-storage-lib`.
+   - When asked to add blob or queue operations, use `{{STORAGE_LIB_PACKAGE}}`.
    - Always use `async with` context manager for proper resource cleanup.
    - Do NOT create raw `BlobServiceClient` or `QueueServiceClient` instances.
 
@@ -121,8 +121,8 @@
 
  | Library | PyPI Package | Use for |
  |---------|-------------|--------|
- | [python_cosmosdb_helper](https://github.com/your-org/your-cosmosdb-library) | `your-cosmosdb-lib` | Cosmos DB SQL + MongoDB with Repository Pattern |
- | [python_storageaccount_helper](https://github.com/your-org/your-storage-library) | `your-storage-lib` | Azure Blob Storage + Queue operations |
+ | [{{COSMOSDB_LIB_REPO}}](https://github.com/{{ORG_NAME}}/{{COSMOSDB_LIB_REPO}}) | `{{COSMOSDB_LIB_PACKAGE}}` | Cosmos DB SQL + MongoDB with Repository Pattern |
+ | [{{STORAGE_LIB_REPO}}](https://github.com/{{ORG_NAME}}/{{STORAGE_LIB_REPO}}) | `{{STORAGE_LIB_PACKAGE}}` | Azure Blob Storage + Queue operations |
 
  **Copilot behavior:**
  - When the user needs Azure data access, check this table and use the listed library.
@@ -133,16 +133,16 @@
 
  | Template | Use for |
  |----------|--------|
- | [python_application_template](https://github.com/your-org/your-app-template) | Base app (console, worker, pipeline, CLI) with AppContext + DI + Azure App Config |
- | [python_api_application_template](https://github.com/your-org/your-api-template) | FastAPI service with advanced DI, routers, health probes |
- | [python_agent_framework_dev_template](https://github.com/your-org/your-agent-template) | AI agent apps with Azure AI Foundry, MCP tools, multi-agent workflows |
+ | [{{APP_TEMPLATE_REPO}}](https://github.com/{{ORG_NAME}}/{{APP_TEMPLATE_REPO}}) | Base app (console, worker, pipeline, CLI) with AppContext + DI + Azure App Config |
+ | [{{API_TEMPLATE_REPO}}](https://github.com/{{ORG_NAME}}/{{API_TEMPLATE_REPO}}) | FastAPI service with advanced DI, routers, health probes |
+ | [{{AGENT_TEMPLATE_REPO}}](https://github.com/{{ORG_NAME}}/{{AGENT_TEMPLATE_REPO}}) | AI agent apps with Azure AI Foundry, MCP tools, multi-agent workflows |
 
  **Copilot behavior:**
 
  - When the user asks to "create a new service/API/app/agent", pick the matching template:
-   - General app / worker / CLI -> `python_application_template`
-   - REST API / web service -> `python_api_application_template`
-   - AI agent / chatbot / MCP -> `python_agent_framework_dev_template`
+   - General app / worker / CLI -> `{{APP_TEMPLATE_REPO}}`
+   - REST API / web service -> `{{API_TEMPLATE_REPO}}`
+   - AI agent / chatbot / MCP -> `{{AGENT_TEMPLATE_REPO}}`
  - **MANDATORY: All projects MUST be placed under `src/<ProjectName><Layer>/`.**
    The `src/` directory at the repo root is a PROJECT CONTAINER — never put source code
    files (`main.py`, `models/`, `routers/`, `pyproject.toml`) directly at the repo root or
@@ -268,16 +268,16 @@
  ## 8. GitHub MCP authentication & reference repo access
 
  Several agents and workflows use **GitHub MCP** (`mcp_github_get_file_contents`, `mcp_github_search_code`, etc.)
- to fetch live patterns from private reference repositories in the `your-org` organization:
+ to fetch live patterns from private reference repositories in the `{{ORG_NAME}}` organization:
 
- - `your-org/your-cosmosdb-library` (your-cosmosdb-lib)
- - `your-org/your-storage-library` (your-storage-lib)
- - `your-org/your-app-template`
- - `your-org/your-api-template`
- - `your-org/your-agent-template`
+ - `{{ORG_NAME}}/{{COSMOSDB_LIB_REPO}}` ({{COSMOSDB_LIB_PACKAGE}})
+ - `{{ORG_NAME}}/{{STORAGE_LIB_REPO}}` ({{STORAGE_LIB_PACKAGE}})
+ - `{{ORG_NAME}}/{{APP_TEMPLATE_REPO}}`
+ - `{{ORG_NAME}}/{{API_TEMPLATE_REPO}}`
+ - `{{ORG_NAME}}/{{AGENT_TEMPLATE_REPO}}`
 
  **Authentication is required.** These repos are not publicly accessible. The GitHub MCP server
- authenticates via the user's GitHub Copilot session, which must have access to the `your-org` org.
+ authenticates via the user's GitHub Copilot session, which must have access to the `{{ORG_NAME}}` org.
 
  **Rules for Copilot and all agents:**
 
@@ -285,15 +285,15 @@
     reference repo content, perform a lightweight probe call (e.g., fetch `README.md` from one
     of the repos above). If the call fails or returns an auth error:
     - **Stop** the current workflow step.
-    - **Inform the user** that GitHub MCP authentication is required to access `your-org` repos.
+    - **Inform the user** that GitHub MCP authentication is required to access `{{ORG_NAME}}` repos.
     - **Provide remediation steps:**
-      1. Ensure the GitHub Copilot extension is signed in with an account that has access to the `your-org` organization.
+      1. Ensure the GitHub Copilot extension is signed in with an account that has access to the `{{ORG_NAME}}` organization.
       2. If using GitHub Copilot Chat, confirm the GitHub MCP server is listed and enabled in `.vscode/mcp.json`.
-      3. Try running a manual GitHub MCP call (e.g., ask Copilot to "fetch README.md from your-org/your-cosmosdb-library") to verify access.
+      3. Try running a manual GitHub MCP call (e.g., ask Copilot to "fetch README.md from {{ORG_NAME}}/{{COSMOSDB_LIB_REPO}}") to verify access.
     - **Do NOT proceed with stale or invented patterns** — the reference repos are the source of truth.
 
- 2. **No degraded mode — `your-org` access is mandatory.** Every engineer using this
-    template MUST have access to the `your-org` GitHub organization. If authentication
+ 2. **No degraded mode — `{{ORG_NAME}}` access is mandatory.** Every engineer using this
+    template MUST have access to the `{{ORG_NAME}}` GitHub organization. If authentication
     fails, STOP the workflow and require the user to sign in with a valid account.
     Do NOT fall back to local patterns — the reference repos are the authoritative source
     for project structure, SDK patterns, and template layouts.

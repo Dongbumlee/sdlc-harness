@@ -33,8 +33,8 @@ with an AI agent that automatically analyzes, summarizes, and answers questions 
 | **API**     | Python 3.12 + FastAPI                  | REST endpoints for document CRUD           |
 | **Web**     | React + TypeScript                     | Upload/browse/download UI + chat interface |
 | **Agent**   | Python 3.12 + Azure AI Agent Framework | Document analysis, summarization, and Q&A  |
-| **Data**    | Azure Cosmos DB via `your-cosmosdb-lib`     | Document metadata + analysis results       |
-| **Files**   | Azure Blob Storage via `your-storage-lib`   | Document file storage                      |
+| **Data**    | Azure Cosmos DB via `the approved Cosmos DB library`     | Document metadata + analysis results       |
+| **Files**   | Azure Blob Storage via `the approved Storage library`   | Document file storage                      |
 | **AI**      | Azure AI Foundry (OpenAI models)       | LLM inference for agent                    |
 | **Hosting** | Azure Container Apps                   | API, Web, and Agent in shared environment  |
 | **Infra**   | Bicep + AVM                            | Infrastructure as Code                     |
@@ -132,7 +132,7 @@ In Copilot Chat, select the **Harness** agent and describe the task:
 @Harness Design a Document Manager application that allows users to
 upload, browse, download, and delete documents (PDF, DOCX, images) with metadata.
 Include an AI agent that summarizes content and answers questions via chat.
-Use your-cosmosdb-lib for metadata, your-storage-lib for files, and deploy to Container Apps.
+Use the approved Cosmos DB library for metadata, the approved Storage library for files, and deploy to Container Apps.
 ```
 
 Harness will delegate to the **Analyst** agent, which:
@@ -158,8 +158,8 @@ Build a Document Manager application that allows users to:
    - Extracts and suggests tags
    - Answers natural language questions about documents via a chat interface
 
-The API should use your-cosmosdb-lib for document metadata and your-storage-lib for file storage.
-The agent service should use the python_agent_framework_dev_template pattern with
+The API should use the approved Cosmos DB library for document metadata and the approved Storage library for file storage.
+The agent service should use the the agent template repo pattern with
 Azure AI Foundry for LLM inference and MCP tools for document access.
 The web frontend should be React with TypeScript, including a chat panel for Q&A.
 All three services (API, Agent, Web) should deploy to Azure Container Apps in a shared environment.
@@ -216,8 +216,8 @@ The Coordinator delegates to the **Scaffolder** agent, which:
 Use .github/prompts/repo-structure-and-cicd.prompt.md to:
 
 Set up the repo structure for the Document Manager application.
-- API: Python FastAPI (use python_api_application_template as base)
-- Agent: Python AI agent (use python_agent_framework_dev_template as base)
+- API: Python FastAPI (use the API template repo as base)
+- Agent: Python AI agent (use the agent template repo as base)
 - Web: React TypeScript frontend
 - CI/CD: GitHub Actions
 - Deployment: Azure Container Apps (all 3 services in shared environment)
@@ -230,7 +230,7 @@ Follow the design in docs/adr/ADR-001-document-manager-design.md.
 
 Copilot should generate:
 - ✅ Folder structure (app/ for API, agent/ for AI agent, web/ for frontend)
-- ✅ `pyproject.toml` with `your-cosmosdb-lib` and `your-storage-lib` dependencies
+- ✅ `pyproject.toml` with `the approved Cosmos DB library` and `the approved Storage library` dependencies
 - ✅ `agent/pyproject.toml` with agent framework dependencies
 - ✅ `package.json` for React frontend
 - ✅ `.github/workflows/ci.yml` — build, lint, test (all 3 services)
@@ -268,7 +268,7 @@ document-manager/
 │   │   │       └── test_document_service.py
 │   │   ├── .env.example
 │   │   ├── Dockerfile
-│   │   └── pyproject.toml        # Independent deps (your-cosmosdb-lib, your-storage-lib, fastapi)
+│   │   └── pyproject.toml        # Independent deps (the approved Cosmos DB library, the approved Storage library, fastapi)
 │   ├── agent/                    # AI Agent service (independent service)
 │   │   ├── src/
 │   │   │   ├── main.py
@@ -358,8 +358,8 @@ The Coordinator delegates to the **Deployer** agent, which:
 Use .github/prompts/deployment.prompt.md to create the deployment infrastructure for
 the Document Manager application. We need:
 
-- Cosmos DB (SQL API) for document metadata via your-cosmosdb-lib
-- Blob Storage for document files via your-storage-lib
+- Cosmos DB (SQL API) for document metadata via the approved Cosmos DB library
+- Blob Storage for document files via the approved Storage library
 - Container Apps for API, Agent, and Web (all 3 in shared environment)
 - Container Registry for Docker images
 - Azure AI Foundry with OpenAI model deployment (for agent service)
@@ -414,7 +414,7 @@ azd up
 @Harness Implement the Document Manager API with these endpoints:
 POST /api/documents, GET /api/documents, GET /api/documents/{id},
 GET /api/documents/{id}/download, DELETE /api/documents/{id}.
-Use your-cosmosdb-lib and your-storage-lib. Follow ADR-001.
+Use the approved Cosmos DB library and the approved Storage library. Follow ADR-001.
 ```
 
 The Coordinator delegates to the **Implementer** agent, which:
@@ -441,8 +441,8 @@ The Document Manager API with these endpoints:
 - GET /api/documents/{id}/download — download document file
 - DELETE /api/documents/{id} — delete document and file
 
-Use your-cosmosdb-lib with a DocumentRepository extending RepositoryBase.
-Use your-storage-lib AsyncStorageBlobHelper for file operations.
+Use the approved Cosmos DB library with a DocumentRepository extending RepositoryBase.
+Use the approved Storage library AsyncStorageBlobHelper for file operations.
 
 Follow the design in docs/adr/ADR-001-document-manager-design.md.
 ```
@@ -458,7 +458,7 @@ Copilot should generate these files with tests:
 
 """Document entity for Cosmos DB storage."""
 
-from your_org.cosmosdb.sql import RootEntityBase
+from <project_cosmosdb_lib>.sql import RootEntityBase
 from typing import Optional
 from datetime import datetime
 
@@ -482,7 +482,7 @@ class Document(RootEntityBase["Document", str]):
 
 """Repository for document metadata in Cosmos DB."""
 
-from your_org.cosmosdb.sql import RepositoryBase
+from <project_cosmosdb_lib>.sql import RepositoryBase
 from app.models.document import Document
 
 class DocumentRepository(RepositoryBase[Document, str]):
@@ -503,7 +503,7 @@ class DocumentRepository(RepositoryBase[Document, str]):
 
 """Document service orchestrating Cosmos DB and Blob Storage operations."""
 
-from your_org.storage.blob import AsyncStorageBlobHelper
+from <project_storage_lib>.blob import AsyncStorageBlobHelper
 from app.repositories.document_repository import DocumentRepository
 from app.models.document import Document
 
@@ -548,7 +548,7 @@ class DocumentService:
 
 | ![Copilot generating implementation code](./images/guide/06-implementation.png)                    |
 | -------------------------------------------------------------------------------------------------- |
-| *Copilot generating the Document model, repository, and service with your-cosmosdb-lib and your-storage-lib* |
+| *Copilot generating the Document model, repository, and service with the approved Cosmos DB library and the approved Storage library* |
 ```python
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -616,13 +616,13 @@ cd ../..
 ```
 Use .github/prompts/implementation-and-tests.prompt.md to implement:
 
-The Document Manager AI Agent service using the python_agent_framework_dev_template pattern:
+The Document Manager AI Agent service using the the agent template repo pattern:
 
 1. Document Analyzer Agent — triggered after document upload:
    - Reads the document from Blob Storage via an MCP tool
    - Summarizes the content using Azure AI Foundry (GPT model)
    - Extracts topic tags
-   - Saves analysis results to Cosmos DB via your-cosmosdb-lib
+   - Saves analysis results to Cosmos DB via the approved Cosmos DB library
 
 2. Document Q&A Agent — chat endpoint:
    - Receives natural language questions about a specific document
@@ -699,7 +699,7 @@ class DocumentAnalyzerAgent:
 
 """MCP tool for reading document content from Azure Blob Storage."""
 
-from your_org.storage.blob import AsyncStorageBlobHelper
+from <project_storage_lib>.blob import AsyncStorageBlobHelper
 
 async def read_document(document_id: str, blob_path: str) -> str:
     """Read document content from Blob Storage.
@@ -823,7 +823,7 @@ After implementation, ask Harness to run a full QA review:
 The Coordinator delegates to the **QA Coordinator**, which spawns **8 parallel reviewer subagents**:
 
 1. **Architecture Reviewer** — checks layering rules, dependency boundaries, pattern consistency
-2. **Azure Compliance Reviewer** — verifies your-cosmosdb-lib usage, no raw SDK calls, identity best practices
+2. **Azure Compliance Reviewer** — verifies the approved Cosmos DB library usage, no raw SDK calls, identity best practices
 3. **Code Quality Reviewer** — checks naming, docstrings, dead code (loads best practices from awesome-copilot)
 4. **Security Reviewer** — loads OWASP Top 10 fresh from awesome-copilot, scans for secrets and injection
 5. **Test Coverage Reviewer** — runs pytest, checks coverage, validates assertion quality
@@ -990,7 +990,7 @@ git checkout -b feature/document-manager
 git add .
 git commit -m "feat: Document Manager - full-stack implementation
 
-- FastAPI API with your-cosmosdb-lib + your-storage-lib
+- FastAPI API with the approved Cosmos DB library + the approved Storage library
 - AI Agent service with Azure AI Foundry + MCP tools
 - React TypeScript frontend with chat panel
 - Bicep/AVM infrastructure with Container Apps

@@ -29,7 +29,7 @@ All 8 reviewer perspectives executed against `tests/e2e-agent-test/`. Findings b
 |---|---|---|---|
 | 1 | Security Reviewer | [app.py](tests/e2e-agent-test/src/backend/app.py#L12) | **Hardcoded OpenAI API key** — `OPENAI_API_KEY = "sk-proj-abc123..."` in source code. Must be removed and rotated immediately. Use Key Vault or environment variable. |
 | 2 | Security Reviewer | [app.py](tests/e2e-agent-test/src/backend/app.py#L15) | **Hardcoded Cosmos DB connection string** — `COSMOS_CONNECTION_STRING = "AccountEndpoint=..."` with `AccountKey` in source. Use `DefaultAzureCredential` instead. |
-| 3 | Security Reviewer | [app.py](tests/e2e-agent-test/src/backend/app.py#L30-L33) | **Hardcoded Storage Account key** — `AccountKey=abc123==` in `BlobServiceClient.from_connection_string()`. Use `your-storage-lib` with managed identity. |
+| 3 | Security Reviewer | [app.py](tests/e2e-agent-test/src/backend/app.py#L30-L33) | **Hardcoded Storage Account key** — `AccountKey=abc123==` in `BlobServiceClient.from_connection_string()`. Use `approved Storage library` with managed identity. |
 | 4 | Security Reviewer | [app.py](tests/e2e-agent-test/src/backend/app.py) | **A01: Broken Access Control** — No authentication or authorization on any endpoint (`/api/documents`, `/api/chat`, `/api/documents/{doc_id}` DELETE). Anyone can read, create, and delete documents. |
 | 5 | Security Reviewer | [app.py](tests/e2e-agent-test/src/backend/app.py#L93-L94) | **Error handler leaks internals** — `generic_error_handler` returns `str(exc)` and `repr(exc.__traceback__)` to the client, exposing internal paths, stack frames, and implementation details. |
 | 6 | Security Reviewer | [app.py](tests/e2e-agent-test/src/backend/app.py#L62-L68) | **A03: Injection / unsanitized input** — `create_document` accepts a raw `dict` and stores it directly in Cosmos DB with no input validation, sanitization, or Pydantic model. |
@@ -48,10 +48,10 @@ All 8 reviewer perspectives executed against `tests/e2e-agent-test/`. Findings b
 
 | # | Source | File | Finding |
 |---|---|---|---|
-| 15 | Azure Compliance Reviewer | [app.py](tests/e2e-agent-test/src/backend/app.py#L6) | **Raw `azure-cosmos` SDK** — `from azure.cosmos import CosmosClient` violates the reference catalog. Must use `your-cosmosdb-lib` with `RepositoryBase`. |
-| 16 | Azure Compliance Reviewer | [app.py](tests/e2e-agent-test/src/backend/app.py#L7) | **Raw `azure-storage-blob` SDK** — `from azure.storage.blob import BlobServiceClient` violates the reference catalog. Must use `your-storage-lib` with `AsyncStorageBlobHelper`. |
-| 17 | Azure Compliance Reviewer | [app.py](tests/e2e-agent-test/src/backend/app.py#L22) | **Connection string auth** — `CosmosClient.from_connection_string()` instead of `DefaultAzureCredential`. Should use managed identity via `your-cosmosdb-lib`. |
-| 18 | Azure Compliance Reviewer | [app.py](tests/e2e-agent-test/src/backend/app.py#L28-L33) | **No `async with` context manager** — `BlobServiceClient` is used without `async with`, violating the `your-storage-lib` pattern for proper resource cleanup. |
+| 15 | Azure Compliance Reviewer | [app.py](tests/e2e-agent-test/src/backend/app.py#L6) | **Raw `azure-cosmos` SDK** — `from azure.cosmos import CosmosClient` violates the reference catalog. Must use `approved Cosmos DB library` with `RepositoryBase`. |
+| 16 | Azure Compliance Reviewer | [app.py](tests/e2e-agent-test/src/backend/app.py#L7) | **Raw `azure-storage-blob` SDK** — `from azure.storage.blob import BlobServiceClient` violates the reference catalog. Must use `approved Storage library` with `AsyncStorageBlobHelper`. |
+| 17 | Azure Compliance Reviewer | [app.py](tests/e2e-agent-test/src/backend/app.py#L22) | **Connection string auth** — `CosmosClient.from_connection_string()` instead of `DefaultAzureCredential`. Should use managed identity via `approved Cosmos DB library`. |
+| 18 | Azure Compliance Reviewer | [app.py](tests/e2e-agent-test/src/backend/app.py#L28-L33) | **No `async with` context manager** — `BlobServiceClient` is used without `async with`, violating the `approved Storage library` pattern for proper resource cleanup. |
 | 19 | Azure Compliance Reviewer | [main.bicep](tests/e2e-agent-test/infra/main.bicep#L13-L19) | **Raw resource definitions** — Uses `'cosmos.bicep'` and `'openai.bicep'` modules instead of Azure Verified Modules (`br/public:avm/res/...`). |
 | 20 | Azure Compliance Reviewer | [main.bicep](tests/e2e-agent-test/infra/main.bicep#L9-L11) | **No tags on resource group** — Missing `azd-env-name`, `TemplateName`, `CreatedBy` tags required by SDLC standards. |
 | 21 | Azure Compliance Reviewer | [main.bicep](tests/e2e-agent-test/infra/main.bicep) | **No WAF toggle parameters** — Missing `enablePrivateNetworking`, `enableMonitoring` parameters required for WAF/Non-WAF deployment variants. |
@@ -123,7 +123,7 @@ All 8 reviewer perspectives executed against `tests/e2e-agent-test/`. Findings b
 | Automated tests pass | ⛔ | No tests exist at all |
 | Code quality standards met | ⛔ | Missing copyright headers, debug statements, missing docstrings |
 | Security review passed (no secrets, proper auth) | ⛔ | 9 security findings including 3 hardcoded secrets, XSS, no auth |
-| Azure compliance verified (correct SDK usage, AVM patterns) | ⛔ | Raw SDKs used instead of `your-cosmosdb-lib`/`your-storage-lib`; no AVM modules; no tags/diagnostics |
+| Azure compliance verified (correct SDK usage, AVM patterns) | ⛔ | Raw SDKs used instead of `approved Cosmos DB library`/`approved Storage library`; no AVM modules; no tags/diagnostics |
 | UX & accessibility checks passed | ⛔ | 10 accessibility violations (missing alt, keyboard nav, focus, responsive layout) |
 | LLM behavior & safety verified | ⛔ | 7 findings — no prompt guards, no max_tokens, no retry, no content filters |
 | Deployment readiness confirmed | ⛔ | No health endpoint, no logging, no timeouts, incomplete README, no dependency manifest |

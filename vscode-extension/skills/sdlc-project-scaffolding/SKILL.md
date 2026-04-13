@@ -25,33 +25,33 @@ For API projects, fetch these key files and use them as the basis for scaffoldin
 
 ```
 # 1. Read the app entry point pattern
-mcp_github_get_file_contents(owner: "your-org", repo: "python_api_application_template", path: "app/main.py")
+mcp_github_get_file_contents(owner: "the project's GitHub org", repo: "the API template repo", path: "app/main.py")
 
 # 2. Read the Application class (core framework pattern)
-mcp_github_get_file_contents(owner: "your-org", repo: "python_api_application_template", path: "app/application.py")
+mcp_github_get_file_contents(owner: "the project's GitHub org", repo: "the API template repo", path: "app/application.py")
 
 # 3. Read the libs/ framework structure
-mcp_github_get_file_contents(owner: "your-org", repo: "python_api_application_template", path: "app/libs")
+mcp_github_get_file_contents(owner: "the project's GitHub org", repo: "the API template repo", path: "app/libs")
 
 # 4. Read the DI pattern with Protocol interfaces
-mcp_github_get_file_contents(owner: "your-org", repo: "python_api_application_template", path: "app/services")
+mcp_github_get_file_contents(owner: "the project's GitHub org", repo: "the API template repo", path: "app/services")
 
 # 5. Read the Dockerfile pattern
-mcp_github_get_file_contents(owner: "your-org", repo: "python_api_application_template", path: "Dockerfile")
+mcp_github_get_file_contents(owner: "the project's GitHub org", repo: "the API template repo", path: "Dockerfile")
 
 # 6. Read the pyproject.toml pattern
-mcp_github_get_file_contents(owner: "your-org", repo: "python_api_application_template", path: "pyproject.toml")
+mcp_github_get_file_contents(owner: "the project's GitHub org", repo: "the API template repo", path: "pyproject.toml")
 
 # 7. Read the health probes router
-mcp_github_get_file_contents(owner: "your-org", repo: "python_api_application_template", path: "app/routers/http_probes.py")
+mcp_github_get_file_contents(owner: "the project's GitHub org", repo: "the API template repo", path: "app/routers/http_probes.py")
 ```
 
 **Read each file's content, then adapt it for the new project.** Do not skip this step.
 
 ## Step 2: Template patterns you MUST follow
 
-These are the exact patterns from `python_api_application_template`. Follow them
-the same way you follow `RootEntityBase` for your-cosmosdb-lib.
+These are the exact patterns from `the API template repo`. Follow them
+the same way you follow `RootEntityBase` for the approved Cosmos DB library.
 
 ### main.py — Application factory pattern (NOT bare FastAPI)
 
@@ -176,8 +176,8 @@ dependencies = [
     "pydantic>=2.11.5",
     "pydantic-settings>=2.9.1",
     "azure-identity>=1.23.0",
-    "your-cosmosdb-lib>=1.0.0",          # Add if Cosmos DB needed
-    "your-storage-lib>=1.0.0",           # Add if Blob/Queue needed
+    "the approved Cosmos DB library>=1.0.0",          # Add if Cosmos DB needed
+    "the approved Storage library>=1.0.0",           # Add if Blob/Queue needed
 ]
 
 [dependency-groups]
@@ -198,9 +198,9 @@ addopts = ["--import-mode=importlib"]
 
 | Application Type | Template Repo | Code Root Inside Project |
 |---|---|---|
-| REST API / web service | `python_api_application_template` | `app/` |
-| Console / worker / CLI | `python_application_template` | `src/` (nested inside project) |
-| AI agent / chatbot / MCP | `python_agent_framework_dev_template` | `src/` (nested inside project) |
+| REST API / web service | `the API template repo` | `app/` |
+| Console / worker / CLI | `the base app template repo` | `src/` (nested inside project) |
+| AI agent / chatbot / MCP | `the agent template repo` | `src/` (nested inside project) |
 | Web frontend | React + TypeScript (custom) | `src/` (nested inside project) |
 
 **IMPORTANT: "Code Root" refers to the folder INSIDE the project folder, NOT the
@@ -266,7 +266,7 @@ For a single-service project with only an API, still use the naming convention:
 
 ```
 src/
-├── <Name>API/               ← python_api_application_template
+├── <Name>API/               ← the API template repo
 │   ├── app/                 ← Code root (NOT src/)
 │   │   ├── main.py
 │   │   ├── application.py
@@ -278,7 +278,7 @@ src/
 │   ├── Dockerfile
 │   ├── pyproject.toml
 │   └── .devcontainer/
-├── <Name>Business/          ← python_application_template
+├── <Name>Business/          ← the base app template repo
 │   ├── src/                 ← Code root (NOT app/)
 │   │   ├── main.py
 │   │   └── libs/
@@ -286,7 +286,7 @@ src/
 │   ├── Dockerfile
 │   ├── pyproject.toml
 │   └── .devcontainer/
-├── <Name>Agent/             ← python_agent_framework_dev_template
+├── <Name>Agent/             ← the agent template repo
 │   ├── src/                 ← Code root (NOT app/)
 │   │   ├── libs/agent_framework/
 │   │   └── samples/

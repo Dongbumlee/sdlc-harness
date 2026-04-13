@@ -53,7 +53,7 @@ Before starting, verify these are in place:
 - [ ] All **Prerequisites** above are met (Docker Desktop running, Node.js installed)
 - [ ] All **6 MCP servers** are started in `.vscode/mcp.json` (see table above)
 - [ ] VS Code is open with this repo as the workspace root
-- [ ] GitHub Copilot extension is signed in (account has `your-org` org access)
+- [ ] GitHub Copilot extension is signed in (account has `the project's GitHub org` org access)
 - [ ] `.github/copilot-instructions.md` still has unfilled placeholders (for first-run init test)
 - [ ] `docs/adr/` folder is empty (clean slate)
 - [ ] `docs/api/` folder is empty (clean slate)
@@ -91,7 +91,7 @@ We need a REST API to store and query feedback.
 
 - [ ] **MCP readiness check** — Harness probes all 3 critical MCP servers BEFORE any other work:
   - [ ] `awesome-copilot` — runs `mcp_awesome-copil_search_instructions(keywords: "security")`
-  - [ ] `GitHub MCP` — runs `mcp_github_get_file_contents` on `your-org/your-cosmosdb-library`
+  - [ ] `GitHub MCP` — runs `mcp_github_get_file_contents` on `the project's approved Cosmos DB library repo`
   - [ ] `Context7` — runs `mcp_context7_resolve-library-id(libraryName: "fastapi")`
 - [ ] **Status table reported** — Harness shows a table with ✅/⛔ status for each server
 - [ ] **Failure handling** — If awesome-copilot is down, Harness stops and tells user to start Docker + MCP server
@@ -143,7 +143,7 @@ Please produce a design proposal.
 
 ### Expected behavior:
 
-- [ ] **GitHub MCP auth gate** — Analyst probes `your-org/your-cosmosdb-library` README
+- [ ] **GitHub MCP auth gate** — Analyst probes `the project's approved Cosmos DB library repo` README
 - [ ] **awesome-copilot loaded** — `"project-planning"` collection + `"task-implementation"` instruction
 - [ ] **Reference catalog fetched** — via GitHub MCP or local `.github/reference-catalog.md`
 - [ ] **Context7 used** — FastAPI / Pydantic docs loaded
@@ -156,7 +156,7 @@ Please produce a design proposal.
 - [ ] **Problem / Requirements** — functional + non-functional listed
 - [ ] **Design / Implementation** — includes:
   - [ ] Layered architecture (API → Application → Domain → Infrastructure)
-  - [ ] Azure services mapped: Cosmos DB → `your-cosmosdb-lib`, Container Apps
+  - [ ] Azure services mapped: Cosmos DB → `approved Cosmos DB library`, Container Apps
   - [ ] Data model: `Feedback` entity extending `RootEntityBase`
   - [ ] API endpoints: `POST /feedback`, `GET /feedback/{id}`, `GET /feedback?category=...`
   - [ ] Repository: `FeedbackRepository` extending `RepositoryBase`
@@ -170,8 +170,8 @@ Please produce a design proposal.
 
 ### Red flags (should NOT happen):
 
-- [ ] ~~Raw `CosmosClient` proposed instead of `your-cosmosdb-lib`~~
-- [ ] ~~Raw `BlobServiceClient` proposed instead of `your-storage-lib`~~
+- [ ] ~~Raw `CosmosClient` proposed instead of `approved Cosmos DB library`~~
+- [ ] ~~Raw `BlobServiceClient` proposed instead of `approved Storage library`~~
 - [ ] ~~New architectural pattern invented without checking existing code~~
 
 ### Result: [ ] PASS / [ ] FAIL
@@ -223,14 +223,14 @@ We need a layered architecture following the application pattern:
 - CustomerFeedbackAPI — FastAPI backend (API layer)
 - CustomerFeedbackBusiness — shared domain models, repositories, services (Business layer)
 - CustomerFeedbackWeb — React frontend (Web layer)
-Use the python_api_application_template for API, python_application_template for Business.
+Use the API application template for API, base application template for Business.
 ```
 
 ### Expected behavior:
 
-- [ ] **GitHub MCP auth gate** — Scaffolder probes `python_application_template` README
+- [ ] **GitHub MCP auth gate** — Scaffolder probes `base application template` README
 - [ ] **`sdlc-project-scaffolding` skill activated** — reads `.github/skills/sdlc-project-scaffolding/SKILL.md`
-- [ ] **Template fetched** — `python_api_application_template` structure retrieved via GitHub MCP
+- [ ] **Template fetched** — `API application template` structure retrieved via GitHub MCP
 - [ ] **awesome-copilot loaded (via skill)** — `multi-stage-dockerfile` + `containerization-docker-best-practices`
 - [ ] **Context7 used** — `uv` / Docker docs loaded
 
@@ -240,7 +240,7 @@ Use the python_api_application_template for API, python_application_template for
   - [ ] `app/routers/` — API route handlers
   - [ ] `app/services/` — application services (orchestration)
   - [ ] `tests/` — API-level tests
-  - [ ] `pyproject.toml` — with `your-cosmosdb-lib`, `fastapi` dependencies
+  - [ ] `pyproject.toml` — with `approved Cosmos DB library`, `fastapi` dependencies
   - [ ] `Dockerfile` — multi-stage build
   - [ ] `.devcontainer/` — per-project devcontainer
   - [ ] `.gitignore`, `.dockerignore`, `.env.example`
@@ -249,7 +249,7 @@ Use the python_api_application_template for API, python_application_template for
   - [ ] `app/repositories/` — data access (FeedbackRepository)
   - [ ] `app/services/` — shared business logic
   - [ ] `tests/` — unit tests
-  - [ ] `pyproject.toml` — with `your-cosmosdb-lib`, `your-storage-lib`, `pydantic` dependencies
+  - [ ] `pyproject.toml` — with `approved Cosmos DB library`, `approved Storage library`, `pydantic` dependencies
   - [ ] `Dockerfile`, `.devcontainer/`
 - [ ] `src/CustomerFeedbackWeb/` — Web layer with:
   - [ ] `src/` — React source (components, hooks, pages)
@@ -347,8 +347,8 @@ ___________________________________________________________________________
 Implement the Customer Feedback API according to the design.
 Follow the strict code → unit test → next step sequence:
 
-1. Domain layer: Feedback entity using your-cosmosdb-lib RootEntityBase → unit test for validation
-2. Infrastructure layer: FeedbackRepository using your-cosmosdb-lib RepositoryBase → unit test with mocked DB
+1. Domain layer: Feedback entity using approved Cosmos DB library RootEntityBase → unit test for validation
+2. Infrastructure layer: FeedbackRepository using approved Cosmos DB library RepositoryBase → unit test with mocked DB
 3. Application layer: FeedbackService with business logic → unit test with mocked repository
 4. API layer: FastAPI routes (POST /feedback, GET /feedback/{id}, GET /feedback?category=...) → unit test for routes
 5. Integration tests for API endpoints (after all code + unit tests)
@@ -357,11 +357,11 @@ Follow the strict code → unit test → next step sequence:
 
 ### Expected behavior:
 
-- [ ] **GitHub MCP auth gate** — Implementer probes `python_cosmosdb_helper` README
+- [ ] **GitHub MCP auth gate** — Implementer probes `Cosmos DB library repo` README
 - [ ] **`sdlc-cosmos-repository` skill activated** — Implementer reads `.github/skills/sdlc-cosmos-repository/SKILL.md` for entity/repo patterns
 - [ ] **`sdlc-blob-storage` skill activated** — (if blob operations needed) reads `.github/skills/sdlc-blob-storage/SKILL.md`
 - [ ] **awesome-copilot Cosmos skill loaded** — `cosmosdb-datamodeling/SKILL.md` via MCP (loaded by skill)
-- [ ] **Live SDK patterns fetched** — `HANDS_ON_GUIDE.md` from `python_cosmosdb_helper` via GitHub MCP
+- [ ] **Live SDK patterns fetched** — `HANDS_ON_GUIDE.md` from `Cosmos DB library repo` via GitHub MCP
 - [ ] **Context7 used** — FastAPI + Pydantic docs loaded
 
 ### Expected output — code files created (with tests per step):
@@ -405,7 +405,7 @@ Follow the strict code → unit test → next step sequence:
 
 ### Red flags:
 
-- [ ] ~~Raw `CosmosClient` used instead of `your-cosmosdb-lib` RepositoryBase~~
+- [ ] ~~Raw `CosmosClient` used instead of `approved Cosmos DB library` RepositoryBase~~
 - [ ] ~~`os.getenv()` used instead of Pydantic `BaseSettings`~~
 - [ ] ~~No tests generated alongside code (tests batched at end)~~
 - [ ] ~~Infrastructure called directly from router (skip Application layer)~~
@@ -484,17 +484,17 @@ Review all code, tests, infrastructure, and documentation.
 #### 1. Architecture Reviewer
 - [ ] **`sdlc-architecture-review` skill activated** — reads `.github/skills/sdlc-architecture-review/SKILL.md`
 - [ ] awesome-copilot loaded (via skill): `architecture-blueprint-generator/SKILL.md`
-- [ ] GitHub MCP auth gate (probes `python_cosmosdb_helper`)
-- [ ] `mcp_github_search_code` for `RepositoryBase` across `your-org` org
+- [ ] GitHub MCP auth gate (probes `Cosmos DB library repo`)
+- [ ] `mcp_github_search_code` for `RepositoryBase` across `the project's GitHub org` org
 - [ ] Reads `.github/reference-catalog.md`
 - [ ] Checks: layering, dependency direction, pattern reuse, no God services, template alignment
 - [ ] Output: Critical / Important / Suggestion / Positive findings
 
 #### 2. Azure Compliance Reviewer
 - [ ] GitHub MCP auth gate
-- [ ] Fetches latest SDK APIs from `python_cosmosdb_helper` + `python_storageaccount_helper`
+- [ ] Fetches latest SDK APIs from `Cosmos DB library repo` + `Storage library repo`
 - [ ] awesome-copilot: `"bicep-code-best-practices"` loaded
-- [ ] Checks: `your-cosmosdb-lib` usage, `RepositoryBase` pattern, `async with`, AVM modules, tags, diagnostics
+- [ ] Checks: `approved Cosmos DB library` usage, `RepositoryBase` pattern, `async with`, AVM modules, tags, diagnostics
 - [ ] Output: Critical / Important / Suggestion / Positive findings
 
 #### 3. Code Quality Reviewer
@@ -507,7 +507,7 @@ Review all code, tests, infrastructure, and documentation.
 #### 4. Security Reviewer
 - [ ] **`sdlc-security-review` skill activated** — reads `.github/skills/sdlc-security-review/SKILL.md`
 - [ ] awesome-copilot loaded (via skill): `"security-and-owasp"` (fresh every review)
-- [ ] Project-specific Azure checks applied: Managed Identity, Key Vault, your-cosmosdb-lib/your-storage-lib auth
+- [ ] Project-specific Azure checks applied: Managed Identity, Key Vault, approved Cosmos DB library/approved Storage library auth
 - [ ] Checks: OWASP Top 10 mapped, secrets, credentials, CORS, headers, input validation, dependencies
 - [ ] Output: Critical / Important / Suggestion / Positive findings
 
@@ -743,7 +743,7 @@ These should be verified across all steps:
 - [ ] No placeholder is filled with a guessed value
 
 ### Auth Gate Consistency
-- [ ] Every agent that needs `your-org` repos probes before accessing them
+- [ ] Every agent that needs `the project's GitHub org` repos probes before accessing them
 - [ ] Auth failures produce clear error messages with remediation steps
 - [ ] Graceful degradation falls back to `.github/reference-catalog.md` with warning
 
@@ -759,8 +759,8 @@ These should be verified across all steps:
 - [ ] Docstrings on all public functions/classes
 
 ### Reference Catalog Compliance
-- [ ] `your-cosmosdb-lib` used for Cosmos DB (never raw SDK)
-- [ ] `your-storage-lib` used for Blob/Queue (if applicable)
+- [ ] `approved Cosmos DB library` used for Cosmos DB (never raw SDK)
+- [ ] `approved Storage library` used for Blob/Queue (if applicable)
 - [ ] No unauthorized dependencies introduced
 
 ---
@@ -770,7 +770,7 @@ These should be verified across all steps:
 | Problem                            | Likely Cause                                        | Fix                                                    |
 | ---------------------------------- | --------------------------------------------------- | ------------------------------------------------------ |
 | Harness doesn't detect placeholders  | `copilot-instructions.md` already filled            | Reset placeholders to `<PROJECT_NAME>` etc.            |
-| GitHub MCP auth fails              | Copilot not signed in with `your-org` access | Sign in with correct account, check `.vscode/mcp.json` |
+| GitHub MCP auth fails              | Copilot not signed in with `the project's GitHub org` access | Sign in with correct account, check `.vscode/mcp.json` |
 | Agent doesn't use awesome-copilot  | MCP server not configured or not responding         | Verify `awesome-copilot` in `.vscode/mcp.json`         |
 | ADR not auto-created after Analyst | Harness didn't follow ADR generation rule             | Manually ask: "Create an ADR from this design"         |
 | QA reviewers run sequentially      | QA Coordinator not parallelizing                    | Check if subagent tool supports parallel calls         |

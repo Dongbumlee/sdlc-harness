@@ -48,8 +48,8 @@ argument-hint: "Describe the feature or requirement to analyze"
  3. **Reference catalog** — `mcp_github_get_file_contents` → fetch `reference-catalog.md`
     from the SDLC template repo (verify Azure service choices match approved libraries)
  4. **Template patterns** — `mcp_github_get_file_contents` → fetch project structure from
-    the matching template repo (`python_application_template`, `python_api_application_template`,
-    or `python_agent_framework_dev_template`)
+    the matching template repo (`the base app template repo`, `the API template repo`,
+    or `the agent template repo`)
  5. **Framework docs** — Use **Context7 MCP** to get current documentation for frameworks
     being evaluated (FastAPI, Pydantic, Azure AI Agent Framework, etc.)
  6. **ADO wiki** — Search the team's Azure DevOps wiki for engineering guidelines:
@@ -70,8 +70,8 @@ argument-hint: "Describe the feature or requirement to analyze"
       - Identify which layers are involved (routers/endpoints, services, domain logic, data access).
       - Identify which Azure services are relevant (Cosmos DB, Blob Storage, etc.).
       - Point to existing patterns/components that should be reused:
-        - Cosmos DB: `your-cosmosdb-lib` with `RepositoryBase[Entity, KeyType]` pattern.
-        - Blob/Queue: `your-storage-lib` with `AsyncStorageBlobHelper` / `AsyncStorageQueueHelper`.
+        - Cosmos DB: `the approved Cosmos DB library` with `RepositoryBase[Entity, KeyType]` pattern.
+        - Blob/Queue: `the approved Storage library` with `AsyncStorageBlobHelper` / `AsyncStorageQueueHelper`.
         - Scaffolding templates from `.github/reference-catalog.md`.
 
  3. **Propose a design**
@@ -127,6 +127,6 @@ argument-hint: "Describe the feature or requirement to analyze"
 
  "Copilot, use the requirement-and-design prompt file to design a feature:
  Allow customers to download their order history. Orders should be stored in Cosmos DB
- using your-cosmosdb-lib repository pattern, and PDF invoices should be stored in Azure Blob
- Storage using your-storage-lib AsyncStorageBlobHelper."
+ using the approved Cosmos DB library repository pattern, and PDF invoices should be stored in Azure Blob
+ Storage using the approved Storage library AsyncStorageBlobHelper."
  -->

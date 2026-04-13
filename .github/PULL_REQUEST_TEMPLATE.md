@@ -40,8 +40,8 @@
 
 <!-- If this PR changes infrastructure or Azure SDK usage, list affected resources. -->
 
-- [ ] Cosmos DB (`your-cosmosdb-lib`)
-- [ ] Blob Storage / Queue (`your-storage-lib`)
+- [ ] Cosmos DB (`the approved Cosmos DB library`)
+- [ ] Blob Storage / Queue (`the approved Storage library`)
 - [ ] Container Apps
 - [ ] AI Foundry / OpenAI
 - [ ] Bicep / AVM modules

@@ -58,9 +58,9 @@ and set up dev environments based on the application project patterns.
 
 0. **Verify GitHub MCP authentication (required):**
    - Perform a probe call: use `mcp_github_get_file_contents` to fetch `README.md` from
-     `your-org/your-app-template`.
+     `the project's app template (from copilot-instructions.md)`.
    - If the call **fails or returns an auth error**, STOP and inform the user:
-     > GitHub MCP authentication is required to access template repos in `your-org`.
+     > GitHub MCP authentication is required to access template repos in `the project's GitHub org`.
      > Please sign in with an account that has org access, then retry.
    - If the user cannot authenticate, fall back to patterns in `.github/reference-catalog.md`
      and warn that live verification was not possible.
@@ -73,9 +73,9 @@ and set up dev environments based on the application project patterns.
 
 1. **Fetch the latest template structure from GitHub MCP:**
    - Use `mcp_github_get_file_contents` to get the directory structure from the matching template repo.
-   - Base app → `your-org/your-app-template`
-   - FastAPI → `your-org/your-api-template`
-   - AI agent → `your-org/your-agent-template`
+   - Base app → `the project's app template (from copilot-instructions.md)`
+   - FastAPI → `the project's API template (from copilot-instructions.md)`
+   - AI agent → `the project's agent template (from copilot-instructions.md)`
 
 2. **Load containerization and CI/CD best practices from awesome-copilot** (skip if unavailable):
    - Use `mcp_awesome-copil_load_instruction` to load `"containerization-docker-best-practices"` — multi-stage
@@ -136,15 +136,15 @@ Each template is a **standalone project**. For multi-service applications, compo
 
 **Template structures** (as they actually exist in the repos):
 
-- `python_api_application_template` → code in `app/`, tests in `tests/`
-- `python_application_template` → code in `src/`, tests in `tests/`, includes `uv.lock`
-- `python_agent_framework_dev_template` → code in `src/`, tests in `tests/`, includes `uv.lock`
+- `the API template repo` → code in `app/`, tests in `tests/`
+- `the base app template repo` → code in `src/`, tests in `tests/`, includes `uv.lock`
+- `the agent template repo` → code in `src/`, tests in `tests/`, includes `uv.lock`
 
 **application composition pattern** — place each template as an independent project under `src/`:
 
 ```
 src/
-├── <ProjectName>API/              ← Based on python_api_application_template
+├── <ProjectName>API/              ← Based on the API template repo
 │   ├── .devcontainer/
 │   ├── .github/
 │   ├── .vscode/
@@ -162,7 +162,7 @@ src/
 │   ├── .python-version
 │   ├── .gitignore
 │   └── .env.example
-├── <ProjectName>Business/         ← Based on python_application_template
+├── <ProjectName>Business/         ← Based on the base app template repo
 │   ├── .devcontainer/
 │   ├── .github/
 │   ├── .vscode/
@@ -175,7 +175,7 @@ src/
 │   ├── uv.lock                    ← Lock file (uv generates this)
 │   ├── .python-version
 │   └── .gitignore
-├── <ProjectName>Agent/            ← Based on python_agent_framework_dev_template
+├── <ProjectName>Agent/            ← Based on the agent template repo
 │   ├── .devcontainer/
 │   ├── .github/
 │   ├── .vscode/
@@ -269,7 +269,7 @@ src/
    - `.devcontainer/devcontainer.json`
    - `tests/` directory with `conftest.py` or test config
    - `.gitignore` and `.dockerignore`
-3. **Dependency correctness** — Are `your-cosmosdb-lib`, `your-storage-lib`, and `pytest-asyncio`
+3. **Dependency correctness** — Are `the approved Cosmos DB library`, `the approved Storage library`, and `pytest-asyncio`
    in the correct dependency groups? No raw Azure SDK packages?
 4. **No leaked business logic** — Did you accidentally generate service implementations,
    domain models, or test cases? Those belong in Phase 4.

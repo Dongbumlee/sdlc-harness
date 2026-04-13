@@ -390,7 +390,7 @@ dependencies (e.g., `poppler-utils`, `libpq-dev`) can be added without affecting
 
 #### 5a. Python Console / Worker / Pipeline App
 
-Based on `python_application_template`. Use for processor services, workers, CLI tools, and data pipelines.
+Based on `the base app template repo`. Use for processor services, workers, CLI tools, and data pipelines.
 
 `src/<service>/.devcontainer/Dockerfile`:
 ```dockerfile
@@ -462,7 +462,7 @@ Key points:
 
 #### 5b. Python FastAPI Service
 
-Based on `python_api_application_template`. Use for REST APIs, web services, and health-probed microservices.
+Based on `the API template repo`. Use for REST APIs, web services, and health-probed microservices.
 
 `src/<service>/.devcontainer/Dockerfile`:
 ```dockerfile
@@ -693,8 +693,8 @@ Example invocation for engineers:
 
 "Copilot, use `.github/prompts/deployment.prompt.md` to create the deployment
  infrastructure for our order processing FastAPI service. We need:
- - Cosmos DB (SQL API) for order data via your-cosmosdb-lib
- - Blob Storage for invoice PDFs via your-storage-lib
+ - Cosmos DB (SQL API) for order data via the approved Cosmos DB library
+ - Blob Storage for invoice PDFs via the approved Storage library
  - Container Apps for hosting
  - AI Foundry for agent integration
  - Private endpoints for all data services

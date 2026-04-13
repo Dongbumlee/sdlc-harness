@@ -1,13 +1,13 @@
 ---
 name: sdlc-blob-storage
 description: >-
-  Implement Azure Blob Storage and Queue operations using your-storage-lib library.
+  Implement Azure Blob Storage and Queue operations using the approved Storage library library.
   Use when uploading, downloading, listing, or managing blobs and queues.
   Triggers on blob, storage, file upload, queue, or Azure Storage requests.
-  Never use raw azure-storage-blob or azure-storage-queue — always use your-storage-lib.
+  Never use raw azure-storage-blob or azure-storage-queue — always use the approved Storage library.
 ---
 
-# Azure Blob Storage & Queue — your-storage-lib Library
+# Azure Blob Storage & Queue — the approved Storage library Library
 
 ## When to use
 
@@ -23,8 +23,8 @@ Fetch the latest patterns from GitHub MCP:
 
 ```
 mcp_github_get_file_contents(
-  owner: "your-org",
-  repo: "python_storageaccount_helper",
+  owner: "the project's GitHub org",
+  repo: "the Storage library repo",
   path: "README.md"
 )
 ```
@@ -34,7 +34,7 @@ mcp_github_get_file_contents(
 Always use `AsyncStorageBlobHelper` with `async with` context manager:
 
 ```python
-from your_org.storage.blob import AsyncStorageBlobHelper
+from <project_storage_lib>.blob import AsyncStorageBlobHelper
 
 async def upload_document(account_name: str, container: str, name: str, data: bytes):
     """Upload a document to blob storage."""
@@ -67,7 +67,7 @@ async def list_all_blobs(account_name: str, container: str) -> list:
 Use `AsyncStorageQueueHelper` with `async with` context manager:
 
 ```python
-from your_org.storage.queue import AsyncStorageQueueHelper
+from <project_org>.storage.queue import AsyncStorageQueueHelper
 
 async def send_message(account_name: str, queue_name: str, message: str):
     """Send a message to the queue."""
@@ -119,7 +119,7 @@ class TestDocumentStorage:
 
 ## Gotchas
 
-- **Never create raw `BlobServiceClient` or `QueueServiceClient`** — `your-storage-lib`
+- **Never create raw `BlobServiceClient` or `QueueServiceClient`** — `the approved Storage library`
   manages connection lifecycle, retry policies, and auth.
 - **Always use `async with`** — this ensures proper resource cleanup. Forgetting it
   causes connection leaks.

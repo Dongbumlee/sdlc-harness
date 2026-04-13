@@ -25,16 +25,16 @@ You review code through the lens of **architecture and design consistency**.
 
 0. **Verify GitHub MCP authentication (required):**
    - Perform a probe call: use `mcp_github_get_file_contents` to fetch `README.md` from
-     `your-org/your-cosmosdb-library`.
+     `the project's Cosmos DB library repo (from copilot-instructions.md)`.
    - If the call **fails or returns an auth error**, STOP and inform the user:
-     > GitHub MCP authentication is required to search patterns across `your-org` repos.
+     > GitHub MCP authentication is required to search patterns across `the project's GitHub org` repos.
      > Please sign in with an account that has org access, then retry.
    - If the user cannot authenticate, fall back to patterns in `.github/reference-catalog.md`
      and note in your review that cross-repo pattern verification was not possible.
 
 1. **Search for pattern consistency across org repos via GitHub MCP:**
    - Use `mcp_github_search_code` to search for `RepositoryBase` and `RootEntityBase`
-     across `your-org` org repos.
+     across `the project's GitHub org` org repos.
    - Compare this repo's patterns with what other applications use.
    - Flag any deviations from the standard pattern.
 

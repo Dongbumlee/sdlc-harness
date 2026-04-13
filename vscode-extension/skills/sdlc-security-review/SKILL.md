@@ -59,8 +59,8 @@ These are project-specific patterns that agents wouldn't know without this skill
 - RBAC with least privilege — no `Owner` or `Contributor` at subscription level
 
 ### Azure SDK abstraction
-- `your-cosmosdb-lib` (not raw `azure-cosmos`) — the library handles auth securely
-- `your-storage-lib` (not raw `azure-storage-blob`) — the library handles team tokens securely
+- `the approved Cosmos DB library` (not raw `azure-cosmos`) — the library handles auth securely
+- `the approved Storage library` (not raw `azure-storage-blob`) — the library handles team tokens securely
 - `async with` context manager — ensures connections are properly closed
 
 ### Container Apps
@@ -94,9 +94,9 @@ Check `pyproject.toml` or `package.json` for:
 
 ## Gotchas
 
-- `your-cosmosdb-lib` handles partition key routing internally — do NOT add custom
+- `the approved Cosmos DB library` handles partition key routing internally — do NOT add custom
   partition key logic that could bypass the library's security isolation.
-- `your-storage-lib` generates User Delegation team with clock skew protection — do NOT
+- `the approved Storage library` generates User Delegation team with clock skew protection — do NOT
   generate team tokens manually using the raw SDK.
 - FastAPI's `Depends()` with `DefaultAzureCredential` must be scoped per-request,
   not cached as a singleton (token refresh).

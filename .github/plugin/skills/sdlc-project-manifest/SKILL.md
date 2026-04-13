@@ -31,15 +31,15 @@ After scaffolding, create `.SDLC/project-manifest.md` with this exact format:
 
 | Project Folder | Template Used | Code Root | Language |
 |---|---|---|---|
-| src/<Name>API/ | python_api_application_template | app/ | Python 3.12 |
-| src/<Name>Business/ | python_application_template | src/ | Python 3.12 |
+| src/<Name>API/ | the API template repo | app/ | Python 3.12 |
+| src/<Name>Business/ | the base app template repo | src/ | Python 3.12 |
 | src/<Name>Web/ | React + TypeScript | src/ | TypeScript |
 
-## Template Patterns (fetched from your-org repos)
+## Template Patterns (fetched from the project's GitHub org repos)
 
 ### API Project: <Name>API
 
-**Template:** `your-org/your-api-template`
+**Template:** `the project's API template (from copilot-instructions.md)`
 
 **Entry point pattern:**
 - `app/main.py` uses `Application()` factory (from `application.py`)
@@ -67,8 +67,8 @@ After scaffolding, create `.SDLC/project-manifest.md` with this exact format:
 - Registered via DI in `Application._register_dependencies()`
 
 **Data access pattern:**
-- Entities: `RootEntityBase["EntityName", KeyType]` (from `your-cosmosdb-lib`)
-- Repositories: `RepositoryBase[Entity, KeyType]` (from `your-cosmosdb-lib`)
+- Entities: `RootEntityBase["EntityName", KeyType]` (from `the approved Cosmos DB library`)
+- Repositories: `RepositoryBase[Entity, KeyType]` (from `the approved Cosmos DB library`)
 - Location: `app/domain/` or `app/business_component/`
 
 **Dockerfile pattern:**
@@ -83,7 +83,7 @@ After scaffolding, create `.SDLC/project-manifest.md` with this exact format:
 
 ### Business Project: <Name>Business
 
-**Template:** `your-org/your-app-template`
+**Template:** `the project's app template (from copilot-instructions.md)`
 [Fill with patterns from that template]
 
 ### Web Project: <Name>Web
@@ -95,8 +95,8 @@ After scaffolding, create `.SDLC/project-manifest.md` with this exact format:
 
 | Library | Package | Used For | Pattern |
 |---|---|---|---|
-| your-cosmosdb-lib | `your-cosmosdb-lib` | Cosmos DB | `RootEntityBase` + `RepositoryBase` |
-| your-storage-lib | `your-storage-lib` | Blob/Queue | `AsyncStorageBlobHelper` with `async with` |
+| the approved Cosmos DB library | `the approved Cosmos DB library` | Cosmos DB | `RootEntityBase` + `RepositoryBase` |
+| the approved Storage library | `the approved Storage library` | Blob/Queue | `AsyncStorageBlobHelper` with `async with` |
 
 ## Naming Conventions
 

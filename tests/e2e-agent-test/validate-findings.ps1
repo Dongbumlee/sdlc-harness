@@ -38,8 +38,8 @@ $canaries = @{
         @{ Id = "A2"; Description = "No application/service layer"; Keywords = @("application layer", "service layer", "missing.*layer", "no.*service") }
     )
     "Azure Compliance Reviewer" = @(
-        @{ Id = "AZ1"; Description = "Raw azure-cosmos SDK"; Keywords = @("your-cosmosdb-lib", "raw.*cosmos", "azure.cosmos", "CosmosClient") }
-        @{ Id = "AZ2"; Description = "Raw azure-storage-blob SDK"; Keywords = @("your-storage-lib", "raw.*blob", "azure.storage.blob", "BlobServiceClient") }
+        @{ Id = "AZ1"; Description = "Raw azure-cosmos SDK"; Keywords = @("approved Cosmos DB library", "raw.*cosmos", "azure.cosmos", "CosmosClient") }
+        @{ Id = "AZ2"; Description = "Raw azure-storage-blob SDK"; Keywords = @("approved Storage library", "raw.*blob", "azure.storage.blob", "BlobServiceClient") }
         @{ Id = "AZ3"; Description = "Connection string auth"; Keywords = @("connection.string", "DefaultAzureCredential", "Managed.*Identity") }
         @{ Id = "AZ4"; Description = "No AVM modules"; Keywords = @("AVM", "avm/res", "Azure Verified Module", "raw.*resource") }
         @{ Id = "AZ5"; Description = "No tags on resources"; Keywords = @("tag", "azd-env-name", "TemplateName", "CreatedBy") }

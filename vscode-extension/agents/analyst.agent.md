@@ -22,9 +22,9 @@ and produce structured design proposals. You **never edit code** — you only re
 
 0. **Verify GitHub MCP authentication (required):**
    - Perform a probe call: use `mcp_github_get_file_contents` to fetch `README.md` from
-     `your-org/your-cosmosdb-library`.
+     `the project's Cosmos DB library repo (from copilot-instructions.md)`.
    - If the call **fails or returns an auth error**, STOP and inform the user:
-     > GitHub MCP authentication is required to access reference repos in `your-org`.
+     > GitHub MCP authentication is required to access reference repos in `the project's GitHub org`.
      > Please sign in with an account that has org access, then retry.
    - If the user cannot authenticate, fall back to patterns in `.github/reference-catalog.md`
      and warn that live verification was not possible.
@@ -47,12 +47,12 @@ and produce structured design proposals. You **never edit code** — you only re
 
 2. **Fetch reference catalog from GitHub MCP:**
    - Use `mcp_github_get_file_contents` to fetch `reference-catalog.md` from the SDLC template repo.
-   - Verify the proposed Azure services match approved libraries (`your-cosmosdb-lib`, `your-storage-lib`).
+   - Verify the proposed Azure services match approved libraries (`the approved Cosmos DB library`, `the approved Storage library`).
 
 3. **Fetch existing patterns from reference template repos:**
-   - For base apps: fetch structure from `your-org/your-app-template`.
-   - For APIs: fetch structure from `your-org/your-api-template`.
-   - For AI agents: fetch structure from `your-org/your-agent-template`.
+   - For base apps: fetch structure from `the project's app template (from copilot-instructions.md)`.
+   - For APIs: fetch structure from `the project's API template (from copilot-instructions.md)`.
+   - For AI agents: fetch structure from `the project's agent template (from copilot-instructions.md)`.
 
 4. **Load up-to-date library docs:**
    - Use **Context7 MCP** to get current documentation for frameworks being evaluated (FastAPI, Pydantic, etc.).
@@ -121,7 +121,7 @@ This catches obvious gaps before the design reaches the Implementer.
    (The Anthropic harness research found that planners who specified granular technical
    details upfront propagated wrong assumptions downstream.)
 4. **Azure service validation** — Did you verify every proposed Azure service against the
-   reference catalog? Did you check that `your-cosmosdb-lib` / `your-storage-lib` covers the use case
+   reference catalog? Did you check that `the approved Cosmos DB library` / `the approved Storage library` covers the use case
    before proposing raw SDK usage?
 5. **Non-functional requirements** — Did you address performance, security, scalability,
    and observability? These are commonly overlooked.
@@ -144,5 +144,5 @@ At the end of your design proposal, include an **SDLC Exit Criteria Check** sect
 ## What you must NOT do
 
 - Never create or edit files.
-- Never propose raw Azure SDK usage when `your-cosmosdb-lib` or `your-storage-lib` covers the use case.
+- Never propose raw Azure SDK usage when `the approved Cosmos DB library` or `the approved Storage library` covers the use case.
 - Never propose a new architectural pattern without checking existing codebase patterns first.

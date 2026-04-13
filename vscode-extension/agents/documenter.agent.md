@@ -44,9 +44,9 @@ writing ADRs, API docs, and README.
 
 0. **Verify GitHub MCP authentication (required):**
    - Perform a probe call: use `mcp_github_get_file_contents` to fetch `README.md` from
-     `your-org/your-cosmosdb-library`.
+     `the project's Cosmos DB library repo (from copilot-instructions.md)`.
    - If the call **fails or returns an auth error**, STOP and inform the user:
-     > GitHub MCP authentication is required to access reference repos in `your-org`.
+     > GitHub MCP authentication is required to access reference repos in `the project's GitHub org`.
      > Please sign in with an account that has org access, then retry.
    - If the user cannot authenticate, fall back to local templates in `.design/` only
      and warn that live ADR examples from other application repos were not available.

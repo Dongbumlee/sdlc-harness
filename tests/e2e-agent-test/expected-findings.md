@@ -25,14 +25,14 @@ this list to measure reviewer detection rates.
 
 | # | File | Canary | Expected Finding |
 |---|---|---|---|
-| AZ1 | `app.py` | `from azure.cosmos import CosmosClient` | Should use `your-cosmosdb-lib` with RepositoryBase |
-| AZ2 | `app.py` | `from azure.storage.blob import BlobServiceClient` | Should use `your-storage-lib` with AsyncStorageBlobHelper |
+| AZ1 | `app.py` | `from azure.cosmos import CosmosClient` | Should use `approved Cosmos DB library` with RepositoryBase |
+| AZ2 | `app.py` | `from azure.storage.blob import BlobServiceClient` | Should use `approved Storage library` with AsyncStorageBlobHelper |
 | AZ3 | `app.py` | `CosmosClient.from_connection_string()` | Should use DefaultAzureCredential, not connection string |
 | AZ4 | `main.bicep` | Raw resource definitions | Should use AVM modules (`br/public:avm/res/...`) |
 | AZ5 | `main.bicep` | No `tags` on resource group | Must include `azd-env-name`, `TemplateName`, `CreatedBy` tags |
 | AZ6 | `main.bicep` | No WAF toggle parameters | Must include `enablePrivateNetworking`, `enableMonitoring` |
 | AZ7 | `main.bicep` | No diagnostics configuration | Resources must send logs to Log Analytics |
-| AZ8 | `app.py` | No `async with` context manager on blob client | your-storage-lib requires `async with` pattern |
+| AZ8 | `app.py` | No `async with` context manager on blob client | approved Storage library requires `async with` pattern |
 
 ---
 

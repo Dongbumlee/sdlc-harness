@@ -45,7 +45,7 @@ $steps = @(
         Phase       = "1-2"
         Agent       = "Analyst"
         Skills      = @("sdlc-project-manifest")
-        Keywords    = @("architecture", "your-cosmosdb-lib|your-storage-lib", "python_api_application_template|template", "Azure OpenAI|OpenAI", "Cosmos DB|CosmosDB", "Repository Pattern|repository", "RAG|retrieval", "citation")
+        Keywords    = @("architecture", "approved Cosmos DB library|approved Storage library", "API application template|template", "Azure OpenAI|OpenAI", "Cosmos DB|CosmosDB", "Repository Pattern|repository", "RAG|retrieval", "citation")
     },
     @{
         Step        = 2
@@ -53,7 +53,7 @@ $steps = @(
         Phase       = "2"
         Agent       = "Documenter"
         Skills      = @("sdlc-adr-authoring")
-        Keywords    = @("ADR|Architecture Decision Record", "Context", "Decision", "Consequences|Alternatives", "your-cosmosdb-lib|your-storage-lib", "Accepted|Proposed")
+        Keywords    = @("ADR|Architecture Decision Record", "Context", "Decision", "Consequences|Alternatives", "approved Cosmos DB library|approved Storage library", "Accepted|Proposed")
     },
     @{
         Step        = 3
@@ -61,7 +61,7 @@ $steps = @(
         Phase       = "3"
         Agent       = "Scaffolder"
         Skills      = @("sdlc-project-scaffolding", "sdlc-project-manifest")
-        Keywords    = @("src/SmartDoc", "pyproject.toml", "Dockerfile", "project-manifest", "python_api_application_template|template")
+        Keywords    = @("src/SmartDoc", "pyproject.toml", "Dockerfile", "project-manifest", "API application template|template")
     },
     @{
         Step        = 4
@@ -77,7 +77,7 @@ $steps = @(
         Phase       = "4"
         Agent       = "Implementer"
         Skills      = @("sdlc-cosmos-repository", "sdlc-blob-storage")
-        Keywords    = @("RootEntityBase", "RepositoryBase", "your-cosmosdb-lib", "your-storage-lib|AsyncStorageBlobHelper", "async with", "pytest|test_", "DefaultAzureCredential|ManagedIdentity")
+        Keywords    = @("RootEntityBase", "RepositoryBase", "approved Cosmos DB library", "approved Storage library|AsyncStorageBlobHelper", "async with", "pytest|test_", "DefaultAzureCredential|ManagedIdentity")
     },
     @{
         Step        = 6

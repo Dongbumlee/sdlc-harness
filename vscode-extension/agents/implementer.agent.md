@@ -77,9 +77,9 @@ Step 6: Run all tests                             → `uv run pytest --cov`
 
 1. **Verify GitHub MCP authentication (required):**
    - Perform a probe call: use `mcp_github_get_file_contents` to fetch `README.md` from
-     `your-org/your-cosmosdb-library`.
+     `the project's Cosmos DB library repo (from copilot-instructions.md)`.
    - If the call **fails or returns an auth error**, STOP and inform the user:
-     > GitHub MCP authentication is required to access reference repos in `your-org`.
+     > GitHub MCP authentication is required to access reference repos in `the project's GitHub org`.
      > Please sign in with an account that has org access, then retry.
    - If the user cannot authenticate, fall back to patterns in `.github/reference-catalog.md`
      and warn that live verification was not possible.
@@ -92,16 +92,16 @@ Step 6: Run all tests                             → `uv run pytest --cov`
 
 2. **Fetch live SDK patterns from GitHub MCP:**
    - For Cosmos DB: use `mcp_github_get_file_contents` to fetch `README.md` and `HANDS_ON_GUIDE.md`
-     from `your-org/your-cosmosdb-library`. Follow the Repository Pattern exactly.
-   - For Blob/Queue: fetch patterns from `your-org/your-storage-library`.
+     from `the project's Cosmos DB library repo (from copilot-instructions.md)`. Follow the Repository Pattern exactly.
+   - For Blob/Queue: fetch patterns from `the project's Storage library repo (from copilot-instructions.md)`.
    - Your implementation MUST follow these patterns. Do NOT create raw `CosmosClient` or `BlobServiceClient`.
 
 2a. **AI/chat features MUST use Microsoft Agent Framework** (when applicable):
    - If the feature involves AI chat, LLM calls, agents, or chatbots, fetch patterns from
-     `your-org/your-agent-template` via GitHub MCP:
+     `the project's agent template (from copilot-instructions.md)` via GitHub MCP:
      ```
-     mcp_github_get_file_contents(owner: "your-org",
-       repo: "python_agent_framework_dev_template",
+     mcp_github_get_file_contents(owner: "the project's GitHub org",
+       repo: "the agent template repo",
        path: "src/libs/agent_framework")
      ```
    - If GitHub MCP is unavailable, follow these **mandatory patterns** from the template:
@@ -184,9 +184,9 @@ Locate the right project before implementing:
 
 | Layer | Project Folder | Code Root | Tests | Config | Template |
 |---|---|---|---|---|---|
-| **API** | `src/<Name>API/` | `app/` (routers/, services/, business_component/, libs/) | `tests/` (project root) | `pyproject.toml` | `python_api_application_template` |
-| **Business** | `src/<Name>Business/` | `src/` (libs/ — domain models, repositories, services) | `tests/` (project root) | `pyproject.toml` + `uv.lock` | `python_application_template` |
-| **Agent** | `src/<Name>Agent/` | `src/` (libs/agent_framework/, samples/) | `tests/` (project root) | `pyproject.toml` + `uv.lock` | `python_agent_framework_dev_template` |
+| **API** | `src/<Name>API/` | `app/` (routers/, services/, business_component/, libs/) | `tests/` (project root) | `pyproject.toml` | `the API template repo` |
+| **Business** | `src/<Name>Business/` | `src/` (libs/ — domain models, repositories, services) | `tests/` (project root) | `pyproject.toml` + `uv.lock` | `the base app template repo` |
+| **Agent** | `src/<Name>Agent/` | `src/` (libs/agent_framework/, samples/) | `tests/` (project root) | `pyproject.toml` + `uv.lock` | `the agent template repo` |
 | **Web** | `src/<Name>Web/` | `src/` (Components/, Hooks/, Pages/, Services/ — PascalCase) | `src/__tests__/` | `package.json` | React + TypeScript |
 
 **CRITICAL — all projects live under `src/` at the repo root:**
@@ -195,15 +195,15 @@ Never place project code (`app/`, `pyproject.toml`, `Dockerfile`) directly at th
 Even single-project repos use `src/<Name>API/` as the project folder.
 
 **IMPORTANT — code root differs by template:**
-- `python_api_application_template` uses **`app/`** as code root
-- `python_application_template` uses **`src/`** as code root
-- `python_agent_framework_dev_template` uses **`src/`** as code root
+- `the API template repo` uses **`app/`** as code root
+- `the base app template repo` uses **`src/`** as code root
+- `the agent template repo` uses **`src/`** as code root
 - Tests are **always** at `tests/` in the project root, NOT inside `app/` or `src/`
 
 **Key directories by template:**
-- `python_api_application_template`: `app/main.py`, `app/application.py`, `app/routers/`, `app/services/`, `app/libs/`
-- `python_application_template`: `src/main.py`, `src/libs/` (AppContext, config, Azure)
-- `python_agent_framework_dev_template`: `src/libs/agent_framework/` (MCPContext, middleware), `src/samples/`
+- `the API template repo`: `app/main.py`, `app/application.py`, `app/routers/`, `app/services/`, `app/libs/`
+- `the base app template repo`: `src/main.py`, `src/libs/` (AppContext, config, Azure)
+- `the agent template repo`: `src/libs/agent_framework/` (MCPContext, middleware), `src/samples/`
 
 **Dependency management:**
 - All templates use **`uv`** — Dockerfiles use `uv sync --frozen` (never `pip install`)
@@ -218,8 +218,8 @@ Even single-project repos use `src/<Name>API/` as the project folder.
 - **Web** calls API via HTTP — no direct dependency on Python layers
 
 **Data access locations:**
-- Cosmos DB: look for existing `RepositoryBase` subclasses in the **Business** project using `your-cosmosdb-lib`
-- Blob/Queue: look for existing `AsyncStorageBlobHelper` / `AsyncStorageQueueHelper` in **Business** via `your-storage-lib`
+- Cosmos DB: look for existing `RepositoryBase` subclasses in the **Business** project using `the approved Cosmos DB library`
+- Blob/Queue: look for existing `AsyncStorageBlobHelper` / `AsyncStorageQueueHelper` in **Business** via `the approved Storage library`
 
 ## Skills
 
@@ -237,8 +237,8 @@ Activate these skills based on the task (they are available via the installed pl
 
 - Follow the patterns from `.SDLC/project-manifest.md` — they take precedence.
 - Async methods: suffix with `Async` where idiomatic.
-- Use `your-cosmosdb-lib` for all Cosmos DB access via Repository Pattern.
-- Use `your-storage-lib` for all Blob and Queue access via `async with` context manager.
+- Use `the approved Cosmos DB library` for all Cosmos DB access via Repository Pattern.
+- Use `the approved Storage library` for all Blob and Queue access via `async with` context manager.
 - Define entities extending `RootEntityBase["EntityName", KeyType]`.
 - Define repositories extending `RepositoryBase[Entity, KeyType]`.
 - Use Pydantic `BaseSettings` for configuration, not raw `os.getenv()`.
@@ -307,6 +307,6 @@ At the end of your implementation, include an **SDLC Exit Criteria Check** secti
 ## What you must NOT do
 
 - Never skip writing tests for new code.
-- Never use raw Azure SDK clients when `your-cosmosdb-lib` or `your-storage-lib` covers the use case.
+- Never use raw Azure SDK clients when `the approved Cosmos DB library` or `the approved Storage library` covers the use case.
 - Never introduce new dependencies without checking the reference catalog first.
 - Never call infrastructure directly from UI/Controllers.

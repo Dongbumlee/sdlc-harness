@@ -54,7 +54,7 @@
     - Maintain predictable documentation (ADRs, API docs) using common structure and locations.
 
  4. **Standardize Azure best practices**
-    - Use approved Azure SDK abstractions (`your-cosmosdb-lib`, `your-storage-lib`) instead of raw SDK clients.
+    - Use approved Azure SDK abstractions (`the approved Cosmos DB library`, `the approved Storage library`) instead of raw SDK clients.
     - Follow identity management, infrastructure-as-code, and resource governance conventions.
 
  5. **Promote Scaffolding Template and reusable components**
@@ -77,13 +77,13 @@
 
  ```
  Command Palette (Ctrl+Shift+P) → Chat: Install Plugin From Source
- → https://github.com/your-org/sdlc-harness
+ → https://github.com/the project's GitHub org/sdlc-harness
  ```
 
  ### GitHub Copilot CLI
 
  ```bash
- copilot plugin install your-org/sdlc-harness
+ copilot plugin install the project's GitHub org/sdlc-harness
  ```
 
  ### First use
@@ -293,7 +293,7 @@
  The **Implementer** agent doesn't work from stale knowledge — it actively fetches live context:
 
  1. **Fetches the latest team dev reusable components and patterns** from GitHub MCP
-    (e.g., `your-cosmosdb-lib` Repository Pattern, `your-storage-lib` context manager usage)
+    (e.g., `the approved Cosmos DB library` Repository Pattern, `the approved Storage library` context manager usage)
  2. **Loads current framework documentation** via Context7 MCP (FastAPI, Pydantic, React, etc.)
  3. **Reads the project's reference catalog** to verify approved libraries and scaffolding templates
  4. Writes the implementation following established patterns, creates entities, repositories, and endpoints
@@ -310,7 +310,7 @@
  ```
  QA Coordinator (adversarial posture — never downgrade findings)
   ├─ Architecture Reviewer      → checks layering rules, dependency boundaries
-  ├─ Azure Compliance Reviewer  → verifies your-cosmosdb-lib usage, no raw SDK calls
+  ├─ Azure Compliance Reviewer  → verifies the approved Cosmos DB library usage, no raw SDK calls
   ├─ Code Quality Reviewer      → checks naming, docstrings, dead code
   ├─ Security Reviewer          → scans for secrets, injection, auth issues (loads OWASP fresh)
   ├─ Test Coverage Reviewer     → runs pytest, checks coverage, validates assertions
@@ -343,7 +343,7 @@
 
  ### Critical Issues (must fix)
  - [Security] Endpoint /orders/{id} missing authorization check
- - [Azure Compliance] Using raw CosmosClient instead of your-cosmosdb-lib RepositoryBase
+ - [Azure Compliance] Using raw CosmosClient instead of the approved Cosmos DB library RepositoryBase
 
  ### Important Issues (should fix)
  - [Code Quality] Missing docstring on OrderRepository class
@@ -383,7 +383,7 @@
      C->>C: Identify phase, verify ADR exists
      C->>I: Delegate implementation
 
-     Note over I: Fetch your-cosmosdb-lib patterns (GitHub MCP)<br/>Load FastAPI docs (Context7)<br/>Read reference catalog<br/>Write code + tests
+     Note over I: Fetch the approved Cosmos DB library patterns (GitHub MCP)<br/>Load FastAPI docs (Context7)<br/>Read reference catalog<br/>Write code + tests
 
      I-->>C: Implementation complete
 
@@ -448,7 +448,7 @@
          QA["QA Coordinator"]
      end
 
-     Impl -->|"fetch your-cosmosdb-lib patterns"| GH
+     Impl -->|"fetch the approved Cosmos DB library patterns"| GH
      Impl -->|"load React/FastAPI docs"| C7
      Impl -->|"load Python MCP instructions"| AC
 
@@ -572,21 +572,21 @@
 
  | Library                                                                                         | PyPI Package   | Use for                                         |
  | ----------------------------------------------------------------------------------------------- | -------------- | ----------------------------------------------- |
- | [python_cosmosdb_helper](https://github.com/your-org/your-cosmosdb-library)             | `your-cosmosdb-lib` | Cosmos DB SQL + MongoDB with Repository Pattern |
- | [python_storageaccount_helper](https://github.com/your-org/your-storage-library) | `your-storage-lib`  | Azure Blob Storage + Queue operations           |
+ | [the Cosmos DB library repo](https://github.com/the project's Cosmos DB library repo (from copilot-instructions.md))             | `the approved Cosmos DB library` | Cosmos DB SQL + MongoDB with Repository Pattern |
+ | [the Storage library repo](https://github.com/the project's Storage library repo (from copilot-instructions.md)) | `the approved Storage library`  | Azure Blob Storage + Queue operations           |
 
  **Mandatory usage rules:**
 
- - Use `your-cosmosdb-lib` for all Cosmos DB access. Do **not** use the raw `azure-cosmos` SDK.
- - Use `your-storage-lib` for all Blob and Queue access. Do **not** use the raw `azure-storage-blob` SDK.
+ - Use `the approved Cosmos DB library` for all Cosmos DB access. Do **not** use the raw `azure-cosmos` SDK.
+ - Use `the approved Storage library` for all Blob and Queue access. Do **not** use the raw `azure-storage-blob` SDK.
 
  ### Scaffolding templates (clone to start a new project)
 
  | Template                                                                                                      | Use for                                   |
  | ------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
- | [python_application_template](https://github.com/your-org/your-app-template)                 | Base app (console, worker, pipeline, CLI) |
- | [python_api_application_template](https://github.com/your-org/your-api-template)         | FastAPI service with advanced DI          |
- | [python_agent_framework_dev_template](https://github.com/your-org/your-agent-template) | AI agent apps with Azure AI Foundry + MCP |
+ | [the base app template repo](https://github.com/the project's app template (from copilot-instructions.md))                 | Base app (console, worker, pipeline, CLI) |
+ | [the API template repo](https://github.com/the project's API template (from copilot-instructions.md))         | FastAPI service with advanced DI          |
+ | [the agent template repo](https://github.com/the project's agent template (from copilot-instructions.md)) | AI agent apps with Azure AI Foundry + MCP |
 
  ### Internal patterns
 
@@ -795,21 +795,21 @@ How to Adopt This Template in a New Application Repo
  #### VS Code
 
  ```
- Command Palette → Chat: Install Plugin From Source → https://github.com/your-org/sdlc-harness
+ Command Palette → Chat: Install Plugin From Source → https://github.com/the project's GitHub org/sdlc-harness
  ```
 
  Or configure this repo as a marketplace in your VS Code settings:
 
  ```json
  // .vscode/settings.json
- "chat.plugins.marketplaces": ["your-org/sdlc-harness"]
+ "chat.plugins.marketplaces": ["the project's GitHub org/sdlc-harness"]
  ```
 
  #### GitHub Copilot CLI
 
  ```bash
  # Install directly from the GitHub repo
- copilot plugin install your-org/sdlc-harness
+ copilot plugin install the project's GitHub org/sdlc-harness
 
  # Verify installation
  copilot plugin list
@@ -891,7 +891,7 @@ Adoption Checklist
 
 #### Plugin install (Option A)
 
- • [ ] Install the plugin via VS Code (`Chat: Install Plugin From Source`) or CLI (`copilot plugin install your-org/sdlc-harness`).
+ • [ ] Install the plugin via VS Code (`Chat: Install Plugin From Source`) or CLI (`copilot plugin install the project's GitHub org/sdlc-harness`).
  • [ ] Run `@Harness` or `/sdlc-workspace-init` in the target repo to generate workspace files.
  • [ ] Review the generated `.github/copilot-instructions.md` and adjust if needed.
  • [ ] Copy `.github/pr-form-validation.workflow.yml` to `.github/workflows/pr-form-validation.yml`.

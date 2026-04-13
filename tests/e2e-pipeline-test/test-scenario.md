@@ -20,7 +20,7 @@ This scenario exercises all agents and all skills in sequential order.
 
 - VS Code with GitHub Copilot Chat and Harness agent available
 - MCP servers configured in `.vscode/mcp.json`
-- GitHub MCP authenticated with `your-org` org access
+- GitHub MCP authenticated with `the project's GitHub org` org access
 - awesome-copilot MCP running (Docker Desktop required)
 - Clean working directory (no uncommitted changes)
 
@@ -77,8 +77,8 @@ Target users: enterprise knowledge workers.
 - [ ] Loads framework docs via Context7
 - [ ] Produces structured design proposal with:
   - Architecture overview (API → Application → Domain)
-  - Azure service mapping (your-cosmosdb-lib, your-storage-lib, Azure OpenAI, AI Search)
-  - Template recommendation (python_api_application_template + React frontend)
+  - Azure service mapping (approved Cosmos DB library, approved Storage library, Azure OpenAI, AI Search)
+  - Template recommendation (API application template + React frontend)
   - Data model sketch (entities, repositories)
 
 ### Agents validated
@@ -93,7 +93,7 @@ Target users: enterprise knowledge workers.
 
 ### Validation keywords
 ```
-architecture|your-cosmosdb-lib|your-storage-lib|python_api_application_template|Azure OpenAI|AI Search|Cosmos DB|Repository Pattern|RAG|citations
+architecture|approved Cosmos DB library|approved Storage library|API application template|Azure OpenAI|AI Search|Cosmos DB|Repository Pattern|RAG|citations
 ```
 
 ---
@@ -114,11 +114,11 @@ architecture|your-cosmosdb-lib|your-storage-lib|python_api_application_template|
 ### Expected artifacts
 - [ ] `docs/adr/ADR-001-*.md` exists
 - [ ] ADR contains: Context, Decision, Consequences sections
-- [ ] ADR references approved libraries (your-cosmosdb-lib, your-storage-lib)
+- [ ] ADR references approved libraries (approved Cosmos DB library, approved Storage library)
 
 ### Validation keywords
 ```
-ADR|Architecture Decision Record|Context|Decision|Consequences|your-cosmosdb-lib|Accepted
+ADR|Architecture Decision Record|Context|Decision|Consequences|approved Cosmos DB library|Accepted
 ```
 
 ---
@@ -135,7 +135,7 @@ It needs a FastAPI backend, React frontend, and shared infrastructure.
 - [ ] Harness delegates to **Scaffolder**
 - [ ] Scaffolder probes GitHub MCP for template structure
 - [ ] Loads Docker/CI-CD best practices from awesome-copilot
-- [ ] Fetches template structure from `your-org/your-api-template`
+- [ ] Fetches template structure from `the project's configured API template`
 - [ ] Creates project under `src/SmartDocAnalyzerAPI/` (mandatory `src/` prefix)
 - [ ] Creates Dockerfile, pyproject.toml, app structure
 - [ ] Creates `.sdlc/project-manifest.md` with template choices
@@ -156,7 +156,7 @@ It needs a FastAPI backend, React frontend, and shared infrastructure.
 
 ### Validation keywords
 ```
-src/SmartDocAnalyzer|pyproject.toml|Dockerfile|project-manifest|python_api_application_template
+src/SmartDocAnalyzer|pyproject.toml|Dockerfile|project-manifest|API application template
 ```
 
 ---
@@ -206,7 +206,7 @@ br/public:avm/res|enablePrivateNetworking|enableMonitoring|azure.yaml|Cosmos|Ope
 ```
 @Harness Implement the document upload and chat features for SmartDoc Analyzer.
 Follow the patterns from ADR-001 and the project manifest.
-Use your-cosmosdb-lib for Cosmos DB and your-storage-lib for Blob Storage.
+Use approved Cosmos DB library for Cosmos DB and approved Storage library for Blob Storage.
 Include unit tests for all new code.
 ```
 
@@ -214,8 +214,8 @@ Include unit tests for all new code.
 - [ ] Harness delegates to **Implementer**
 - [ ] Implementer reads `.sdlc/project-manifest.md` for template patterns
 - [ ] Probes GitHub MCP for live SDK patterns
-- [ ] Fetches your-cosmosdb-lib README + HANDS_ON_GUIDE for Repository Pattern
-- [ ] Fetches your-storage-lib README for Blob patterns
+- [ ] Fetches approved Cosmos DB library README + HANDS_ON_GUIDE for Repository Pattern
+- [ ] Fetches approved Storage library README for Blob patterns
 - [ ] Loads framework docs via Context7 (FastAPI, Pydantic)
 - [ ] Creates entities extending `RootEntityBase`
 - [ ] Creates repositories extending `RepositoryBase`
@@ -240,7 +240,7 @@ Include unit tests for all new code.
 
 ### Validation keywords
 ```
-RootEntityBase|RepositoryBase|your-cosmosdb-lib|your-storage-lib|async with|AsyncStorageBlobHelper|pytest|test_|DefaultAzureCredential
+RootEntityBase|RepositoryBase|approved Cosmos DB library|approved Storage library|async with|AsyncStorageBlobHelper|pytest|test_|DefaultAzureCredential
 ```
 
 ---
@@ -296,7 +296,7 @@ Review all code, tests, infrastructure, and documentation.
 ### Agents validated (9 agents)
 - [x] **QA Coordinator** — MCP probes, orchestration, synthesis, manual QA checklist
 - [x] **Architecture Reviewer** — layering, dependency direction
-- [x] **Azure Compliance Reviewer** — your-cosmosdb-lib/your-storage-lib usage, AVM patterns
+- [x] **Azure Compliance Reviewer** — approved Cosmos DB library/approved Storage library usage, AVM patterns
 - [x] **Code Quality Reviewer** — copyright, docstrings, naming, debug code
 - [x] **Security Reviewer** — OWASP, secrets, auth, XSS, input validation
 - [x] **Test Coverage Reviewer** — test existence, coverage, Playwright checks

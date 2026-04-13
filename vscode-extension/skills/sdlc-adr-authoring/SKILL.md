@@ -74,8 +74,8 @@ High-level description of the chosen approach.
 ### Azure Services
 | Service | Library | Purpose |
 |---|---|---|
-| Cosmos DB | your-cosmosdb-lib | Order data storage |
-| Blob Storage | your-storage-lib | Invoice PDF storage |
+| Cosmos DB | the approved Cosmos DB library | Order data storage |
+| Blob Storage | the approved Storage library | Invoice PDF storage |
 
 ### Data Model
 | Entity | Base Class | Key Type | Container |
@@ -142,7 +142,7 @@ Before saving, verify:
 - **Always use the SDLC template from `.design/ADR-TEMPLATE.md`** — the awesome-copilot
   ADR format is a useful reference but our template has SDLC-specific sections
   (SDLC Impact, RAI Considerations) that are mandatory.
-- **Azure services table must specify the library** (your-cosmosdb-lib, your-storage-lib) —
+- **Azure services table must specify the library** (the approved Cosmos DB library, the approved Storage library) —
   not just the service name.
 - **Data model entities must specify `RootEntityBase` base class** — this ensures
   the Implementer knows the exact pattern to follow.

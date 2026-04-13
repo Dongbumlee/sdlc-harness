@@ -54,8 +54,8 @@
 | 2 | `sdlc-project-scaffolding` | Project Scaffolding | Scaffold project structures from templates with CI/CD, Docker, devcontainers | Scaffolder |
 | 3 | `sdlc-project-manifest` | Project Manifest | Generate/read `.SDLC/project-manifest.md` for cross-agent pattern persistence | Scaffolder (write), Implementer, Documenter, Architecture Reviewer, Code Quality Reviewer, Deployer (read) |
 | 4 | `sdlc-azure-deployment` | Azure Deployment | Bicep + AVM + azd infrastructure templates and deployment lifecycle | Deployer, QA Bug Checklist Reviewer |
-| 5 | `sdlc-cosmos-repository` | Cosmos Repository | Azure Cosmos DB data access with your-cosmosdb-lib (Repository Pattern) | Implementer |
-| 6 | `sdlc-blob-storage` | Blob Storage | Azure Blob/Queue operations with your-storage-lib | Implementer |
+| 5 | `sdlc-cosmos-repository` | Cosmos Repository | Azure Cosmos DB data access with the approved Cosmos DB library (Repository Pattern) | Implementer |
+| 6 | `sdlc-blob-storage` | Blob Storage | Azure Blob/Queue operations with the approved Storage library | Implementer |
 | 7 | `sdlc-adr-authoring` | ADR Authoring | Architecture Decision Records following SDLC + awesome-copilot patterns | Documenter |
 | 8 | `sdlc-code-quality` | Code Quality | Code quality review with quality instruction files + awesome-copilot | Code Quality Reviewer, Implementer (per spec) |
 | 9 | `sdlc-security-review` | Security Review | OWASP Top 10 + project-specific Azure security patterns | Security Reviewer, LLM Behavior Reviewer, QA Bug Checklist Reviewer |

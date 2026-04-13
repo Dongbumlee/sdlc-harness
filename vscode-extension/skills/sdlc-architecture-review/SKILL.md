@@ -26,7 +26,7 @@ For cross-repo pattern consistency, search via GitHub MCP:
 
 ```
 mcp_github_search_code(
-  q: "RepositoryBase RootEntityBase org:your-org",
+  q: "RepositoryBase RootEntityBase org:the project's GitHub org",
   per_page: 5
 )
 ```
@@ -62,9 +62,9 @@ Each layer should be an independent project under `src/`:
 
 | Layer | Project | Code Root | Template |
 |---|---|---|---|
-| API | `src/<Name>API/` | `app/` | `python_api_application_template` |
-| Business | `src/<Name>Business/` | `src/` | `python_application_template` |
-| Agent | `src/<Name>Agent/` | `src/` | `python_agent_framework_dev_template` |
+| API | `src/<Name>API/` | `app/` | `the API template repo` |
+| Business | `src/<Name>Business/` | `src/` | `the base app template repo` |
+| Agent | `src/<Name>Agent/` | `src/` | `the agent template repo` |
 | Web | `src/<Name>Web/` | `src/` | React + TypeScript |
 
 **Check:**
