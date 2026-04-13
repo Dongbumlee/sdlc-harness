@@ -3,6 +3,7 @@ name: Azure Compliance Reviewer
 description: "Use when reviewing Azure SDK usage, verifying your-cosmosdb-lib/your-storage-lib patterns, checking Bicep/AVM compliance, validating identity management, or auditing infrastructure configuration."
 user-invocable: false
 tools: ['read', 'search', 'github/*', 'awesome-copilot/*']
+skills: ['sdlc-reviewer-output-format']
 ---
 
 # Azure Compliance Reviewer — QA Perspective: Azure SDK & Infrastructure
@@ -67,3 +68,28 @@ Return findings as:
 - **Positive**: Azure best practices done well (cite specific evidence, not generic praise)
 
 **Quality Score: X/10** — Justify the score with 2-3 sentences referencing specific findings.
+
+## Structured Output Block
+
+After your Markdown review report, you MUST emit a structured YAML block for machine parsing.
+Use the `sdlc-reviewer-output-format` skill for the complete specification.
+
+Place this block at the very end of your response:
+
+```
+---sdlc-review-output---
+reviewer: "Azure Compliance Reviewer"
+phase: "<phase being reviewed>"
+score: <1-10>
+verdict: PASS | FAIL | CRITICAL_FAIL
+findings:
+  - severity: critical | high | medium | low
+    category: <one of your domain categories>
+    description: "<finding>"
+    location: "<file:line>"
+    recommendation: "<fix>"
+reasoning: "<2-3 sentence summary>"
+---end-sdlc-review-output---
+```
+
+Your domain categories: `sdk-abstraction` | `repository-pattern` | `context-manager` | `identity` | `bicep-avm` | `waf-toggles` | `resource-tags` | `diagnostics` | `secrets`

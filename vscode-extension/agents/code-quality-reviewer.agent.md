@@ -3,6 +3,7 @@ name: Code Quality Reviewer
 description: "Use when reviewing code for naming conventions, docstring coverage, dead code, comment quality, type annotations, import organization, or DRY violations."
 user-invocable: false
 tools: ['read', 'search', 'awesome-copilot/*']
+skills: ['sdlc-reviewer-output-format']
 ---
 
 # Code Quality Reviewer — QA Perspective: Readability & Maintainability
@@ -77,3 +78,28 @@ Return findings as:
 - **Positive**: Well-written, clean code aspects (cite specific evidence, not generic praise)
 
 **Quality Score: X/10** — Justify the score with 2-3 sentences referencing specific findings.
+
+## Structured Output Block
+
+After your Markdown review report, you MUST emit a structured YAML block for machine parsing.
+Use the `sdlc-reviewer-output-format` skill for the complete specification.
+
+Place this block at the very end of your response:
+
+```
+---sdlc-review-output---
+reviewer: "Code Quality Reviewer"
+phase: "<phase being reviewed>"
+score: <1-10>
+verdict: PASS | FAIL | CRITICAL_FAIL
+findings:
+  - severity: critical | high | medium | low
+    category: <one of your domain categories>
+    description: "<finding>"
+    location: "<file:line>"
+    recommendation: "<fix>"
+reasoning: "<2-3 sentence summary>"
+---end-sdlc-review-output---
+```
+
+Your domain categories: `copyright` | `docstrings` | `naming` | `dead-code` | `comments` | `error-handling` | `type-safety` | `imports` | `function-size` | `dry` | `terminology` | `placeholder-text` | `debug-code`

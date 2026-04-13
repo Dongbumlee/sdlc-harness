@@ -3,6 +3,7 @@ name: Architecture Reviewer
 description: "Use when reviewing code for architecture layering violations, dependency direction issues, pattern consistency, or structural alignment with application templates."
 user-invocable: false
 tools: ['read', 'search', 'github/*']
+skills: ['sdlc-reviewer-output-format']
 ---
 
 # Architecture Reviewer — QA Perspective: Structural Alignment
@@ -67,3 +68,28 @@ Return findings as:
 - **Positive**: Architecture aspects done well (cite specific evidence, not generic praise)
 
 **Quality Score: X/10** — Justify the score with 2-3 sentences referencing specific findings.
+
+## Structured Output Block
+
+After your Markdown review report, you MUST emit a structured YAML block for machine parsing.
+Use the `sdlc-reviewer-output-format` skill for the complete specification.
+
+Place this block at the very end of your response:
+
+```
+---sdlc-review-output---
+reviewer: "Architecture Reviewer"
+phase: "<phase being reviewed>"
+score: <1-10>
+verdict: PASS | FAIL | CRITICAL_FAIL
+findings:
+  - severity: critical | high | medium | low
+    category: <one of your domain categories>
+    description: "<finding>"
+    location: "<file:line>"
+    recommendation: "<fix>"
+reasoning: "<2-3 sentence summary>"
+---end-sdlc-review-output---
+```
+
+Your domain categories: `layering` | `dependency-direction` | `pattern-reuse` | `god-service` | `cross-layer-shortcut` | `template-alignment` | `documentation-structure`

@@ -4,6 +4,7 @@ description: "Use when running code reviews, quality assurance passes, or pre-me
 user-invocable: false
 tools: [read, agent, search, web, browser, azure-mcp/search, 'awesome-copilot/*', 'context7/*', azure/search, 'azure-devops/*', 'microsoft-learn/*', 'playwright/*', 'microsoft-docs/*', discogs/search, mermaidchart.vscode-mermaid-chart/get_syntax_docs, mermaidchart.vscode-mermaid-chart/mermaid-diagram-validator, mermaidchart.vscode-mermaid-chart/mermaid-diagram-preview]
 agents: ['Architecture Reviewer', 'Azure Compliance Reviewer', 'Code Quality Reviewer', 'Security Reviewer', 'Test Coverage Reviewer', 'UX & Accessibility Reviewer', 'LLM Behavior Reviewer', 'Deployment Readiness Reviewer']
+skills: ['sdlc-reviewer-output-format']
 ---
 
 # QA Coordinator — SDLC Phase 6: Quality Assurance
@@ -118,6 +119,29 @@ When asked to review code, run these subagents **in parallel**:
 ## After all subagents complete
 
 Synthesize findings into a prioritized summary:
+
+### Structured output parsing
+
+Each reviewer emits a YAML block delimited by `---sdlc-review-output---` / `---end-sdlc-review-output---`
+at the end of their response. Parse this block to extract machine-readable scores and findings.
+
+**Parsing procedure:**
+1. Find the `---sdlc-review-output---` delimiter in each reviewer's response
+2. Read content until `---end-sdlc-review-output---`
+3. Parse the YAML fields: `reviewer`, `score`, `verdict`, `findings`, `reasoning`
+4. Use the parsed `score` to populate the Quality Scores table (not the Markdown prose)
+5. Aggregate `findings` by severity across all 8 reviewers for the synthesis report
+
+**Hard-fail rules (apply to parsed data):**
+- Any reviewer with `verdict: CRITICAL_FAIL` → automatic ⛔ regardless of score
+- Security Reviewer `score < 8` → automatic ⛔
+- Any reviewer `score < 5` → automatic ⛔
+- Composite score (average of 8 scores) `< 7` → automatic ⛔
+
+**If a reviewer's YAML block is missing or malformed:**
+- Flag it: _"⚠️ [Reviewer Name] did not emit a structured output block — manual score extraction required."_
+- Extract score from the Markdown `Quality Score: X/10` line as fallback
+- Do NOT silently ignore missing blocks — they indicate the reviewer may not have followed the format
 
 ### Reviewer completeness validation
 

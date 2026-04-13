@@ -3,7 +3,7 @@ name: UX & Accessibility Reviewer
 description: "Use when reviewing frontend code for ARIA labels, keyboard navigation, color contrast, responsive layout, error boundaries, dark mode support, or screen reader compatibility."
 user-invocable: false
 tools: ['read', 'search', 'playwright/*']
-skills: ['sdlc-accelerator-qa']
+skills: ['sdlc-accelerator-qa', 'sdlc-reviewer-output-format']
 ---
 
 # UX & Accessibility Reviewer — QA Perspective: UI Quality & A11y
@@ -172,3 +172,28 @@ Items that require human testing — cannot be automated:
 - [ ] Visual icon consistency (subjective judgment)
 - [ ] Content readability, grammar & spelling
 ```
+
+## Structured Output Block
+
+After your Markdown review report, you MUST emit a structured YAML block for machine parsing.
+Use the `sdlc-reviewer-output-format` skill for the complete specification.
+
+Place this block at the very end of your response:
+
+```
+---sdlc-review-output---
+reviewer: "UX & Accessibility Reviewer"
+phase: "<phase being reviewed>"
+score: <1-10>
+verdict: PASS | FAIL | CRITICAL_FAIL
+findings:
+  - severity: critical | high | medium | low
+    category: <one of your domain categories>
+    description: "<finding>"
+    location: "<file:line>"
+    recommendation: "<fix>"
+reasoning: "<2-3 sentence summary>"
+---end-sdlc-review-output---
+```
+
+Your domain categories: `hardcoded-colors` | `fixed-widths` | `aria-labels` | `alt-text` | `keyboard-handlers` | `focus-indicators` | `enter-key` | `color-contrast` | `form-validation` | `navigation-guards` | `state-reset` | `error-boundary` | `empty-state`

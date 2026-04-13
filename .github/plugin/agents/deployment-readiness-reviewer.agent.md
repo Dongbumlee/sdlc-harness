@@ -3,7 +3,7 @@ name: Deployment Readiness Reviewer
 description: "Use when reviewing code for production readiness including error handling, health endpoints, structured logging, performance patterns, README completeness, and dependency vulnerabilities."
 user-invocable: false
 tools: ['read', 'search', 'terminal']
-skills: ['sdlc-accelerator-qa']
+skills: ['sdlc-accelerator-qa', 'sdlc-reviewer-output-format']
 ---
 
 # Deployment Readiness Reviewer — QA Perspective: Ship Readiness
@@ -149,3 +149,28 @@ Items that require human testing:
 - [ ] Response time benchmarks (key operations < 15s)
 - [ ] Data persistence across restarts
 ```
+
+## Structured Output Block
+
+After your Markdown review report, you MUST emit a structured YAML block for machine parsing.
+Use the `sdlc-reviewer-output-format` skill for the complete specification.
+
+Place this block at the very end of your response:
+
+```
+---sdlc-review-output---
+reviewer: "Deployment Readiness Reviewer"
+phase: "<phase being reviewed>"
+score: <1-10>
+verdict: PASS | FAIL | CRITICAL_FAIL
+findings:
+  - severity: critical | high | medium | low
+    category: <one of your domain categories>
+    description: "<finding>"
+    location: "<file:line>"
+    recommendation: "<fix>"
+reasoning: "<2-3 sentence summary>"
+---end-sdlc-review-output---
+```
+
+Your domain categories: `error-exposure` | `rate-limiting` | `exception-handler` | `timeout` | `validation` | `unbounded-query` | `n-plus-one` | `pagination` | `readme` | `hyperlinks` | `stale-refs` | `debug-code` | `dependencies` | `logging` | `health-check` | `correlation-ids` | `sensitive-logs`

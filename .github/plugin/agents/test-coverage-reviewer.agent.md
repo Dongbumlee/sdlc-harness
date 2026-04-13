@@ -3,6 +3,7 @@ name: Test Coverage Reviewer
 description: "Use when reviewing test quality, coverage gaps, assertion effectiveness, mocking patterns, edge case coverage, or running Playwright e2e tests."
 user-invocable: false
 tools: ['read', 'search', 'terminal', 'awesome-copilot/*', 'playwright/*']
+skills: ['sdlc-reviewer-output-format']
 ---
 
 # Test Coverage Reviewer — QA Perspective: Testing & Coverage
@@ -106,3 +107,28 @@ Return findings as:
 - **Positive**: Well-tested aspects, good mocking patterns (cite specific evidence, not generic praise)
 
 **Quality Score: X/10** — Justify the score with 2-3 sentences referencing specific findings.
+
+## Structured Output Block
+
+After your Markdown review report, you MUST emit a structured YAML block for machine parsing.
+Use the `sdlc-reviewer-output-format` skill for the complete specification.
+
+Place this block at the very end of your response:
+
+```
+---sdlc-review-output---
+reviewer: "Test Coverage Reviewer"
+phase: "<phase being reviewed>"
+score: <1-10>
+verdict: PASS | FAIL | CRITICAL_FAIL
+findings:
+  - severity: critical | high | medium | low
+    category: <one of your domain categories>
+    description: "<finding>"
+    location: "<file:line>"
+    recommendation: "<fix>"
+reasoning: "<2-3 sentence summary>"
+---end-sdlc-review-output---
+```
+
+Your domain categories: `test-existence` | `aaa-structure` | `test-naming` | `test-isolation` | `mocking` | `edge-cases` | `assertions` | `coverage-threshold` | `test-pollution` | `integration-tests` | `file-upload` | `international-chars` | `error-paths` | `empty-state` | `playwright-a11y` | `cross-browser` | `keyboard-nav` | `console-errors`

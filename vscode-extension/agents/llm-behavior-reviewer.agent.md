@@ -3,7 +3,7 @@ name: LLM Behavior Reviewer
 description: "Use when reviewing AI agent code for prompt injection guards, system prompt security, grounding fidelity, citation accuracy, content filtering, token limits, or file handling safety."
 user-invocable: false
 tools: ['read', 'search']
-skills: ['sdlc-accelerator-qa', 'sdlc-security-review']
+skills: ['sdlc-accelerator-qa', 'sdlc-security-review', 'sdlc-reviewer-output-format']
 ---
 
 # LLM Behavior Reviewer — QA Perspective: AI Agent Quality & Safety
@@ -152,3 +152,28 @@ Items that require human testing against a running agent:
 - [ ] File upload with each supported type
 - [ ] International character file handling
 ```
+
+## Structured Output Block
+
+After your Markdown review report, you MUST emit a structured YAML block for machine parsing.
+Use the `sdlc-reviewer-output-format` skill for the complete specification.
+
+Place this block at the very end of your response:
+
+```
+---sdlc-review-output---
+reviewer: "LLM Behavior Reviewer"
+phase: "<phase being reviewed>"
+score: <1-10>
+verdict: PASS | FAIL | CRITICAL_FAIL
+findings:
+  - severity: critical | high | medium | low
+    category: <one of your domain categories>
+    description: "<finding>"
+    location: "<file:line>"
+    recommendation: "<fix>"
+reasoning: "<2-3 sentence summary>"
+---end-sdlc-review-output---
+```
+
+Your domain categories: `system-prompt-protection` | `content-filter` | `prompt-injection` | `citation` | `grounding` | `ai-disclaimer` | `multi-turn-context` | `token-limits` | `retry-logic` | `file-type-validation` | `file-size-limits` | `filename-sanitization` | `encoding` | `placeholder-text`
