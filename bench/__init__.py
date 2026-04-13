@@ -1,1 +1,0 @@
-"""SDLC Harness benchmarking framework."""

@@ -1,58 +1,39 @@
 # SDLC Harness Benchmarks
 
-Canary-based evaluation framework for measuring Copilot agent quality across SDLC phases.
+Canary-based E2E test scenarios for validating the SDLC Harness agent pipeline.
 
 ## Structure
 
 ```
 bench/
-├── canaries/          # Test scenarios by SDLC phase
+├── canaries/          # E2E test scenarios by SDLC phase
 │   ├── requirements/  # Requirements generation canaries
+│   ├── design/        # Architecture design canaries
+│   ├── scaffold/      # Project scaffolding canaries
 │   ├── implement/     # Code implementation canaries
 │   ├── qa/            # Quality assurance canaries
-│   ├── design/        # Architecture design canaries
 │   ├── deploy/        # Deployment canaries
 │   ├── document/      # Documentation canaries
-│   ├── scaffold/      # Project scaffolding canaries
 │   ├── rai/           # Responsible AI canaries
 │   └── release/       # Release management canaries
-├── graders/           # Evaluation components
-│   ├── code/          # Deterministic graders (AST, keyword, file, structural)
-│   └── llm/           # LLM-based graders (judge, consensus, rubric)
-├── engine/            # Scoring, trend analysis, report generation
-└── reports/           # Historical benchmark reports + baseline
+└── results/           # Canary test results (generated)
 ```
 
-## Quick Start
+## What Are Canaries?
 
-```bash
-# Run all benchmarks
-python tools/run-benchmarks.py
+Canaries are E2E integration tests that validate "does the harness work correctly?"
 
-# Run a specific phase
-python tools/run-benchmarks.py --phase requirements
+Each canary spec defines:
+- A scenario (input to the harness)
+- Expected agent routing and behavior
+- Pass/fail criteria based on agent outputs
 
-# Run a specific canary
-python tools/run-benchmarks.py --canary req-001-ecommerce-api
-
-# Compare against baseline
-python tools/run-benchmarks.py --compare-baseline
-```
+Canaries test the **harness itself**, not model quality. They feed a scenario into the
+agent pipeline and verify the correct agents fire, produce structured output, and meet
+evaluation gates.
 
 ## Adding a Canary
 
 1. Create a YAML file in `canaries/<phase>/`
-2. Define `id`, `phase`, `input`, `expected_outputs`, and `graders`
+2. Define `id`, `phase`, `input`, `expected_outputs`, and evaluation criteria
 3. See existing canaries for the schema
-
-## Grader Types
-
-| Type | Module | Use Case |
-|------|--------|----------|
-| KeywordGrader | `bench.graders.code.keyword_grader` | Check for required terms |
-| ASTGrader | `bench.graders.code.ast_grader` | Validate code structure |
-| StructuralGrader | `bench.graders.code.structural_grader` | Check architectural patterns |
-| FileGrader | `bench.graders.code.file_grader` | Validate file outputs |
-| JudgeGrader | `bench.graders.llm.judge_grader` | LLM quality judgment |
-| ConsensusGrader | `bench.graders.llm.consensus_grader` | Multi-LLM agreement |
-| RubricGrader | `bench.graders.llm.rubric_grader` | Rubric-based LLM scoring |
