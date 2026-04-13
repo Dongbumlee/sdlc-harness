@@ -79,6 +79,32 @@ reasoning: "<evaluation summary>"
 - Results stored in `bench/results/` as structured JSON
 - CI validates spec schema on PRs touching agents/skills
 
+## Known Issues / Future Work
+
+### Library Placeholder Hardcoding (~309 occurrences)
+
+The codebase contains ~309 references to placeholder library names (`your-org/your-*`) that assume every project uses specific internal SDK wrapper libraries:
+
+| Placeholder | Package Name | What It Assumes |
+|-------------|-------------|-----------------|
+| `your-org/your-cosmosdb-library` | `your-cosmosdb-lib` | Every project uses a custom Cosmos DB wrapper |
+| `your-org/your-storage-library` | `your-storage-lib` | Every project uses a custom Azure Storage wrapper |
+| `your-org/your-app-template` | — | Base app template exists in org |
+| `your-org/your-api-template` | — | FastAPI template exists in org |
+| `your-org/your-agent-template` | — | AI agent template exists in org |
+
+**Problem:** This hardcodes an assumption that doesn't hold for a general-purpose SDLC harness. Not every project uses Cosmos DB, not every org has wrapper libraries, and agents should be smart enough to research appropriate libraries based on project context.
+
+**Affected files:** Agents (harness, analyst, scaffolder, implementer, deployer, azure-compliance-reviewer, architecture-reviewer, documenter), skills (cosmos-repository, blob-storage, security-review, project-scaffolding, adr-authoring, azure-deployment, project-manifest, workspace-init), all 5 prompt files, e2e tests, README, design templates.
+
+**Future approach:** The `copilot-instructions.template.md` should teach **best practices and patterns** (e.g., "use SDK abstraction libraries", "follow Repository Pattern") rather than prescribe specific internal libraries. Agents should leverage their intelligence to research and recommend appropriate libraries based on the project's tech stack and requirements. The workspace-init process can optionally accept org-specific library references during setup, but they should not be baked into agent instructions.
+
+**Note:** This is a significant refactoring effort that deserves its own design pass — not a quick find-replace.
+
+### External Repo References (Resolved)
+
+Previously referenced `microsoft/content-processing-solution-accelerator` and `microsoft/Container-Migration-Solution-Accelerator` as architectural pattern examples. Both were removed in `09c3adf` to make the harness self-contained. Architectural patterns are now described inline in agent/skill instructions.
+
 ## Git Operations - Critical Lessons
 
 ### GITHUB_TOKEN Conflict (ROOT CAUSE OF PUSH FAILURES)
@@ -145,10 +171,13 @@ Env var: `GITHUB_PERSONAL_ACCESS_TOKEN` in `~/.amplifier/keys.env`
 | 5 | CI/CD integration | `04eb992` | Done |
 | — | Rename: accelerator → project | `58bd2ae`, `fb89842` | Done |
 | — | Sync fix + benchmark workflow update | `542db34` | Done |
+| — | Remove external repo dependencies | `09c3adf` | Done |
 
 ### Commits on `evo` Branch (Latest First)
 
 ```
+09c3adf refactor: remove external repo dependencies from agents and skills
+88fb48b docs: update AGENTS.md with v2 implementation status
 04eb992 feat: add CI/CD canary validation workflow (v2 Step 5)
 fb89842 refactor: complete accelerator to project rename across codebase
 5096d10 feat: strengthen harness evaluation gates (v2 Step 4)
@@ -172,4 +201,4 @@ c8fe3fa refactor: remove Python evaluation layer (v2 migration Step 1)
 | Date | Session | Key Outcomes |
 |------|---------|-------------|
 | 2026-04-12/13 | `aa3398f9-...` | V2 spec written, architecture decisions, GitHub MCP configured |
-| 2026-04-13 | `6f539128-...` | V2 migration Steps 1-5 implemented, accelerator→project rename, CI green |
+| 2026-04-13 | `6f539128-...` | V2 migration Steps 1-5 implemented, accelerator→project rename, CI green, external repo refs removed, library placeholder issue documented |
