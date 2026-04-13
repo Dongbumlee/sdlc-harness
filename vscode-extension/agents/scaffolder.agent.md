@@ -131,7 +131,7 @@ uses `<ProjectName><Layer>` naming (e.g., `CustomerFeedbackAPI`, `CustomerFeedba
 
 ## Scaffolding rules
 
-Follow the application project folder pattern (reference: `microsoft/content-processing-solution-project`).
+Follow the application project folder pattern.
 Each template is a **standalone project**. For multi-service applications, compose them as independent projects under `src/`.
 
 **Template structures** (as they actually exist in the repos):

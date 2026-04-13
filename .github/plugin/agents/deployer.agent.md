@@ -106,12 +106,7 @@ and release automation following Azure Verified Modules (AVM) and Landing Zone p
    - Get Azure deployment best practices: use Azure MCP `bestpractices` tool for
      IaC rules, deployment guidance, and WAF alignment.
 
-4. **Fetch Bicep patterns from existing application repos via GitHub MCP:**
-   - Use `mcp_github_get_file_contents` to fetch `infra/main.bicep` from
-     `microsoft/content-processing-solution-project` or `microsoft/Container-Migration-Solution-Project`.
-   - Align with their AVM module versions and patterns.
-
-5. **Load additional best practices from awesome-copilot** (skip if unavailable):
+4. **Load additional best practices from awesome-copilot** (skip if unavailable):
    - Use `mcp_awesome-copil_load_instruction` to load `"bicep-code-best-practices"` — Bicep naming conventions,
      structure, parameters, security.
    - Use `mcp_awesome-copil_load_instruction` to load `"containerization-docker-best-practices"` — multi-stage

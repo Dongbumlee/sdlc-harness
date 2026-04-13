@@ -377,8 +377,7 @@ CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
 
 ### 5. Configure Dev Containers (per-service isolation)
 
-Following the application project pattern (see [Content Processing application](https://github.com/microsoft/content-processing-solution-project)
-for a production reference), each service under `src/` gets its **own** `.devcontainer/` with
+Following the application project pattern, each service under `src/` gets its **own** `.devcontainer/` with
 service-specific tooling and dependencies. This per-service isolation ensures that engineers
 working on one layer can build, test, and run independently — without pulling in dependencies
 from other services.

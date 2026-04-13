@@ -81,8 +81,7 @@ Before starting, load these resources for accurate implementation:
 
 1. **Locate relevant code**
    - Identify the modules/classes/functions that should be changed or created.
-   - All layers live under `src/` as independent projects following the application project pattern
-     (reference: `microsoft/content-processing-solution-project`):
+   - All layers live under `src/` as independent projects:
      - API: `src/<Name>API/app/` (FastAPI routers, services), `src/<Name>API/tests/`, `src/<Name>API/pyproject.toml`
      - Business: `src/<Name>Business/src/` (domain models, repositories, shared services), `src/<Name>Business/tests/`
      - Agent: `src/<Name>Agent/src/` (agents, MCP tools, middleware), `src/<Name>Agent/tests/`

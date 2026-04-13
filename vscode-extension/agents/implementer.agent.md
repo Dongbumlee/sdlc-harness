@@ -179,8 +179,8 @@ Step 6: Run all tests                             → `uv run pytest --cov`
 
 ## Service directory map
 
-All layers live under `src/` as independent projects following the application project pattern
-(reference: `microsoft/content-processing-solution-project`). Locate the right project before implementing:
+All layers live under `src/` as independent projects following the application project pattern.
+Locate the right project before implementing:
 
 | Layer | Project Folder | Code Root | Tests | Config | Template |
 |---|---|---|---|---|---|
