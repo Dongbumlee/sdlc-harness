@@ -1,5 +1,6 @@
 # Canary: API Documentation Generation
 id: doc-001-api-documentation
+version: "1.0"
 phase: document
 title: "API Documentation Generation"
 description: >
@@ -55,42 +56,41 @@ expected:
     - curl
     - request
     - response
-
-graders:
-  - type: keyword
-    weight: 0.3
-    config:
-      required:
-        - authentication
-        - authorization
-        - pagination
-        - rate limiting
-        - error
-        - request
-        - response
-        - curl
-        - Bearer
-        - JSON
-      forbidden: ["TODO", "placeholder"]
-  - type: structural
-    weight: 0.3
-    config:
-      required_sections:
-        - getting started
-        - authentication
-        - endpoints
-        - error reference
-        - pagination
-        - rate limiting
-  - type: llm-judge
-    weight: 0.4
-    config:
-      criteria:
-        - completeness
-        - technical_accuracy
-        - clarity
-        - usability
-        - example_quality
+  graders:
+    - type: keyword
+      weight: 0.3
+      config:
+        required:
+          - authentication
+          - authorization
+          - pagination
+          - rate limiting
+          - error
+          - request
+          - response
+          - curl
+          - Bearer
+          - JSON
+        forbidden: ["TODO", "placeholder"]
+    - type: structural
+      weight: 0.3
+      config:
+        required_sections:
+          - getting started
+          - authentication
+          - endpoints
+          - error reference
+          - pagination
+          - rate limiting
+    - type: llm-judge
+      weight: 0.4
+      config:
+        criteria:
+          - completeness
+          - technical_accuracy
+          - clarity
+          - usability
+          - example_quality
 
 timeout_seconds: 120
 tags:

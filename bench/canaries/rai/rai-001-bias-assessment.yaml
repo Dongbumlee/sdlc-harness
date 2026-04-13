@@ -1,5 +1,6 @@
 # Canary: Responsible AI Bias Assessment
 id: rai-001-bias-assessment
+version: "1.0"
 phase: rai
 title: "Responsible AI Bias Assessment"
 description: >
@@ -66,42 +67,41 @@ expected:
     - explainability
     - mitigation
     - demographic parity
-
-graders:
-  - type: keyword
-    weight: 0.3
-    config:
-      required:
-        - bias
-        - fairness
-        - disparate impact
-        - PII
-        - GDPR
-        - explainability
-        - mitigation
-        - demographic parity
-        - proxy discrimination
-        - human-in-the-loop
-      forbidden: ["TODO", "placeholder"]
-  - type: structural
-    weight: 0.3
-    config:
-      required_sections:
-        - bias detection
-        - fairness metrics
-        - data privacy
-        - transparency
-        - explainability
-        - mitigation
-  - type: llm-judge
-    weight: 0.4
-    config:
-      criteria:
-        - completeness
-        - technical_accuracy
-        - clarity
-        - regulatory_awareness
-        - actionability
+  graders:
+    - type: keyword
+      weight: 0.3
+      config:
+        required:
+          - bias
+          - fairness
+          - disparate impact
+          - PII
+          - GDPR
+          - explainability
+          - mitigation
+          - demographic parity
+          - proxy discrimination
+          - human-in-the-loop
+        forbidden: ["TODO", "placeholder"]
+    - type: structural
+      weight: 0.3
+      config:
+        required_sections:
+          - bias detection
+          - fairness metrics
+          - data privacy
+          - transparency
+          - explainability
+          - mitigation
+    - type: llm-judge
+      weight: 0.4
+      config:
+        criteria:
+          - completeness
+          - technical_accuracy
+          - clarity
+          - regulatory_awareness
+          - actionability
 
 timeout_seconds: 120
 tags:

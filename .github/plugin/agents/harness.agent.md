@@ -285,6 +285,23 @@ GitHub MCP authentication by performing a lightweight probe:
 - Architecture Reviewer, Azure Compliance Reviewer
 - Release Manager
 
+## Canary mode (E2E harness self-test)
+
+Use the `sdlc-canary-runner` skill when the user triggers canary mode.
+
+**Trigger phrases:** "run canary tests", "canary mode", "run canaries", "test the harness", "validate phase agents"
+
+### Canary mode procedure
+
+1. **Load the skill:** Invoke `/sdlc-canary-runner` to get the full run procedure.
+2. **Discover specs:** Read all `.yaml` files from `bench/canaries/` recursively.
+3. **Route each spec:** Map `phase` → agent using the skill's routing table, then delegate with the spec's `prompt` as input.
+4. **Grade outputs:** Apply each grader in `expected.graders` (keyword, structural, llm-judge) and compute weighted composite score.
+5. **Write results:** Save JSON to `bench/results/canary-run-{date}.json`.
+6. **Report:** Present a summary table with per-canary pass/fail verdicts and scores.
+
+**Key rule:** Canary mode uses the SAME agents and SAME evaluation gates as production — the only difference is that input comes from the spec's `prompt` field rather than the user.
+
 ## What you must NOT do
 
 - Never edit files directly — always delegate to a worker agent.

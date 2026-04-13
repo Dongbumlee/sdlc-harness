@@ -1,56 +1,95 @@
+# Canary: Security Review of API Code
 id: qa-001-security-review
+version: "1.0"
 phase: qa
 title: "Security Review of API Code"
-description: |
-  Given a code sample with intentional security vulnerabilities,
-  produce a security review identifying issues and remediation.
+description: >
+  Tests the AI agent's ability to identify security vulnerabilities in a
+  Flask API code sample and produce actionable remediation recommendations.
 
-input:
-  code_sample: |
-    from flask import Flask, request, jsonify
-    import sqlite3
-    import os
+prompt: |
+  You are a senior security engineer. Perform a thorough security review of
+  the following Flask API code and identify all vulnerabilities:
 
-    app = Flask(__name__)
-    SECRET_KEY = "hardcoded-secret-key-123"
+  ```python
+  from flask import Flask, request, jsonify
+  import sqlite3
+  import os
 
-    @app.route("/login", methods=["POST"])
-    def login():
-        username = request.form["username"]
-        password = request.form["password"]
-        conn = sqlite3.connect("users.db")
-        cursor = conn.execute(
-            f"SELECT * FROM users WHERE username='{username}' AND password='{password}'"
-        )
-        user = cursor.fetchone()
-        if user:
-            return jsonify({"token": SECRET_KEY + username})
-        return jsonify({"error": "Invalid credentials"}), 401
+  app = Flask(__name__)
+  SECRET_KEY = "hardcoded-secret-key-123"
 
-    @app.route("/exec", methods=["POST"])
-    def run_command():
-        cmd = request.json["command"]
-        result = os.popen(cmd).read()
-        return jsonify({"output": result})
+  @app.route("/login", methods=["POST"])
+  def login():
+      username = request.form["username"]
+      password = request.form["password"]
+      conn = sqlite3.connect("users.db")
+      cursor = conn.execute(
+          f"SELECT * FROM users WHERE username='{username}' AND password='{password}'"
+      )
+      user = cursor.fetchone()
+      if user:
+          return jsonify({"token": SECRET_KEY + username})
+      return jsonify({"error": "Invalid credentials"}), 401
 
-expected_outputs:
-  - vulnerability_report
-  - remediation_plan
+  @app.route("/exec", methods=["POST"])
+  def run_command():
+      cmd = request.json["command"]
+      result = os.popen(cmd).read()
+      return jsonify({"output": result})
+  ```
 
-graders:
-  - module: bench.graders.code.keyword_grader
-    class: KeywordGrader
-    config:
-      required_keywords:
-        - SQL injection
-        - hardcoded secret
-        - command injection
-        - input validation
-      min_match_ratio: 0.75
-  - module: bench.graders.llm.judge_grader
-    class: JudgeGrader
-    config:
-      criteria: |
-        Did the review identify ALL critical vulnerabilities?
-        Did it provide actionable remediation for each?
-        Did it prioritize by severity?
+  Deliverables:
+  1. Vulnerability report listing each issue with:
+     - Vulnerability type (e.g., SQL Injection, Command Injection)
+     - Severity (Critical / High / Medium / Low)
+     - Affected line(s) of code
+     - Explanation of the risk
+  2. Remediation plan with corrected code for each vulnerability
+  3. Security best practices checklist for this type of API
+
+expected:
+  keywords:
+    - SQL injection
+    - hardcoded secret
+    - command injection
+    - input validation
+  graders:
+    - type: keyword
+      weight: 0.3
+      config:
+        required:
+          - SQL injection
+          - hardcoded secret
+          - command injection
+          - input validation
+          - parameterized
+          - remediation
+          - severity
+          - authentication
+        forbidden: ["TODO", "placeholder"]
+    - type: structural
+      weight: 0.3
+      config:
+        required_sections:
+          - vulnerability report
+          - SQL injection
+          - command injection
+          - hardcoded
+          - remediation
+    - type: llm-judge
+      weight: 0.4
+      config:
+        criteria:
+          - completeness
+          - technical_accuracy
+          - severity_assessment
+          - remediation_quality
+          - actionability
+
+timeout_seconds: 120
+tags:
+  - qa
+  - security
+  - code-review
+  - vulnerability

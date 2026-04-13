@@ -1,5 +1,6 @@
 # Canary: Azure Web App Deployment Configuration
 id: dep-001-azure-webapp
+version: "1.0"
 phase: deploy
 title: "Azure Web App Deployment Configuration"
 description: >
@@ -53,42 +54,41 @@ expected:
     - pipeline
     - deployment slot
     - managed identity
-
-graders:
-  - type: keyword
-    weight: 0.3
-    config:
-      required:
-        - Bicep
-        - App Service
-        - Container Registry
-        - Key Vault
-        - PostgreSQL
-        - managed identity
-        - deployment slot
-        - Application Insights
-        - pipeline
-        - VNet
-      forbidden: ["TODO", "placeholder"]
-  - type: structural
-    weight: 0.3
-    config:
-      required_sections:
-        - infrastructure as code
-        - CI/CD pipeline
-        - networking
-        - secrets management
-        - monitoring
-        - deployment strategy
-  - type: llm-judge
-    weight: 0.4
-    config:
-      criteria:
-        - completeness
-        - technical_accuracy
-        - clarity
-        - security_posture
-        - operational_readiness
+  graders:
+    - type: keyword
+      weight: 0.3
+      config:
+        required:
+          - Bicep
+          - App Service
+          - Container Registry
+          - Key Vault
+          - PostgreSQL
+          - managed identity
+          - deployment slot
+          - Application Insights
+          - pipeline
+          - VNet
+        forbidden: ["TODO", "placeholder"]
+    - type: structural
+      weight: 0.3
+      config:
+        required_sections:
+          - infrastructure as code
+          - CI/CD pipeline
+          - networking
+          - secrets management
+          - monitoring
+          - deployment strategy
+    - type: llm-judge
+      weight: 0.4
+      config:
+        criteria:
+          - completeness
+          - technical_accuracy
+          - clarity
+          - security_posture
+          - operational_readiness
 
 timeout_seconds: 120
 tags:

@@ -1,52 +1,86 @@
+# Canary: CRUD Endpoint Implementation
 id: impl-001-crud-endpoint
+version: "1.0"
 phase: implement
 title: "CRUD Endpoint Implementation"
-description: |
-  Given an API spec for a product resource, generate a complete
-  CRUD implementation with validation, error handling, and tests.
+description: >
+  Tests the AI agent's ability to generate a complete, production-ready CRUD
+  implementation with validation, error handling, and tests for a given API spec.
 
-input:
-  api_spec: |
-    Resource: Product
-    Fields:
-      - id: UUID (auto-generated)
-      - name: string (required, 1-200 chars)
-      - price: decimal (required, > 0)
-      - category: string (required, enum: electronics|clothing|food)
-      - created_at: datetime (auto)
-    Endpoints:
-      - POST /products — create
-      - GET /products/:id — read
-      - PUT /products/:id — update
-      - DELETE /products/:id — delete
-      - GET /products — list with pagination
-  language: python
-  framework: fastapi
+prompt: |
+  You are a senior Python engineer. Implement a complete CRUD API for a Product
+  resource using FastAPI with the following specification:
 
-expected_outputs:
-  - implementation_code
-  - test_code
-  - validation_logic
+  Resource: Product
+  Fields:
+    - id: UUID (auto-generated)
+    - name: string (required, 1-200 chars)
+    - price: decimal (required, > 0)
+    - category: string (required, enum: electronics|clothing|food)
+    - created_at: datetime (auto)
+  Endpoints:
+    - POST /products — create
+    - GET /products/:id — read
+    - PUT /products/:id — update
+    - DELETE /products/:id — delete
+    - GET /products — list with pagination (page, per_page query params)
 
-graders:
-  - module: bench.graders.code.ast_grader
-    class: ASTGrader
-    config:
-      required_constructs:
-        - class_definition
-        - function_definition
-        - error_handling
-      language: python
-  - module: bench.graders.code.structural_grader
-    class: StructuralGrader
-    config:
-      required_patterns:
-        - crud_endpoints
-        - input_validation
-        - error_responses
-  - module: bench.graders.code.file_grader
-    class: FileGrader
-    config:
-      expected_files:
-        - "*.py"
-      min_files: 2
+  Requirements:
+  1. Pydantic models for request/response validation
+  2. FastAPI router with proper HTTP status codes (201, 200, 204, 404, 422)
+  3. In-memory storage (dict) for simplicity — no real database needed
+  4. Input validation with meaningful error messages
+  5. Comprehensive pytest tests covering success and failure scenarios
+  6. Type hints throughout, no bare `except:` clauses
+
+  Produce production-quality code with docstrings and type annotations.
+
+expected:
+  keywords:
+    - FastAPI
+    - Pydantic
+    - pytest
+    - router
+    - validation
+    - UUID
+    - pagination
+    - error handling
+  graders:
+    - type: keyword
+      weight: 0.3
+      config:
+        required:
+          - FastAPI
+          - Pydantic
+          - pytest
+          - router
+          - validation
+          - UUID
+          - pagination
+          - HTTPException
+          - status_code
+        forbidden: ["TODO", "placeholder"]
+    - type: structural
+      weight: 0.3
+      config:
+        required_sections:
+          - models
+          - router
+          - error handling
+          - tests
+    - type: llm-judge
+      weight: 0.4
+      config:
+        criteria:
+          - completeness
+          - technical_accuracy
+          - code_quality
+          - test_coverage
+          - production_readiness
+
+timeout_seconds: 120
+tags:
+  - implement
+  - python
+  - fastapi
+  - crud

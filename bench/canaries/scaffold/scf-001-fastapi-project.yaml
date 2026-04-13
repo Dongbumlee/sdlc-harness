@@ -1,5 +1,6 @@
 # Canary: FastAPI Project Scaffolding
 id: scf-001-fastapi-project
+version: "1.0"
 phase: scaffold
 title: "FastAPI Project Scaffolding"
 description: >
@@ -45,41 +46,40 @@ expected:
     - SQLAlchemy
     - Alembic
     - pytest
-
-graders:
-  - type: keyword
-    weight: 0.3
-    config:
-      required:
-        - pyproject.toml
-        - Dockerfile
-        - FastAPI
-        - SQLAlchemy
-        - Alembic
-        - pytest
-        - uvicorn
-        - pydantic
-        - middleware
-      forbidden: ["TODO", "placeholder"]
-  - type: structural
-    weight: 0.3
-    config:
-      required_sections:
-        - project structure
-        - configuration
-        - entry point
-        - database
-        - testing
-        - containerization
-  - type: llm-judge
-    weight: 0.4
-    config:
-      criteria:
-        - completeness
-        - technical_accuracy
-        - clarity
-        - production_readiness
-        - best_practices
+  graders:
+    - type: keyword
+      weight: 0.3
+      config:
+        required:
+          - pyproject.toml
+          - Dockerfile
+          - FastAPI
+          - SQLAlchemy
+          - Alembic
+          - pytest
+          - uvicorn
+          - pydantic
+          - middleware
+        forbidden: ["TODO", "placeholder"]
+    - type: structural
+      weight: 0.3
+      config:
+        required_sections:
+          - project structure
+          - configuration
+          - entry point
+          - database
+          - testing
+          - containerization
+    - type: llm-judge
+      weight: 0.4
+      config:
+        criteria:
+          - completeness
+          - technical_accuracy
+          - clarity
+          - production_readiness
+          - best_practices
 
 timeout_seconds: 120
 tags:

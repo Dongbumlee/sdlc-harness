@@ -1,41 +1,77 @@
+# Canary: E-commerce API Requirements Generation
 id: req-001-ecommerce-api
+version: "1.0"
 phase: requirements
 title: "E-commerce API Requirements Generation"
-description: |
-  Given a business brief for an e-commerce platform, generate
-  a complete set of functional and non-functional requirements
-  covering authentication, product catalog, cart, and checkout.
+description: >
+  Tests the AI agent's ability to generate a complete set of functional and
+  non-functional requirements for an e-commerce platform from a business brief.
 
-input:
-  business_brief: |
-    Build a REST API for an e-commerce platform supporting:
-    - User registration and JWT authentication
-    - Product catalog with search and filtering
-    - Shopping cart management
-    - Order placement with payment integration
-    Target: 10k concurrent users, 99.9% uptime SLA.
+prompt: |
+  You are a senior business analyst. Given the following business brief,
+  produce a complete set of requirements for an e-commerce REST API:
 
-expected_outputs:
-  - functional_requirements
-  - non_functional_requirements
-  - api_endpoint_list
+  Business Brief:
+  Build a REST API for an e-commerce platform supporting:
+  - User registration and JWT authentication
+  - Product catalog with search and filtering
+  - Shopping cart management
+  - Order placement with payment integration
+  Target: 10k concurrent users, 99.9% uptime SLA.
 
-graders:
-  - module: bench.graders.code.keyword_grader
-    class: KeywordGrader
-    config:
-      required_keywords:
-        - authentication
-        - authorization
-        - rate limiting
-        - pagination
-        - error handling
-      min_match_ratio: 0.8
-  - module: bench.graders.llm.rubric_grader
-    class: RubricGrader
-    config:
-      rubric: |
-        Score the requirements on completeness (0-1):
-        - Are all four domains covered?
-        - Are NFRs specific and measurable?
-        - Are edge cases addressed?
+  Deliverables:
+  1. Functional requirements (user stories or use cases)
+  2. Non-functional requirements (performance, security, scalability, reliability)
+  3. API endpoint list with HTTP methods and brief descriptions
+  4. Data model overview (key entities and relationships)
+
+  For each requirement, assign a priority (Must-Have / Should-Have / Nice-to-Have)
+  and acceptance criteria.
+
+expected:
+  keywords:
+    - authentication
+    - authorization
+    - rate limiting
+    - pagination
+    - error handling
+  graders:
+    - type: keyword
+      weight: 0.3
+      config:
+        required:
+          - authentication
+          - authorization
+          - rate limiting
+          - pagination
+          - error handling
+          - functional
+          - non-functional
+          - SLA
+          - endpoint
+          - data model
+        forbidden: ["TODO", "placeholder"]
+    - type: structural
+      weight: 0.3
+      config:
+        required_sections:
+          - functional requirements
+          - non-functional requirements
+          - API endpoints
+          - data model
+          - acceptance criteria
+    - type: llm-judge
+      weight: 0.4
+      config:
+        criteria:
+          - completeness
+          - testability
+          - specificity
+          - prioritization
+          - coverage_of_all_domains
+
+timeout_seconds: 120
+tags:
+  - requirements
+  - e-commerce
+  - rest-api

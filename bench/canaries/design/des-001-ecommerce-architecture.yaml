@@ -1,5 +1,6 @@
 # Canary: E-commerce System Architecture Design
 id: des-001-ecommerce-architecture
+version: "1.0"
 phase: design
 title: "E-commerce System Architecture Design"
 description: >
@@ -43,42 +44,41 @@ expected:
     - database
     - authentication
     - scalability
-
-graders:
-  - type: keyword
-    weight: 0.3
-    config:
-      required:
-        - microservices
-        - API gateway
-        - event-driven
-        - caching
-        - load balancer
-        - database
-        - authentication
-        - scalability
-        - inventory
-        - payment
-      forbidden: ["TODO", "placeholder"]
-  - type: structural
-    weight: 0.3
-    config:
-      required_sections:
-        - component diagram
-        - data flow
-        - technology stack
-        - database design
-        - caching strategy
-        - security architecture
-  - type: llm-judge
-    weight: 0.4
-    config:
-      criteria:
-        - completeness
-        - technical_accuracy
-        - clarity
-        - trade_off_analysis
-        - scalability_reasoning
+  graders:
+    - type: keyword
+      weight: 0.3
+      config:
+        required:
+          - microservices
+          - API gateway
+          - event-driven
+          - caching
+          - load balancer
+          - database
+          - authentication
+          - scalability
+          - inventory
+          - payment
+        forbidden: ["TODO", "placeholder"]
+    - type: structural
+      weight: 0.3
+      config:
+        required_sections:
+          - component diagram
+          - data flow
+          - technology stack
+          - database design
+          - caching strategy
+          - security architecture
+    - type: llm-judge
+      weight: 0.4
+      config:
+        criteria:
+          - completeness
+          - technical_accuracy
+          - clarity
+          - trade_off_analysis
+          - scalability_reasoning
 
 timeout_seconds: 120
 tags:
