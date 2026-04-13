@@ -37,30 +37,26 @@ Run these probe calls and report the status to the user:
 | # | MCP Server | Probe Call | Required For |
 |---|---|---|---|
 | 1 | **awesome-copilot** | `mcp_awesome-copil_search_instructions(keywords: "security")` | Skills loading (OWASP, Docker, Bicep, ADR best practices) |
-| 2 | **GitHub MCP (libraries)** | `mcp_github_get_file_contents(owner: "your-org", repo: "python_cosmosdb_helper", path: "README.md")` | your-cosmosdb-lib / your-storage-lib SDK patterns |
-| 3 | **GitHub MCP (templates)** | `mcp_github_get_file_contents(owner: "your-org", repo: "python_api_application_template", path: "README.md")` | Scaffolding templates (CRITICAL for project structure) |
-| 4 | **Context7** | `mcp_context7_resolve-library-id(libraryName: "fastapi")` | Framework documentation |
-
-**Run probes 2 and 3 in parallel** — they test access to two different private repos in `your-org`.
+| 2 | **GitHub MCP** | `mcp_github_get_me()` or any lightweight GitHub API call | Repository access, PR creation, code search |
+| 3 | **Context7** | `mcp_context7_resolve-library-id(libraryName: "fastapi")` | Framework documentation |
 
 **Report results to the user as a status table:**
 
-> **🔌 MCP Server Status**
+> **MCP Server Status**
 >
 > | Server | Status | Impact if unavailable |
 > |---|---|---|
-> | awesome-copilot | ✅ Ready / ⛔ Not running | Skills cannot load best practices (OWASP, Docker, Bicep) |
-> | GitHub MCP (libraries) | ✅ Ready / ⛔ Auth failed | Cannot fetch your-cosmosdb-lib/your-storage-lib SDK patterns |
-> | GitHub MCP (templates) | ✅ Ready / ⛔ Auth failed | Cannot fetch scaffolding template structure — will generate WRONG folder layout |
-> | Context7 | ✅ Ready / ⛔ Not running | Cannot load framework docs (FastAPI, React, etc.) |
+> | awesome-copilot | Ready / Not running | Skills cannot load best practices (OWASP, Docker, Bicep) |
+> | GitHub MCP | Ready / Not configured | Cannot access repos, create PRs, or search code |
+> | Context7 | Ready / Not running | Cannot load framework docs (FastAPI, React, etc.) |
 >
 > *Azure MCP, Azure DevOps MCP, and Microsoft Learn MCP are checked on demand by worker agents.*
 
 **Decision rules:**
 
-- **All 4 pass → proceed normally.**
-- **awesome-copilot fails → STOP.** Tell the user:
-  > ⛔ The `awesome-copilot` MCP server is not running. This server is required for
+- **All 3 pass -> proceed normally.**
+- **awesome-copilot fails -> STOP.** Tell the user:
+  > The `awesome-copilot` MCP server is not running. This server is required for
   > loading best practices used by skills (security, deployment, scaffolding, code quality).
   >
   > **To fix:** Ensure Docker Desktop is running, then start the `awesome-copilot` server
@@ -68,28 +64,12 @@ Run these probe calls and report the status to the user:
   >
   > Verify manually: `docker ps` should show the awesome-copilot container.
 
-- **GitHub MCP (templates OR libraries) fails → STOP and guide user through login.** Tell the user:
-  > ⛔ **GitHub MCP authentication required — you must sign in before I can proceed.**
-  >
-  > All engineers using Harness **must** have access to the `your-org` GitHub org.
-  > I need these private repos to fetch the correct project templates and SDK patterns.
-  >
-  > **Please complete these steps now:**
-  >
-  > 1. **Click the GitHub Copilot icon** in the VS Code bottom status bar (or go to
-  >    `View → Command Palette → GitHub Copilot: Sign In`).
-  > 2. **Sign in with your Microsoft-linked GitHub account** that has `your-org` org access.
-  > 3. **Start the GitHub MCP server**: open `.vscode/mcp.json` and click the **"Start"**
-  >    button above the `"github"` server definition.
-  > 4. **Tell me "ready"** and I'll re-run the check.
-  >
-  > If you're unsure whether your GitHub account has `your-org` access, visit:
-  > https://github.com/orgs/your-org/people — if you can see the members list, you have access.
+- **GitHub MCP fails -> warn and proceed with degraded mode.** GitHub MCP enhances
+  the workflow (repo access, PR creation, code search across repos) but is not
+  strictly required. Agents can work with local files and inline patterns.
+  Tell the user what capabilities are reduced without it.
 
-  After the user confirms they've signed in, **re-run the GitHub MCP probes** (both libraries
-  and templates). Only proceed when both pass.
-
-- **Context7 fails → warn and proceed.** Agents can work without framework docs
+- **Context7 fails -> warn and proceed.** Agents can work without framework docs
   but may use stale training data.
 
 ### Step 1: Bootstrap workspace files (if missing)
@@ -287,35 +267,15 @@ This ensures every design decision is captured as a permanent, reviewable record
 - Use **GitHub MCP** (`mcp_github_get_file_contents`) to fetch reference catalog or template patterns.
 - If the user's request is unclear, ask 1-2 focused clarification questions before delegating.
 
-## GitHub MCP authentication gate
+## GitHub MCP usage
 
-**Before delegating to any worker agent that requires reference repo access**, you MUST verify
-GitHub MCP authentication by performing a lightweight probe:
+GitHub MCP is available for fetching project-related files, reading issues, and searching code
+within the **current project's repository**. Worker agents may use GitHub MCP tools on demand
+when they need to read files, issues, or search code in the project repo.
 
-1. **Probe call:** Use `mcp_github_get_file_contents` to fetch `README.md` from
-   `your-org/your-cosmosdb-library` (owner: `your-org`, repo: `python_cosmosdb_helper`, path: `README.md`).
-
-2. **If the probe succeeds:** Proceed normally — delegate to the worker agent.
-
-3. **If the probe fails or returns an auth error:**
-   - **STOP — do NOT delegate** to any worker agent.
-   - **Guide the user through login:**
-
-     > ⛔ **GitHub authentication required before I can proceed.**
-     >
-     > Please sign in now:
-     > 1. Click the **GitHub Copilot icon** in the VS Code status bar (or `Ctrl+Shift+P` → "GitHub Copilot: Sign In").
-     > 2. Use your **Microsoft-linked GitHub account** with `your-org` org access.
-     > 3. Open `.vscode/mcp.json` and click **"Start"** on the `"github"` server.
-     > 4. Say **"ready"** and I'll re-check.
-
-   - **Re-run the probe** after the user confirms. Only proceed when it passes.
-   - **No degraded mode** — `your-org` access is mandatory for all SDLC workflows.
-
-**Agents that require this auth gate** (all use `mcp_github_get_file_contents` or `mcp_github_search_code`):
-- Analyst, Scaffolder, Deployer, Implementer, Documenter
-- Architecture Reviewer, Azure Compliance Reviewer
-- Release Manager
+**No pre-flight authentication gate is required.** If a GitHub MCP call fails during a workflow,
+the worker agent should gracefully degrade — use local file reads, cached patterns, or inline
+instructions as fallback. Never block the entire pipeline on a single MCP call failure.
 
 ## Canary mode (E2E harness self-test)
 
