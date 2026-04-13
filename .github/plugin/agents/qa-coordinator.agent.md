@@ -136,7 +136,16 @@ at the end of their response. Parse this block to extract machine-readable score
 - Any reviewer with `verdict: CRITICAL_FAIL` → automatic ⛔ regardless of score
 - Security Reviewer `score < 8` → automatic ⛔
 - Any reviewer `score < 5` → automatic ⛔
-- Composite score (average of 8 scores) `< 7` → automatic ⛔
+- Weighted composite score `< 7` → automatic ⛔
+
+**Weighted composite formula:**
+```
+security_weight = 1.5
+other_weight    = 1.0
+composite = (security_score × 1.5 + sum(other_7_scores × 1.0)) / (1.5 + 7 × 1.0)
+          = (security_score × 1.5 + sum(other_7_scores)) / 8.5
+```
+Use this formula — do NOT use a simple average of all 8 scores.
 
 **If a reviewer's YAML block is missing or malformed:**
 - Flag it: _"⚠️ [Reviewer Name] did not emit a structured output block — manual score extraction required."_
@@ -392,20 +401,117 @@ After incorporating both automated and manual results, issue the final verdict:
 ### Overall: ⛔ Request changes — address critical issues and manual QA failures
 ```
 
-### Iterative feedback loop (QA → fix → re-QA)
+### Iterative feedback loop with 3-tier escalation
 
-When the overall verdict is ⛔ (Request changes):
+When the overall verdict is ⛔ (Request changes), determine the escalation tier based on failure
+severity and retry history:
 
-1. **Present a concrete fix list** with file names, line numbers, and specific actions required.
-2. **Tell the user:** _"After fixes are applied, re-run QA review to verify. I will re-evaluate
-   only the domains that scored below threshold to save time."_
-3. **On re-review**, only re-run the specific reviewers whose domains had failures.
-   Compare the new scores against the previous round and report the delta.
-4. **Continue the loop** until all domains pass their thresholds or the user explicitly accepts
-   the remaining issues.
+#### Escalation tier determination
+
+| Condition | Tier | Action |
+|-----------|------|--------|
+| Any reviewer with `verdict: CRITICAL_FAIL` | Critical (no retry) | STOP — present results, require user decision immediately |
+| 1-2 reviewers failed, all failing scores 5-6, no Critical findings | Tier 1 | Auto-retry via Implementer |
+| Tier 1 auto-retry still fails OR 3+ reviewers failed initially | Tier 2 | Present to user, ask for targeted fix attempt |
+| After Tier 2 attempt still fails OR 3 total rounds reached | Tier 3 | User decides: override / manual fix / abandon |
+
+#### Tier 1: Auto-retry (routed automatically by Harness)
+
+**Condition:** 1-2 reviewers failed, all failing scores in the 5-6 range, no Critical findings.
+
+Report to Harness for automatic routing:
+> "⚙️ **QA Auto-Retry (Tier 1):** [N] reviewer(s) failed with minor issues (scores 5-6, no
+> Critical findings). Routing to Implementer with the QA Feedback Template. Re-review will
+> cover only the failed domains."
+
+Produce the **QA Feedback Template** (see below) for Harness to forward to the Implementer.
+
+#### Tier 2: Targeted retry (user confirms)
+
+**Condition:** Tier 1 auto-retry still fails, OR 3+ reviewers failed in the initial review.
+
+Present to the user:
+```
+⚠️ QA Targeted Retry Required (Tier 2)
+
+The following reviewers did not pass:
+
+| Reviewer   | Round 1 | Round 2 | Key Issue   |
+|------------|---------|---------|-------------|
+| [Reviewer] | X/10    | Y/10    | [summary]   |
+
+Would you like to attempt a targeted fix? I can route specific guidance to the Implementer
+focusing on these [N] failing areas.
+Reply "yes" to proceed or "skip" to escalate to Tier 3.
+```
+
+#### Tier 3: User decision (all retry attempts exhausted)
+
+**Condition:** After 2 failed fix attempts, OR 3 total QA rounds reached, OR user skips Tier 2.
+
+Present full results and require user decision:
+```
+🛑 QA Gate — User Decision Required (Tier 3)
+
+QA has not passed after [N] rounds. Full picture:
+
+Final scores:
+| Reviewer      | Score | Threshold | Status |
+|---------------|-------|-----------|--------|
+| [Reviewer]    | X/10  | ≥7        | ⛔ Fail |
+
+Unresolved findings:
+- [Critical/Important finding with file:line]
+
+Choose how to proceed:
+1. Override and proceed — accept remaining issues and continue to the next SDLC phase
+2. Manual fix — you fix the issues; I'll re-run QA after you confirm
+3. Abandon — stop work on this feature; issues will be filed as bugs for later
+
+Reply with 1, 2, or 3.
+```
+
+#### Hard limit: 3 QA rounds maximum
+
+After 3 total rounds (initial + 2 retries), always escalate to Tier 3 regardless of tier
+determination. Never loop indefinitely.
+
+#### Post-loop summary
+
+When the QA loop concludes (pass or user decision), summarize the trajectory:
+> "QA completed in [N] rounds. Composite score: Round 1 [X/10] → Round 2 [Y/10] → Final [Z/10]."
 
 This iterative loop is essential — a single-pass review that identifies issues but never
 verifies fixes leaves quality gaps in the final deliverable.
+
+---
+
+### QA Feedback Template (for Implementer routing)
+
+When routing a QA failure back to the Implementer (Tier 1 auto-retry or Tier 2 targeted retry),
+use this exact template so the Implementer has the precise information needed to fix efficiently:
+
+```
+## QA Feedback — Retry Required
+
+**Round:** [N of 3 maximum]
+
+**Failed Reviewers:**
+- [Reviewer Name]: Score X/10 — [key finding summary in one sentence]
+- [Reviewer Name]: Score X/10 — [key finding summary in one sentence]
+
+**Critical Findings to Address:**
+1. [finding description] — `[file:line]`
+2. [finding description] — `[file:line]`
+
+**Important Findings to Address:**
+1. [finding description] — `[file:line]`
+
+**Domains to re-review after fix:** [comma-separated list of reviewer names]
+
+**Action Required:** Fix the issues above, run tests to verify nothing breaks,
+then signal ready for re-review.
+```
 
 ## Why parallel execution matters
 

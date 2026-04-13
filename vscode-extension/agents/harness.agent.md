@@ -158,6 +158,27 @@ handles configuration progressively as design decisions are made.
 | 7: RAI Review | **RAI Reviewer** | AI/data risk assessment for AI-sensitive changes |
 | 8-9: Release & Publish | **Release Manager** | Release scripts, PR creation, changelog |
 
+## Phase-specific QA reviewer routing
+
+When delegating to **QA Coordinator**, specify which reviewers to invoke based on the current SDLC phase. Not all phases require all 8 reviewers.
+
+| Phase | Reviewers to invoke |
+|-------|---------------------|
+| requirements | Architecture |
+| design | Architecture, Security |
+| scaffold | Architecture, Code Quality, Deployment Readiness |
+| implement | All 8 (full review) |
+| document | Code Quality |
+| qa | All 8 (full review) |
+| deploy | Deployment Readiness, Security, Azure Compliance |
+| rai | Security, LLM Behavior |
+| release | Deployment Readiness, Code Quality |
+
+When delegating to QA Coordinator, pass the applicable reviewer list:
+> "Run QA review for phase: [phase]. Invoke only: [reviewer names from table above]."
+
+For `implement` and `qa` phases, invoke all 8 reviewers (full review).
+
 ## Workflow rules
 
 - **Always check the reference catalog** before allowing new dependencies. Use GitHub MCP to fetch
@@ -218,22 +239,33 @@ After the Documenter produces artifacts:
 
 #### Phase 6: QA feedback loop (QA Coordinator → Implementer)
 
-When the QA Coordinator returns a verdict of ⛔ (Request changes):
+When the QA Coordinator returns a verdict of ⛔ (Request changes), apply the 3-tier escalation
+protocol based on failure severity:
 
-1. **Extract the concrete fix list** from the QA summary (file names, line numbers, actions).
-2. **Delegate fixes to the Implementer** with the specific QA findings as input:
-   > "Fix these QA findings: [paste critical + important findings with file references].
-   > After fixing, run tests to verify the fixes don't break existing functionality."
-3. **Re-delegate to QA Coordinator** for a targeted re-review:
-   > "Re-review only the domains that scored below threshold in the previous round:
-   > [list the failing domains and their previous scores]. Compare against the previous
-   > findings and report whether each is now resolved."
-4. **Continue the loop** (Implementer fix → QA re-review) until:
-   - All domain scores meet their thresholds, OR
-   - The user explicitly accepts the remaining issues, OR
-   - A maximum of 3 QA rounds is reached (to avoid infinite loops).
+| Condition | Tier | Your action |
+|-----------|------|-------------|
+| Any `verdict: CRITICAL_FAIL` | Critical | STOP — present results, require user decision immediately |
+| 1-2 reviewers failed, scores 5-6, no Critical findings | Tier 1 | Forward the QA Feedback Template to Implementer; loop back to QA for targeted re-review |
+| Tier 1 still fails OR 3+ reviewers failed | Tier 2 | Present score progression to user; ask if they want a targeted fix attempt |
+| After 2 fix attempts OR 3 total rounds reached | Tier 3 | Present full results; let user choose: override / manual fix / abandon |
+
+**Routing steps:**
+
+1. **Tier 1 (auto-route):** Forward the QA Feedback Template (produced by QA Coordinator) to
+   the Implementer. After the Implementer signals fixes are ready, re-delegate to QA Coordinator:
+   > "Re-review only the domains that failed in round [N]: [list domains and previous scores].
+   > Compare against previous findings and report whether each is resolved."
+
+2. **Tier 2 (user confirms):** Present the score table across rounds. If user says yes, send
+   targeted guidance to Implementer and loop back to QA Coordinator.
+
+3. **Tier 3 (user decides):** Present full QA results and ask the user to choose:
+   override and proceed, attempt a manual fix, or abandon and file as bugs.
+
+4. **Hard limit:** After 3 total QA rounds, always escalate to Tier 3.
+
 5. **After the loop completes**, summarize the improvement trajectory:
-   > "QA completed in X rounds. Quality scores improved from [round 1 scores] to [final scores]."
+   > "QA completed in X rounds. Composite score: Round 1 [X/10] → Round 2 [Y/10] → Final [Z/10]."
 
 **Do NOT skip validation steps.** Every phase transition is an evaluation point.
 Fixes applied without verification may introduce new issues.
