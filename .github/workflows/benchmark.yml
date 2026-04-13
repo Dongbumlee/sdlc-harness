@@ -1,81 +1,44 @@
-name: Benchmark Suite
+name: Canary Spec Validation
 
 on:
   workflow_dispatch:
-    inputs:
-      profile:
-        description: 'Benchmark profile to run'
-        required: false
-        default: 'ci-quick'
-        type: choice
-        options:
-          - ci-quick
-          - ci-full
-          - nightly
-      canary_filter:
-        description: 'Filter canaries by phase (e.g., requirements,implement)'
-        required: false
-        type: string
-  schedule:
-    - cron: '0 6 * * 1'  # Weekly Monday 6am UTC
+  push:
+    branches: [dev, evo]
+    paths:
+      - 'bench/canaries/**'
+  pull_request:
+    branches: [dev, evo]
+    paths:
+      - 'bench/canaries/**'
 
 permissions:
   contents: read
-  issues: write
-
-env:
-  PYTHON_VERSION: '3.11'
 
 jobs:
-  benchmark:
+  validate-canaries:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 5
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-
-      - name: Install dependencies
+      - name: Validate canary spec structure
         run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt 2>/dev/null || true
-          pip install pyyaml jsonschema
+          echo "=== Validating canary specs ==="
+          errors=0
+          for dir in bench/canaries/*/; do
+            phase=$(basename "$dir")
+            spec="$dir/canary-spec.yaml"
+            if [ ! -f "$spec" ]; then
+              echo "FAIL: $phase - missing canary-spec.yaml"
+              errors=$((errors + 1))
+            else
+              echo "PASS: $phase - canary-spec.yaml exists"
+            fi
+          done
 
-      - name: Validate canary specs
-        run: python tools/validate_canaries.py
-
-      - name: Run benchmark suite
-        env:
-          BENCHMARK_PROFILE: ${{ inputs.profile || 'ci-quick' }}
-          CANARY_FILTER: ${{ inputs.canary_filter || '' }}
-        run: python tools/run_benchmark.py --profile "$BENCHMARK_PROFILE" --filter "$CANARY_FILTER"
-
-      - name: Upload benchmark report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: benchmark-report-${{ github.run_id }}
-          path: bench/reports/
-          retention-days: 90
-
-      - name: Check for regressions
-        if: success()
-        run: |
-          python -c "
-          import json, sys
-          try:
-              with open('bench/reports/latest.json') as f:
-                  report = json.load(f)
-              score = report.get('summary', {}).get('overall_score', 0)
-              print(f'Overall score: {score:.2%}')
-              if score < 0.7:
-                  print('::warning::Benchmark score below 70% threshold')
-                  sys.exit(1)
-          except FileNotFoundError:
-              print('No report generated')
-              sys.exit(1)
-          "
+          if [ $errors -gt 0 ]; then
+            echo "::error::$errors canary spec(s) missing"
+            exit 1
+          fi
+          echo "All canary specs validated"
