@@ -81,25 +81,16 @@ reasoning: "<evaluation summary>"
 
 ## Known Issues / Future Work
 
-### Library Placeholder Hardcoding (~309 occurrences)
+### Library Placeholder Hardcoding (Resolved)
 
-The codebase contains ~309 references to placeholder library names (`your-org/your-*`) that assume every project uses specific internal SDK wrapper libraries:
+Previously contained ~309 references to placeholder library names (`your-org/your-*`) that assumed every project uses specific internal SDK wrapper libraries. Resolved in `0e41994` (MCP gate removal) and `b0a470c` (full placeholder refactoring, 61 files, 412 replacements).
 
-| Placeholder | Package Name | What It Assumes |
-|-------------|-------------|-----------------|
-| `your-org/your-cosmosdb-library` | `your-cosmosdb-lib` | Every project uses a custom Cosmos DB wrapper |
-| `your-org/your-storage-library` | `your-storage-lib` | Every project uses a custom Azure Storage wrapper |
-| `your-org/your-app-template` | — | Base app template exists in org |
-| `your-org/your-api-template` | — | FastAPI template exists in org |
-| `your-org/your-agent-template` | — | AI agent template exists in org |
-
-**Problem:** This hardcodes an assumption that doesn't hold for a general-purpose SDLC harness. Not every project uses Cosmos DB, not every org has wrapper libraries, and agents should be smart enough to research appropriate libraries based on project context.
-
-**Affected files:** Agents (harness, analyst, scaffolder, implementer, deployer, azure-compliance-reviewer, architecture-reviewer, documenter), skills (cosmos-repository, blob-storage, security-review, project-scaffolding, adr-authoring, azure-deployment, project-manifest, workspace-init), all 5 prompt files, e2e tests, README, design templates.
-
-**Future approach:** The `copilot-instructions.template.md` should teach **best practices and patterns** (e.g., "use SDK abstraction libraries", "follow Repository Pattern") rather than prescribe specific internal libraries. Agents should leverage their intelligence to research and recommend appropriate libraries based on the project's tech stack and requirements. The workspace-init process can optionally accept org-specific library references during setup, but they should not be baked into agent instructions.
-
-**Note:** This is a significant refactoring effort that deserves its own design pass — not a quick find-replace.
+**What changed:**
+- All hardcoded `your-org/your-cosmosdb-library`, `your-storage-lib`, `your-org/your-app-template`, etc. replaced with configurable references
+- `copilot-instructions.template.md` now uses `{{PLACEHOLDER}}` variables (e.g., `{{COSMOSDB_LIB_PACKAGE}}`, `{{STORAGE_LIB_PACKAGE}}`) that get filled during workspace-init
+- Agent/skill instructions now reference "the approved Cosmos DB library (from copilot-instructions.md)" instead of hardcoded package names
+- MCP readiness gate in harness agent removed — no longer blocks on probing private org repos
+- Agents teach **patterns** (Repository Pattern, SDK abstraction, `async with`) rather than prescribing specific libraries
 
 ### External Repo References (Resolved)
 
