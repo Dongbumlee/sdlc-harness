@@ -1,0 +1,72 @@
+name: Canary Spec Validation
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [dev, evo]
+    paths:
+      - 'bench/canaries/**'
+      - 'schemas/canary-spec.schema.json'
+      - 'tools/validate_canaries.py'
+      - '.github/plugin/**'
+      - 'vscode-extension/**'
+  pull_request:
+    branches: [dev, evo]
+    paths:
+      - 'bench/canaries/**'
+      - 'schemas/canary-spec.schema.json'
+      - 'tools/validate_canaries.py'
+      - '.github/plugin/**'
+      - 'vscode-extension/**'
+
+permissions:
+  contents: read
+
+jobs:
+  validate-canaries:
+    name: Validate canary specs (schema)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install validation dependencies
+        run: pip install jsonschema pyyaml
+
+      - name: Validate canary specs against schema
+        run: |
+          echo "=== Validating canary specs against schema ==="
+          python tools/validate_canaries.py
+
+  sync-check:
+    name: Agent & skill sync check
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check agent directory sync
+        run: |
+          echo "=== Checking agent sync ==="
+          diff -r \
+            --exclude="plugin.json" \
+            --exclude="package.json" \
+            vscode-extension/agents/ .github/plugin/agents/ \
+            && echo "✅ Agents in sync" \
+            || { echo "❌ Agent directories have diverged! Run: rsync -a --delete .github/plugin/agents/ vscode-extension/agents/"; exit 1; }
+
+      - name: Check skill directory sync
+        run: |
+          echo "=== Checking skill sync ==="
+          diff -r \
+            --exclude="plugin.json" \
+            --exclude="package.json" \
+            vscode-extension/skills/ .github/plugin/skills/ \
+            && echo "✅ Skills in sync" \
+            || { echo "❌ Skill directories have diverged! Run: rsync -a --delete --exclude='plugin.json' --exclude='package.json' .github/plugin/skills/ vscode-extension/skills/"; exit 1; }
