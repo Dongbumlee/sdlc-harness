@@ -86,7 +86,7 @@ Domain knowledge packages in `.github/plugin/skills/`:
 | `sdlc-code-quality` | Lint, type check | Implement, QA |
 | `sdlc-security-review` | Vulnerability scan | Implement, QA |
 | `sdlc-adr-authoring` | Decision records | Design |
-| `sdlc-accelerator-qa` | QA workflow | QA |
+| `sdlc-project-qa` | QA workflow | QA |
 | `sdlc-qa-bug-checklist` | Bug patterns | QA |
 | `sdlc-azure-deployment` | Azure IaC | Deploy |
 | `sdlc-cosmos-repository` | Cosmos DB patterns | Implement |

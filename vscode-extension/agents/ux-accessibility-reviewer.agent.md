@@ -3,7 +3,7 @@ name: UX & Accessibility Reviewer
 description: "Use when reviewing frontend code for ARIA labels, keyboard navigation, color contrast, responsive layout, error boundaries, dark mode support, or screen reader compatibility."
 user-invocable: false
 tools: ['read', 'search', 'playwright/*']
-skills: ['sdlc-accelerator-qa', 'sdlc-reviewer-output-format']
+skills: ['sdlc-project-qa', 'sdlc-reviewer-output-format']
 ---
 
 # UX & Accessibility Reviewer — QA Perspective: UI Quality & A11y
@@ -25,16 +25,16 @@ and frontend state management**.
 
 ## Skills
 
-Activate the **`sdlc-accelerator-qa`** skill (invoke `/sdlc-accelerator-qa` or let the agent load it automatically).
+Activate the **`sdlc-project-qa`** skill (invoke `/sdlc-project-qa` or let the agent load it automatically).
 Focus on **Categories 1 and 2** (UX & Accessibility, Core Functionality & State).
 
 ## Before reviewing
 
-> **MCP note:** This reviewer uses local skill files (`sdlc-accelerator-qa`) for code review
+> **MCP note:** This reviewer uses local skill files (`sdlc-project-qa`) for code review
 > and **Playwright MCP** for live browser testing (if the app is running). The QA Coordinator's
 > Step 0 checks awesome-copilot but does not affect this reviewer's core functionality.
 
-1. **Load the accelerator QA skill** — invoke `/sdlc-accelerator-qa`
+1. **Load the project QA skill** — invoke `/sdlc-project-qa`
    and follow the checklist for Categories 1 and 2.
 
 2. **Identify frontend technology:**
@@ -100,7 +100,7 @@ Focus on **Categories 1 and 2** (UX & Accessibility, Core Functionality & State)
 
 List items that CANNOT be verified by code review alone. Many can be automated
 with Playwright — check if the project has Playwright tests and reference the
-patterns in the `sdlc-accelerator-qa` skill:
+patterns in the `sdlc-project-qa` skill:
 
 **Playwright-automatable** (if project has Playwright):
 - High-DPI display rendering → `deviceScaleFactor: 1.5` (Pattern 3)

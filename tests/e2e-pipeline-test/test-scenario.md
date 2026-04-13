@@ -6,7 +6,7 @@ outputs, and feeds into the next step.
 
 ## Test Scenario
 
-**Project**: "SmartDoc Analyzer" — a document analysis accelerator with:
+**Project**: "SmartDoc Analyzer" — a document analysis project with:
 - FastAPI backend with Cosmos DB for document storage
 - React frontend for document upload and AI-powered chat
 - Azure OpenAI for document Q&A with citations
@@ -30,7 +30,7 @@ This scenario exercises all agents and all skills in sequential order.
 
 ### Prompt
 ```
-@Harness Hello, I want to build a new accelerator called SmartDoc Analyzer.
+@Harness Hello, I want to build a new project called SmartDoc Analyzer.
 ```
 
 ### Expected behavior
@@ -305,7 +305,7 @@ Review all code, tests, infrastructure, and documentation.
 - [x] **Deployment Readiness Reviewer** — health endpoint, logging, README, timeouts
 
 ### Skills validated (4 skills)
-- [x] **sdlc-accelerator-qa** — 10-category product QA checklist
+- [x] **sdlc-project-qa** — 10-category product QA checklist
 - [x] **sdlc-security-review** — OWASP Top 10 + team Azure patterns
 - [x] **sdlc-code-quality** — naming, docstrings, commenting patterns
 - [x] **sdlc-architecture-review** — layering rules, pattern reuse
@@ -436,7 +436,7 @@ Bug Checklist|Blocker|Warning|sourced from|bugs|Deployment|Identity|RBAC|post-de
 | 4 | 3+8 | Deployer | sdlc-azure-deployment | [ ] PASS / [ ] FAIL |
 | 5 | 4 | Implementer | sdlc-cosmos-repository, sdlc-blob-storage | [ ] PASS / [ ] FAIL |
 | 6 | 5 | Documenter | sdlc-adr-authoring | [ ] PASS / [ ] FAIL |
-| 7 | 6 | QA Coordinator + 8 | sdlc-accelerator-qa, sdlc-security-review, sdlc-code-quality, sdlc-architecture-review | [ ] PASS / [ ] FAIL |
+| 7 | 6 | QA Coordinator + 8 | sdlc-project-qa, sdlc-security-review, sdlc-code-quality, sdlc-architecture-review | [ ] PASS / [ ] FAIL |
 | 8 | 7 | RAI Reviewer | (awesome-copilot AI safety) | [ ] PASS / [ ] FAIL |
 | 9 | 8-9 | Release Manager | — | [ ] PASS / [ ] FAIL |
 | 10 | 6 (standalone) | QA Bug Checklist Reviewer | sdlc-qa-bug-checklist | [ ] PASS / [ ] FAIL |
@@ -474,7 +474,7 @@ Bug Checklist|Blocker|Warning|sourced from|bugs|Deployment|Identity|RBAC|post-de
 | sdlc-azure-deployment | 4 | [ ] |
 | sdlc-cosmos-repository | 5 | [ ] |
 | sdlc-blob-storage | 5 | [ ] |
-| sdlc-accelerator-qa | 7 | [ ] |
+| sdlc-project-qa | 7 | [ ] |
 | sdlc-security-review | 7, 10 | [ ] |
 | sdlc-code-quality | 7 | [ ] |
 | sdlc-architecture-review | 7 | [ ] |

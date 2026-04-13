@@ -70,7 +70,7 @@ and assertion effectiveness**.
 - [ ] **No test pollution** — Tests clean up after themselves?
 - [ ] **Integration tests** — API endpoints have HTTP-level tests?
 
-## Accelerator-specific checks (from product QA checklist)
+## Project-specific checks (from product QA checklist)
 
 - [ ] **File upload edge cases** — Tests cover boundary conditions:
   zero-byte files, large files, long filenames, unsupported types, corrupted files.
@@ -84,7 +84,7 @@ and assertion effectiveness**.
 ## Playwright UX/accessibility test coverage (frontend projects)
 
 If the project has a frontend, check for these Playwright test patterns from the
-`sdlc-accelerator-qa` skill. Reference the skill's Playwright section for templates.
+`sdlc-project-qa` skill. Reference the skill's Playwright section for templates.
 
 - [ ] **axe-core accessibility test** — `@axe-core/playwright` integration exists and
   tests run with WCAG 2.1 AA tags? (`grep -rn "AxeBuilder\|axe-core" . --include="*.ts"`)
@@ -96,7 +96,7 @@ If the project has a frontend, check for these Playwright test patterns from the
 
 If Playwright tests are missing for a frontend project, flag as:
 > **Important**: No Playwright e2e/accessibility tests found. Consider adding tests
-> using patterns from the `sdlc-accelerator-qa` skill (Playwright section).
+> using patterns from the `sdlc-project-qa` skill (Playwright section).
 
 ## Output format
 

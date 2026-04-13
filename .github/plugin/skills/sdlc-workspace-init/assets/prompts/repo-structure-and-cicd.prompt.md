@@ -104,7 +104,7 @@ Based on the project type, choose the matching template from `.github/reference-
 
 ### 2. Create layered folder structure under `src/`
 
-Follow the application accelerator pattern (reference: `microsoft/content-processing-solution-accelerator`).
+Follow the application project pattern (reference: `microsoft/content-processing-solution-project`).
 Each layer is an **independent project** under `src/` with its own devcontainer, Dockerfile, and dependencies:
 
 ```

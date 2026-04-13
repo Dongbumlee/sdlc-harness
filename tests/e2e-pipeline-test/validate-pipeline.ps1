@@ -92,7 +92,7 @@ $steps = @(
         Name        = "QA Review (QA Coordinator + 8)"
         Phase       = "6"
         Agent       = "QA Coordinator"
-        Skills      = @("sdlc-accelerator-qa", "sdlc-security-review", "sdlc-code-quality", "sdlc-architecture-review")
+        Skills      = @("sdlc-project-qa", "sdlc-security-review", "sdlc-code-quality", "sdlc-architecture-review")
         Keywords    = @("QA Review Summary", "Critical Issues|Critical", "Important Issues|Important", "Suggestions|Suggestion", "Overall Verdict|Verdict", "SDLC Exit Criteria", "Manual QA Checklist", "Architecture Reviewer|Architecture", "Security Reviewer|Security", "UX.*Accessibility|Accessibility", "LLM Behavior|LLM", "Deployment Readiness|Deployment")
     },
     @{
@@ -262,7 +262,7 @@ Write-Host "=== Skill Coverage ===" -ForegroundColor Yellow
 $allSkills = @(
     "sdlc-project-manifest", "sdlc-adr-authoring", "sdlc-project-scaffolding",
     "sdlc-azure-deployment", "sdlc-cosmos-repository", "sdlc-blob-storage",
-    "sdlc-accelerator-qa", "sdlc-security-review", "sdlc-code-quality",
+    "sdlc-project-qa", "sdlc-security-review", "sdlc-code-quality",
     "sdlc-architecture-review", "sdlc-qa-bug-checklist"
 )
 

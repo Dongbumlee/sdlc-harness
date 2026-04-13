@@ -67,7 +67,7 @@ fresh OWASP guidance from awesome-copilot MCP on every review.
 - [ ] **Headers** — Security headers set (CSP, HSTS, X-Frame-Options)?
 - [ ] **Dependencies** — No known CVEs in direct dependencies?
 
-## Accelerator-specific checks (from product QA checklist)
+## Project-specific checks (from product QA checklist)
 
 - [ ] **Authentication enforcement** — All routes except `/health` require auth.
   `grep -rn "Depends.*get_current_user\|@require_auth\|isAuthenticated\|authMiddleware" src/`

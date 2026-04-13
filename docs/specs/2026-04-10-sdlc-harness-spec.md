@@ -187,7 +187,7 @@ sub_agents_by_phase:
       - deployment-readiness-reviewer  # Health endpoints, error handling, observability, perf
     standalone:                    # User-invocable, NOT auto-dispatched by QA Coordinator
       - qa-bug-checklist-reviewer  # 338 real production bugs across 9 projects (7 checklists)
-    skills: [sdlc-code-quality, sdlc-security-review, sdlc-accelerator-qa, sdlc-qa-bug-checklist]
+    skills: [sdlc-code-quality, sdlc-security-review, sdlc-project-qa, sdlc-qa-bug-checklist]
   rai:
     primary: rai-reviewer
     skills: [ai-prompt-engineering-safety-review]  # Via awesome-copilot MCP
@@ -400,7 +400,7 @@ harness generate --target all               # all supported platforms
 | `sdlc-architecture-review` | phase | QA | Architecture Reviewer | No |
 | `sdlc-code-quality` | phase | Implement, QA, Release | Code Quality Reviewer | No (multi-language rules) |
 | `sdlc-security-review` | phase | QA | Security Reviewer, QA Bug Checklist Reviewer | No |
-| `sdlc-accelerator-qa` | phase | QA | UX Reviewer, LLM Behavior Reviewer, Deployment Readiness Reviewer, QA Bug Checklist Reviewer | No |
+| `sdlc-project-qa` | phase | QA | UX Reviewer, LLM Behavior Reviewer, Deployment Readiness Reviewer, QA Bug Checklist Reviewer | No |
 | `sdlc-qa-bug-checklist` | phase | QA | QA Bug Checklist Reviewer | No (project-derived patterns) |
 | `sdlc-azure-deployment` | phase | Deploy | Deployer, QA Bug Checklist Reviewer | **Yes — Azure** |
 | `sdlc-cosmos-repository` | phase | Implement | Implementer | **Yes — Azure Cosmos DB** |

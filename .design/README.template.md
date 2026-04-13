@@ -287,8 +287,8 @@ Recommended additional security measures:
 
 | Related Project         | Description   |
 | ----------------------- | ------------- |
-| <RELATED_ACCELERATOR_1> | <DESCRIPTION> |
-| <RELATED_ACCELERATOR_2> | <DESCRIPTION> |
+| <RELATED_PROJECT_1> | <DESCRIPTION> |
+| <RELATED_PROJECT_2> | <DESCRIPTION> |
 
 <br/>
 

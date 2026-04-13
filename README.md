@@ -323,7 +323,7 @@
  Each reviewer works in its own context window — no anchoring bias. Every reviewer provides
  a **numeric quality score (1-10)** with hard fail thresholds (Security requires ≥8, others ≥7).
  The Security Reviewer loads the **OWASP Top 10 checklist fresh** from awesome-copilot on every review.
- The 3 product-level reviewers use the **`sdlc-accelerator-qa`** skill for comprehensive QA.
+ The 3 product-level reviewers use the **`sdlc-project-qa`** skill for comprehensive QA.
 
  #### Step 5: Engineer reviews the synthesized QA report
 
@@ -487,7 +487,7 @@
  > permissions to create resource groups, resources, and role assignments (Contributor + RBAC at
  > subscription or resource group level). Verify quota availability for Azure OpenAI models before deployment.
 
- > **Dev Containers:** Following the [application accelerator pattern](https://your-apps-portal.example.com),
+ > **Dev Containers:** Following the [application project pattern](https://your-apps-portal.example.com),
  > each service under `src/` provides its **own** `.devcontainer/` with service-specific tooling.
  > This per-service isolation ensures that engineers working on one layer (e.g., backend API,
  > processor, frontend) can build, test, and run independently — without pulling in dependencies

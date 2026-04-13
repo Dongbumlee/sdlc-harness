@@ -1,19 +1,19 @@
 ---
-name: sdlc-accelerator-qa
+name: sdlc-project-qa
 description: >-
   Comprehensive product QA checklist for enterprise applications and AI agents,
   covering UX/accessibility, core functionality, LLM behavior, data handling,
   error resilience, security, performance, deployment hygiene, and observability.
   Use when performing full product QA, pre-release validation, or generating
-  manual QA checklists. Triggers on product QA, accelerator QA, release readiness,
+  manual QA checklists. Triggers on product QA, project QA, release readiness,
   or comprehensive review requests. Complements the sdlc-qa-bug-checklist skill
   (which focuses on known bug patterns from ADO data).
 ---
 
-# SDLC Accelerator QA Checklist
+# SDLC Project QA Checklist
 
 Comprehensive product-level QA checklist for enterprise applications and AI agents.
-Distilled from years of accelerator QA work — test plans, bug logs, bug bash sessions,
+Distilled from years of project QA work — test plans, bug logs, bug bash sessions,
 and QA knowledge documentation.
 
 **Relationship to other skills:**
@@ -218,7 +218,7 @@ and QA knowledge documentation.
 ## Category 6: Security & Privacy (7 items)
 
 > Most items are covered by the existing `sdlc-security-review` skill and Security Reviewer agent.
-> These are **supplementary checks** specific to accelerator products.
+> These are **supplementary checks** specific to project products.
 
 - [ ] **6.1 Authentication Enforcement** — All routes except public health checks must require auth.
   - **How to verify**: `grep -rn "Depends.*get_current_user\|@require_auth\|isAuthenticated\|authMiddleware" src/ --include="*.py" --include="*.ts"`
@@ -227,7 +227,7 @@ and QA knowledge documentation.
   non-Microsoft CDNs) that may violate branding or compliance requirements.
   - **How to verify**: `grep -rn "googleapis\|cdnjs\|unpkg\|jsdelivr\|cloudflare" src/ --include="*.html" --include="*.tsx" --include="*.css"`
 
-- [ ] **6.3 Content Licensing Compliance** — If sample data ships with the accelerator, verify
+- [ ] **6.3 Content Licensing Compliance** — If sample data ships with the project, verify
   license files exist and permit commercial redistribution.
   - **How to verify**: `find . -name "LICENSE*" -o -name "NOTICE*"` in data directories
 
@@ -278,7 +278,7 @@ and QA knowledge documentation.
   - **How to verify**: Extract `[text](path)` links from `*.md` files and verify each path exists
 
 - [ ] **8.3 Stale Project References** — Search for references to old project names, internal
-  codenames, or copy-paste artifacts from other accelerators.
+  codenames, or copy-paste artifacts from other projects.
   - **How to verify**: `grep -rn "TODO\|FIXME\|CHANGEME\|REPLACE_ME" . --include="*.md" --include="*.json" --include="*.yaml"`
 
 - [ ] **8.4 Source Code Comment Quality** — Check for debug code, console.log statements,

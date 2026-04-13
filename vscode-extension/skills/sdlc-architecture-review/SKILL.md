@@ -2,7 +2,7 @@
 name: sdlc-architecture-review
 description: >-
   Review code for architecture and design consistency following SDLC layering rules
-  and application accelerator patterns. Use when reviewing PRs, checking dependency
+  and application project patterns. Use when reviewing PRs, checking dependency
   boundaries, or validating pattern reuse. Triggers on architecture review,
   layering check, design review, or pattern compliance requests.
 ---
@@ -33,7 +33,7 @@ mcp_github_search_code(
 
 ## Step 2: Verify layering rules
 
-The application accelerator uses a strict layered architecture:
+The application project uses a strict layered architecture:
 
 ```
 ┌─────────────────────────────────────────┐

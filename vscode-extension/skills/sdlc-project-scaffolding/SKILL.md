@@ -7,7 +7,7 @@ description: >-
   project structure, CI/CD pipeline, or Dockerfile requests.
 ---
 
-# SDLC Project Scaffolding — application Accelerator Pattern
+# SDLC Project Scaffolding — application Project Pattern
 
 ## When to use
 

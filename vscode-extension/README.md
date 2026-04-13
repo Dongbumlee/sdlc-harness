@@ -10,7 +10,7 @@ Multi-agent system for building enterprise applications with production-quality 
 - **QA Coordinator** + 8 specialized reviewers (Architecture, Code Quality, Security, Test Coverage, UX/Accessibility, LLM Behavior, Deployment Readiness, Azure Compliance, RAI, QA Bug Checklist)
 
 ### 12 Skills
-`/sdlc-accelerator-qa`, `/sdlc-adr-authoring`, `/sdlc-architecture-review`, `/sdlc-azure-deployment`, `/sdlc-blob-storage`, `/sdlc-code-quality`, `/sdlc-cosmos-repository`, `/sdlc-project-manifest`, `/sdlc-project-scaffolding`, `/sdlc-qa-bug-checklist`, `/sdlc-security-review`, `/sdlc-workspace-init`
+`/sdlc-project-qa`, `/sdlc-adr-authoring`, `/sdlc-architecture-review`, `/sdlc-azure-deployment`, `/sdlc-blob-storage`, `/sdlc-code-quality`, `/sdlc-cosmos-repository`, `/sdlc-project-manifest`, `/sdlc-project-scaffolding`, `/sdlc-qa-bug-checklist`, `/sdlc-security-review`, `/sdlc-workspace-init`
 
 ## Usage
 

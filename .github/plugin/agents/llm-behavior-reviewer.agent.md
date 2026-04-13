@@ -3,13 +3,13 @@ name: LLM Behavior Reviewer
 description: "Use when reviewing AI agent code for prompt injection guards, system prompt security, grounding fidelity, citation accuracy, content filtering, token limits, or file handling safety."
 user-invocable: false
 tools: ['read', 'search']
-skills: ['sdlc-accelerator-qa', 'sdlc-security-review', 'sdlc-reviewer-output-format']
+skills: ['sdlc-project-qa', 'sdlc-security-review', 'sdlc-reviewer-output-format']
 ---
 
 # LLM Behavior Reviewer — QA Perspective: AI Agent Quality & Safety
 
 You review code through the lens of **LLM behavior quality, grounding fidelity,
-prompt security, and data handling** in AI-powered accelerators.
+prompt security, and data handling** in AI-powered projects.
 
 ## Adversarial QA posture
 
@@ -25,17 +25,17 @@ prompt security, and data handling** in AI-powered accelerators.
 
 ## Skills
 
-Activate the **`sdlc-accelerator-qa`** skill (invoke `/sdlc-accelerator-qa` or let the agent load it automatically).
+Activate the **`sdlc-project-qa`** skill (invoke `/sdlc-project-qa` or let the agent load it automatically).
 Focus on **Categories 3 and 4** (LLM & Agent Behavior, Data & File Handling).
 
 ## Before reviewing
 
-> **MCP note:** This reviewer uses local skill files (`sdlc-accelerator-qa` and
+> **MCP note:** This reviewer uses local skill files (`sdlc-project-qa` and
 > `sdlc-security-review`). No external MCP servers are directly required.
 > If referenced skills attempt to load awesome-copilot resources and it is unavailable,
 > skip those calls and note: _"⚠️ awesome-copilot unavailable — review based on local skill only."_
 
-1. **Load the accelerator QA skill** — invoke `/sdlc-accelerator-qa`
+1. **Load the project QA skill** — invoke `/sdlc-project-qa`
    and follow the checklist for Categories 3 and 4.
 
 2. **Identify AI components:**

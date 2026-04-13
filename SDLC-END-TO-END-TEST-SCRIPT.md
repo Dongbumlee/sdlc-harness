@@ -519,14 +519,14 @@ Review all code, tests, infrastructure, and documentation.
 - [ ] Output: Critical / Important / Suggestion / Positive findings
 
 #### 6. UX & Accessibility Reviewer
-- [ ] **`sdlc-accelerator-qa` skill activated** — reads `.github/skills/sdlc-accelerator-qa/SKILL.md`
+- [ ] **`sdlc-project-qa` skill activated** — reads `.github/skills/sdlc-project-qa/SKILL.md`
 - [ ] Categories 1-2 applied (UX & Accessibility, Core Functionality & State)
 - [ ] Checks: ARIA labels, alt text, keyboard nav, focus indicators, dark mode CSS, error boundaries
 - [ ] Emits manual QA items: cross-browser, screen reader, high-DPI, golden path
 - [ ] Output: Critical / Important / Suggestion / Positive + Manual QA Required
 
 #### 7. LLM Behavior Reviewer
-- [ ] **`sdlc-accelerator-qa` skill activated** — reads `.github/skills/sdlc-accelerator-qa/SKILL.md`
+- [ ] **`sdlc-project-qa` skill activated** — reads `.github/skills/sdlc-project-qa/SKILL.md`
 - [ ] Categories 3-4 applied (LLM & Agent Behavior, Data & File Handling)
 - [ ] Checks: system prompt protection, content filters, prompt injection guards, citations, grounding, retry logic
 - [ ] Checks: file type validation, size limits, filename sanitization, encoding handling
@@ -534,7 +534,7 @@ Review all code, tests, infrastructure, and documentation.
 - [ ] Output: Critical / Important / Suggestion / Positive + Manual QA Required
 
 #### 8. Deployment Readiness Reviewer
-- [ ] **`sdlc-accelerator-qa` skill activated** — reads `.github/skills/sdlc-accelerator-qa/SKILL.md`
+- [ ] **`sdlc-project-qa` skill activated** — reads `.github/skills/sdlc-project-qa/SKILL.md`
 - [ ] Categories 5, 7-9 applied (Error Handling, Performance, Repo Hygiene, Observability)
 - [ ] Checks: error exposure, rate limits, global exception handler, timeouts, unbounded queries, pagination
 - [ ] Checks: README completeness, hyperlink integrity, stale refs, debug code, dependency health
@@ -696,9 +696,9 @@ ___________________________________________________________________________
 | Code Quality Reviewer     | [ ]    | awesome-copilot                                           | `sdlc-code-quality`                                         |
 | Security Reviewer         | [ ]    | awesome-copilot                                           | `sdlc-security-review`                                      |
 | Test Coverage Reviewer    | [ ]    | awesome-copilot                                           | (references test-quality instruction files)                 |
-| UX & Accessibility Rev.   | [ ]    | —                                                         | `sdlc-accelerator-qa` (Categories 1-2)                      |
-| LLM Behavior Reviewer     | [ ]    | —                                                         | `sdlc-accelerator-qa` (Cat 3-4) + `sdlc-security-review`   |
-| Deployment Readiness Rev. | [ ]    | —                                                         | `sdlc-accelerator-qa` (Categories 5, 7-9)                   |
+| UX & Accessibility Rev.   | [ ]    | —                                                         | `sdlc-project-qa` (Categories 1-2)                      |
+| LLM Behavior Reviewer     | [ ]    | —                                                         | `sdlc-project-qa` (Cat 3-4) + `sdlc-security-review`   |
+| Deployment Readiness Rev. | [ ]    | —                                                         | `sdlc-project-qa` (Categories 5, 7-9)                   |
 | QA Bug Checklist Reviewer | [ ]    | —                                                         | `sdlc-qa-bug-checklist`                                     |
 | RAI Reviewer              | [ ]    | awesome-copilot, MS Learn                                 | (loads `ai-prompt-engineering-safety-review` via MCP)       |
 | Release Manager           | [ ]    | GitHub MCP                                                | (no skill — orchestration-focused)                          |

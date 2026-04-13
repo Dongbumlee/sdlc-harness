@@ -19,7 +19,7 @@
 | 6 | sdlc-code-quality | Code quality review | 6 (QA) | Code Quality Reviewer, QA Coordinator | Partial |
 | 7 | sdlc-security-review | Security vulnerability scanning | 6 (QA) | Security Reviewer, LLM Behavior Reviewer, QA Bug Checklist | No |
 | 8 | sdlc-architecture-review | Architecture pattern validation | 6 (QA) | Architecture Reviewer | No |
-| 9 | sdlc-accelerator-qa | Accelerator QA checklist | 6 (QA) | UX/Accessibility, LLM Behavior, Deployment Readiness | No |
+| 9 | sdlc-project-qa | Project QA checklist | 6 (QA) | UX/Accessibility, LLM Behavior, Deployment Readiness | No |
 | 10 | sdlc-qa-bug-checklist | QA bug tracking checklist | 6 (QA) | QA Bug Checklist Reviewer, QA Coordinator | No |
 | 11 | sdlc-cosmos-repository | CosmosDB repository pattern | 4 (Implement) | Implementer | Yes (Azure) |
 | 12 | sdlc-blob-storage | Azure Blob Storage integration | 4 (Implement) | Implementer | Yes (Azure) |
@@ -36,13 +36,13 @@
 | Deployer | sdlc-azure-deployment |
 | Implementer | sdlc-project-manifest, sdlc-cosmos-repository, sdlc-blob-storage |
 | Documenter | sdlc-adr-authoring, sdlc-project-manifest |
-| QA Coordinator | sdlc-code-quality, sdlc-security-review, sdlc-accelerator-qa, sdlc-qa-bug-checklist |
+| QA Coordinator | sdlc-code-quality, sdlc-security-review, sdlc-project-qa, sdlc-qa-bug-checklist |
 | Architecture Reviewer | sdlc-architecture-review |
 | Code Quality Reviewer | sdlc-code-quality |
 | Security Reviewer | sdlc-security-review |
-| UX & Accessibility Reviewer | sdlc-accelerator-qa |
-| LLM Behavior Reviewer | sdlc-accelerator-qa, sdlc-security-review |
-| Deployment Readiness Reviewer | sdlc-accelerator-qa |
+| UX & Accessibility Reviewer | sdlc-project-qa |
+| LLM Behavior Reviewer | sdlc-project-qa, sdlc-security-review |
+| Deployment Readiness Reviewer | sdlc-project-qa |
 | QA Bug Checklist Reviewer | sdlc-qa-bug-checklist, sdlc-security-review, sdlc-azure-deployment |
 | RAI Reviewer | _(external: awesome-copilot MCP)_ |
 | Release Manager | _(none — uses GitHub MCP)_ |

@@ -44,7 +44,7 @@ root/
 **Apply this rule to EVERY file you create. There are NO exceptions.**
 
 You are the **Scaffolder** agent. You create project structures, generate per-project CI/CD pipeline stubs,
-and set up dev environments based on the application accelerator patterns.
+and set up dev environments based on the application project patterns.
 
 ## Your responsibilities
 
@@ -99,7 +99,7 @@ and set up dev environments based on the application accelerator patterns.
 ## Skills
 
 Activate the **`sdlc-project-scaffolding`** skill (invoke `/sdlc-project-scaffolding` or let the agent load it automatically).
-This skill provides the application accelerator folder structure, template selection logic,
+This skill provides the application project folder structure, template selection logic,
 Dockerfile patterns, and loads Docker/containerization best practices from
 awesome-copilot MCP.
 
@@ -131,7 +131,7 @@ uses `<ProjectName><Layer>` naming (e.g., `CustomerFeedbackAPI`, `CustomerFeedba
 
 ## Scaffolding rules
 
-Follow the application accelerator folder pattern (reference: `microsoft/content-processing-solution-accelerator`).
+Follow the application project folder pattern (reference: `microsoft/content-processing-solution-project`).
 Each template is a **standalone project**. For multi-service applications, compose them as independent projects under `src/`.
 
 **Template structures** (as they actually exist in the repos):

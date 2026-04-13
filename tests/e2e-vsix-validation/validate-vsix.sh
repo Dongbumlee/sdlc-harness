@@ -133,7 +133,7 @@ done
 section "4. Skill File Validation (12 skills)"
 # =============================================================
 EXPECTED_SKILLS=(
-    sdlc-accelerator-qa sdlc-adr-authoring sdlc-architecture-review
+    sdlc-project-qa sdlc-adr-authoring sdlc-architecture-review
     sdlc-azure-deployment sdlc-blob-storage sdlc-code-quality
     sdlc-cosmos-repository sdlc-project-manifest sdlc-project-scaffolding
     sdlc-qa-bug-checklist sdlc-security-review sdlc-workspace-init
@@ -238,7 +238,7 @@ done
 section "8. Branding Sanitization Check"
 # =============================================================
 BRAND_HITS=0
-for pattern in "Solution Accelerator" "GSA" "SAS-" "sas-cosmosdb" "sas-storage"; do
+for pattern in "Solution Project" "GSA" "SAS-" "sas-cosmosdb" "sas-storage"; do
     hits=$(grep -rl "$pattern" "$EXT" 2>/dev/null | wc -l || true)
     if [[ $hits -gt 0 ]]; then
         BRAND_HITS=$((BRAND_HITS+hits))
@@ -247,7 +247,7 @@ for pattern in "Solution Accelerator" "GSA" "SAS-" "sas-cosmosdb" "sas-storage";
     fi
 done
 if [[ $BRAND_HITS -eq 0 ]]; then
-    pass "No stale SAS/GSA/Solution Accelerator branding found"
+    pass "No stale SAS/GSA/Solution Project branding found"
 fi
 
 # =============================================================

@@ -58,7 +58,7 @@ the template patterns recorded in the manifest (DI pattern, service interfaces, 
 - [ ] **Function size** — No excessively long functions? Single responsibility?
 - [ ] **DRY** — No duplicated logic that should be extracted?
 
-## Accelerator-specific checks (from product QA checklist)
+## Project-specific checks (from product QA checklist)
 
 - [ ] **Consistent terminology** — Same concept uses same term throughout UI text
   (e.g., not "Agent" in one place and "AI Agent" in another).

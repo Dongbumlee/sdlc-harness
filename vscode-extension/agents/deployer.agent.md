@@ -108,7 +108,7 @@ and release automation following Azure Verified Modules (AVM) and Landing Zone p
 
 4. **Fetch Bicep patterns from existing application repos via GitHub MCP:**
    - Use `mcp_github_get_file_contents` to fetch `infra/main.bicep` from
-     `microsoft/content-processing-solution-accelerator` or `microsoft/Container-Migration-Solution-Accelerator`.
+     `microsoft/content-processing-solution-project` or `microsoft/Container-Migration-Solution-Project`.
    - Align with their AVM module versions and patterns.
 
 5. **Load additional best practices from awesome-copilot** (skip if unavailable):

@@ -17,7 +17,7 @@
 | # | Agent File | Name | Role Type | Phase(s) | User-Invocable | Skills (from frontmatter/body) |
 |---|---|---|---|---|---|---|
 | 1 | `harness.agent.md` | Harness | Orchestrator | All (1–9) | Yes (entry point) | sdlc-workspace-init (via first-run) |
-| 2 | `qa-coordinator.agent.md` | QA Coordinator | Orchestrator + Phase Worker | 6 | No | sdlc-code-quality, sdlc-security-review, sdlc-accelerator-qa, sdlc-qa-bug-checklist (per spec) |
+| 2 | `qa-coordinator.agent.md` | QA Coordinator | Orchestrator + Phase Worker | 6 | No | sdlc-code-quality, sdlc-security-review, sdlc-project-qa, sdlc-qa-bug-checklist (per spec) |
 | 3 | `analyst.agent.md` | Analyst | Phase Worker | 1–2 | No | sdlc-workspace-init (per spec) |
 | 4 | `scaffolder.agent.md` | Scaffolder | Phase Worker | 3 | No | sdlc-project-scaffolding, sdlc-project-manifest |
 | 5 | `deployer.agent.md` | Deployer | Phase Worker | 3+8 | No | sdlc-azure-deployment |
@@ -30,9 +30,9 @@
 | 12 | `code-quality-reviewer.agent.md` | Code Quality Reviewer | QA Reviewer | 6 (sub) | No | sdlc-code-quality |
 | 13 | `security-reviewer.agent.md` | Security Reviewer | QA Reviewer | 6 (sub) | No | sdlc-security-review |
 | 14 | `test-coverage-reviewer.agent.md` | Test Coverage Reviewer | QA Reviewer | 6 (sub) | No | _(none in frontmatter — references test-quality instruction files)_ |
-| 15 | `ux-accessibility-reviewer.agent.md` | UX & Accessibility Reviewer | QA Reviewer | 6 (sub) | No | sdlc-accelerator-qa |
-| 16 | `llm-behavior-reviewer.agent.md` | LLM Behavior Reviewer | QA Reviewer | 6 (sub) | No | sdlc-accelerator-qa, sdlc-security-review |
-| 17 | `deployment-readiness-reviewer.agent.md` | Deployment Readiness Reviewer | QA Reviewer | 6 (sub) | No | sdlc-accelerator-qa |
+| 15 | `ux-accessibility-reviewer.agent.md` | UX & Accessibility Reviewer | QA Reviewer | 6 (sub) | No | sdlc-project-qa |
+| 16 | `llm-behavior-reviewer.agent.md` | LLM Behavior Reviewer | QA Reviewer | 6 (sub) | No | sdlc-project-qa, sdlc-security-review |
+| 17 | `deployment-readiness-reviewer.agent.md` | Deployment Readiness Reviewer | QA Reviewer | 6 (sub) | No | sdlc-project-qa |
 | 18 | `qa-bug-checklist-reviewer.agent.md` | QA Bug Checklist Reviewer | Standalone | On-demand | **Yes** | sdlc-qa-bug-checklist, sdlc-security-review, sdlc-azure-deployment |
 
 ### Agent Counts by Role Type
@@ -59,9 +59,9 @@
 | 7 | `sdlc-adr-authoring` | ADR Authoring | Architecture Decision Records following SDLC + awesome-copilot patterns | Documenter |
 | 8 | `sdlc-code-quality` | Code Quality | Code quality review with quality instruction files + awesome-copilot | Code Quality Reviewer, Implementer (per spec) |
 | 9 | `sdlc-security-review` | Security Review | OWASP Top 10 + project-specific Azure security patterns | Security Reviewer, LLM Behavior Reviewer, QA Bug Checklist Reviewer |
-| 10 | `sdlc-accelerator-qa` | Accelerator QA | Product-level QA checklist (10 categories, UX/a11y/LLM/data/errors/security/perf/deploy/ops) | UX & Accessibility Reviewer, LLM Behavior Reviewer, Deployment Readiness Reviewer, QA Coordinator (per spec) |
+| 10 | `sdlc-project-qa` | Project QA | Product-level QA checklist (10 categories, UX/a11y/LLM/data/errors/security/perf/deploy/ops) | UX & Accessibility Reviewer, LLM Behavior Reviewer, Deployment Readiness Reviewer, QA Coordinator (per spec) |
 | 11 | `sdlc-qa-bug-checklist` | QA Bug Checklist | 338 real production bugs across 9 projects — bug-driven QA validation | QA Bug Checklist Reviewer, QA Coordinator (per spec) |
-| 12 | `sdlc-architecture-review` | Architecture Review | Structural alignment with SDLC layering rules and accelerator patterns | Architecture Reviewer |
+| 12 | `sdlc-architecture-review` | Architecture Review | Structural alignment with SDLC layering rules and project patterns | Architecture Reviewer |
 
 ---
 
@@ -91,7 +91,7 @@
 | **User-invocable** | No |
 | **Tools** | `read`, `agent`, `search`, `web`, `browser`, `azure-mcp/search`, `awesome-copilot/*`, `context7/*`, `azure/search`, `azure-devops/*`, `microsoft-learn/*`, `playwright/*`, `microsoft-docs/*`, `discogs/search`, `mermaidchart.vscode-mermaid-chart/*` |
 | **Sub-agents** | Architecture Reviewer, Azure Compliance Reviewer, Code Quality Reviewer, Security Reviewer, Test Coverage Reviewer, UX & Accessibility Reviewer, LLM Behavior Reviewer, Deployment Readiness Reviewer |
-| **Skills (per spec)** | sdlc-code-quality, sdlc-security-review, sdlc-accelerator-qa, sdlc-qa-bug-checklist |
+| **Skills (per spec)** | sdlc-code-quality, sdlc-security-review, sdlc-project-qa, sdlc-qa-bug-checklist |
 | **MCP gates** | awesome-copilot (warn), Azure DevOps (warn) — neither is a hard blocker |
 | **Key behaviors** | Adversarial QA posture, parallel reviewer dispatch, numeric quality scores per domain, hard thresholds (security ≥8, others ≥7), manual QA checklist, QA Report generation, ADO bug filing, iterative fix loop |
 
@@ -222,7 +222,7 @@
 | **User-invocable** | No |
 | **Tools** | `read`, `search`, `awesome-copilot/*` |
 | **Skills** | sdlc-code-quality |
-| **Key behaviors** | Reads project manifest, loads quality instruction files per language, accelerator-specific checks (placeholder text, debug code), adversarial posture, numeric score |
+| **Key behaviors** | Reads project manifest, loads quality instruction files per language, project-specific checks (placeholder text, debug code), adversarial posture, numeric score |
 
 ### 3.13 Security Reviewer (QA Reviewer)
 
@@ -234,7 +234,7 @@
 | **User-invocable** | No |
 | **Tools** | `read`, `search`, `awesome-copilot/*` |
 | **Skills** | sdlc-security-review |
-| **Key behaviors** | Higher threshold (8/10 vs 7/10), OWASP-mapped checklist, accelerator-specific checks (XSS, CDN audit, error opacity), adversarial posture, numeric score |
+| **Key behaviors** | Higher threshold (8/10 vs 7/10), OWASP-mapped checklist, project-specific checks (XSS, CDN audit, error opacity), adversarial posture, numeric score |
 
 ### 3.14 Test Coverage Reviewer (QA Reviewer)
 
@@ -245,8 +245,8 @@
 | **Phase(s)** | 6 (sub-agent of QA Coordinator) |
 | **User-invocable** | No |
 | **Tools** | `read`, `search`, `terminal`, `awesome-copilot/*`, `playwright/*` |
-| **Skills** | _(none declared in frontmatter — references test-quality instruction files and sdlc-accelerator-qa in body)_ |
-| **Key behaviors** | Runs pytest/vitest for coverage, Playwright e2e if frontend present, accelerator-specific checks (file upload edge cases, international chars, error paths), adversarial posture, numeric score |
+| **Skills** | _(none declared in frontmatter — references test-quality instruction files and sdlc-project-qa in body)_ |
+| **Key behaviors** | Runs pytest/vitest for coverage, Playwright e2e if frontend present, project-specific checks (file upload edge cases, international chars, error paths), adversarial posture, numeric score |
 
 ### 3.15 UX & Accessibility Reviewer (QA Reviewer)
 
@@ -257,7 +257,7 @@
 | **Phase(s)** | 6 (sub-agent of QA Coordinator) |
 | **User-invocable** | No |
 | **Tools** | `read`, `search`, `playwright/*` |
-| **Skills** | sdlc-accelerator-qa (declared in frontmatter `skills:` field) |
+| **Skills** | sdlc-project-qa (declared in frontmatter `skills:` field) |
 | **Key behaviors** | Proactive Playwright MCP testing (does not wait for user URL), saves artifacts to `.playwright-mcp/`, Category 1+2 checklists, adversarial posture, numeric score |
 
 ### 3.16 LLM Behavior Reviewer (QA Reviewer)
@@ -269,7 +269,7 @@
 | **Phase(s)** | 6 (sub-agent of QA Coordinator) |
 | **User-invocable** | No |
 | **Tools** | `read`, `search` |
-| **Skills** | sdlc-accelerator-qa, sdlc-security-review (declared in frontmatter `skills:` field) |
+| **Skills** | sdlc-project-qa, sdlc-security-review (declared in frontmatter `skills:` field) |
 | **Key behaviors** | Category 3+4 checklists (LLM & Agent Behavior, Data & File Handling), no external MCP directly required, adversarial posture, numeric score |
 
 ### 3.17 Deployment Readiness Reviewer (QA Reviewer)
@@ -281,7 +281,7 @@
 | **Phase(s)** | 6 (sub-agent of QA Coordinator) |
 | **User-invocable** | No |
 | **Tools** | `read`, `search`, `terminal` |
-| **Skills** | sdlc-accelerator-qa (declared in frontmatter `skills:` field) |
+| **Skills** | sdlc-project-qa (declared in frontmatter `skills:` field) |
 | **Key behaviors** | Category 5+7+8+9 checklists (Error Handling, Performance, Deployment Hygiene, Observability), runs `pip audit`/`npm audit` if possible, adversarial posture, numeric score |
 
 ### 3.18 QA Bug Checklist Reviewer (Standalone)
@@ -311,7 +311,7 @@ Cross-referenced from `docs/specs/2026-04-10-sdlc-harness-spec.md` §1.3:
 | **Deploy** | Deployer | — | sdlc-azure-deployment |
 | **Implement** | Implementer | — (entry gate: reference-catalog) | sdlc-code-quality, sdlc-cosmos-repository, sdlc-blob-storage |
 | **Document** | Documenter | — | sdlc-adr-authoring, sdlc-project-manifest |
-| **QA** | QA Coordinator | 8 parallel reviewers + 1 standalone | sdlc-code-quality, sdlc-security-review, sdlc-accelerator-qa, sdlc-qa-bug-checklist |
+| **QA** | QA Coordinator | 8 parallel reviewers + 1 standalone | sdlc-code-quality, sdlc-security-review, sdlc-project-qa, sdlc-qa-bug-checklist |
 | **RAI** | RAI Reviewer | — | _(ai-prompt-engineering-safety-review via awesome-copilot)_ |
 | **Release** | Release Manager | Deployer (Phase 8 infra) | _(none — GitHub MCP direct)_ |
 
@@ -407,7 +407,7 @@ Every agent referenced in the spec's `sub_agents_by_phase` mapping has a corresp
 | `sdlc-adr-authoring` | `vscode-extension/skills/sdlc-adr-authoring/` | ✅ |
 | `sdlc-code-quality` | `vscode-extension/skills/sdlc-code-quality/` | ✅ |
 | `sdlc-security-review` | `vscode-extension/skills/sdlc-security-review/` | ✅ |
-| `sdlc-accelerator-qa` | `vscode-extension/skills/sdlc-accelerator-qa/` | ✅ |
+| `sdlc-project-qa` | `vscode-extension/skills/sdlc-project-qa/` | ✅ |
 | `sdlc-qa-bug-checklist` | `vscode-extension/skills/sdlc-qa-bug-checklist/` | ✅ |
 | `sdlc-architecture-review` | `vscode-extension/skills/sdlc-architecture-review/` | ✅ |
 
@@ -431,7 +431,7 @@ Every agent referenced in the spec's `sub_agents_by_phase` mapping has a corresp
 |---|---|
 | RAI Reviewer has no local skill | Depends entirely on `ai-prompt-engineering-safety-review` loaded via awesome-copilot MCP. If awesome-copilot is down, this agent has no skill fallback. Consider creating a local `sdlc-rai-review` skill. |
 | Release Manager has no skills | Uses GitHub MCP directly. This is by design but means no standardized release patterns are captured as reusable knowledge. |
-| Test Coverage Reviewer has no skills in frontmatter | References `sdlc-accelerator-qa` in body text but does not declare it in `skills:` frontmatter. |
+| Test Coverage Reviewer has no skills in frontmatter | References `sdlc-project-qa` in body text but does not declare it in `skills:` frontmatter. |
 | Azure Compliance Reviewer has no skills | References awesome-copilot for Bicep best practices but has no local skill. Could benefit from a formal skill declaration. |
 
 ### 8.3 Spec vs. Implementation Discrepancies
@@ -450,4 +450,4 @@ Every agent referenced in the spec's `sub_agents_by_phase` mapping has a corresp
 | Add `user-invocable: true` to Harness | Make the entry-point status explicit. |
 | Create `sdlc-rai-review` local skill | Provide a fallback for RAI reviews when awesome-copilot is unavailable. |
 | Remove `discogs/search` from QA Coordinator | Appears to be a configuration artifact. |
-| Declare `sdlc-accelerator-qa` in Test Coverage Reviewer frontmatter | The skill is referenced in the body but not in `skills:`. |
+| Declare `sdlc-project-qa` in Test Coverage Reviewer frontmatter | The skill is referenced in the body but not in `skills:`. |

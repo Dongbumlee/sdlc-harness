@@ -152,7 +152,7 @@ az resource list -g <rg> --query "[].{name:name, type:type, state:provisioningSt
   - Chat completion works but embeddings returns `PermissionDenied` — separate RBAC needed
   - **How to verify**: `az cognitiveservices account deployment list --name <name> -g <rg> -o table` then check RBAC for each deployment
 
-- [ ] **AI Foundry "Project not found"** (intermittent across multiple accelerators)
+- [ ] **AI Foundry "Project not found"** (intermittent across multiple projects)
   - **Error**: `"Project not found"` immediately after deployment
   - **Root cause**: Azure AI Foundry eventual consistency — project created but not yet visible via API
   - **Fix**: Add retry with backoff in `run_create_agents_scripts.sh`:
@@ -262,7 +262,7 @@ az resource list -g <rg> --query "[].{name:name, type:type, state:provisioningSt
 
 ### 6.1 Managed Identity RBAC Matrix
 
-Every accelerator's managed identity must have these roles assigned in Bicep:
+Every project's managed identity must have these roles assigned in Bicep:
 
 | Resource | Required Role | Verify |
 |---|---|---|
@@ -285,7 +285,7 @@ Every accelerator's managed identity must have these roles assigned in Bicep:
 
 ## Checklist 7: Smoke Testing Matrix (60 bugs discovered in QA)
 
-Every accelerator must pass ALL cells before release:
+Every project must pass ALL cells before release:
 
 | Config | Upload | Chat | Process | Admin | Post-Deploy Scripts |
 |---|---|---|---|---|---|

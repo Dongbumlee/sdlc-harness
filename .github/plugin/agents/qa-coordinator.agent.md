@@ -111,7 +111,7 @@ When asked to review code, run these subagents **in parallel**:
 4. **Security Reviewer** — secrets, injection risks, auth patterns, OWASP compliance
 5. **Test Coverage Reviewer** — test patterns, coverage, assertions, mocking quality
 
-### Product-level reviewers (new 3 — from accelerator QA checklist)
+### Product-level reviewers (new 3 — from project QA checklist)
 6. **UX & Accessibility Reviewer** — a11y attributes, ARIA labels, keyboard nav, state management
 7. **LLM Behavior Reviewer** — system prompt safety, grounding, citations, content filters, file handling
 8. **Deployment Readiness Reviewer** — error handling, performance patterns, repo hygiene, observability
@@ -283,7 +283,7 @@ After synthesizing all 8 reviewer findings, **generate a formal QA Report markdo
 and save it before presenting the manual checklist. The report should include:
 
 1. Executive summary (total items, pass/fail/not-checked counts)
-2. All findings mapped to the `sdlc-accelerator-qa` checklist categories (1-10)
+2. All findings mapped to the `sdlc-project-qa` checklist categories (1-10)
 3. Each item shows: checklist #, description, check type (Agent/Playwright/Manual), status, finding detail
 4. Priority fix list (Critical → High → Medium) with file names and action required
 5. Manual QA checklist (items requiring human testing)
