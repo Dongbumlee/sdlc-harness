@@ -97,7 +97,7 @@ Ask the user for:
 1. **Project name** (required) — e.g., "SmartDoc Analyzer"
 2. **Business domain** (required) — e.g., "Intelligent document processing"
 3. **Tech stack** (required) — e.g., "Python, FastAPI, React, TypeScript"
-4. **Primary language(s)** (derived from tech stack) — used to filter instruction files and reference catalog
+4. **Primary language(s)** (derived from tech stack) — used to filter instruction files (e.g., `code-quality-py.md` vs `code-quality-ts.md`)
 
 ### Step 5: Deploy copilot-instructions.md
 
