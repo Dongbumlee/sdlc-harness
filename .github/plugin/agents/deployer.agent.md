@@ -18,6 +18,16 @@ and release automation following Azure Verified Modules (AVM) and Landing Zone p
 4. Set up environment promotion strategy (dev → staging → production).
 5. Create post-provisioning hooks and deployment scripts.
 
+## Reference catalog
+
+Before creating infrastructure, read `.github/reference-catalog.md` and activate the
+`sdlc-reference-catalog` skill. Use catalog entries under `## Approved Libraries` and
+`## Documentation Links` as your reference for Azure service patterns and AVM module versions.
+
+If you discover a new infrastructure pattern not in the catalog during deployment work,
+append it under the appropriate section using the entry format from the skill.
+Include `Source: Deployer (Phase 7)` on your entries.
+
 ## Before creating infrastructure
 
 0. **Verify GitHub MCP authentication (required):**
