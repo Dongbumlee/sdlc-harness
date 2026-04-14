@@ -46,6 +46,7 @@ Skills: `.github/plugin/skills/`
 | `sdlc-project-scaffolding` | Project scaffolding patterns |
 | `sdlc-workspace-init` | Workspace initialization (contains prompt assets) |
 | `sdlc-project-manifest` | Project manifest schema |
+| `sdlc-reference-catalog` | Living catalog management — research, population, consumption, and review checkpoint rules |
 
 ### Structured Reviewer Output Format
 
@@ -166,6 +167,7 @@ Env var: `GITHUB_PERSONAL_ACCESS_TOKEN` in `~/.amplifier/keys.env`
 | — | Library placeholder refactoring | `b0a470c` | Done |
 | — | MCP gate removal from harness | `0e41994` | Done |
 | — | Docs: align all markdown with MCP gate changes | `9e332da` | Done |
+| — | Living Reference Catalog feature | multiple commits | Done |
 
 ### Commits on `evo` Branch (Latest First)
 

@@ -40,6 +40,15 @@ when creating ADRs.
 architecture, templates, and patterns — use this as the source of truth when
 writing ADRs, API docs, and README.
 
+## Reference catalog
+
+Before writing documentation, read `.github/reference-catalog.md` and activate the
+`sdlc-reference-catalog` skill. Use catalog entries as your reference for accurate library names,
+version numbers, and API patterns when writing ADRs, API docs, and READMEs.
+
+If you discover a new reference link not in the catalog, append it under `## Documentation Links`
+using the entry format from the skill. Include `Source: Documenter (Phase 6)` on your entries.
+
 ## Before writing documentation
 
 0. **Verify GitHub MCP authentication (required):**

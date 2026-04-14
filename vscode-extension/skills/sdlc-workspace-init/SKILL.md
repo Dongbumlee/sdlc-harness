@@ -28,6 +28,7 @@ system because they require per-project customization or live outside `.github/p
 | `assets/copilot-instructions.template.md` | `.github/copilot-instructions.md` | Yes — project name, domain, stack |
 | `assets/instructions/*.instructions.md` | `.github/instructions/` | No — copied as-is |
 | `assets/prompts/*.prompt.md` | `.github/prompts/` | No — copied as-is |
+| *(generated at runtime)* | `.github/reference-catalog.md` | Yes — empty template with 5 fixed sections |
 
 ## Procedure
 
@@ -96,7 +97,7 @@ Ask the user for:
 1. **Project name** (required) — e.g., "SmartDoc Analyzer"
 2. **Business domain** (required) — e.g., "Intelligent document processing"
 3. **Tech stack** (required) — e.g., "Python, FastAPI, React, TypeScript"
-4. **Primary language(s)** (derived from tech stack) — used to filter instruction files and reference catalog
+4. **Primary language(s)** (derived from tech stack) — used to filter instruction files (e.g., `code-quality-py.md` vs `code-quality-ts.md`)
 
 ### Step 5: Deploy copilot-instructions.md
 
@@ -107,18 +108,64 @@ Ask the user for:
    - `{{TECH_STACK}}` → user's tech stack
 3. Write the result to `.github/copilot-instructions.md`.
 
-### Step 6: Deploy filtered reference catalog
+### Step 6: Create empty reference catalog template
 
-1. Read `.github/reference-catalog.md` from the skill assets.
-2. Based on the **primary language(s)** from Step 4, generate a **project-specific** version:
-   - Keep all language-agnostic sections (intro, how to use, adding entries).
-   - In SDK tables (§1.1–1.4), **highlight the project's language rows** and keep others as reference.
-   - In the Template Matrix, **bold the row(s)** matching the project's language.
-   - In detailed templates (§2.1–2.4), include only the language-specific entries that apply.
-3. Write the filtered catalog to `.github/reference-catalog.md`.
+Create `.github/reference-catalog.md` with the empty catalog template. This template will be populated
+by the Analyst agent during Phase 1-2 using the `sdlc-reference-catalog` skill.
 
-> **Why filter?** A Java team doesn't need to read through Python/Rust/Go details on every lookup.
-> The full catalog stays in the skill assets; the deployed version is focused on the project's stack.
+Write this content to `.github/reference-catalog.md`:
+
+```
+# Reference Catalog
+
+> This catalog is populated by the Analyst agent during the design phase.
+> Downstream agents may append new entries but must not modify existing ones.
+> Each entry includes the source agent that added it.
+
+## Approved Libraries
+
+<!-- Analyst: Research and list approved packages with versions, purpose, and installation -->
+
+## Project Templates
+
+<!-- Analyst: Document project structure patterns, scaffolding templates, starter repos -->
+
+## API Patterns
+
+<!-- Analyst: Document key design patterns (Repository Pattern, SDK abstractions, etc.) -->
+
+## Code Examples
+
+<!-- Analyst: Include representative code snippets showing approved usage patterns -->
+
+## Documentation Links
+
+<!-- Analyst: Link to official docs, internal wikis, and reference guides -->
+```
+
+> **Why an empty template?** The Analyst populates this during the design phase using live research
+> from GitHub MCP, Context7, awesome-copilot, and web sources. A static pre-populated catalog
+> falls out of date; a living catalog stays current with each project's actual tech stack.
+
+### Step 6b: Ask catalog review preference
+
+Ask the user:
+
+> **Catalog review preference:** Would you like to review the reference catalog before
+> development begins, or proceed automatically?
+>
+> - **review** (default) — Harness will show you the catalog summary after the Analyst
+>   populates it, and you can approve, edit, or proceed.
+> - **auto** — Harness proceeds automatically after catalog population.
+
+Store the answer in `harness-config.yml` as:
+
+```yaml
+catalog_review: true   # "review" → true (default)
+catalog_review: false  # "auto" → false
+```
+
+If the user doesn't answer or skips the question, default to `catalog_review: true`.
 
 ### Step 7: Deploy instruction files
 
@@ -169,6 +216,7 @@ Copy each file from `assets/prompts/` to `.github/prompts/`:
 - ✅ `.github/copilot-instructions.md` — customized for "{{PROJECT_NAME}}"
 - ✅ `.github/instructions/` — X quality instruction files deployed
 - ✅ `.github/prompts/` — 6 SDLC prompt files deployed
+- ✅ `.github/reference-catalog.md` — empty catalog template created (Analyst will populate during Phase 1-2)
 
 **Next steps:**
 1. **Start MCP servers** — open `.vscode/mcp.json` and click "Start" on each server.

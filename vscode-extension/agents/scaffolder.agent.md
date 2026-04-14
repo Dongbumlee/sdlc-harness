@@ -54,6 +54,16 @@ and set up dev environments based on the application project patterns.
 4. Create `pyproject.toml`, `Dockerfile`, and build configurations.
 5. Set up root-level compliance files and quality instruction files.
 
+## Reference catalog
+
+Before starting scaffolding work, read `.github/reference-catalog.md` and activate the
+`sdlc-reference-catalog` skill. Use catalog entries under `## Project Templates` and
+`## Approved Libraries` as your primary reference for project structure and dependencies.
+
+If you discover a new template pattern or library not in the catalog during scaffolding,
+append it under the appropriate section using the entry format from the skill.
+Include `Source: Scaffolder (Phase 3)` on your entries.
+
 ## Before scaffolding
 
 0. **Verify GitHub MCP authentication (required):**

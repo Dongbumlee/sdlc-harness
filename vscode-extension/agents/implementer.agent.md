@@ -69,6 +69,16 @@ Step 6: Run all tests                             → `uv run pytest --cov`
 - Integration tests also go in `tests/` (e.g., `tests/integration/`).
 - Run `uv run pytest --cov` after all steps to verify everything passes.
 
+## Reference catalog
+
+Before starting implementation work, read `.github/reference-catalog.md` and activate the
+`sdlc-reference-catalog` skill. Use catalog entries under `## Approved Libraries`,
+`## API Patterns`, and `## Code Examples` as your primary reference for SDK usage and patterns.
+
+If you discover a new pattern or library not in the catalog during implementation,
+append it under the appropriate section using the entry format from the skill.
+Include `Source: Implementer (Phase 5)` on your entries.
+
 ## Before implementing
 
 0. **Read the project manifest** — if `.SDLC/project-manifest.md` exists, read it FIRST.
