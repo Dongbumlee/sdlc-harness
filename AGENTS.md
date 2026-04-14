@@ -165,12 +165,12 @@ Env var: `GITHUB_PERSONAL_ACCESS_TOKEN` in `~/.amplifier/keys.env`
 | — | Remove external repo dependencies | `09c3adf` | Done |
 | — | Library placeholder refactoring | `b0a470c` | Done |
 | — | MCP gate removal from harness | `0e41994` | Done |
-| — | Docs: align all markdown with MCP gate changes | pending | Done |
+| — | Docs: align all markdown with MCP gate changes | `9e332da` | Done |
 
 ### Commits on `evo` Branch (Latest First)
 
 ```
-(pending) docs: align documentation with MCP gate and placeholder refactoring
+9e332da docs: align all markdown with MCP gate and placeholder refactoring
 8cfdfc3 docs: update AGENTS.md - mark library placeholder refactoring as resolved
 b0a470c refactor: replace hardcoded library placeholders with project-config references
 0e41994 refactor: remove your-org MCP readiness gate from harness agent
