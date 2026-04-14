@@ -203,6 +203,16 @@ Analyst does design work → asks user about preferred libraries → researches 
 If `catalog_review: true` — Harness presents summary (N entries across 5 sections, bulleted) → user can review, edit, or proceed.
 If `catalog_review: false` — Harness logs that catalog was populated and auto-proceeds.
 
+**Edit path during review:** When the user requests changes at the review checkpoint:
+
+1. Harness routes the revision request to the Analyst agent
+2. Analyst may modify any existing catalog entries — the append-only rule has **not** taken effect yet; it begins only after user approval
+3. Analyst updates the catalog and returns to Harness
+4. Harness re-presents the updated summary
+5. Once the user says "proceed", append-only mode activates — from this point forward, downstream agents can only add entries, never modify existing ones
+
+The append-only rule has a clear activation point: **user approval of the catalog** (or auto-approval in self-driving mode).
+
 **Phase 3+ — Downstream:**
 Agents silently consume catalog. If they discover new patterns, they append with their agent name and phase number. The user sees normal agent output, not catalog-append notifications.
 
@@ -227,7 +237,15 @@ Agents silently consume catalog. If they discover new patterns, they append with
 - **Missing catalog file:** If `.github/reference-catalog.md` doesn't exist when a downstream agent tries to read it (e.g., workspace-init was skipped), the agent proceeds without catalog guidance and logs a warning. No hard failure.
 - **Empty catalog:** If the Analyst fails to populate the catalog (e.g., no relevant libraries found), the template remains with placeholder comments. Downstream agents treat missing entries as "not yet researched" and do their own research, appending discoveries.
 - **Merge conflicts in catalog:** Since entries are append-only and each agent writes to distinct sub-sections, conflicts are unlikely. If they occur, the later agent's entry wins (append at bottom).
-- **Review mode interruption:** If the user dismisses the review checkpoint without explicit approval, the Harness treats it as approved and proceeds (fail-open, not fail-closed).
+- **Review mode interruption:** If the user dismisses the review checkpoint without explicit approval, Harness treats it as approved and append-only mode activates. Downstream agents proceed with whatever catalog content exists at that point.
+
+## Compatibility
+
+- **File path is the contract:** Agents reference the catalog by file path (`.github/reference-catalog.md`), not by content structure. The new template is backward-compatible with any agent that reads this path.
+- **New projects:** The current static catalog content is replaced by the empty template when `sdlc-workspace-init` runs on a new project. No migration needed.
+- **Existing projects with a populated catalog:** Agents will read whatever content exists. The skill's consumption rules work with any content format — agents scan for headings and entries, and gracefully handle missing sections.
+- **Agent instruction changes are additive:** No agent instruction files need structural changes beyond the ones listed in "Files Affected". The consumption instruction is a single added paragraph per agent.
+- **`copilot-instructions.md` unchanged:** The `copilot-instructions.md` template already references `.github/reference-catalog.md` by path. No change needed there.
 
 ## Testing Strategy
 
