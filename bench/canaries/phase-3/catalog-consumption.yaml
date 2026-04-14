@@ -11,25 +11,27 @@ prompt: |
 expected:
   graders:
     - type: keyword
-      keywords:
-        - "reference-catalog"
-        - "Approved Libraries"
-        - "Project Templates"
-      min_matches: 2
       weight: 0.3
+      config:
+        required:
+          - "reference-catalog"
+          - "Approved Libraries"
+          - "Project Templates"
+        forbidden: []
     - type: structural
-      checks:
-        - "output references the catalog for library choices"
-        - "output follows catalog-recommended project structure"
       weight: 0.3
+      config:
+        required_sections:
+          - "output references the catalog for library choices"
+          - "output follows catalog-recommended project structure"
     - type: llm-judge
-      criteria: |
-        The Scaffolder should:
-        1. Read the reference catalog before starting
-        2. Use catalog entries for project template selection
-        3. Use catalog entries for library dependencies
-        4. Not independently research what is already in the catalog
       weight: 0.4
+      config:
+        criteria:
+          - read_reference_catalog_before_starting
+          - use_catalog_entries_for_project_template_selection
+          - use_catalog_entries_for_library_dependencies
+          - not_independently_research_what_is_already_in_catalog
 timeout_seconds: 120
 tags:
   - catalog

@@ -12,25 +12,27 @@ prompt: |
 expected:
   graders:
     - type: keyword
-      keywords:
-        - "reference-catalog"
-        - "Approved Libraries"
-        - "API Patterns"
-      min_matches: 2
       weight: 0.3
+      config:
+        required:
+          - "reference-catalog"
+          - "Approved Libraries"
+          - "API Patterns"
+        forbidden: []
     - type: structural
-      checks:
-        - "output contains library recommendations with versions"
-        - "output mentions the reference catalog skill"
       weight: 0.3
+      config:
+        required_sections:
+          - "output contains library recommendations with versions"
+          - "output mentions the reference catalog skill"
     - type: llm-judge
-      criteria: |
-        The Analyst should:
-        1. Ask the user about preferred libraries before researching
-        2. Reference the sdlc-reference-catalog skill
-        3. Populate entries under the catalog's fixed headings
-        4. Include source attribution on each entry
       weight: 0.4
+      config:
+        criteria:
+          - ask_user_about_preferred_libraries
+          - reference_sdlc_reference_catalog_skill
+          - populate_entries_under_fixed_headings
+          - include_source_attribution_on_entries
 timeout_seconds: 120
 tags:
   - catalog
