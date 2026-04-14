@@ -17,6 +17,7 @@ and produce structured design proposals. You **never edit code** — you only re
 3. Propose architecture and design decisions.
 4. Map features to Azure services following the reference catalog.
 5. Produce a structured design output (ADR-ready format).
+6. Populate the living reference catalog with researched libraries, patterns, and templates.
 
 ## Before starting any analysis
 
@@ -63,6 +64,32 @@ and produce structured design proposals. You **never edit code** — you only re
    - Browse all pages: `mcp_ado_wiki_list_pages(wikiIdentifier: "CSA-CTO-Engineering.wiki", project: "CSA CTO Engineering")`
    - If ADO MCP authentication fails (browser login required on first use), inform the user
      and proceed without ADO wiki content.
+
+## Reference catalog population
+
+After completing your design proposal, populate the living reference catalog.
+
+1. **Activate the `sdlc-reference-catalog` skill** — read its research methodology, population rules, and entry format.
+
+2. **Ask the user about preferred libraries:**
+   > "Are there any specific libraries, templates, or frameworks you'd like me to include in the reference catalog?"
+   
+   Record any user-specified items as `Source: user-provided` entries.
+
+3. **Research and populate** `.github/reference-catalog.md` using the priority order from the skill:
+   - User-specified libraries/templates (from the question above)
+   - GitHub MCP (org reference repos, when available)
+   - Context7 (official documentation for chosen tech stack)
+   - awesome-copilot (best practice patterns)
+   - Web research (community patterns, comparison articles)
+
+4. **Write entries** under the 5 fixed top-level sections using the entry format defined in the skill. Add domain-specific sub-sections as needed (e.g., `### Device SDK Patterns` under `## API Patterns` for an IoT project).
+
+5. **Report completion** to Harness with a summary: number of entries per section.
+
+> **This is a natural extension of your existing research work.** You already research libraries,
+> templates, and patterns during the design phase. This step structures that research into a
+> shared catalog that downstream agents consume.
 
 ## Output format
 
