@@ -1,0 +1,37 @@
+id: scf-002-catalog-consumption
+version: "1.0"
+phase: scaffold
+title: "Scaffolder consumes reference catalog"
+description: |
+  Verify that the Scaffolder agent reads .github/reference-catalog.md
+  and uses catalog entries when scaffolding a new project.
+prompt: |
+  Scaffold a new FastAPI project called "FeedbackAPI" using the
+  reference catalog for approved libraries and project templates.
+expected:
+  graders:
+    - type: keyword
+      keywords:
+        - "reference-catalog"
+        - "Approved Libraries"
+        - "Project Templates"
+      min_matches: 2
+      weight: 0.3
+    - type: structural
+      checks:
+        - "output references the catalog for library choices"
+        - "output follows catalog-recommended project structure"
+      weight: 0.3
+    - type: llm-judge
+      criteria: |
+        The Scaffolder should:
+        1. Read the reference catalog before starting
+        2. Use catalog entries for project template selection
+        3. Use catalog entries for library dependencies
+        4. Not independently research what is already in the catalog
+      weight: 0.4
+timeout_seconds: 120
+tags:
+  - catalog
+  - phase-3
+  - living-catalog

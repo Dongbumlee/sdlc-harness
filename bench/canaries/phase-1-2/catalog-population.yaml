@@ -1,0 +1,38 @@
+id: des-002-catalog-population
+version: "1.0"
+phase: design
+title: "Analyst populates reference catalog"
+description: |
+  Verify that the Analyst agent populates .github/reference-catalog.md
+  using the sdlc-reference-catalog skill after completing a design proposal.
+prompt: |
+  I need to build a REST API for managing customer feedback.
+  Tech stack: Python 3.12, FastAPI, Azure Cosmos DB.
+  Please analyze requirements and design the system.
+expected:
+  graders:
+    - type: keyword
+      keywords:
+        - "reference-catalog"
+        - "Approved Libraries"
+        - "API Patterns"
+      min_matches: 2
+      weight: 0.3
+    - type: structural
+      checks:
+        - "output contains library recommendations with versions"
+        - "output mentions the reference catalog skill"
+      weight: 0.3
+    - type: llm-judge
+      criteria: |
+        The Analyst should:
+        1. Ask the user about preferred libraries before researching
+        2. Reference the sdlc-reference-catalog skill
+        3. Populate entries under the catalog's fixed headings
+        4. Include source attribution on each entry
+      weight: 0.4
+timeout_seconds: 120
+tags:
+  - catalog
+  - phase-1-2
+  - living-catalog

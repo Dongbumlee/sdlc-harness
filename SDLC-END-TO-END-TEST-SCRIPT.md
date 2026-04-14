@@ -168,6 +168,13 @@ Please produce a design proposal.
 - [ ] **Project Configuration** — `TECH_STACK`, `ARCH_STYLE`, `OTHER_AZURE_SERVICES` values for Harness
 - [ ] **SDLC Exit Criteria** — checklist with ✅/⚠️/⛔ statuses
 
+### Reference catalog checks:
+
+- [ ] Analyst asks about preferred libraries before populating the reference catalog
+- [ ] Analyst populates `.github/reference-catalog.md` with entries under the 5 fixed sections
+- [ ] Each catalog entry includes source attribution
+- [ ] Harness presents catalog summary and review checkpoint (if `catalog_review: true`)
+
 ### Red flags (should NOT happen):
 
 - [ ] ~~Raw `CosmosClient` proposed instead of `approved Cosmos DB library`~~
@@ -258,6 +265,12 @@ Use the API application template for API, base application template for Business
   - [ ] `.devcontainer/`
 - [ ] Quality instruction files confirmed for Python + TypeScript stack
 - [ ] Root-level compliance files created (`TRANSPARENCY_FAQ.md`, `CODE_OF_CONDUCT.md`, etc.)
+
+### Reference catalog checks:
+
+- [ ] Scaffolder reads `.github/reference-catalog.md` before starting
+- [ ] Scaffolder uses catalog entries for library selection (not independent research)
+- [ ] Scaffolder appends new discoveries with `Source: Scaffolder (Phase 3)`
 
 ### Red flags:
 

@@ -98,6 +98,15 @@ architecture|approved Cosmos DB library|approved Storage library|API application
 
 ---
 
+## Catalog Verification
+
+1. After Analyst completes, verify `.github/reference-catalog.md` is populated
+2. Check that at least one entry exists under `## Approved Libraries`
+3. Check that entries include `Source:` attribution
+4. If `catalog_review: true`, verify Harness presents summary and asks for review
+
+---
+
 ## Step 2: ADR Creation (Documenter — auto-triggered by Harness)
 
 ### Expected behavior (no new prompt needed — Harness auto-delegates after Analyst)
