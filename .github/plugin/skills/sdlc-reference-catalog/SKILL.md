@@ -58,6 +58,7 @@ Every entry appended by any agent must use this format:
 - **Purpose:** [what it's for]
 - **Usage:** [code example or description]
 - **Links:** [documentation URLs]
+- **Research Notes:** [optional — note if any research source was unavailable, e.g., "GitHub MCP unavailable — verified via web research only"]
 ```
 
 Mark user-specified entries as `Source: user-provided`.
@@ -72,13 +73,13 @@ When populating the catalog, research sources in this priority order:
 4. **awesome-copilot MCP** — load best practice patterns. Use `mcp_awesome-copil_search_instructions` to find relevant instructions for the project's tech stack.
 5. **Web research** — community patterns, comparison articles, and ecosystem guidance for libraries not covered by the above sources.
 
-For each source that is unavailable (MCP not running, auth failure), skip it gracefully and note in the catalog entry that the source was unavailable.
+For each source that is unavailable (MCP not running, auth failure), skip it gracefully and use the `Research Notes` field in the catalog entry to record which source was unavailable (e.g., `Research Notes: GitHub MCP unavailable — verified via web research only`).
 
 ## Population rules (Analyst only)
 
 - Use the 5 fixed top-level headings (`## Approved Libraries`, `## Project Templates`, `## API Patterns`, `## Code Examples`, `## Documentation Links`).
 - Add sub-sections freely under each heading as needed for the project domain (e.g., `### Device SDK Patterns` under `## API Patterns` for an IoT project).
-- Every entry must include: source agent, package/version, purpose, usage example, and links.
+- Every entry must include: source agent, package/version, purpose, usage example, and links; and optionally research notes (when a research source was unavailable).
 - Mark user-specified libraries as `Source: user-provided`.
 - Replace the HTML comment placeholders with actual content as you populate each section.
 
