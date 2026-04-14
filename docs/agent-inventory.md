@@ -78,7 +78,7 @@
 | **Tools** | `agent`, `read`, `search`, `edit`, `execute`, `terminal`, `fetch`, `web`, `browser`, `todo`, `github/*`, `awesome-copilot/*`, `context7/*`, `azure-devops/*`, `azure/*`, `azure-mcp/*`, `microsoft-learn/*`, `microsoft-docs/*`, `playwright/*` |
 | **Sub-agents** | Analyst, Scaffolder, Deployer, Implementer, Documenter, QA Coordinator, RAI Reviewer, Release Manager |
 | **Skills** | sdlc-workspace-init (via first-run bootstrap) |
-| **MCP gates** | awesome-copilot (hard stop), GitHub MCP (hard stop), Context7 (warn), Azure DevOps (warn) |
+| **MCP gates** | awesome-copilot (hard stop), GitHub MCP (optional — graceful degradation), Context7 (warn), Azure DevOps (warn) |
 | **Key behaviors** | First-run workspace init, progressive placeholder filling, ADR generation rule, iterative feedback loops, QA feedback loop (max 3 rounds) |
 
 ### 3.2 QA Coordinator (Orchestrator + Phase Worker)
@@ -105,7 +105,7 @@
 | **User-invocable** | No |
 | **Tools** | `read`, `search`, `fetch`, `github/*`, `awesome-copilot/*`, `context7/*`, `azure-devops/*` |
 | **Skills (per spec)** | sdlc-workspace-init |
-| **MCP gates** | GitHub MCP (required), awesome-copilot (recommended), Azure DevOps (optional) |
+| **MCP gates** | GitHub MCP (optional — enhances with live repo patterns), awesome-copilot (recommended), Azure DevOps (optional) |
 | **Key behaviors** | ADR-ready output format, Mermaid diagrams, progressive config output, self-evaluation checklist, SDLC exit criteria |
 
 ### 3.4 Scaffolder (Phase Worker)
@@ -118,7 +118,7 @@
 | **User-invocable** | No |
 | **Tools** | `read`, `search`, `edit`, `terminal`, `github/*`, `awesome-copilot/*`, `context7/*`, `azure-devops/*` |
 | **Skills** | sdlc-project-scaffolding, sdlc-project-manifest |
-| **MCP gates** | GitHub MCP (required), awesome-copilot (recommended) |
+| **MCP gates** | GitHub MCP (optional — enhances with template patterns), awesome-copilot (recommended) |
 | **Key behaviors** | Strict `src/<ProjectName><Layer>/` rule, template fidelity validation, scope boundary (scaffolding only — no business logic), self-evaluation checklist |
 
 ### 3.5 Deployer (Phase Worker)
@@ -131,7 +131,7 @@
 | **User-invocable** | No |
 | **Tools** | `read`, `search`, `edit`, `terminal`, `github/*`, `awesome-copilot/*`, `azure/*`, `microsoft-learn/*`, `azure-devops/*` |
 | **Skills** | sdlc-azure-deployment |
-| **MCP gates** | GitHub MCP (required), awesome-copilot (recommended), Azure DevOps (mandatory for Bicep — blocks infra creation) |
+| **MCP gates** | GitHub MCP (optional — enhances with deployment patterns), awesome-copilot (recommended), Azure DevOps (mandatory for Bicep — blocks infra creation) |
 | **Key behaviors** | AVM module lookup, ADO wiki Bicep standards, WAF toggle parameters, two-tier parameter files, Managed Identity enforcement, self-evaluation checklist |
 
 ### 3.6 Implementer (Phase Worker)
@@ -144,7 +144,7 @@
 | **User-invocable** | No |
 | **Tools** | `execute`, `read`, `agent`, `edit`, `search`, `web`, `browser`, `azure-mcp/*`, `awesome-copilot/*`, `context7/*`, `github/*`, `azure/search`, `azure-devops/*`, `microsoft-learn/*`, `microsoft-docs/*`, `ms-python.python/*`, `todo` |
 | **Skills** | sdlc-project-manifest, sdlc-cosmos-repository, sdlc-blob-storage |
-| **MCP gates** | GitHub MCP (required), awesome-copilot (recommended) |
+| **MCP gates** | GitHub MCP (optional — enhances with SDK patterns), awesome-copilot (recommended) |
 | **Key behaviors** | Acceptance criteria (sprint contract), strict 6-step workflow, service directory map, Agent Framework patterns, self-evaluation checklist |
 
 ### 3.7 Documenter (Phase Worker)
@@ -157,7 +157,7 @@
 | **User-invocable** | No |
 | **Tools** | `read`, `search`, `edit`, `github/*`, `microsoft-learn/*` |
 | **Skills** | sdlc-adr-authoring |
-| **MCP gates** | GitHub MCP (required) |
+| **MCP gates** | GitHub MCP (optional — enhances with repo context) |
 | **Key behaviors** | Template-driven docs from `.design/`, Mermaid diagram conversion, ADR creation workflow, self-evaluation checklist |
 
 ### 3.8 RAI Reviewer (Phase Worker)
@@ -183,7 +183,7 @@
 | **User-invocable** | No |
 | **Tools** | `read`, `search`, `edit`, `github/*` |
 | **Skills** | _(none — uses GitHub MCP tools directly)_ |
-| **MCP gates** | GitHub MCP (required — no local fallback) |
+| **MCP gates** | GitHub MCP (recommended — needed for PR creation; other tasks degrade gracefully) |
 | **Key behaviors** | SDLC-compliant PR bodies, post-deployment monitoring, rollback procedure, release checklist |
 
 ### 3.10 Architecture Reviewer (QA Reviewer)
@@ -196,7 +196,7 @@
 | **User-invocable** | No |
 | **Tools** | `read`, `search`, `github/*` |
 | **Skills** | sdlc-architecture-review |
-| **MCP gates** | GitHub MCP (required) |
+| **MCP gates** | GitHub MCP (optional — enhances with architecture patterns) |
 | **Key behaviors** | Reads project manifest, cross-repo pattern search, adversarial posture, numeric score |
 
 ### 3.11 Azure Compliance Reviewer (QA Reviewer)
@@ -209,7 +209,7 @@
 | **User-invocable** | No |
 | **Tools** | `read`, `search`, `github/*`, `awesome-copilot/*` |
 | **Skills** | _(none declared — uses awesome-copilot for Bicep best practices)_ |
-| **MCP gates** | GitHub MCP (required), awesome-copilot (recommended) |
+| **MCP gates** | GitHub MCP (optional — enhances with compliance patterns), awesome-copilot (recommended) |
 | **Key behaviors** | Fetches live SDK APIs from GitHub MCP, Bicep best practices from awesome-copilot, adversarial posture, numeric score |
 
 ### 3.12 Code Quality Reviewer (QA Reviewer)

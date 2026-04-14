@@ -89,12 +89,12 @@ We need a REST API to store and query feedback.
 
 ### Expected behavior:
 
-- [ ] **MCP readiness check** — Harness probes all 3 critical MCP servers BEFORE any other work:
-  - [ ] `awesome-copilot` — runs `mcp_awesome-copil_search_instructions(keywords: "security")`
-  - [ ] `GitHub MCP` — runs `mcp_github_get_file_contents` on `the project's approved Cosmos DB library repo`
-  - [ ] `Context7` — runs `mcp_context7_resolve-library-id(libraryName: "fastapi")`
-- [ ] **Status table reported** — Harness shows a table with ✅/⛔ status for each server
-- [ ] **Failure handling** — If awesome-copilot is down, Harness stops and tells user to start Docker + MCP server
+- [ ] **Workspace initialization** — Harness checks environment and probes MCP servers:
+  - [ ] `awesome-copilot` — runs `mcp_awesome-copil_search_instructions(keywords: "security")` — **hard stop if unavailable**
+  - [ ] `GitHub MCP` — probes reference repos if available — **optional, graceful degradation to reference-catalog.md**
+  - [ ] `Context7` — runs `mcp_context7_resolve-library-id(libraryName: "fastapi")` — **warn if unavailable**
+- [ ] **Status table reported** — Harness shows a table with ✅/⚠️/⛔ status for each server
+- [ ] **Failure handling** — If awesome-copilot is down, Harness stops. If GitHub MCP unavailable, Harness continues with warning.
 - [ ] **Placeholder detection** — Harness detects unfilled placeholders in `.github/copilot-instructions.md`
 - [ ] **Questions asked** — Harness asks 2-3 quick questions:
   - Project name → answer: `"customer-feedback-service"`
@@ -143,7 +143,7 @@ Please produce a design proposal.
 
 ### Expected behavior:
 
-- [ ] **GitHub MCP auth gate** — Analyst probes `the project's approved Cosmos DB library repo` README
+- [ ] **GitHub MCP (optional)** — Analyst probes reference repos if available; falls back to reference-catalog.md
 - [ ] **awesome-copilot loaded** — `"project-planning"` collection + `"task-implementation"` instruction
 - [ ] **Reference catalog fetched** — via GitHub MCP or local `.github/reference-catalog.md`
 - [ ] **Context7 used** — FastAPI / Pydantic docs loaded
@@ -192,7 +192,7 @@ delegate to the Documenter to save it as an ADR.
 - [ ] **`sdlc-adr-authoring` skill activated** — Documenter reads `.github/skills/sdlc-adr-authoring/SKILL.md`
 - [ ] **awesome-copilot ADR skill loaded** — `create-architectural-decision-record/SKILL.md` via MCP
 - [ ] **Template used** — Documenter reads `.design/ADR-TEMPLATE.md` (SDLC template takes precedence)
-- [ ] **GitHub MCP auth gate** — Documenter probes reference repos
+- [ ] **GitHub MCP (optional)** — Documenter probes reference repos if available; falls back to local patterns
 - [ ] **ADR file created** — `docs/adr/ADR-001-customer-feedback-api.md` (or similar)
 - [ ] **ADR structure correct** — matches SDLC template: Context, Problem, Design, Alternatives, Testing, RAI, SDLC Impact
 - [ ] **Status set** — `Proposed`
@@ -228,7 +228,7 @@ Use the API application template for API, base application template for Business
 
 ### Expected behavior:
 
-- [ ] **GitHub MCP auth gate** — Scaffolder probes `base application template` README
+- [ ] **GitHub MCP (optional)** — Scaffolder probes template repos if available; falls back to reference-catalog.md
 - [ ] **`sdlc-project-scaffolding` skill activated** — reads `.github/skills/sdlc-project-scaffolding/SKILL.md`
 - [ ] **Template fetched** — `API application template` structure retrieved via GitHub MCP
 - [ ] **awesome-copilot loaded (via skill)** — `multi-stage-dockerfile` + `containerization-docker-best-practices`
@@ -301,7 +301,7 @@ Set up Azure infrastructure for the Customer Feedback API:
 - [ ] **`sdlc-azure-deployment` skill activated** — reads `.github/skills/sdlc-azure-deployment/SKILL.md`
 - [ ] **ADO wiki fetched FIRST** — all 7 Bicep-development subsections (Bicep-standards, WAF-configuration-by-resource, AVM-publishing-process, Reusable-Network-Module-for-AVM-WAF, network, network_subnet_design)
 - [ ] **AVM registry checked** — `#fetch https://azure.github.io/Azure-Verified-Modules/indexes/bicep/bicep-resource-modules/` for module availability and latest versions
-- [ ] **GitHub MCP auth gate** — Deployer probes reference repos
+- [ ] **GitHub MCP (optional)** — Deployer probes reference repos if available; falls back to local Bicep patterns
 - [ ] **awesome-copilot loaded (via skill)** — `azure-deployment-preflight` + `update-avm-modules-in-bicep` + `bicep-code-best-practices`
 - [ ] **Azure MCP Bicep tools used** — AVM module discovery, resource type schemas
 - [ ] **Existing Bicep patterns fetched** — from application repos via GitHub MCP
@@ -357,7 +357,7 @@ Follow the strict code → unit test → next step sequence:
 
 ### Expected behavior:
 
-- [ ] **GitHub MCP auth gate** — Implementer probes `Cosmos DB library repo` README
+- [ ] **GitHub MCP (optional)** — Implementer probes SDK repos if available; falls back to reference-catalog.md patterns
 - [ ] **`sdlc-cosmos-repository` skill activated** — Implementer reads `.github/skills/sdlc-cosmos-repository/SKILL.md` for entity/repo patterns
 - [ ] **`sdlc-blob-storage` skill activated** — (if blob operations needed) reads `.github/skills/sdlc-blob-storage/SKILL.md`
 - [ ] **awesome-copilot Cosmos skill loaded** — `cosmosdb-datamodeling/SKILL.md` via MCP (loaded by skill)
@@ -440,7 +440,7 @@ Update documentation for the Customer Feedback API:
 
 ### Expected behavior:
 
-- [ ] **GitHub MCP auth gate** — Documenter probes reference repos
+- [ ] **GitHub MCP (optional)** — Documenter probes reference repos if available; falls back to local patterns
 - [ ] **API doc template used** — reads `.design/API-DOC-TEMPLATE.md`
 - [ ] **README template used** — reads `.design/README.template.md`
 - [ ] **MS Learn MCP used** — for Azure service documentation references
@@ -484,14 +484,14 @@ Review all code, tests, infrastructure, and documentation.
 #### 1. Architecture Reviewer
 - [ ] **`sdlc-architecture-review` skill activated** — reads `.github/skills/sdlc-architecture-review/SKILL.md`
 - [ ] awesome-copilot loaded (via skill): `architecture-blueprint-generator/SKILL.md`
-- [ ] GitHub MCP auth gate (probes `Cosmos DB library repo`)
-- [ ] `mcp_github_search_code` for `RepositoryBase` across `the project's GitHub org` org
+- [ ] GitHub MCP (optional) — probes reference repos if available; falls back to reference-catalog.md
+- [ ] `mcp_github_search_code` for `RepositoryBase` across `the project's GitHub org` org (if GitHub MCP available)
 - [ ] Reads `.github/reference-catalog.md`
 - [ ] Checks: layering, dependency direction, pattern reuse, no God services, template alignment
 - [ ] Output: Critical / Important / Suggestion / Positive findings
 
 #### 2. Azure Compliance Reviewer
-- [ ] GitHub MCP auth gate
+- [ ] GitHub MCP (optional) — probes SDK repos if available; falls back to reference-catalog.md
 - [ ] Fetches latest SDK APIs from `Cosmos DB library repo` + `Storage library repo`
 - [ ] awesome-copilot: `"bicep-code-best-practices"` loaded
 - [ ] Checks: `approved Cosmos DB library` usage, `RepositoryBase` pattern, `async with`, AVM modules, tags, diagnostics
@@ -621,7 +621,7 @@ Create a release checklist, changelog, and prepare the PR.
 
 ### Expected behavior:
 
-- [ ] **GitHub MCP auth gate** — Release Manager verifies GitHub MCP connectivity
+- [ ] **GitHub MCP (recommended)** — Release Manager uses GitHub MCP for PR creation; other release tasks work without it
 - [ ] **Commit history gathered** — via `mcp_github_list_commits`
 - [ ] **PR body follows template** — uses `.github/PULL_REQUEST_TEMPLATE.md` structure
 
@@ -684,7 +684,7 @@ ___________________________________________________________________________
 
 | Agent                     | Tested | MCP Integrations Verified                                 | Skills Activated                                            |
 | ------------------------- | ------ | --------------------------------------------------------- | ----------------------------------------------------------- |
-| Harness (Coordinator)       | [ ]    | GitHub MCP (auth gate), progressive config                | (orchestrator — delegates to skill-enabled agents)          |
+| Harness (Coordinator)       | [ ]    | awesome-copilot (required), GitHub MCP (optional), progressive config | (orchestrator — delegates to skill-enabled agents)          |
 | Analyst                   | [ ]    | GitHub MCP, awesome-copilot, Context7, ADO MCP            | (reads skill-aligned patterns in design output)             |
 | Scaffolder                | [ ]    | GitHub MCP, awesome-copilot, Context7, ADO MCP            | `sdlc-project-scaffolding`                                   |
 | Deployer                  | [ ]    | GitHub MCP, awesome-copilot, Azure MCP, MS Learn, ADO MCP | `sdlc-azure-deployment`                                      |
@@ -742,10 +742,11 @@ These should be verified across all steps:
 - [ ] Each phase fills only what it can determine
 - [ ] No placeholder is filled with a guessed value
 
-### Auth Gate Consistency
-- [ ] Every agent that needs `the project's GitHub org` repos probes before accessing them
+### MCP Integration Consistency
+- [ ] awesome-copilot is hard-required — agents stop if unavailable
+- [ ] GitHub MCP is optional — agents probe if available and fall back to reference-catalog.md with warning
 - [ ] Auth failures produce clear error messages with remediation steps
-- [ ] Graceful degradation falls back to `.github/reference-catalog.md` with warning
+- [ ] Graceful degradation uses `.github/reference-catalog.md` patterns when GitHub MCP unavailable
 
 ### SDLC Exit Criteria
 - [ ] Every agent includes its SDLC Exit Criteria checklist
@@ -770,7 +771,7 @@ These should be verified across all steps:
 | Problem                            | Likely Cause                                        | Fix                                                    |
 | ---------------------------------- | --------------------------------------------------- | ------------------------------------------------------ |
 | Harness doesn't detect placeholders  | `copilot-instructions.md` already filled            | Reset placeholders to `<PROJECT_NAME>` etc.            |
-| GitHub MCP auth fails              | Copilot not signed in with `the project's GitHub org` access | Sign in with correct account, check `.vscode/mcp.json` |
+| GitHub MCP not available            | Copilot not signed in with org access, or MCP not configured | Sign in with correct account, check `.vscode/mcp.json`. Agents fall back to reference-catalog.md |
 | Agent doesn't use awesome-copilot  | MCP server not configured or not responding         | Verify `awesome-copilot` in `.vscode/mcp.json`         |
 | ADR not auto-created after Analyst | Harness didn't follow ADR generation rule             | Manually ask: "Create an ADR from this design"         |
 | QA reviewers run sequentially      | QA Coordinator not parallelizing                    | Check if subagent tool supports parallel calls         |

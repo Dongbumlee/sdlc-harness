@@ -111,7 +111,7 @@ This plan covers 4 phases with 17 tasks total, taking the current sdlc-harness f
 **Acceptance Criteria:**
 - Schema validates all example profiles without errors
 - Each profile specifies: stack, cloud, cicd, evaluation, distribution sections
-- MCP readiness check enforces hard-stop for GitHub MCP and awesome-copilot
+- MCP readiness check enforces hard-stop for awesome-copilot; GitHub MCP degrades gracefully _(updated per 0e41994: GitHub MCP hard-stop removed)_
 - Profiles are composable (base + override pattern)
 
 **Effort Estimate:** Medium (3–4 days)
@@ -120,18 +120,18 @@ This plan covers 4 phases with 17 tasks total, taking the current sdlc-harness f
 
 ### Task 2.2: Bootstrap Pipeline with Profile System
 
-**Scope:** Implement the bootstrap sequence: config load → profile selection → MCP readiness check → workspace file generation → verification. Support both interactive wizard and `--profile` flag modes.
+**Scope:** Implement the bootstrap sequence: config load → profile selection → workspace initialization → workspace file generation → verification. Support both interactive wizard and `--profile` flag modes.
 
 **Deliverables:**
 - Bootstrap script/CLI that reads `harness-config.yml` or runs interactive wizard
 - Profile selection logic with inheritance (profile → base → defaults)
-- MCP readiness check implementation (probe each server, enforce hard-stop/warn)
+- Workspace initialization implementation (probe awesome-copilot; GitHub MCP optional with graceful degradation) _(updated per 0e41994)_
 - Generated `copilot-instructions.md` from template with placeholder filling
 
 **Acceptance Criteria:**
 - `harness init --profile azure-python` produces a valid workspace in under 30 seconds
 - `harness init` (no args) launches interactive wizard and produces equivalent output
-- MCP readiness check correctly identifies unavailable servers and blocks on hard-stop servers
+- Workspace initialization correctly identifies unavailable servers: awesome-copilot blocks; GitHub MCP degrades gracefully _(updated per 0e41994)_
 - Generated `copilot-instructions.md` has all `{{PLACEHOLDER}}` tokens replaced
 
 **Effort Estimate:** Large (4–5 days)
@@ -425,4 +425,4 @@ Phase 4 ────────────────────────
 | 3-agent orchestrator (Planner, Generator, Evaluator) | Interactive wizard UI (CLI-only in this plan) |
 | GitHub Copilot as sole platform target | Multi-platform distribution (deferred to future plan) |
 | Config-driven template conversion | Fully automated canary generation via code mutation |
-| MCP readiness check with hard-stop enforcement | Custom MCP server development |
+| MCP readiness check (awesome-copilot hard-stop; GitHub MCP graceful degradation) | Custom MCP server development |

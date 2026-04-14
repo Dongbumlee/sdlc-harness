@@ -67,14 +67,16 @@ The orchestrator follows a fixed protocol:
 
 The current `@Harness` coordinator implements critical mechanisms that the evolved orchestrator MUST preserve:
 
-**Step 0 — MCP Readiness Check:**
+**Step 0 — Workspace Initialization:**
+
+> **Note (post-0e41994):** GitHub MCP authentication is no longer a hard gate. Agents use GitHub MCP when available and degrade gracefully to local reference-catalog.md when unavailable.
 
 Before any phase execution, probe required MCP servers:
 
 | Server | Transport | Failure Mode |
 |---|---|---|
 | awesome-copilot | Docker (`ghcr.io/microsoft/mcp-dotnet-samples/awesome-copilot:latest`) | **Hard stop** — skills depend on live OWASP/best-practice data |
-| GitHub MCP | HTTP (`api.githubcopilot.com/mcp/`) | **Hard stop** — reference repos, templates, cross-repo search unavailable |
+| GitHub MCP | HTTP (`api.githubcopilot.com/mcp/`) | **Graceful degradation** — agents fall back to local reference-catalog.md patterns |
 | Context7 | npx (`@upstash/context7-mcp@latest`) | **Warn** — continue with degraded library/framework docs |
 | Azure DevOps MCP | npx (`@azure-devops/mcp`) | **Warn** — ADO wiki, work items, pipelines unavailable |
 | Azure MCP | npx (`@azure/mcp@latest`) | **Warn** — Azure resource management unavailable |
@@ -99,7 +101,7 @@ The workspace bootstrap template (`copilot-instructions.md`) contains `{{PLACEHO
 | ADR Gate | After every Analyst (design) output | Auto-delegate to Documenter for ADR authoring before proceeding to implementation |
 | Reference Catalog Gate | Before Implement phase artifacts are accepted | Verify no libraries introduced that aren't in `.github/reference-catalog.md` |
 | QA Feedback Loop | After QA phase identifies issues | Route back to Implementer for fixes, re-run only failing QA domains (max 3 rounds) |
-| GitHub MCP Auth Gate | Before ANY worker that needs reference repos | Verify org-level GitHub MCP authentication; no degraded mode |
+| GitHub MCP (optional) | Before workers that benefit from reference repos | Use GitHub MCP when available; **graceful degradation** to local reference-catalog.md when unavailable |
 
 ### 1.2 Planner Agent
 

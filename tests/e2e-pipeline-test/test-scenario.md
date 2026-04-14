@@ -20,13 +20,13 @@ This scenario exercises all agents and all skills in sequential order.
 
 - VS Code with GitHub Copilot Chat and Harness agent available
 - MCP servers configured in `.vscode/mcp.json`
-- GitHub MCP authenticated with `the project's GitHub org` org access
-- awesome-copilot MCP running (Docker Desktop required)
+- GitHub MCP configured (optional — enhances with live repo patterns; falls back to reference-catalog.md)
+- awesome-copilot MCP running (Docker Desktop required) — **hard stop if unavailable**
 - Clean working directory (no uncommitted changes)
 
 ---
 
-## Step 0: MCP Readiness (Harness)
+## Step 0: Workspace Initialization (Harness)
 
 ### Prompt
 ```
@@ -34,13 +34,13 @@ This scenario exercises all agents and all skills in sequential order.
 ```
 
 ### Expected behavior
-- [ ] Harness runs MCP server readiness check (Step 0)
-- [ ] Reports status table for: awesome-copilot, GitHub MCP (libraries), GitHub MCP (templates), Context7
+- [ ] Harness runs workspace initialization (Step 0)
+- [ ] Reports status: awesome-copilot (required), GitHub MCP (optional), Context7 (optional)
 - [ ] Detects placeholders in `copilot-instructions.md` and asks for project details
 - [ ] Fills `<PROJECT_NAME>` → "SmartDoc Analyzer"
 
 ### Agents validated
-- [x] **Harness** — MCP readiness check, placeholder detection, progressive config
+- [x] **Harness** — workspace initialization, placeholder detection, progressive config
 
 ### Skills validated
 - (none — orchestration only)
@@ -50,7 +50,7 @@ This scenario exercises all agents and all skills in sequential order.
 
 ### Validation keywords
 ```
-MCP Server Status|awesome-copilot|GitHub MCP|Context7|PROJECT_NAME|SmartDoc
+awesome-copilot|GitHub MCP|Context7|PROJECT_NAME|SmartDoc
 ```
 
 ---
@@ -82,7 +82,7 @@ Target users: enterprise knowledge workers.
   - Data model sketch (entities, repositories)
 
 ### Agents validated
-- [x] **Analyst** — design proposal, MCP probes
+- [x] **Analyst** — design proposal, requirements analysis
 
 ### Skills validated
 - [x] **sdlc-project-manifest** (if manifest creation is triggered)
@@ -287,14 +287,14 @@ Review all code, tests, infrastructure, and documentation.
 
 ### Expected behavior
 - [ ] Harness delegates to **QA Coordinator**
-- [ ] QA Coordinator runs MCP readiness check (Step 0)
+- [ ] QA Coordinator dispatches appropriate reviewers for the project type
 - [ ] Launches 8 reviewers IN PARALLEL
 - [ ] Synthesizes findings from all 8 perspectives
 - [ ] Presents Manual QA Checklist
 - [ ] Offers to create ADO bugs (if ADO available)
 
 ### Agents validated (9 agents)
-- [x] **QA Coordinator** — MCP probes, orchestration, synthesis, manual QA checklist
+- [x] **QA Coordinator** — reviewer orchestration, synthesis, manual QA checklist
 - [x] **Architecture Reviewer** — layering, dependency direction
 - [x] **Azure Compliance Reviewer** — approved Cosmos DB library/approved Storage library usage, AVM patterns
 - [x] **Code Quality Reviewer** — copyright, docstrings, naming, debug code

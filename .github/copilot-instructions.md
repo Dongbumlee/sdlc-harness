@@ -244,7 +244,7 @@
 
  ---
 
- ## 8. GitHub MCP authentication & reference repo access
+ ## 8. GitHub MCP & reference repo access
 
  <!-- TEMPLATE: Replace {{ORG_NAME}} with your GitHub organization name -->
 
@@ -254,30 +254,29 @@
  The specific repos are listed in `.github/reference-catalog.md`. They typically include
  approved SDK wrapper libraries and scaffolding templates.
 
- **Authentication is required.** These repos are not publicly accessible. The GitHub MCP server
- authenticates via the user's GitHub Copilot session, which must have access to the `{{ORG_NAME}}` org.
+ **GitHub MCP enhances workflows but is not mandatory.** When authenticated, agents fetch the
+ latest SDK patterns, template structures, and API examples from reference repos. When
+ unavailable, agents fall back to `.github/reference-catalog.md` and the patterns documented
+ in agent/skill instructions — these are tested and valid.
 
  **Rules for Copilot and all agents:**
 
- 1. **Verify access before relying on fetched content.** Before any workflow that depends on
-    reference repo content, perform a lightweight probe call (e.g., fetch `README.md` from one
-    of the catalog repos). If the call fails or returns an auth error:
-    - **Stop** the current workflow step.
-    - **Inform the user** that GitHub MCP authentication is required to access `{{ORG_NAME}}` repos.
-    - **Provide remediation steps:**
-      1. Ensure the GitHub Copilot extension is signed in with an account that has access to the `{{ORG_NAME}}` organization.
-      2. If using GitHub Copilot Chat, confirm the GitHub MCP server is listed and enabled in `.vscode/mcp.json`.
-      3. Try running a manual GitHub MCP call to verify access.
-    - **Do NOT proceed with stale or invented patterns** — the reference repos are the source of truth.
+ 1. **Prefer live patterns when GitHub MCP is available.** When authenticated with the
+    `{{ORG_NAME}}` organization, use GitHub MCP to fetch the latest SDK versions, template
+    updates, and cross-repo patterns. Live patterns are the most current source.
 
- 2. **No degraded mode — `{{ORG_NAME}}` access is mandatory.** Every engineer using this
-    template MUST have access to the `{{ORG_NAME}}` GitHub organization. If authentication
-    fails, STOP the workflow and require the user to sign in with a valid account.
-    Do NOT fall back to local patterns — the reference repos are the authoritative source
-    for project structure, SDK patterns, and template layouts.
+ 2. **Degrade gracefully when GitHub MCP is unavailable.** If GitHub MCP is not authenticated
+    or returns errors, fall back to:
+    - `.github/reference-catalog.md` for approved libraries and patterns
+    - Patterns documented in agent and skill instructions (e.g., `sdlc-cosmos-repository`)
+    - Do NOT block the workflow — continue with available information and note the limitation.
 
- 3. **No fabricated API surfaces.** If you cannot fetch the latest API from a reference repo,
-    do NOT guess or invent method signatures. STOP and ask the user to authenticate.
+ 3. **Never fabricate API surfaces.** If you cannot determine the correct API from either
+    GitHub MCP or local reference documentation, ask the user for clarification rather than
+    guessing method signatures.
+
+ **For best results:** Ensure GitHub Copilot is signed in with an account that has `{{ORG_NAME}}`
+ org access, and confirm the GitHub MCP server is enabled in `.vscode/mcp.json`.
 
  ---
 

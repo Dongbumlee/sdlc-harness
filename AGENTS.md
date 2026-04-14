@@ -163,10 +163,18 @@ Env var: `GITHUB_PERSONAL_ACCESS_TOKEN` in `~/.amplifier/keys.env`
 | — | Rename: accelerator → project | `58bd2ae`, `fb89842` | Done |
 | — | Sync fix + benchmark workflow update | `542db34` | Done |
 | — | Remove external repo dependencies | `09c3adf` | Done |
+| — | Library placeholder refactoring | `b0a470c` | Done |
+| — | MCP gate removal from harness | `0e41994` | Done |
+| — | Docs: align all markdown with MCP gate changes | pending | Done |
 
 ### Commits on `evo` Branch (Latest First)
 
 ```
+(pending) docs: align documentation with MCP gate and placeholder refactoring
+8cfdfc3 docs: update AGENTS.md - mark library placeholder refactoring as resolved
+b0a470c refactor: replace hardcoded library placeholders with project-config references
+0e41994 refactor: remove your-org MCP readiness gate from harness agent
+a256a72 docs: update AGENTS.md with library placeholder issue and session history
 09c3adf refactor: remove external repo dependencies from agents and skills
 88fb48b docs: update AGENTS.md with v2 implementation status
 04eb992 feat: add CI/CD canary validation workflow (v2 Step 5)
