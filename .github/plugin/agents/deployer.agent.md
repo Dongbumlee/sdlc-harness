@@ -26,7 +26,7 @@ Before creating infrastructure, read `.github/reference-catalog.md` and activate
 
 If you discover a new infrastructure pattern not in the catalog during deployment work,
 append it under the appropriate section using the entry format from the skill.
-Include `Source: Deployer (Phase 7)` on your entries.
+Include `Source: Deployer (Phase 8)` on your entries.
 
 ## Before creating infrastructure
 
