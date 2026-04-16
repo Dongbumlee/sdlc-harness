@@ -1,0 +1,19 @@
+{
+  "name": "azure",
+  "displayName": "Azure Cloud Pack",
+  "version": "1.0.0",
+  "cloud": "azure",
+  "agents": {
+    "deployer": "azure-deployer.agent.md",
+    "complianceReviewer": "azure-compliance-reviewer.agent.md"
+  },
+  "skills": [
+    "sdlc-azure-deployment",
+    "sdlc-cosmos-repository",
+    "sdlc-blob-storage"
+  ],
+  "mcpServers": "mcp-servers.json",
+  "reviewers": [
+    "azure-compliance-reviewer.agent.md"
+  ]
+}
