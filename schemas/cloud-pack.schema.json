@@ -1,0 +1,71 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/sdlc-harness/cloud-pack.schema.json",
+  "title": "Cloud Pack Manifest",
+  "description": "JSON Schema for cloud pack manifest files",
+  "type": "object",
+  "required": ["name", "displayName", "version", "cloud", "agents", "skills"],
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Pack identifier using lowercase letters and hyphens only",
+      "pattern": "^[a-z][a-z0-9-]*$"
+    },
+    "displayName": {
+      "type": "string",
+      "description": "Human-readable display name for the pack"
+    },
+    "version": {
+      "type": "string",
+      "description": "Semantic version (major.minor.patch)",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "cloud": {
+      "type": "string",
+      "description": "Target cloud provider",
+      "enum": ["azure", "aws", "gcp"]
+    },
+    "agents": {
+      "type": "object",
+      "description": "Agent file references for this pack",
+      "required": ["deployer"],
+      "properties": {
+        "deployer": {
+          "type": "string",
+          "description": "Required deployer agent file reference"
+        },
+        "complianceReviewer": {
+          "type": "string",
+          "description": "Optional compliance reviewer agent file reference"
+        }
+      },
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "skills": {
+      "type": "array",
+      "description": "List of skill identifiers included in this pack",
+      "minItems": 0,
+      "items": {
+        "type": "string"
+      }
+    },
+    "description": {
+      "type": "string",
+      "description": "Optional human-readable description of the pack"
+    },
+    "mcpServers": {
+      "type": "string",
+      "description": "Optional path to MCP servers configuration file"
+    },
+    "reviewers": {
+      "type": "array",
+      "description": "Optional list of reviewer agent file references",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
