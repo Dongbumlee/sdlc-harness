@@ -1,6 +1,5 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://github.com/sdlc-harness/cloud-pack.schema.json",
   "title": "Cloud Pack Manifest",
   "description": "JSON Schema for cloud pack manifest files",
   "type": "object",
