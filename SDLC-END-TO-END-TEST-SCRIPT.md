@@ -311,7 +311,7 @@ Set up Azure infrastructure for the Customer Feedback API:
 
 ### Expected behavior:
 
-- [ ] **`sdlc-azure-deployment` skill activated** — reads `.github/skills/sdlc-azure-deployment/SKILL.md`
+- [ ] **`sdlc-azure-deployment` skill activated** — reads `.github/plugin/packs/azure/skills/sdlc-azure-deployment/SKILL.md`
 - [ ] **ADO wiki fetched FIRST** — all 7 Bicep-development subsections (Bicep-standards, WAF-configuration-by-resource, AVM-publishing-process, Reusable-Network-Module-for-AVM-WAF, network, network_subnet_design)
 - [ ] **AVM registry checked** — `#fetch https://azure.github.io/Azure-Verified-Modules/indexes/bicep/bicep-resource-modules/` for module availability and latest versions
 - [ ] **GitHub MCP (optional)** — Deployer probes reference repos if available; falls back to local Bicep patterns
@@ -371,8 +371,8 @@ Follow the strict code → unit test → next step sequence:
 ### Expected behavior:
 
 - [ ] **GitHub MCP (optional)** — Implementer probes SDK repos if available; falls back to reference-catalog.md patterns
-- [ ] **`sdlc-cosmos-repository` skill activated** — Implementer reads `.github/skills/sdlc-cosmos-repository/SKILL.md` for entity/repo patterns
-- [ ] **`sdlc-blob-storage` skill activated** — (if blob operations needed) reads `.github/skills/sdlc-blob-storage/SKILL.md`
+- [ ] **`sdlc-cosmos-repository` skill activated** — Implementer reads `.github/plugin/packs/azure/skills/sdlc-cosmos-repository/SKILL.md` for entity/repo patterns
+- [ ] **`sdlc-blob-storage` skill activated** — (if blob operations needed) reads `.github/plugin/packs/azure/skills/sdlc-blob-storage/SKILL.md`
 - [ ] **awesome-copilot Cosmos skill loaded** — `cosmosdb-datamodeling/SKILL.md` via MCP (loaded by skill)
 - [ ] **Live SDK patterns fetched** — `HANDS_ON_GUIDE.md` from `Cosmos DB library repo` via GitHub MCP
 - [ ] **Context7 used** — FastAPI + Pydantic docs loaded

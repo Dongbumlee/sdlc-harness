@@ -134,8 +134,7 @@ section "4. Skill File Validation (12 skills)"
 # =============================================================
 EXPECTED_SKILLS=(
     sdlc-project-qa sdlc-adr-authoring sdlc-architecture-review
-    sdlc-azure-deployment sdlc-blob-storage sdlc-code-quality
-    sdlc-cosmos-repository sdlc-project-manifest sdlc-project-scaffolding
+    sdlc-code-quality sdlc-project-manifest sdlc-project-scaffolding
     sdlc-qa-bug-checklist sdlc-security-review sdlc-workspace-init
 )
 for skill in "${EXPECTED_SKILLS[@]}"; do
@@ -144,6 +143,19 @@ for skill in "${EXPECTED_SKILLS[@]}"; do
         pass "Skill: $skill ($(wc -l < "$f") lines)"
     else
         fail "Skill: $skill NOT FOUND"
+    fi
+done
+
+# Azure skills moved to packs/azure/skills/
+AZURE_SKILLS=(
+    sdlc-azure-deployment sdlc-blob-storage sdlc-cosmos-repository
+)
+for skill in "${AZURE_SKILLS[@]}"; do
+    f="$EXT/packs/azure/skills/$skill/SKILL.md"
+    if [[ -f "$f" ]]; then
+        pass "Skill (azure pack): $skill ($(wc -l < "$f") lines)"
+    else
+        fail "Skill (azure pack): $skill NOT FOUND"
     fi
 done
 
