@@ -1,0 +1,31 @@
+name: Build VSIX
+
+on:
+  pull_request:
+    branches: [dev, evo]
+  push:
+    branches: [dev, evo]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Build VSIX
+        run: cd vscode-extension && npx @vscode/vsce package --no-dependencies
+
+      - name: Validate VSIX
+        run: bash tests/e2e-vsix-validation/validate-vsix.sh
+
+      - name: Upload VSIX artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sdlc-agent-template-vsix
+          path: vscode-extension/*.vsix
+          retention-days: 30

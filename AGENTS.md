@@ -75,7 +75,7 @@ reasoning: "<evaluation summary>"
 
 ### Canary Testing
 
-- 9 canary specs in `bench/canaries/` (one per SDLC phase), all using unified v2 format
+- 11 canary specs in `bench/canaries/` (one per SDLC phase + 2 catalog-specific), all using unified v2 format
 - Harness supports canary mode (trigger: "run canary tests" / "canary mode")
 - Results stored in `bench/results/` as structured JSON
 - CI validates spec schema on PRs touching agents/skills
@@ -167,7 +167,7 @@ Env var: `GITHUB_PERSONAL_ACCESS_TOKEN` in `~/.amplifier/keys.env`
 | — | Library placeholder refactoring | `b0a470c` | Done |
 | — | MCP gate removal from harness | `0e41994` | Done |
 | — | Docs: align all markdown with MCP gate changes | `9e332da` | Done |
-| — | Living Reference Catalog feature | multiple commits | Done |
+| — | Living Reference Catalog feature | `51f518d`..`6e5f914` | Done |
 
 ### Commits on `evo` Branch (Latest First)
 
@@ -203,3 +203,4 @@ c8fe3fa refactor: remove Python evaluation layer (v2 migration Step 1)
 |------|---------|-------------|
 | 2026-04-12/13 | `aa3398f9-...` | V2 spec written, architecture decisions, GitHub MCP configured |
 | 2026-04-13 | `6f539128-...` | V2 migration Steps 1-5 implemented, accelerator→project rename, CI green, external repo refs removed, library placeholder issue documented |
+| 2026-04-14 | `6f539128-...` | Library placeholder refactoring, MCP gate removal, doc alignment, Living Reference Catalog feature (design, plan, 7-task implementation with 3-agent review pipeline) |

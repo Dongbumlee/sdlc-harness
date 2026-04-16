@@ -3,7 +3,7 @@
         {
             "id": "ado_org",
             "type": "promptString",
-            "description": "Azure DevOps organization name (e.g. 'CSACTOSOL')"
+            "description": "Azure DevOps organization name (e.g. 'your_org')"
         }
     ],
     "servers": {
