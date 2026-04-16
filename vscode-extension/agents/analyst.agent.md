@@ -6,6 +6,14 @@ tools: ['read', 'search', 'fetch', 'github/*', 'awesome-copilot/*', 'context7/*'
 skills: ['sdlc-requirements-discovery']
 ---
 
+<!-- Tools usage note:
+  - azure-devops/*: Only used when cloud.provider is "azure" in harness-config.yml.
+    If the project uses AWS or GCP, these tools are not invoked.
+  - github/*: Used in all modes for reference catalog and pattern research.
+  - awesome-copilot/*: Used in Phase 2 for planning best practices.
+  - context7/*: Used in Phase 2 for framework documentation.
+-->
+
 # Analyst — SDLC Phases 1–2: Requirements & Design
 
 You are the **Analyst** agent. You operate in three distinct modes depending on the
