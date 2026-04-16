@@ -209,6 +209,8 @@ The contribution path is explicit: Fork, copy `packs/azure/` as template, replac
 | Update canary specs | Ensure canaries work with the pack-based architecture |
 | Marketplace listing | VS Code marketplace + Copilot Extensions catalog |
 | Update CI workflows | Sync check and canary validation aware of `packs/` structure |
+| Move specs and plans to `docs/internal/` | Relocate `docs/specs/` and `docs/plans/` to `docs/internal/specs/` and `docs/internal/plans/` |
+| Configure publication exclusions | Set up `.gitignore` on `main` for `docs/internal/` and `AGENTS.md` |
 
 ## Medium-Term Roadmap (Months 2-3)
 
@@ -235,6 +237,39 @@ The contribution path is explicit: Fork, copy `packs/azure/` as template, replac
 - Demo walkthrough used as the primary adoption driver
 - LinkedIn announcement published
 - Internal canary suite expanded to validate each cloud pack independently
+
+## Publication Strategy
+
+The `evo` branch contains internal planning artifacts that must not be exposed when `main` is published.
+
+### Directory Split
+
+| Directory | Visibility | Contents |
+|-----------|-----------|----------|
+| `docs/` | **Public** (merged to `main`) | Getting started guide, architecture overview, agent/skill inventory, CONTRIBUTING.md |
+| `docs/internal/` | **Private** (excluded from `main`) | Design specs, implementation plans, competitive analysis, session history |
+
+### What Stays Private
+
+- `docs/internal/specs/` — Design specifications (including this document)
+- `docs/internal/plans/` — Implementation plans
+- `AGENTS.md` — Session history and internal context
+- Competitive analysis artifacts
+
+### What Goes Public
+
+- `README.md` (slim version)
+- `docs/getting-started.md`
+- `docs/architecture-overview.md`
+- `docs/agent-inventory.md`
+- `docs/skill-inventory.md`
+- `CONTRIBUTING.md`
+
+### Enforcement
+
+- Add `docs/internal/` and `AGENTS.md` to `.gitignore` on `main` branch
+- When merging `evo → main`, exclude private paths
+- CI check: fail if `docs/internal/` appears in a PR targeting `main`
 
 ## Open Questions
 
