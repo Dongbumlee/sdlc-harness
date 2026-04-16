@@ -2,11 +2,9 @@
 Tests for Azure cloud pack directory structure and manifest files.
 Task: Create Pack Directory Structure and Azure Pack Manifest
 """
-import json
-import os
-from pathlib import Path
 
-import pytest
+import json
+from pathlib import Path
 
 REPO_ROOT = Path(__file__).parent.parent
 
@@ -111,8 +109,8 @@ class TestVscodePackJson:
 
     def test_vscode_pack_json_identical_to_plugin(self):
         """Both pack.json files should be identical."""
-        assert PLUGIN_PACK_JSON.exists(), f"Plugin pack.json missing"
-        assert VSCODE_PACK_JSON.exists(), f"VSCode pack.json missing"
+        assert PLUGIN_PACK_JSON.exists(), "Plugin pack.json missing"
+        assert VSCODE_PACK_JSON.exists(), "VSCode pack.json missing"
         with open(PLUGIN_PACK_JSON) as f:
             plugin_data = json.load(f)
         with open(VSCODE_PACK_JSON) as f:
