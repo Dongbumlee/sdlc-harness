@@ -177,6 +177,7 @@ Before synthesizing, validate each reviewer's output:
 | Code Quality | X/10 | ≥7 | ✅ Pass / ⛔ Fail |
 | Security | X/10 | ≥8 | ✅ Pass / ⛔ Fail |
 | Test Coverage | X/10 | ≥7 | ✅ Pass / ⛔ Fail |
+| Requirements Completeness | X/10 | ≥7 | ✅ Pass / ⛔ Fail |
 | UX & Accessibility | X/10 | ≥7 | ✅ Pass / ⛔ Fail |
 | LLM Behavior | X/10 | ≥7 | ✅ Pass / ⛔ Fail |
 | Deployment Readiness | X/10 | ≥7 | ✅ Pass / ⛔ Fail |
