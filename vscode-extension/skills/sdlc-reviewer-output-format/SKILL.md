@@ -2,13 +2,13 @@
 name: sdlc-reviewer-output-format
 description: >-
   Structured YAML output format for SDLC QA reviewer agents.
-  Ensures consistent, parseable review output across all 8 reviewer domains.
+  Ensures consistent, parseable review output across all 9 reviewer domains.
   Use in conjunction with each reviewer's existing Markdown report format.
 ---
 
 # SDLC Reviewer Structured Output Format
 
-All 8 QA reviewer agents MUST emit a structured YAML block at the **end** of their response.
+All 9 QA reviewer agents MUST emit a structured YAML block at the **end** of their response.
 This block is parsed by the QA Coordinator to aggregate scores, apply hard-fail rules, and
 generate the synthesis report.
 
@@ -54,7 +54,7 @@ reasoning: "<2-3 sentence evaluation summary>"
 | Domain | Pass Threshold | Notes |
 |--------|---------------|-------|
 | Security Reviewer | ≥ 8 | Higher bar — security issues are never minor |
-| All other 7 reviewers | ≥ 7 | Standard production threshold |
+| All other 8 reviewers | ≥ 7 | Standard production threshold |
 
 **Verdict assignment:**
 - Any finding with `severity: critical` → verdict MUST be `CRITICAL_FAIL` regardless of score
@@ -85,6 +85,9 @@ Use the categories matching your reviewer domain:
 
 ### Test Coverage Reviewer
 `test-existence` | `aaa-structure` | `test-naming` | `test-isolation` | `mocking` | `edge-cases` | `assertions` | `coverage-threshold` | `test-pollution` | `integration-tests` | `file-upload` | `international-chars` | `error-paths` | `empty-state` | `playwright-a11y` | `cross-browser` | `keyboard-nav` | `console-errors`
+
+### Requirements Completeness Reviewer
+`requirement-testability` | `requirement-ambiguity` | `requirement-measurability` | `scope-coverage` | `acceptance-criteria` | `nfr-measurability` | `constraint-completeness` | `requirement-traceability`
 
 ### UX & Accessibility Reviewer
 `hardcoded-colors` | `fixed-widths` | `aria-labels` | `alt-text` | `keyboard-handlers` | `focus-indicators` | `enter-key` | `color-contrast` | `form-validation` | `navigation-guards` | `state-reset` | `error-boundary` | `empty-state`
@@ -136,4 +139,4 @@ The QA Coordinator extracts YAML blocks by:
 1. Finding the `---sdlc-review-output---` delimiter
 2. Reading content until `---end-sdlc-review-output---`
 3. Parsing the YAML to extract `score`, `verdict`, and `findings`
-4. Applying hard-fail rules across all 8 parsed blocks
+4. Applying hard-fail rules across all 9 parsed blocks
