@@ -1,7 +1,7 @@
 {
   "name": "sdlc-agent-template",
   "displayName": "SDLC Harness",
-  "description": "SDLC Harness — an agent-driven multi-agent system that orchestrates your entire software development lifecycle with harness-quality QA, 18 specialized agents, and 15 domain skills.",
+  "description": "SDLC Harness — an agent-driven multi-agent system that orchestrates your entire software development lifecycle with harness-quality QA, 19 specialized agents, and 16 domain skills.",
   "version": "1.0.0",
   "publisher": "sdlc-harness",
   "license": "MIT",
@@ -36,6 +36,7 @@
       { "path": "agents/llm-behavior-reviewer.agent.md" },
       { "path": "agents/qa-bug-checklist-reviewer.agent.md" },
       { "path": "agents/qa-coordinator.agent.md" },
+      { "path": "agents/requirements-completeness-reviewer.agent.md" },
       { "path": "agents/rai-reviewer.agent.md" },
       { "path": "agents/release-manager.agent.md" },
       { "path": "agents/scaffolder.agent.md" },
@@ -56,6 +57,7 @@
       { "path": "skills/sdlc-project-scaffolding/SKILL.md" },
       { "path": "skills/sdlc-qa-bug-checklist/SKILL.md" },
       { "path": "skills/sdlc-reference-catalog/SKILL.md" },
+      { "path": "skills/sdlc-requirements-discovery/SKILL.md" },
       { "path": "skills/sdlc-reviewer-output-format/SKILL.md" },
       { "path": "skills/sdlc-security-review/SKILL.md" },
       { "path": "skills/sdlc-workspace-init/SKILL.md" }
