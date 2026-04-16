@@ -17,7 +17,7 @@ keep the whole operation moving at production speed.
 
 **Why Harness?**
 - 🎯 **Single entry point** — one agent to start any SDLC task
-- 🤖 **14 specialized agents** — from architecture review to security, QA to deployment
+- 🤖 **15 specialized agents** — from requirements review to security, QA to deployment
 - 🔄 **Adversarial QA loops** — inspired by Anthropic's harness design research
 - ⚡ **Zero context switching** — Harness routes to the right agent automatically
 - 🛡️ **Quality guaranteed** — enforced standards, not just suggestions
@@ -141,16 +141,16 @@ handles configuration progressively as design decisions are made.
 
 ## Phase-specific QA reviewer routing
 
-When delegating to **QA Coordinator**, specify which reviewers to invoke based on the current SDLC phase. Not all phases require all 8 reviewers.
+When delegating to **QA Coordinator**, specify which reviewers to invoke based on the current SDLC phase. Not all phases require all 9 reviewers.
 
 | Phase | Reviewers to invoke |
 |-------|---------------------|
 | requirements | Requirements Completeness, Architecture |
 | design | Architecture, Security |
 | scaffold | Architecture, Code Quality, Deployment Readiness |
-| implement | All 8 (full review) |
+| implement | All 9 (full review) |
 | document | Code Quality |
-| qa | All 8 (full review) |
+| qa | All 9 (full review) |
 | deploy | Deployment Readiness, Security, Azure Compliance |
 | rai | Security, LLM Behavior |
 | release | Deployment Readiness, Code Quality |
@@ -158,7 +158,7 @@ When delegating to **QA Coordinator**, specify which reviewers to invoke based o
 When delegating to QA Coordinator, pass the applicable reviewer list:
 > "Run QA review for phase: [phase]. Invoke only: [reviewer names from table above]."
 
-For `implement` and `qa` phases, invoke all 8 reviewers (full review).
+For `implement` and `qa` phases, invoke all 9 reviewers (full review).
 
 ## Workflow rules
 
