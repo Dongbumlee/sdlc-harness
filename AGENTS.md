@@ -144,11 +144,10 @@ Env var: `GITHUB_PERSONAL_ACCESS_TOKEN` in `~/.amplifier/keys.env`
 | `docs/specs/2026-04-13-sdlc-harness-v2-spec.md` | V2 architecture specification |
 | `docs/specs/2026-04-10-sdlc-harness-spec.md` | Original v1 specification |
 | `.github/plugin/agents/harness.agent.md` | Main orchestrator agent |
-| `.github/plugin/agents/qa-coordinator.agent.md` | QA orchestrator (dispatches 8 reviewers) |
-| `bench/canaries/` | 9 E2E test scenarios (one per SDLC phase) |
+| `.github/plugin/agents/qa-coordinator.agent.md` | QA orchestrator (dispatches 9 reviewers) |
+| `bench/canaries/` | 11 E2E test scenarios (one per SDLC phase + catalog tests) |
 | `schemas/canary-spec.schema.json` | JSON schema for canary specs |
 | `tools/validate_canaries.py` | Canary spec validator |
-| `tests/e2e-agent-test/run-canaries.sh` | Local canary validation script |
 
 ## Implementation History
 
