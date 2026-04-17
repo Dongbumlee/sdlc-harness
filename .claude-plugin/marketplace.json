@@ -1,0 +1,35 @@
+{
+  "name": "sdlc-harness",
+  "owner": {
+    "name": "SDLC Harness Contributors"
+  },
+  "metadata": {
+    "description": "SDLC Harness — a multi-agent system that orchestrates your entire software development lifecycle with 19 specialized agents and 16 domain skills.",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "sdlc-harness",
+      "source": ".",
+      "description": "Full SDLC orchestration with 19 agents (harness, analyst, scaffolder, implementer, deployer, documenter, QA coordinator, 8 QA reviewers, RAI reviewer, release manager) and 16 skills covering code quality, security, architecture, testing, scaffolding, and Azure cloud patterns.",
+      "version": "1.0.0",
+      "author": {
+        "name": "SDLC Harness Contributors"
+      },
+      "homepage": "https://github.com/Dongbumlee/sdlc-harness",
+      "repository": "https://github.com/Dongbumlee/sdlc-harness",
+      "license": "MIT",
+      "keywords": [
+        "sdlc",
+        "multi-agent",
+        "code-quality",
+        "security-review",
+        "qa-review",
+        "scaffolding",
+        "azure",
+        "agent-skills"
+      ],
+      "category": "productivity"
+    }
+  ]
+}

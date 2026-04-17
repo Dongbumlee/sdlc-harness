@@ -31,3 +31,19 @@ jobs:
             vscode-extension/skills/ .github/plugin/skills/ \
             && echo "✅ Skills in sync" \
             || { echo "❌ Skill directories have diverged!"; exit 1; }
+
+      - name: Check pack directory sync
+        run: |
+          echo "=== Checking pack sync ==="
+          diff -r \
+            vscode-extension/packs/ .github/plugin/packs/ \
+            && echo "✅ Packs in sync" \
+            || { echo "❌ Pack directories have diverged!"; exit 1; }
+
+      - name: Check plugin.json sync
+        run: |
+          echo "=== Checking plugin.json sync ==="
+          diff \
+            vscode-extension/plugin.json .github/plugin/plugin.json \
+            && echo "✅ plugin.json in sync" \
+            || { echo "❌ plugin.json files have diverged!"; exit 1; }
