@@ -1,9 +1,20 @@
 # SDLC End-to-End Test Script
 
-> **Purpose:** Validate the entire 9-phase SDLC Agent pipeline using a realistic feature scenario.
-> **Scenario:** "Customer Feedback API" — a FastAPI service with Cosmos DB storage and React frontend.
-> **Estimated time:** 60–90 minutes for a full run.
-> **Prerequisite:** VS Code with GitHub Copilot extension, MCP servers configured in `.vscode/mcp.json`.
+> **Purpose:** Validate the entire 9-phase SDLC Agent pipeline using a realistic feature scenario.\
+> **Scenario:** "Customer Feedback API" — a FastAPI service with Cosmos DB storage and React frontend.\
+> **Duration:** ~60–90 minutes for a full run.\
+> **Prerequisite:** VS Code with GitHub Copilot, MCP servers configured.
+
+```
+ ┌──────────────────────────────────────────────────────────────────────┐
+ │  🧪 E2E Test Flow                                                  │
+ │                                                                    │
+ │  Init → Analyze → Design → Scaffold → Deploy → Implement →        │
+ │  Document → QA (9 reviewers) → RAI → Release                      │
+ │                                                                    │
+ │  19 agents · 16 skills · 7 MCP servers · 9 SDLC phases            │
+ └──────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 
@@ -53,7 +64,7 @@ Before starting, verify these are in place:
 - [ ] All **Prerequisites** above are met (Docker Desktop running, Node.js installed)
 - [ ] All **6 MCP servers** are started in `.vscode/mcp.json` (see table above)
 - [ ] VS Code is open with this repo as the workspace root
-- [ ] GitHub Copilot extension is signed in (account has `the project's GitHub org` org access)
+- [ ] GitHub Copilot extension is signed in
 - [ ] `.github/copilot-instructions.md` still has unfilled placeholders (for first-run init test)
 - [ ] `docs/adr/` folder is empty (clean slate)
 - [ ] `docs/api/` folder is empty (clean slate)
@@ -71,7 +82,7 @@ Before starting, verify these are in place:
 | 4    | Phase 3+8     | Harness → Deployer                     | 10 min   |
 | 5    | Phase 4       | Harness → Implementer                  | 15 min   |
 | 6    | Phase 5       | Harness → Documenter                   | 5 min    |
-| 7    | Phase 6       | Harness → QA Coordinator → 8 Reviewers | 10 min   |
+| 7    | Phase 6       | Harness → QA Coordinator → 9 Reviewers | 10 min   |
 | 8    | Phase 7       | Harness → RAI Reviewer                 | 5 min    |
 | 9    | Phase 8-9     | Harness → Release Manager              | 5 min    |
 
@@ -156,7 +167,7 @@ Please produce a design proposal.
 - [ ] **Problem / Requirements** — functional + non-functional listed
 - [ ] **Design / Implementation** — includes:
   - [ ] Layered architecture (API → Application → Domain → Infrastructure)
-  - [ ] Azure services mapped: Cosmos DB → `approved Cosmos DB library`, Container Apps
+  - [ ] Azure services mapped: Cosmos DB → the approved Cosmos DB SDK wrapper, Container Apps
   - [ ] Data model: `Feedback` entity extending `RootEntityBase`
   - [ ] API endpoints: `POST /feedback`, `GET /feedback/{id}`, `GET /feedback?category=...`
   - [ ] Repository: `FeedbackRepository` extending `RepositoryBase`
@@ -177,8 +188,8 @@ Please produce a design proposal.
 
 ### Red flags (should NOT happen):
 
-- [ ] ~~Raw `CosmosClient` proposed instead of `approved Cosmos DB library`~~
-- [ ] ~~Raw `BlobServiceClient` proposed instead of `approved Storage library`~~
+- [ ] ~~Raw `CosmosClient` proposed instead of the approved Cosmos DB SDK wrapper~~
+- [ ] ~~Raw `BlobServiceClient` proposed instead of the approved Storage SDK wrapper~~
 - [ ] ~~New architectural pattern invented without checking existing code~~
 
 ### Result: [ ] PASS / [ ] FAIL
@@ -247,7 +258,7 @@ Use the API application template for API, base application template for Business
   - [ ] `app/routers/` — API route handlers
   - [ ] `app/services/` — application services (orchestration)
   - [ ] `tests/` — API-level tests
-  - [ ] `pyproject.toml` — with `approved Cosmos DB library`, `fastapi` dependencies
+  - [ ] `pyproject.toml` — with the approved Cosmos DB SDK wrapper, `fastapi` dependencies
   - [ ] `Dockerfile` — multi-stage build
   - [ ] `.devcontainer/` — per-project devcontainer
   - [ ] `.gitignore`, `.dockerignore`, `.env.example`
@@ -256,7 +267,7 @@ Use the API application template for API, base application template for Business
   - [ ] `app/repositories/` — data access (FeedbackRepository)
   - [ ] `app/services/` — shared business logic
   - [ ] `tests/` — unit tests
-  - [ ] `pyproject.toml` — with `approved Cosmos DB library`, `approved Storage library`, `pydantic` dependencies
+  - [ ] `pyproject.toml` — with the approved Cosmos DB SDK wrapper, the approved Storage SDK wrapper, `pydantic` dependencies
   - [ ] `Dockerfile`, `.devcontainer/`
 - [ ] `src/CustomerFeedbackWeb/` — Web layer with:
   - [ ] `src/` — React source (components, hooks, pages)
@@ -360,8 +371,8 @@ ___________________________________________________________________________
 Implement the Customer Feedback API according to the design.
 Follow the strict code → unit test → next step sequence:
 
-1. Domain layer: Feedback entity using approved Cosmos DB library RootEntityBase → unit test for validation
-2. Infrastructure layer: FeedbackRepository using approved Cosmos DB library RepositoryBase → unit test with mocked DB
+1. Domain layer: Feedback entity using the approved Cosmos DB SDK wrapper RootEntityBase → unit test for validation
+2. Infrastructure layer: FeedbackRepository using the approved Cosmos DB SDK wrapper RepositoryBase → unit test with mocked DB
 3. Application layer: FeedbackService with business logic → unit test with mocked repository
 4. API layer: FastAPI routes (POST /feedback, GET /feedback/{id}, GET /feedback?category=...) → unit test for routes
 5. Integration tests for API endpoints (after all code + unit tests)
@@ -418,7 +429,7 @@ Follow the strict code → unit test → next step sequence:
 
 ### Red flags:
 
-- [ ] ~~Raw `CosmosClient` used instead of `approved Cosmos DB library` RepositoryBase~~
+- [ ] ~~Raw `CosmosClient` used instead of the approved Cosmos DB SDK wrapper RepositoryBase~~
 - [ ] ~~`os.getenv()` used instead of Pydantic `BaseSettings`~~
 - [ ] ~~No tests generated alongside code (tests batched at end)~~
 - [ ] ~~Infrastructure called directly from router (skip Application layer)~~
@@ -478,7 +489,7 @@ ___________________________________________________________________________
 
 ---
 
-## Step 7 — Phase 6: QA Activities (QA Coordinator + 8 Reviewers)
+## Step 7 — Phase 6: QA Activities (QA Coordinator + 9 Reviewers)
 
 ### Prompt to send to `@Harness`:
 
@@ -490,15 +501,15 @@ Review all code, tests, infrastructure, and documentation.
 ### Expected behavior:
 
 - [ ] **Harness delegates to QA Coordinator**
-- [ ] **QA Coordinator launches 8 reviewers IN PARALLEL** (not sequentially)
+- [ ] **QA Coordinator launches 9 reviewers IN PARALLEL** (not sequentially)
 
-### 8 Parallel Reviewers — what each should do:
+### 9 Parallel Reviewers — what each should do:
 
 #### 1. Architecture Reviewer
 - [ ] **`sdlc-architecture-review` skill activated** — reads `.github/skills/sdlc-architecture-review/SKILL.md`
 - [ ] awesome-copilot loaded (via skill): `architecture-blueprint-generator/SKILL.md`
 - [ ] GitHub MCP (optional) — probes reference repos if available; falls back to reference-catalog.md
-- [ ] `mcp_github_search_code` for `RepositoryBase` across `the project's GitHub org` org (if GitHub MCP available)
+- [ ] `mcp_github_search_code` for `RepositoryBase` patterns (if GitHub MCP available)
 - [ ] Reads `.github/reference-catalog.md`
 - [ ] Checks: layering, dependency direction, pattern reuse, no God services, template alignment
 - [ ] Output: Critical / Important / Suggestion / Positive findings
@@ -507,7 +518,7 @@ Review all code, tests, infrastructure, and documentation.
 - [ ] GitHub MCP (optional) — probes SDK repos if available; falls back to reference-catalog.md
 - [ ] Fetches latest SDK APIs from `Cosmos DB library repo` + `Storage library repo`
 - [ ] awesome-copilot: `"bicep-code-best-practices"` loaded
-- [ ] Checks: `approved Cosmos DB library` usage, `RepositoryBase` pattern, `async with`, AVM modules, tags, diagnostics
+- [ ] Checks: the approved Cosmos DB SDK wrapper usage, `RepositoryBase` pattern, `async with`, AVM modules, tags, diagnostics
 - [ ] Output: Critical / Important / Suggestion / Positive findings
 
 #### 3. Code Quality Reviewer
@@ -520,7 +531,7 @@ Review all code, tests, infrastructure, and documentation.
 #### 4. Security Reviewer
 - [ ] **`sdlc-security-review` skill activated** — reads `.github/skills/sdlc-security-review/SKILL.md`
 - [ ] awesome-copilot loaded (via skill): `"security-and-owasp"` (fresh every review)
-- [ ] Project-specific Azure checks applied: Managed Identity, Key Vault, approved Cosmos DB library/approved Storage library auth
+- [ ] Project-specific Azure checks applied: Managed Identity, Key Vault, the approved Cosmos DB SDK wrapper/the approved Storage SDK wrapper auth
 - [ ] Checks: OWASP Top 10 mapped, secrets, credentials, CORS, headers, input validation, dependencies
 - [ ] Output: Critical / Important / Suggestion / Positive findings
 
@@ -531,14 +542,21 @@ Review all code, tests, infrastructure, and documentation.
 - [ ] Checks: test existence, AAA structure, naming, isolation, mocking, edge cases, assertions, coverage
 - [ ] Output: Critical / Important / Suggestion / Positive findings
 
-#### 6. UX & Accessibility Reviewer
+#### 6. Requirements Completeness Reviewer
+- [ ] **`sdlc-requirements-discovery` skill activated** — reads `.github/skills/sdlc-requirements-discovery/SKILL.md`
+- [ ] Cross-references implementation against design requirements from ADR
+- [ ] Checks: all functional requirements addressed, NFRs covered, edge cases identified
+- [ ] Checks: acceptance criteria mapped to tests, no requirement gaps
+- [ ] Output: Critical / Important / Suggestion / Positive findings
+
+#### 7. UX & Accessibility Reviewer
 - [ ] **`sdlc-project-qa` skill activated** — reads `.github/skills/sdlc-project-qa/SKILL.md`
 - [ ] Categories 1-2 applied (UX & Accessibility, Core Functionality & State)
 - [ ] Checks: ARIA labels, alt text, keyboard nav, focus indicators, dark mode CSS, error boundaries
 - [ ] Emits manual QA items: cross-browser, screen reader, high-DPI, golden path
 - [ ] Output: Critical / Important / Suggestion / Positive + Manual QA Required
 
-#### 7. LLM Behavior Reviewer
+#### 8. LLM Behavior Reviewer
 - [ ] **`sdlc-project-qa` skill activated** — reads `.github/skills/sdlc-project-qa/SKILL.md`
 - [ ] Categories 3-4 applied (LLM & Agent Behavior, Data & File Handling)
 - [ ] Checks: system prompt protection, content filters, prompt injection guards, citations, grounding, retry logic
@@ -546,7 +564,7 @@ Review all code, tests, infrastructure, and documentation.
 - [ ] Emits manual QA items: grounding accuracy, citation verification, prompt brittleness
 - [ ] Output: Critical / Important / Suggestion / Positive + Manual QA Required
 
-#### 8. Deployment Readiness Reviewer
+#### 9. Deployment Readiness Reviewer
 - [ ] **`sdlc-project-qa` skill activated** — reads `.github/skills/sdlc-project-qa/SKILL.md`
 - [ ] Categories 5, 7-9 applied (Error Handling, Performance, Repo Hygiene, Observability)
 - [ ] Checks: error exposure, rate limits, global exception handler, timeouts, unbounded queries, pagination
@@ -569,7 +587,7 @@ Review all code, tests, infrastructure, and documentation.
 
 ### SDLC Exit Criteria reported by QA Coordinator:
 
-- [ ] All 8 review perspectives completed: ✅/⚠️/⛔
+- [ ] All 9 review perspectives completed: ✅/⚠️/⛔
 - [ ] No critical issues remaining: ✅/⚠️/⛔
 - [ ] Automated tests pass: ✅/⚠️/⛔
 - [ ] Code quality standards met: ✅/⚠️/⛔
@@ -689,7 +707,7 @@ ___________________________________________________________________________
 | 4    | 3+8     | Deployer           | [ ] PASS / [ ] FAIL |       |
 | 5    | 4       | Implementer        | [ ] PASS / [ ] FAIL |       |
 | 6    | 5       | Documenter         | [ ] PASS / [ ] FAIL |       |
-| 7    | 6       | QA Coordinator + 8 | [ ] PASS / [ ] FAIL |       |
+| 7    | 6       | QA Coordinator + 9 | [ ] PASS / [ ] FAIL |       |
 | 8    | 7       | RAI Reviewer       | [ ] PASS / [ ] FAIL |       |
 | 9    | 8-9     | Release Manager    | [ ] PASS / [ ] FAIL |       |
 
@@ -703,12 +721,13 @@ ___________________________________________________________________________
 | Deployer                  | [ ]    | GitHub MCP, awesome-copilot, Azure MCP, MS Learn, ADO MCP | `sdlc-azure-deployment`                                      |
 | Implementer               | [ ]    | GitHub MCP, Context7, awesome-copilot                     | `sdlc-cosmos-repository`, `sdlc-blob-storage`                 |
 | Documenter                | [ ]    | GitHub MCP, MS Learn                                      | `sdlc-adr-authoring`                                         |
-| QA Coordinator            | [ ]    | (orchestrates 8 reviewers)                                | (delegates to skill-enabled reviewers)                      |
+| QA Coordinator            | [ ]    | (orchestrates 9 reviewers)                                | (delegates to skill-enabled reviewers)                      |
 | Architecture Reviewer     | [ ]    | GitHub MCP                                                | `sdlc-architecture-review`                                  |
 | Azure Compliance Reviewer | [ ]    | GitHub MCP, awesome-copilot                               | (references `sdlc-cosmos-repository`, `sdlc-blob-storage`)  |
 | Code Quality Reviewer     | [ ]    | awesome-copilot                                           | `sdlc-code-quality`                                         |
 | Security Reviewer         | [ ]    | awesome-copilot                                           | `sdlc-security-review`                                      |
 | Test Coverage Reviewer    | [ ]    | awesome-copilot                                           | (references test-quality instruction files)                 |
+| Req. Completeness Rev.    | [ ]    | —                                                         | `sdlc-requirements-discovery`                               |
 | UX & Accessibility Rev.   | [ ]    | —                                                         | `sdlc-project-qa` (Categories 1-2)                      |
 | LLM Behavior Reviewer     | [ ]    | —                                                         | `sdlc-project-qa` (Cat 3-4) + `sdlc-security-review`   |
 | Deployment Readiness Rev. | [ ]    | —                                                         | `sdlc-project-qa` (Categories 5, 7-9)                   |
@@ -748,7 +767,7 @@ These should be verified across all steps:
 | `sdlc-architecture-review` | Step 7 (Architecture Reviewer) | [ ] |
 | `sdlc-azure-deployment` | Step 4 (Deployer — Bicep/AVM) | [ ] |
 | `sdlc-project-scaffolding` | Step 3 (Scaffolder — folder structure) | [ ] |
-| `sdlc-code-quality` | Step 7 (Code Quality Reviewer) | [ ] |
+| `sdlc-code-quality` | Step 7 (Code Quality Reviewer) | [ ] |\n| `sdlc-requirements-discovery` | Step 7 (Requirements Completeness Reviewer) | [ ] |
 
 ### Progressive Configuration
 - [ ] Placeholders are filled incrementally (not all at once)
@@ -773,8 +792,8 @@ These should be verified across all steps:
 - [ ] Docstrings on all public functions/classes
 
 ### Reference Catalog Compliance
-- [ ] `approved Cosmos DB library` used for Cosmos DB (never raw SDK)
-- [ ] `approved Storage library` used for Blob/Queue (if applicable)
+- [ ] the approved Cosmos DB SDK wrapper used for Cosmos DB (never raw SDK)
+- [ ] the approved Storage SDK wrapper used for Blob/Queue (if applicable)
 - [ ] No unauthorized dependencies introduced
 
 ---
