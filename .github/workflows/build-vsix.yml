@@ -18,7 +18,7 @@ jobs:
           node-version: '20'
 
       - name: Build VSIX
-        run: cd vscode-extension && npx @vscode/vsce package --no-dependencies
+        run: cd vscode-extension && npx -y @vscode/vsce package --no-dependencies --allow-missing-repository
 
       - name: Validate VSIX
         run: bash tests/e2e-vsix-validation/validate-vsix.sh

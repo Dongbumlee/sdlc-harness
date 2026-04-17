@@ -1,0 +1,13 @@
+# Exclude from VSIX package
+.github/
+.claude-plugin/
+bench/
+docs/
+schemas/
+tests/
+tools/
+*.md
+!README.md
+.gitignore
+.gitattributes
+*.vsix

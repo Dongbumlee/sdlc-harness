@@ -5,6 +5,10 @@
   "version": "1.0.0",
   "publisher": "sdlc-harness",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Dongbumlee/sdlc-harness"
+  },
   "engines": {
     "vscode": "^1.99.0"
   },

@@ -9,7 +9,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 VSIX_DIR="$REPO_ROOT/vscode-extension"
-VSIX_FILE="$VSIX_DIR/sdlc-agent-template-1.0.0.vsix"
+VSIX_FILE="$VSIX_DIR/sdlc-harness-1.0.0.vsix"
 EXTRACT_DIR=$(mktemp -d)
 
 trap 'rm -rf "$EXTRACT_DIR"' EXIT
@@ -32,7 +32,7 @@ section "1. VSIX Package Exists"
 # =============================================================
 if [[ -f "$VSIX_FILE" ]]; then
     SIZE=$(du -h "$VSIX_FILE" | cut -f1)
-    pass "VSIX found: sdlc-agent-template-1.0.0.vsix ($SIZE)"
+    pass "VSIX found: sdlc-harness-1.0.0.vsix ($SIZE)"
 else
     fail "VSIX not found at $VSIX_FILE"
     echo "Run: cd vscode-extension && npx @vscode/vsce package --no-dependencies"
