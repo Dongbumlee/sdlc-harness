@@ -3,6 +3,8 @@
 [![CI](https://github.com/Dongbumlee/sdlc-harness/actions/workflows/sync-check.yml/badge.svg?branch=evo)](https://github.com/Dongbumlee/sdlc-harness/actions/workflows/sync-check.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![copilot plugin install](https://img.shields.io/badge/copilot%20plugin%20install-sdlc--harness-8A2BE2)](https://github.com/Dongbumlee/sdlc-harness)
+[![VS Code](https://img.shields.io/badge/VS%20Code-1.99+-007ACC?logo=visual-studio-code&logoColor=white)](https://code.visualstudio.com/)
+[![GitHub Copilot CLI](https://img.shields.io/badge/Copilot%20CLI-supported-000?logo=github&logoColor=white)](https://docs.github.com/en/copilot/how-tos/copilot-cli)
 
 > *From first commit to final release, Harness orchestrates your entire software development
 > lifecycle — so you can focus on building what matters.*
