@@ -6,14 +6,16 @@
 > **Prerequisite:** VS Code with GitHub Copilot, MCP servers configured.
 
 ```
- ┌──────────────────────────────────────────────────────────────────────┐
- │  🧪 E2E Test Flow                                                  │
- │                                                                    │
- │  Init → Analyze → Design → Scaffold → Deploy → Implement →        │
- │  Document → QA (9 reviewers) → RAI → Release                      │
- │                                                                    │
- │  19 agents · 16 skills · 7 MCP servers · 9 SDLC phases            │
- └──────────────────────────────────────────────────────────────────────┘
+ ┌────────────────────────────────────────────────────────────────┐
+ │                                                                │
+ │   E2E Test Flow                                                │
+ │                                                                │
+ │   Init > Analyze > Design > Scaffold > Deploy > Implement >    │
+ │   Document > QA (9 reviewers) > RAI > Release                  │
+ │                                                                │
+ │   19 agents  -  16 skills  -  7 MCP servers  -  9 SDLC phases  │
+ │                                                                │
+ └────────────────────────────────────────────────────────────────┘
 ```
 
 ---
