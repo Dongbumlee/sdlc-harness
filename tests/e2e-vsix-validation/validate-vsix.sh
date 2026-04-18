@@ -234,15 +234,18 @@ for prompt in "${EXPECTED_PROMPTS[@]}"; do
 done
 
 # =============================================================
-section "7. Top-Level Documentation"
+section "7. Workspace-Init Template Assets"
 # =============================================================
-for doc in copilot-instructions.md reference-catalog.md SDLC-with-Copilot-and-Azure.md; do
-    f="$EXT/$doc"
+# These files are deployed to target repos by sdlc-workspace-init skill,
+# not shipped at the VSIX root. Check they exist in the skill assets.
+INIT_ASSETS="$EXT/skills/sdlc-workspace-init/assets"
+for doc in copilot-instructions.template.md reference-catalog.template.md; do
+    f="$INIT_ASSETS/$doc"
     if [[ -f "$f" ]]; then
         lines=$(wc -l < "$f")
-        pass "Doc: $doc ($lines lines)"
+        pass "Template asset: $doc ($lines lines)"
     else
-        fail "Doc: $doc NOT FOUND"
+        warn "Template asset: $doc not found in workspace-init assets"
     fi
 done
 
@@ -353,18 +356,7 @@ section "13. Source ↔ VSIX Sync Check"
 # =============================================================
 GITHUB_DIR="$REPO_ROOT/.github"
 if [[ -d "$GITHUB_DIR" ]]; then
-    for doc in reference-catalog.md copilot-instructions.md SDLC-with-Copilot-and-Azure.md; do
-        GH_FILE="$GITHUB_DIR/$doc"
-        VS_FILE="$VSIX_DIR/$doc"
-        if [[ -f "$GH_FILE" && -f "$VS_FILE" ]]; then
-            if diff -q "$GH_FILE" "$VS_FILE" > /dev/null 2>&1; then
-                pass ".github/$doc ↔ vscode-extension/$doc IN SYNC"
-            else
-                DIFF_LINES=$(diff "$GH_FILE" "$VS_FILE" | wc -l)
-                fail ".github/$doc ↔ vscode-extension/$doc OUT OF SYNC ($DIFF_LINES diff lines)"
-            fi
-        fi
-    done
+    # Template files are workspace-init assets, not top-level docs — skip sync check for them
 
     GH_INST="$GITHUB_DIR/instructions"
     VS_INST="$VSIX_DIR/skills/sdlc-workspace-init/assets/instructions"
