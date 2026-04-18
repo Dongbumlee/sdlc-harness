@@ -10,6 +10,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - uses: actions/checkout@v5
 
@@ -18,7 +20,9 @@ jobs:
           node-version: '22'
 
       - name: Build VSIX
-        run: cd vscode-extension && npx -y @vscode/vsce package --no-dependencies --allow-missing-repository
+        run: |
+          cp LICENSE vscode-extension/LICENSE
+          cd vscode-extension && npx -y @vscode/vsce package --no-dependencies --allow-missing-repository
 
       - name: Validate VSIX
         run: bash tests/e2e-vsix-validation/validate-vsix.sh

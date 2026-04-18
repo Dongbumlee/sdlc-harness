@@ -27,6 +27,8 @@ jobs:
     name: Validate canary specs (schema)
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
       - uses: actions/checkout@v5
@@ -47,6 +49,8 @@ jobs:
     name: Agent & skill sync check
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
       - uses: actions/checkout@v5
