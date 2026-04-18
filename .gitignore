@@ -6,3 +6,10 @@ __pycache__/
 *.vsix
 *.whl
 
+# Internal dev files (not for distribution)
+AGENTS.md
+SDLC-END-TO-END-TEST-SCRIPT.md
+.mcp.json
+docs/internal/
+docs/placeholder-mapping.md
+
