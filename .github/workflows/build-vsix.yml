@@ -11,11 +11,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Build VSIX
         run: cd vscode-extension && npx -y @vscode/vsce package --no-dependencies --allow-missing-repository
@@ -24,7 +24,7 @@ jobs:
         run: bash tests/e2e-vsix-validation/validate-vsix.sh
 
       - name: Upload VSIX artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: sdlc-harness-vsix
           path: vscode-extension/*.vsix
