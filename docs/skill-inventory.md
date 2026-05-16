@@ -3,7 +3,7 @@
 **Version:** 1.0.0
 **Date:** 2026-04-11
 **Source branch:** `evo`
-**Total skills:** 12
+**Total skills:** 16
 
 ---
 
@@ -23,6 +23,9 @@
 | 10 | sdlc-qa-bug-checklist | QA bug tracking checklist | 6 (QA) | QA Bug Checklist Reviewer, QA Coordinator | No |
 | 11 | sdlc-cosmos-repository | CosmosDB repository pattern | 4 (Implement) | Implementer | Yes (Azure) |
 | 12 | sdlc-blob-storage | Azure Blob Storage integration | 4 (Implement) | Implementer | Yes (Azure) |
+| 13 | sdlc-canary-runner | E2E canary test execution | 6 (QA) / CI | Harness _(CI — canary-test.yml)_ | No |
+| 14 | sdlc-reference-catalog | Living catalog of approved libraries | All | Analyst, Scaffolder, Implementer, Deployer, Documenter, Harness | No |
+| 15 | sdlc-reviewer-output-format | Structured YAML output schema for QA reviewers | 6 (QA) | QA Coordinator + 9 reviewers | No |
 
 ---
 
@@ -36,7 +39,7 @@
 | Deployer | sdlc-azure-deployment |
 | Implementer | sdlc-project-manifest, sdlc-cosmos-repository, sdlc-blob-storage |
 | Documenter | sdlc-adr-authoring, sdlc-project-manifest |
-| QA Coordinator | sdlc-code-quality, sdlc-security-review, sdlc-project-qa, sdlc-qa-bug-checklist |
+| QA Coordinator | sdlc-code-quality, sdlc-security-review, sdlc-project-qa, sdlc-qa-bug-checklist, sdlc-reviewer-output-format |
 | Architecture Reviewer | sdlc-architecture-review |
 | Code Quality Reviewer | sdlc-code-quality |
 | Security Reviewer | sdlc-security-review |

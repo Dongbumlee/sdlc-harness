@@ -3,7 +3,6 @@ __pycache__/
 .venv/
 *.egg-info/
 .pytest_cache/
-*.vsix
 *.whl
 
 # Internal dev files (not for distribution)

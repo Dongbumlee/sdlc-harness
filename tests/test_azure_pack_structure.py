@@ -12,13 +12,10 @@ REPO_ROOT = Path(__file__).parent.parent
 REQUIRED_DIRS = [
     ".github/plugin/packs/azure/skills",
     ".github/plugin/packs/_template/skills",
-    "vscode-extension/packs/azure/skills",
-    "vscode-extension/packs/_template/skills",
 ]
 
 # Required pack.json locations
 PLUGIN_PACK_JSON = REPO_ROOT / ".github/plugin/packs/azure/pack.json"
-VSCODE_PACK_JSON = REPO_ROOT / "vscode-extension/packs/azure/pack.json"
 
 
 class TestDirectoryStructure:
@@ -28,14 +25,6 @@ class TestDirectoryStructure:
 
     def test_github_plugin_template_skills_dir_exists(self):
         path = REPO_ROOT / ".github/plugin/packs/_template/skills"
-        assert path.is_dir(), f"Directory missing: {path}"
-
-    def test_vscode_azure_skills_dir_exists(self):
-        path = REPO_ROOT / "vscode-extension/packs/azure/skills"
-        assert path.is_dir(), f"Directory missing: {path}"
-
-    def test_vscode_template_skills_dir_exists(self):
-        path = REPO_ROOT / "vscode-extension/packs/_template/skills"
         assert path.is_dir(), f"Directory missing: {path}"
 
 
@@ -96,23 +85,3 @@ class TestPluginPackJson:
         assert "reviewers" in data
         reviewers = data["reviewers"]
         assert "azure-compliance-reviewer.agent.md" in reviewers
-
-
-class TestVscodePackJson:
-    def test_vscode_pack_json_exists(self):
-        assert VSCODE_PACK_JSON.exists(), f"File missing: {VSCODE_PACK_JSON}"
-
-    def test_vscode_pack_json_is_valid_json(self):
-        with open(VSCODE_PACK_JSON) as f:
-            data = json.load(f)
-        assert isinstance(data, dict)
-
-    def test_vscode_pack_json_identical_to_plugin(self):
-        """Both pack.json files should be identical."""
-        assert PLUGIN_PACK_JSON.exists(), "Plugin pack.json missing"
-        assert VSCODE_PACK_JSON.exists(), "VSCode pack.json missing"
-        with open(PLUGIN_PACK_JSON) as f:
-            plugin_data = json.load(f)
-        with open(VSCODE_PACK_JSON) as f:
-            vscode_data = json.load(f)
-        assert plugin_data == vscode_data, "pack.json files are not identical"
