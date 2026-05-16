@@ -1,6 +1,5 @@
 # SDLC Harness
 
-[![CI](https://github.com/Dongbumlee/sdlc-harness/actions/workflows/sync-check.yml/badge.svg?branch=evo)](https://github.com/Dongbumlee/sdlc-harness/actions/workflows/sync-check.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![copilot plugin install](https://img.shields.io/badge/copilot%20plugin%20install-sdlc--harness-8A2BE2)](https://github.com/Dongbumlee/sdlc-harness)
 [![VS Code](https://img.shields.io/badge/VS%20Code-1.99+-007ACC?logo=visual-studio-code&logoColor=white)](https://code.visualstudio.com/)
@@ -44,10 +43,6 @@ Install once — get all 19 agents, 16 skills, and the full SDLC workflow instan
 **GitHub Copilot CLI**
 
 <img src="docs/assets/install-copilot-cli.png" alt="Copilot CLI plugin installation" width="620">
-
-**Marketplace browse & install**
-
-<img src="docs/assets/install-marketplace.png" alt="Marketplace browse and install" width="620">
 
 ### First use
 
@@ -197,7 +192,7 @@ SDLC Harness includes an E2E test framework for validating the harness itself.
 Canary specs define expected agent behavior for each SDLC phase.
 
 - **11 canary specs** across `bench/canaries/` (one per phase + catalog-specific tests)
-- **6 JSON schemas** in `schemas/` for validation (canary specs, configs, reports, cloud packs)
+- **2 JSON schemas** in `schemas/` for validation (canary specs, cloud packs)
 - **CI integration** — `canary-test.yml` validates spec schema on PRs touching agents/skills
 - Results stored as structured JSON in `bench/results/`
 
@@ -338,7 +333,6 @@ SDLC Harness development happens on the `evo` branch.
 
 ```
 .github/plugin/       ← Repo-scoped plugin (auto-loads when repo is opened)
-vscode-extension/     ← VSIX distribution (must stay in sync with .github/plugin/)
 bench/canaries/       ← E2E canary test specs
 schemas/              ← JSON schemas for validation
 tools/                ← Validation scripts
@@ -349,13 +343,11 @@ docs/                 ← Architecture docs, specs, guides
 
 | Workflow | Purpose |
 |----------|---------|
-| `sync-check.yml` | Ensures `.github/plugin/` and `vscode-extension/` stay identical |
 | `canary-test.yml` | Validates canary spec schema on PRs touching agents/skills |
-| `build-vsix.yml` | Builds the VS Code extension package |
 
 ### Key rules
 
-- `.github/plugin/` and `vscode-extension/` must stay in sync (CI enforced)
+- VSIX distribution is retired — do not recreate `vscode-extension/`, `sync-check.yml`, or `build-vsix.yml`. The repo ships only as a Copilot plugin via `.github/plugin/` and `.claude-plugin/marketplace.json`.
 - Agent/skill changes require corresponding canary spec updates
 - All QA reviewers emit structured YAML output (see `sdlc-reviewer-output-format` skill)
 

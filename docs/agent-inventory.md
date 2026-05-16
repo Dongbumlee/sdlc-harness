@@ -4,11 +4,10 @@
 **Date:** 2026-04-11
 **Source branch:** `evo`
 **Total agents:** 19 (18 agent files + 1 dual-role)
-**Total skills:** 12
+**Total skills:** 16
 
-> Generated from codebase exploration of `vscode-extension/agents/` and
-> `vscode-extension/skills/*/SKILL.md`, cross-referenced against
-> `docs/specs/2026-04-10-sdlc-harness-spec.md` §1 (`sub_agents_by_phase`).
+> Generated from codebase exploration of `.github/plugin/agents/` and
+> `.github/plugin/skills/*/SKILL.md`.
 
 ---
 
@@ -62,6 +61,9 @@
 | 10 | `sdlc-project-qa` | Project QA | Product-level QA checklist (10 categories, UX/a11y/LLM/data/errors/security/perf/deploy/ops) | UX & Accessibility Reviewer, LLM Behavior Reviewer, Deployment Readiness Reviewer, QA Coordinator (per spec) |
 | 11 | `sdlc-qa-bug-checklist` | QA Bug Checklist | 338 real production bugs across 9 projects — bug-driven QA validation | QA Bug Checklist Reviewer, QA Coordinator (per spec) |
 | 12 | `sdlc-architecture-review` | Architecture Review | Structural alignment with SDLC layering rules and project patterns | Architecture Reviewer |
+| 13 | `sdlc-canary-runner` | Canary Runner | Instructs the Harness agent how to run E2E canary tests against SDLC phase agents to validate orchestration. | Canary test runner (CI) |
+| 14 | `sdlc-reference-catalog` | Reference Catalog | Manage the living reference catalog — research methodology, population rules, consumption rules, append-only enforcement, and review checkpoints. | All agents (catalog reference) |
+| 15 | `sdlc-reviewer-output-format` | Reviewer Output Format | Structured YAML output format ensuring consistent, parseable review output across all reviewer domains. | QA Coordinator + 9 reviewers |
 
 ---
 
@@ -71,7 +73,7 @@
 
 | Field | Value |
 |---|---|
-| **File** | `vscode-extension/agents/harness.agent.md` |
+| **File** | `.github/plugin/agents/harness.agent.md` |
 | **Role** | Master orchestrator — single entry point for all SDLC workflows |
 | **Phase(s)** | All (1–9) — delegates to phase workers |
 | **User-invocable** | Yes (implicit — no `user-invocable: false` in frontmatter) |
@@ -85,8 +87,8 @@
 
 | Field | Value |
 |---|---|
-| **File** | `vscode-extension/agents/qa-coordinator.agent.md` |
-| **Role** | Phase 6 worker AND sub-agent orchestrator for 8 parallel QA reviewers |
+| **File** | `.github/plugin/agents/qa-coordinator.agent.md` |
+| **Role** | Phase 6 worker AND sub-agent orchestrator for 9 parallel QA reviewers |
 | **Phase(s)** | 6 (Quality Assurance) |
 | **User-invocable** | No |
 | **Tools** | `read`, `agent`, `search`, `web`, `browser`, `azure-mcp/search`, `awesome-copilot/*`, `context7/*`, `azure/search`, `azure-devops/*`, `microsoft-learn/*`, `playwright/*`, `microsoft-docs/*`, `discogs/search`, `mermaidchart.vscode-mermaid-chart/*` |
@@ -99,7 +101,7 @@
 
 | Field | Value |
 |---|---|
-| **File** | `vscode-extension/agents/analyst.agent.md` |
+| **File** | `.github/plugin/agents/analyst.agent.md` |
 | **Role** | Requirements clarification, design proposals, Azure service mapping |
 | **Phase(s)** | 1–2 (Requirements & Design) |
 | **User-invocable** | No |
@@ -112,7 +114,7 @@
 
 | Field | Value |
 |---|---|
-| **File** | `vscode-extension/agents/scaffolder.agent.md` |
+| **File** | `.github/plugin/agents/scaffolder.agent.md` |
 | **Role** | Project structure creation from templates, CI/CD pipeline stubs, Dockerfiles |
 | **Phase(s)** | 3 (Repo Structure & CI/CD) |
 | **User-invocable** | No |
@@ -125,7 +127,7 @@
 
 | Field | Value |
 |---|---|
-| **File** | `vscode-extension/agents/deployer.agent.md` |
+| **File** | `.github/plugin/agents/deployer.agent.md` |
 | **Role** | Azure infrastructure (Bicep/AVM), azd orchestration, deployment lifecycle |
 | **Phase(s)** | 3+8 (Deployment & Infrastructure) |
 | **User-invocable** | No |
@@ -138,7 +140,7 @@
 
 | Field | Value |
 |---|---|
-| **File** | `vscode-extension/agents/implementer.agent.md` |
+| **File** | `.github/plugin/agents/implementer.agent.md` |
 | **Role** | Production code + tests, feature implementation with inline testing |
 | **Phase(s)** | 4 (Implementation & Tests) |
 | **User-invocable** | No |
@@ -151,7 +153,7 @@
 
 | Field | Value |
 |---|---|
-| **File** | `vscode-extension/agents/documenter.agent.md` |
+| **File** | `.github/plugin/agents/documenter.agent.md` |
 | **Role** | ADRs, API docs, README updates |
 | **Phase(s)** | 5 (Repository Documentation) |
 | **User-invocable** | No |
@@ -164,7 +166,7 @@
 
 | Field | Value |
 |---|---|
-| **File** | `vscode-extension/agents/rai-reviewer.agent.md` |
+| **File** | `.github/plugin/agents/rai-reviewer.agent.md` |
 | **Role** | AI and data risk assessment, responsible AI compliance |
 | **Phase(s)** | 7 (Responsible AI Review) |
 | **User-invocable** | No |
@@ -177,7 +179,7 @@
 
 | Field | Value |
 |---|---|
-| **File** | `vscode-extension/agents/release-manager.agent.md` |
+| **File** | `.github/plugin/agents/release-manager.agent.md` |
 | **Role** | Release scripts, PR creation, changelogs, environment promotion |
 | **Phase(s)** | 8–9 (Release & Publish) |
 | **User-invocable** | No |
@@ -190,7 +192,7 @@
 
 | Field | Value |
 |---|---|
-| **File** | `vscode-extension/agents/architecture-reviewer.agent.md` |
+| **File** | `.github/plugin/agents/architecture-reviewer.agent.md` |
 | **Role** | Layering rules, dependency boundaries, pattern consistency |
 | **Phase(s)** | 6 (sub-agent of QA Coordinator) |
 | **User-invocable** | No |
@@ -203,7 +205,7 @@
 
 | Field | Value |
 |---|---|
-| **File** | `vscode-extension/agents/azure-compliance-reviewer.agent.md` |
+| **File** | `.github/plugin/agents/azure-compliance-reviewer.agent.md` |
 | **Role** | Azure SDK usage, AVM patterns, identity management, tags, diagnostics |
 | **Phase(s)** | 6 (sub-agent of QA Coordinator) |
 | **User-invocable** | No |
@@ -216,7 +218,7 @@
 
 | Field | Value |
 |---|---|
-| **File** | `vscode-extension/agents/code-quality-reviewer.agent.md` |
+| **File** | `.github/plugin/agents/code-quality-reviewer.agent.md` |
 | **Role** | Naming, docstrings, dead code, comments, type safety, DRY |
 | **Phase(s)** | 6 (sub-agent of QA Coordinator) |
 | **User-invocable** | No |
@@ -228,7 +230,7 @@
 
 | Field | Value |
 |---|---|
-| **File** | `vscode-extension/agents/security-reviewer.agent.md` |
+| **File** | `.github/plugin/agents/security-reviewer.agent.md` |
 | **Role** | OWASP Top 10, secrets, injection risks, auth patterns, CORS |
 | **Phase(s)** | 6 (sub-agent of QA Coordinator) |
 | **User-invocable** | No |
@@ -240,7 +242,7 @@
 
 | Field | Value |
 |---|---|
-| **File** | `vscode-extension/agents/test-coverage-reviewer.agent.md` |
+| **File** | `.github/plugin/agents/test-coverage-reviewer.agent.md` |
 | **Role** | Test quality, coverage gaps, assertion effectiveness, Playwright e2e |
 | **Phase(s)** | 6 (sub-agent of QA Coordinator) |
 | **User-invocable** | No |
@@ -252,7 +254,7 @@
 
 | Field | Value |
 |---|---|
-| **File** | `vscode-extension/agents/ux-accessibility-reviewer.agent.md` |
+| **File** | `.github/plugin/agents/ux-accessibility-reviewer.agent.md` |
 | **Role** | ARIA labels, keyboard nav, color contrast, responsive layout, dark mode |
 | **Phase(s)** | 6 (sub-agent of QA Coordinator) |
 | **User-invocable** | No |
@@ -264,7 +266,7 @@
 
 | Field | Value |
 |---|---|
-| **File** | `vscode-extension/agents/llm-behavior-reviewer.agent.md` |
+| **File** | `.github/plugin/agents/llm-behavior-reviewer.agent.md` |
 | **Role** | Prompt injection guards, system prompt security, grounding, citations, token limits |
 | **Phase(s)** | 6 (sub-agent of QA Coordinator) |
 | **User-invocable** | No |
@@ -276,7 +278,7 @@
 
 | Field | Value |
 |---|---|
-| **File** | `vscode-extension/agents/deployment-readiness-reviewer.agent.md` |
+| **File** | `.github/plugin/agents/deployment-readiness-reviewer.agent.md` |
 | **Role** | Error handling, health endpoints, logging, performance, repo hygiene, observability |
 | **Phase(s)** | 6 (sub-agent of QA Coordinator) |
 | **User-invocable** | No |
@@ -288,7 +290,7 @@
 
 | Field | Value |
 |---|---|
-| **File** | `vscode-extension/agents/qa-bug-checklist-reviewer.agent.md` |
+| **File** | `.github/plugin/agents/qa-bug-checklist-reviewer.agent.md` |
 | **Role** | Bug-driven validation against 338 real production bugs across 9 projects |
 | **Phase(s)** | On-demand (not dispatched by QA Coordinator) |
 | **User-invocable** | **Yes** |
@@ -299,9 +301,9 @@
 
 ---
 
-## 4. Phase-to-Agent Mapping (from spec `sub_agents_by_phase`)
+## 4. Phase-to-Agent Mapping
 
-Cross-referenced from `docs/specs/2026-04-10-sdlc-harness-spec.md` §1.3:
+Phase-to-agent assignments derived from the agent frontmatter:
 
 | Phase | Primary Agent | Supporting / Post-Gate | Skills |
 |---|---|---|---|
@@ -311,7 +313,7 @@ Cross-referenced from `docs/specs/2026-04-10-sdlc-harness-spec.md` §1.3:
 | **Deploy** | Deployer | — | sdlc-azure-deployment |
 | **Implement** | Implementer | — (entry gate: reference-catalog) | sdlc-code-quality, sdlc-cosmos-repository, sdlc-blob-storage |
 | **Document** | Documenter | — | sdlc-adr-authoring, sdlc-project-manifest |
-| **QA** | QA Coordinator | 8 parallel reviewers + 1 standalone | sdlc-code-quality, sdlc-security-review, sdlc-project-qa, sdlc-qa-bug-checklist |
+| **QA** | QA Coordinator | 9 parallel reviewers + 1 standalone | sdlc-code-quality, sdlc-security-review, sdlc-project-qa, sdlc-qa-bug-checklist |
 | **RAI** | RAI Reviewer | — | _(ai-prompt-engineering-safety-review via awesome-copilot)_ |
 | **Release** | Release Manager | Deployer (Phase 8 infra) | _(none — GitHub MCP direct)_ |
 
@@ -398,18 +400,18 @@ Every agent referenced in the spec's `sub_agents_by_phase` mapping has a corresp
 
 | Skill Referenced (in agents/spec) | Skill Directory Exists | Status |
 |---|---|---|
-| `sdlc-workspace-init` | `vscode-extension/skills/sdlc-workspace-init/` | ✅ |
-| `sdlc-project-scaffolding` | `vscode-extension/skills/sdlc-project-scaffolding/` | ✅ |
-| `sdlc-project-manifest` | `vscode-extension/skills/sdlc-project-manifest/` | ✅ |
-| `sdlc-azure-deployment` | `vscode-extension/skills/sdlc-azure-deployment/` | ✅ |
-| `sdlc-cosmos-repository` | `vscode-extension/skills/sdlc-cosmos-repository/` | ✅ |
-| `sdlc-blob-storage` | `vscode-extension/skills/sdlc-blob-storage/` | ✅ |
-| `sdlc-adr-authoring` | `vscode-extension/skills/sdlc-adr-authoring/` | ✅ |
-| `sdlc-code-quality` | `vscode-extension/skills/sdlc-code-quality/` | ✅ |
-| `sdlc-security-review` | `vscode-extension/skills/sdlc-security-review/` | ✅ |
-| `sdlc-project-qa` | `vscode-extension/skills/sdlc-project-qa/` | ✅ |
-| `sdlc-qa-bug-checklist` | `vscode-extension/skills/sdlc-qa-bug-checklist/` | ✅ |
-| `sdlc-architecture-review` | `vscode-extension/skills/sdlc-architecture-review/` | ✅ |
+| `sdlc-workspace-init` | `.github/plugin/skills/sdlc-workspace-init/` | ✅ |
+| `sdlc-project-scaffolding` | `.github/plugin/skills/sdlc-project-scaffolding/` | ✅ |
+| `sdlc-project-manifest` | `.github/plugin/skills/sdlc-project-manifest/` | ✅ |
+| `sdlc-azure-deployment` | `.github/plugin/skills/sdlc-azure-deployment/` | ✅ |
+| `sdlc-cosmos-repository` | `.github/plugin/skills/sdlc-cosmos-repository/` | ✅ |
+| `sdlc-blob-storage` | `.github/plugin/skills/sdlc-blob-storage/` | ✅ |
+| `sdlc-adr-authoring` | `.github/plugin/skills/sdlc-adr-authoring/` | ✅ |
+| `sdlc-code-quality` | `.github/plugin/skills/sdlc-code-quality/` | ✅ |
+| `sdlc-security-review` | `.github/plugin/skills/sdlc-security-review/` | ✅ |
+| `sdlc-project-qa` | `.github/plugin/skills/sdlc-project-qa/` | ✅ |
+| `sdlc-qa-bug-checklist` | `.github/plugin/skills/sdlc-qa-bug-checklist/` | ✅ |
+| `sdlc-architecture-review` | `.github/plugin/skills/sdlc-architecture-review/` | ✅ |
 
 **Result: All 12 skills referenced in agents/spec have matching SKILL.md files. No missing skills.**
 
