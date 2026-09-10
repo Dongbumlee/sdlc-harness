@@ -151,7 +151,7 @@
    - CORRECT: `root/src/CustomerFeedbackAPI/app/main.py`
  - Follow the template's folder layout INSIDE the project folder, not at the repo root.
  - See `.github/reference-catalog.md` for template details and project structure reference.
- - See `.github/skills/sdlc-project-scaffolding/SKILL.md` for the full scaffolding skill.
+ - Use the `sdlc-project-scaffolding` skill for the full scaffolding procedure.
 
  ### 4.3 Internal patterns in this repo
 

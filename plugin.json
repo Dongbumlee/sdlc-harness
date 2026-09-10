@@ -1,4 +1,5 @@
 {
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "sdlc-harness",
   "description": "SDLC Harness — an agent-driven multi-agent system that orchestrates your entire software development lifecycle with harness-quality QA, 19 specialized agents, and 16 domain skills.",
   "version": "1.0.0",
@@ -16,7 +17,5 @@
     "multi-agent",
     "orchestrator",
     "agent-skills"
-  ],
-  "agents": "agents/",
-  "skills": ["skills/", "packs/azure/skills/"]
+  ]
 }

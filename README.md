@@ -181,7 +181,8 @@ deployment, data access, and storage skills tailored to that provider.
 | **AWS** | `sdlc-aws-deployment`, `sdlc-dynamodb-repository`, `sdlc-s3-storage` | Planned |
 | **GCP** | `sdlc-gcp-deployment`, `sdlc-firestore-repository`, `sdlc-gcs-storage` | Planned |
 
-The Azure Pack is bundled at `packs/azure/` and includes its own `pack.json` manifest.
+The Azure Pack metadata is bundled at `packs/azure/pack.json`; its three skills are also
+published in the root `skills/` directory so current Agent Plugins clients discover them.
 To create a new cloud pack, use the `packs/_template/` skeleton.
 
 ---
@@ -311,7 +312,7 @@ Harness generates `copilot-instructions.md`, deploys quality instructions and pr
 
 ### Option B: Manual copy
 
-1. Copy `.github/plugin/agents/`, `.github/prompts/`, `.github/instructions/`, `.design/`, `.vscode/mcp.json`
+1. Copy `com.github.copilot/agents/`, `skills/`, `.github/prompts/`, `.github/instructions/`, `.design/`, `.vscode/mcp.json`
 2. Set `<PROJECT_NAME>` in `.github/copilot-instructions.md`
 3. Select quality instruction files matching your stack
 
@@ -332,7 +333,9 @@ SDLC Harness development happens on the `evo` branch.
 ### Repository structure
 
 ```
-.github/plugin/       ← Repo-scoped plugin (auto-loads when repo is opened)
+com.github.copilot/   ← Copilot-specific agents
+skills/               ← Portable Agent Plugins skills
+plugin.json           ← Root plugin manifest
 bench/canaries/       ← E2E canary test specs
 schemas/              ← JSON schemas for validation
 tools/                ← Validation scripts
@@ -347,7 +350,7 @@ docs/                 ← Architecture docs, specs, guides
 
 ### Key rules
 
-- VSIX distribution is retired — do not recreate `vscode-extension/`, `sync-check.yml`, or `build-vsix.yml`. The repo ships only as a Copilot plugin via `.github/plugin/` and `.claude-plugin/marketplace.json`.
+- VSIX distribution is retired — do not recreate `vscode-extension/`, `sync-check.yml`, or `build-vsix.yml`. The repo ships as a root Agent Plugins package via `plugin.json`, `skills/`, and `com.github.copilot/`, with `.claude-plugin/marketplace.json` providing marketplace metadata.
 - Agent/skill changes require corresponding canary spec updates
 - All QA reviewers emit structured YAML output (see `sdlc-reviewer-output-format` skill)
 

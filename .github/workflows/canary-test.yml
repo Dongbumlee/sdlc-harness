@@ -8,14 +8,18 @@ on:
       - 'bench/canaries/**'
       - 'schemas/canary-spec.schema.json'
       - 'tools/validate_canaries.py'
-      - '.github/plugin/**'
+      - 'plugin.json'
+      - 'com.github.copilot/**'
+      - 'skills/**'
   pull_request:
     branches: [dev, evo]
     paths:
       - 'bench/canaries/**'
       - 'schemas/canary-spec.schema.json'
       - 'tools/validate_canaries.py'
-      - '.github/plugin/**'
+      - 'plugin.json'
+      - 'com.github.copilot/**'
+      - 'skills/**'
 
 permissions:
   contents: read
@@ -42,4 +46,3 @@ jobs:
         run: |
           echo "=== Validating canary specs against schema ==="
           python tools/validate_canaries.py
-

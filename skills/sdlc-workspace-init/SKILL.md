@@ -15,7 +15,7 @@ description: "Initialize a new repository with SDLC workspace files — MCP conf
 
 Copies workspace-specific files from the skill's `assets/` folder into the target repo's
 `.github/` and `.vscode/` directories. These files cannot be distributed via the plugin
-system because they require per-project customization or live outside `.github/plugin/`.
+system because they require per-project customization or live outside the plugin package.
 
 > **This skill is the ONLY place that deploys `.vscode/mcp.json`.**
 > No other agent or skill should deploy mcp.json to avoid duplicate writes.
