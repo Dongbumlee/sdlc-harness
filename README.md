@@ -309,7 +309,11 @@ Conditional: **Node.js 20+** / **pnpm** for TypeScript/React projects.
 ### Option A: Plugin install (recommended)
 
 ```bash
-copilot plugin install Dongbumlee/sdlc-harness
+# Register the marketplace once
+copilot plugin marketplace add Dongbumlee/sdlc-harness
+
+# Install or update the plugin from the marketplace
+copilot plugin install sdlc-harness@sdlc-harness
 ```
 
 Then open any project and run:
@@ -320,6 +324,17 @@ initialize workspace
 ```
 
 Harness generates `copilot-instructions.md`, deploys quality instructions and prompt files.
+
+To update the plugin later:
+
+```bash
+copilot plugin marketplace update sdlc-harness
+copilot plugin install sdlc-harness@sdlc-harness
+```
+
+`copilot plugin install Dongbumlee/sdlc-harness` still works today, but Copilot CLI
+marks direct repository installs as deprecated. Use the marketplace form to remain
+compatible with future CLI releases.
 
 ### Option B: Manual copy
 
