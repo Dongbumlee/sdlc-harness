@@ -9,6 +9,7 @@ on:
       - 'schemas/canary-spec.schema.json'
       - 'tools/validate_canaries.py'
       - 'plugin.json'
+      - '.github/agents/**'
       - 'com.github.copilot/**'
       - 'skills/**'
   pull_request:
@@ -18,6 +19,7 @@ on:
       - 'schemas/canary-spec.schema.json'
       - 'tools/validate_canaries.py'
       - 'plugin.json'
+      - '.github/agents/**'
       - 'com.github.copilot/**'
       - 'skills/**'
 
@@ -46,3 +48,8 @@ jobs:
         run: |
           echo "=== Validating canary specs against schema ==="
           python tools/validate_canaries.py
+
+      - name: Verify CLI and plugin agent profiles match
+        run: |
+          echo "=== Verifying .github/agents and com.github.copilot/agents ==="
+          diff -r --no-dereference .github/agents com.github.copilot/agents

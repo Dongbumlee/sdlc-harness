@@ -9,7 +9,8 @@ An engineer receives a GitHub issue, a feature request, or identifies a bug. The
 VS Code, switch to the **Harness** agent in Copilot Chat, and describe the task:
 
 ```text
-@Harness Implement the order history API from ADR-012.
+/agent harness
+Implement the order history API from ADR-012.
 It needs Cosmos DB for order data and Blob Storage for invoice PDFs.
 ```
 

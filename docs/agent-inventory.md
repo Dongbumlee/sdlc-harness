@@ -1,12 +1,12 @@
 # SDLC Harness — Agent Inventory
 
-**Version:** 1.0.0
+**Version:** 1.0.1
 **Date:** 2026-04-11
 **Source branch:** `evo`
 **Total agents:** 19 (18 agent files + 1 dual-role)
 **Total skills:** 16
 
-> Generated from codebase exploration of `com.github.copilot/agents/` and
+> Generated from codebase exploration of `.github/agents/` and
 > `skills/*/SKILL.md`.
 
 ---
@@ -73,7 +73,7 @@
 
 | Field | Value |
 |---|---|
-| **File** | `com.github.copilot/agents/harness.agent.md` |
+| **File** | `.github/agents/harness.agent.md` |
 | **Role** | Master orchestrator — single entry point for all SDLC workflows |
 | **Phase(s)** | All (1–9) — delegates to phase workers |
 | **User-invocable** | Yes (implicit — no `user-invocable: false` in frontmatter) |
@@ -87,7 +87,7 @@
 
 | Field | Value |
 |---|---|
-| **File** | `com.github.copilot/agents/qa-coordinator.agent.md` |
+| **File** | `.github/agents/qa-coordinator.agent.md` |
 | **Role** | Phase 6 worker AND sub-agent orchestrator for 9 parallel QA reviewers |
 | **Phase(s)** | 6 (Quality Assurance) |
 | **User-invocable** | No |
@@ -101,7 +101,7 @@
 
 | Field | Value |
 |---|---|
-| **File** | `com.github.copilot/agents/analyst.agent.md` |
+| **File** | `.github/agents/analyst.agent.md` |
 | **Role** | Requirements clarification, design proposals, Azure service mapping |
 | **Phase(s)** | 1–2 (Requirements & Design) |
 | **User-invocable** | No |
@@ -114,7 +114,7 @@
 
 | Field | Value |
 |---|---|
-| **File** | `com.github.copilot/agents/scaffolder.agent.md` |
+| **File** | `.github/agents/scaffolder.agent.md` |
 | **Role** | Project structure creation from templates, CI/CD pipeline stubs, Dockerfiles |
 | **Phase(s)** | 3 (Repo Structure & CI/CD) |
 | **User-invocable** | No |
@@ -127,7 +127,7 @@
 
 | Field | Value |
 |---|---|
-| **File** | `com.github.copilot/agents/deployer.agent.md` |
+| **File** | `.github/agents/deployer.agent.md` |
 | **Role** | Azure infrastructure (Bicep/AVM), azd orchestration, deployment lifecycle |
 | **Phase(s)** | 3+8 (Deployment & Infrastructure) |
 | **User-invocable** | No |
@@ -140,7 +140,7 @@
 
 | Field | Value |
 |---|---|
-| **File** | `com.github.copilot/agents/implementer.agent.md` |
+| **File** | `.github/agents/implementer.agent.md` |
 | **Role** | Production code + tests, feature implementation with inline testing |
 | **Phase(s)** | 4 (Implementation & Tests) |
 | **User-invocable** | No |
@@ -153,7 +153,7 @@
 
 | Field | Value |
 |---|---|
-| **File** | `com.github.copilot/agents/documenter.agent.md` |
+| **File** | `.github/agents/documenter.agent.md` |
 | **Role** | ADRs, API docs, README updates |
 | **Phase(s)** | 5 (Repository Documentation) |
 | **User-invocable** | No |
@@ -166,7 +166,7 @@
 
 | Field | Value |
 |---|---|
-| **File** | `com.github.copilot/agents/rai-reviewer.agent.md` |
+| **File** | `.github/agents/rai-reviewer.agent.md` |
 | **Role** | AI and data risk assessment, responsible AI compliance |
 | **Phase(s)** | 7 (Responsible AI Review) |
 | **User-invocable** | No |
@@ -179,7 +179,7 @@
 
 | Field | Value |
 |---|---|
-| **File** | `com.github.copilot/agents/release-manager.agent.md` |
+| **File** | `.github/agents/release-manager.agent.md` |
 | **Role** | Release scripts, PR creation, changelogs, environment promotion |
 | **Phase(s)** | 8–9 (Release & Publish) |
 | **User-invocable** | No |
@@ -192,7 +192,7 @@
 
 | Field | Value |
 |---|---|
-| **File** | `com.github.copilot/agents/architecture-reviewer.agent.md` |
+| **File** | `.github/agents/architecture-reviewer.agent.md` |
 | **Role** | Layering rules, dependency boundaries, pattern consistency |
 | **Phase(s)** | 6 (sub-agent of QA Coordinator) |
 | **User-invocable** | No |
@@ -205,7 +205,7 @@
 
 | Field | Value |
 |---|---|
-| **File** | `com.github.copilot/agents/azure-compliance-reviewer.agent.md` |
+| **File** | `.github/agents/azure-compliance-reviewer.agent.md` |
 | **Role** | Azure SDK usage, AVM patterns, identity management, tags, diagnostics |
 | **Phase(s)** | 6 (sub-agent of QA Coordinator) |
 | **User-invocable** | No |
@@ -218,7 +218,7 @@
 
 | Field | Value |
 |---|---|
-| **File** | `com.github.copilot/agents/code-quality-reviewer.agent.md` |
+| **File** | `.github/agents/code-quality-reviewer.agent.md` |
 | **Role** | Naming, docstrings, dead code, comments, type safety, DRY |
 | **Phase(s)** | 6 (sub-agent of QA Coordinator) |
 | **User-invocable** | No |
@@ -230,7 +230,7 @@
 
 | Field | Value |
 |---|---|
-| **File** | `com.github.copilot/agents/security-reviewer.agent.md` |
+| **File** | `.github/agents/security-reviewer.agent.md` |
 | **Role** | OWASP Top 10, secrets, injection risks, auth patterns, CORS |
 | **Phase(s)** | 6 (sub-agent of QA Coordinator) |
 | **User-invocable** | No |
@@ -242,7 +242,7 @@
 
 | Field | Value |
 |---|---|
-| **File** | `com.github.copilot/agents/test-coverage-reviewer.agent.md` |
+| **File** | `.github/agents/test-coverage-reviewer.agent.md` |
 | **Role** | Test quality, coverage gaps, assertion effectiveness, Playwright e2e |
 | **Phase(s)** | 6 (sub-agent of QA Coordinator) |
 | **User-invocable** | No |
@@ -254,7 +254,7 @@
 
 | Field | Value |
 |---|---|
-| **File** | `com.github.copilot/agents/ux-accessibility-reviewer.agent.md` |
+| **File** | `.github/agents/ux-accessibility-reviewer.agent.md` |
 | **Role** | ARIA labels, keyboard nav, color contrast, responsive layout, dark mode |
 | **Phase(s)** | 6 (sub-agent of QA Coordinator) |
 | **User-invocable** | No |
@@ -266,7 +266,7 @@
 
 | Field | Value |
 |---|---|
-| **File** | `com.github.copilot/agents/llm-behavior-reviewer.agent.md` |
+| **File** | `.github/agents/llm-behavior-reviewer.agent.md` |
 | **Role** | Prompt injection guards, system prompt security, grounding, citations, token limits |
 | **Phase(s)** | 6 (sub-agent of QA Coordinator) |
 | **User-invocable** | No |
@@ -278,7 +278,7 @@
 
 | Field | Value |
 |---|---|
-| **File** | `com.github.copilot/agents/deployment-readiness-reviewer.agent.md` |
+| **File** | `.github/agents/deployment-readiness-reviewer.agent.md` |
 | **Role** | Error handling, health endpoints, logging, performance, repo hygiene, observability |
 | **Phase(s)** | 6 (sub-agent of QA Coordinator) |
 | **User-invocable** | No |
@@ -290,7 +290,7 @@
 
 | Field | Value |
 |---|---|
-| **File** | `com.github.copilot/agents/qa-bug-checklist-reviewer.agent.md` |
+| **File** | `.github/agents/qa-bug-checklist-reviewer.agent.md` |
 | **Role** | Bug-driven validation against 338 real production bugs across 9 projects |
 | **Phase(s)** | On-demand (not dispatched by QA Coordinator) |
 | **User-invocable** | **Yes** |

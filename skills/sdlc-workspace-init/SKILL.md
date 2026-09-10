@@ -222,6 +222,6 @@ Copy each file from `assets/prompts/` to `.github/prompts/`:
 1. **Start MCP servers** — open `.vscode/mcp.json` and click "Start" on each server.
    All 7 servers are required.
 2. Review `.github/copilot-instructions.md` and adjust if needed.
-3. Use `@Harness` to start your first SDLC task.
+3. Use `/agent harness` to start your first SDLC task in Copilot CLI or Copilot App.
 4. Use `/requirement-and-design` to begin Phase 1-2.
 ```

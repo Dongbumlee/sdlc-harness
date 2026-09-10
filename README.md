@@ -57,7 +57,8 @@ Install once — get all 19 agents, 16 skills, and the full SDLC workflow instan
 Open your project and bootstrap:
 
 ```
-@Harness initialize workspace
+/agent harness
+initialize workspace
 ```
 
 Harness deploys MCP config, quality instructions, and prompt files, then asks for your
@@ -65,6 +66,14 @@ project details (name, domain, stack) to generate `copilot-instructions.md`.
 
 > After Harness deploys `.vscode/mcp.json`, start the MCP servers and **open a new chat
 > session** (`Ctrl+L`) — VS Code registers MCP tools at session start.
+
+The repository includes the agent profiles in both supported locations:
+
+- `.github/agents/` — Copilot CLI, GitHub Copilot App, and repository-level discovery.
+- `com.github.copilot/agents/` — Agent Plugins-compatible package layout.
+
+The two directories must remain identical. In Copilot CLI, use `/agent` and select
+`harness`; `@` is reserved for file references.
 
 ---
 
@@ -154,7 +163,8 @@ Agents fetch live context from external tools — no stale training data:
 ## How It Works
 
 ```
-@Harness Implement the order history API from ADR-012.
+/agent harness
+Implement the order history API from ADR-012.
 ```
 
 1. **Harness** identifies this as Phase 4, verifies the ADR exists, delegates to **Implementer**.
@@ -305,21 +315,22 @@ copilot plugin install Dongbumlee/sdlc-harness
 Then open any project and run:
 
 ```
-@Harness initialize workspace
+/agent harness
+initialize workspace
 ```
 
 Harness generates `copilot-instructions.md`, deploys quality instructions and prompt files.
 
 ### Option B: Manual copy
 
-1. Copy `com.github.copilot/agents/`, `skills/`, `.github/prompts/`, `.github/instructions/`, `.design/`, `.vscode/mcp.json`
+1. Copy `.github/agents/`, `skills/`, `.github/prompts/`, `.github/instructions/`, `.design/`, `.vscode/mcp.json`
 2. Set `<PROJECT_NAME>` in `.github/copilot-instructions.md`
 3. Select quality instruction files matching your stack
 
 ### Adoption checklist
 
 - [ ] Install plugin or copy files
-- [ ] Run `@Harness` or `/sdlc-workspace-init` to generate workspace files
+- [ ] Run `/agent harness` or `/sdlc-workspace-init` to generate workspace files
 - [ ] Review `.github/copilot-instructions.md`
 - [ ] Start MCP servers, open new chat session
 - [ ] Enable branch protection on `main`
