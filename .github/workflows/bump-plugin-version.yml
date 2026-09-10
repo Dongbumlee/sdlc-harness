@@ -1,0 +1,125 @@
+name: Bump Plugin Version
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: Version increment to apply
+        required: true
+        default: patch
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+permissions:
+  contents: write
+
+concurrency:
+  group: bump-plugin-version-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  bump:
+    name: Bump and tag plugin version
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Calculate and apply version
+        id: version
+        env:
+          BUMP: ${{ inputs.bump }}
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+
+          const bump = process.env.BUMP;
+          const manifestPath = 'plugin.json';
+          const marketplacePath = '.claude-plugin/marketplace.json';
+          const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+          const marketplace = JSON.parse(fs.readFileSync(marketplacePath, 'utf8'));
+          const current = manifest.version;
+          const match = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/.exec(current);
+
+          if (!match) {
+            throw new Error(`plugin.json contains an invalid semantic version: ${current}`);
+          }
+
+          let major = Number(match[1]);
+          let minor = Number(match[2]);
+          let patch = Number(match[3]);
+
+          if (bump === 'major') {
+            major += 1;
+            minor = 0;
+            patch = 0;
+          } else if (bump === 'minor') {
+            minor += 1;
+            patch = 0;
+          } else if (bump === 'patch') {
+            patch += 1;
+          } else {
+            throw new Error(`Unsupported version bump: ${bump}`);
+          }
+
+          const next = `${major}.${minor}.${patch}`;
+          if (next === current) {
+            throw new Error('Version bump did not change the version');
+          }
+
+          manifest.version = next;
+          marketplace.metadata.version = next;
+          for (const plugin of marketplace.plugins) {
+            if (plugin.name === manifest.name) {
+              plugin.version = next;
+            }
+          }
+
+          fs.writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+          fs.writeFileSync(marketplacePath, `${JSON.stringify(marketplace, null, 2)}\n`);
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `previous=${current}\nnext=${next}\n`);
+          NODE
+
+      - name: Verify synchronized versions
+        env:
+          EXPECTED_VERSION: ${{ steps.version.outputs.next }}
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const expected = process.env.EXPECTED_VERSION;
+          const manifest = JSON.parse(fs.readFileSync('plugin.json', 'utf8'));
+          const marketplace = JSON.parse(fs.readFileSync('.claude-plugin/marketplace.json', 'utf8'));
+          const plugin = marketplace.plugins.find((item) => item.name === manifest.name);
+
+          if (
+            manifest.version !== expected ||
+            marketplace.metadata.version !== expected ||
+            !plugin ||
+            plugin.version !== expected
+          ) {
+            throw new Error('Plugin and marketplace versions are not synchronized');
+          }
+          NODE
+
+      - name: Commit and tag release
+        env:
+          PREVIOUS_VERSION: ${{ steps.version.outputs.previous }}
+          NEXT_VERSION: ${{ steps.version.outputs.next }}
+          BRANCH: ${{ github.ref_name }}
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add plugin.json .claude-plugin/marketplace.json
+          git commit -m "chore: bump plugin version to ${NEXT_VERSION}"
+          git tag -a "v${NEXT_VERSION}" -m "Release v${NEXT_VERSION}"
+          git push origin "HEAD:${BRANCH}" --follow-tags
+          echo "Bumped ${PREVIOUS_VERSION} to ${NEXT_VERSION}"

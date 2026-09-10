@@ -347,6 +347,12 @@ docs/                 ← Architecture docs, specs, guides
 | Workflow | Purpose |
 |----------|---------|
 | `canary-test.yml` | Validates canary spec schema on PRs touching agents/skills |
+| `bump-plugin-version.yml` | Manually bumps the plugin version and synchronizes marketplace metadata |
+
+To publish a plugin update, open **Actions → Bump Plugin Version → Run workflow**, choose
+`patch`, `minor`, or `major`, and run it from the branch to update. The workflow updates
+`plugin.json`, `.claude-plugin/marketplace.json`, creates a matching `vX.Y.Z` tag, and
+pushes the commit to that branch.
 
 ### Key rules
 
