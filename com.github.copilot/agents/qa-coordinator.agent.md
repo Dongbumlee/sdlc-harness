@@ -2,7 +2,7 @@
 name: QA Coordinator
 description: "Use when running code reviews, quality assurance passes, requirements validation, or pre-merge validation. Orchestrates 9 parallel reviewer subagents covering architecture, security, code quality, testing, requirements completeness, UX, LLM behavior, Azure compliance, and deployment readiness."
 user-invocable: false
-tools: [read, agent, search, web, browser, azure-mcp/search, 'awesome-copilot/*', 'context7/*', azure/search, 'azure-devops/*', 'microsoft-learn/*', 'playwright/*', 'microsoft-docs/*', mermaidchart.vscode-mermaid-chart/get_syntax_docs, mermaidchart.vscode-mermaid-chart/mermaid-diagram-validator, mermaidchart.vscode-mermaid-chart/mermaid-diagram-preview]
+tools: [read, agent, search, web, browser, 'awesome-copilot/*', 'context7/*', 'azure-devops/*', 'microsoft-learn/*', 'playwright/*', mermaidchart.vscode-mermaid-chart/get_syntax_docs, mermaidchart.vscode-mermaid-chart/mermaid-diagram-validator, mermaidchart.vscode-mermaid-chart/mermaid-diagram-preview]
 agents: ['Architecture Reviewer', 'Azure Compliance Reviewer', 'Code Quality Reviewer', 'Security Reviewer', 'Test Coverage Reviewer', 'Requirements Completeness Reviewer', 'UX & Accessibility Reviewer', 'LLM Behavior Reviewer', 'Deployment Readiness Reviewer']
 skills: ['sdlc-reviewer-output-format']
 ---
