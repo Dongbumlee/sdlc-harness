@@ -30,6 +30,16 @@ SKILL_DIR = REPO_ROOT / "skills"
 DOC_PATH = REPO_ROOT / "docs" / "agent-inventory.md"
 
 PHASE_RE = re.compile(r"SDLC\s+Phases?\s+([0-9+\-–—,.\s]+?)\s*:", re.IGNORECASE)
+GENERATED_RE = re.compile(r"^\*\*Generated:\*\* \d{4}-\d{2}-\d{2}$", re.M)
+
+
+def without_generated_date(text: str) -> str:
+    """Normalize the generation-date line so --check is reproducible.
+
+    The date is informative when generating, but it must not make the
+    freshness check fail just because a new day has begun.
+    """
+    return GENERATED_RE.sub("**Generated:** <date>", text)
 
 
 def parse_frontmatter(path: Path) -> tuple[dict, str]:
@@ -268,7 +278,7 @@ def main() -> int:
     output = "\n".join(lines)
     if check:
         current = DOC_PATH.read_text(encoding="utf-8") if DOC_PATH.exists() else ""
-        if current != output:
+        if without_generated_date(current) != without_generated_date(output):
             print("agent-inventory.md is stale — regenerate with:")
             print("  python3 tools/generate_agent_inventory.py")
             return 1
