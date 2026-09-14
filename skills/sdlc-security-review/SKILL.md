@@ -6,6 +6,9 @@ description: >-
   exposure, auth issues, injection risks, or OWASP compliance. Triggers on any
   code review, PR review, or security audit request. Loads fresh OWASP checklist
   from awesome-copilot MCP on every review.
+version: "1.0"
+author: sdlc-harness
+user-invocable: false
 ---
 
 # SDLC Security Review

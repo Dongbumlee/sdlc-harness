@@ -1,6 +1,9 @@
 ---
 name: sdlc-reference-catalog
 description: "Manage the living reference catalog — research methodology, population rules, consumption rules, append-only enforcement, and review checkpoint behavior. Activated by the Analyst (population), Scaffolder/Implementer/Deployer/Documenter (consumption), and Harness (review checkpoint)."
+version: "1.0"
+author: sdlc-harness
+user-invocable: false
 ---
 
 # SDLC Reference Catalog

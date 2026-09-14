@@ -4,6 +4,9 @@ description: >-
   Structured YAML output format for SDLC QA reviewer agents.
   Ensures consistent, parseable review output across all 9 reviewer domains.
   Use in conjunction with each reviewer's existing Markdown report format.
+version: "1.0"
+author: sdlc-harness
+user-invocable: false
 ---
 
 # SDLC Reviewer Structured Output Format

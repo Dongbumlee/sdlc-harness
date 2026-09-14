@@ -3,7 +3,7 @@ name: Architecture Reviewer
 description: "Use when reviewing code for architecture layering violations, dependency direction issues, pattern consistency, or structural alignment with application templates."
 user-invocable: false
 tools: ['read', 'search', 'github/*']
-skills: ['sdlc-reviewer-output-format']
+skills: ['sdlc-reviewer-output-format', 'sdlc-architecture-review']
 ---
 
 # Architecture Reviewer — QA Perspective: Structural Alignment

@@ -1,10 +1,13 @@
 ---
 name: sdlc-cosmos-repository
 description: >-
-  Implement Azure Cosmos DB data access using the approved Cosmos DB library library with Repository
+  Implement Azure Cosmos DB data access using the approved Cosmos DB library with Repository
   Pattern. Use when creating entities, repositories, or any Cosmos DB CRUD operations.
   Triggers on Cosmos DB, database, entity, repository, data model, or data access
   requests. Never use raw azure-cosmos SDK — always use the approved Cosmos DB library.
+version: "1.0"
+author: sdlc-harness
+user-invocable: false
 ---
 
 # Azure Cosmos DB — Repository Pattern with the approved Cosmos DB library

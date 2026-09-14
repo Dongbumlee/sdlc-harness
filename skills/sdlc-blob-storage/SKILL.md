@@ -1,13 +1,16 @@
 ---
 name: sdlc-blob-storage
 description: >-
-  Implement Azure Blob Storage and Queue operations using the approved Storage library library.
+  Implement Azure Blob Storage and Queue operations using the approved Storage library.
   Use when uploading, downloading, listing, or managing blobs and queues.
   Triggers on blob, storage, file upload, queue, or Azure Storage requests.
   Never use raw azure-storage-blob or azure-storage-queue — always use the approved Storage library.
+version: "1.0"
+author: sdlc-harness
+user-invocable: false
 ---
 
-# Azure Blob Storage & Queue — the approved Storage library Library
+# Azure Blob Storage & Queue — the approved Storage library
 
 ## When to use
 

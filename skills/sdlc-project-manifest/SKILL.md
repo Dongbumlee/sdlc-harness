@@ -6,6 +6,9 @@ description: >-
   ALL agents — Scaffolder creates it, every other agent reads it before working.
   Triggers on any scaffolding, implementation, review, or documentation task.
   Ensures cross-agent consistency for template patterns across the entire SDLC lifecycle.
+version: "1.0"
+author: sdlc-harness
+user-invocable: false
 ---
 
 # SDLC Project Manifest — Cross-Agent Pattern Persistence

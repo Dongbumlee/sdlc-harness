@@ -1,6 +1,9 @@
 ---
 name: sdlc-workspace-init
 description: "Initialize a new repository with SDLC workspace files — MCP config, copilot-instructions.md, quality instructions, and prompt files. Use when setting up a new project, bootstrapping SDLC, onboarding a repo, or when Harness detects missing workspace files."
+version: "1.0"
+author: sdlc-harness
+user-invocable: false
 ---
 
 # SDLC Workspace Initialization

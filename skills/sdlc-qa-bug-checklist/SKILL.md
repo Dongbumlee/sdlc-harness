@@ -5,6 +5,9 @@ description: >-
   projects with detailed error patterns, Azure error codes, and verification
   commands. Use when reviewing code, PRs, deployments, or running QA checks.
   Triggers on any QA review, pre-deployment validation, or bug-prevention audit.
+version: "1.0"
+author: sdlc-harness
+user-invocable: false
 ---
 
 # SDLC QA Bug Checklist

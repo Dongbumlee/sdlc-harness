@@ -5,6 +5,9 @@ description: >-
   Dockerfiles, and devcontainers. Use when creating a new service, restructuring
   a project, or setting up CI/CD. Triggers on scaffold, new project, new service,
   project structure, CI/CD pipeline, or Dockerfile requests.
+version: "1.0"
+author: sdlc-harness
+user-invocable: false
 ---
 
 # SDLC Project Scaffolding — application Project Pattern

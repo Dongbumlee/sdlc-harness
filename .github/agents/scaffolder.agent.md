@@ -3,6 +3,7 @@ name: Scaffolder
 description: "Use when creating new project structures, scaffolding services from templates, setting up CI/CD pipelines, Dockerfiles, or devcontainers. Handles SDLC Phase 3 repo structure."
 user-invocable: false
 tools: ['read', 'search', 'edit', 'terminal', 'github/*', 'awesome-copilot/*', 'context7/*', 'azure-devops/*']
+skills: ['sdlc-project-manifest', 'sdlc-project-scaffolding', 'sdlc-reference-catalog']
 ---
 
 # Scaffolder — SDLC Phase 3: Repo Structure & CI/CD
