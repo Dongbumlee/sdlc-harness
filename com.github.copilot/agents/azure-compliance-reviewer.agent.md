@@ -2,7 +2,7 @@
 name: Azure Compliance Reviewer
 description: "Use when reviewing Azure SDK usage, verifying the approved Cosmos DB library/the approved Storage library patterns, checking Bicep/AVM compliance, validating identity management, or auditing infrastructure configuration."
 user-invocable: false
-tools: ['read', 'search', 'github/*', 'awesome-copilot/*']
+tools: ['read', 'search', 'github/*', 'awesome-copilot/*', 'microsoft-learn/*']
 skills: ['sdlc-reviewer-output-format']
 ---
 
