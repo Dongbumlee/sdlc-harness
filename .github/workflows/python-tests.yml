@@ -34,7 +34,10 @@ jobs:
           python-version: '3.11'
 
       - name: Install test dependencies
-        run: pip install pytest
+        run: pip install pytest pyyaml
 
       - name: Run pytest
         run: python -m pytest tests/ -q
+
+      - name: Verify agent inventory is up to date
+        run: python tools/generate_agent_inventory.py --check
