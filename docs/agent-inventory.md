@@ -99,9 +99,6 @@
 | `execute` | Harness, Implementer |
 | `fetch` | Analyst, Harness |
 | `github/*` | Analyst, Architecture Reviewer, Azure Compliance Reviewer, Deployer, Documenter, Harness, Implementer, Release Manager, Scaffolder |
-| `mermaidchart.vscode-mermaid-chart/get_syntax_docs` | QA Coordinator |
-| `mermaidchart.vscode-mermaid-chart/mermaid-diagram-preview` | QA Coordinator |
-| `mermaidchart.vscode-mermaid-chart/mermaid-diagram-validator` | QA Coordinator |
 | `microsoft-learn/*` | Azure Compliance Reviewer, Deployer, Documenter, Harness, Implementer, QA Coordinator, RAI Reviewer |
 | `ms-python.python/configurePythonEnvironment` | Implementer |
 | `ms-python.python/getPythonEnvironmentInfo` | Implementer |
