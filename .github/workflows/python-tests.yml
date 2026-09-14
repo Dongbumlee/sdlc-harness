@@ -1,0 +1,40 @@
+name: Python Tests
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [dev, evo]
+    paths:
+      - 'tests/**'
+      - 'tools/**'
+      - '.github/workflows/python-tests.yml'
+  pull_request:
+    branches: [dev, evo]
+    paths:
+      - 'tests/**'
+      - 'tools/**'
+      - '.github/workflows/python-tests.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  pytest:
+    name: Run pytest suite
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install test dependencies
+        run: pip install pytest
+
+      - name: Run pytest
+        run: python -m pytest tests/ -q

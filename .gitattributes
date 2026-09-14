@@ -1,0 +1,8 @@
+# Normalize line endings so CI's diff check between the two agent
+# profile directories never fails on CRLF vs LF again.
+* text=auto
+*.agent.md text eol=lf
+*.md text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.json text eol=lf
