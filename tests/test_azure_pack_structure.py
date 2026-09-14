@@ -2,6 +2,8 @@
 # Licensed under the MIT License.
 """Validate the Azure pack metadata and plugin-discoverable skill layout."""
 
+from __future__ import annotations
+
 import json
 from pathlib import Path
 

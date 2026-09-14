@@ -3,7 +3,7 @@ name: Test Coverage Reviewer
 description: "Use when reviewing test quality, coverage gaps, assertion effectiveness, mocking patterns, edge case coverage, or running Playwright e2e tests."
 user-invocable: false
 tools: ['read', 'search', 'terminal', 'awesome-copilot/*', 'playwright/*']
-skills: ['sdlc-reviewer-output-format']
+skills: ['sdlc-reviewer-output-format', 'sdlc-project-qa']
 ---
 
 # Test Coverage Reviewer — QA Perspective: Testing & Coverage

@@ -7,6 +7,8 @@ freshness gate must ignore that line, otherwise CI starts failing the
 day after the doc was last regenerated.
 """
 
+from __future__ import annotations
+
 import sys
 from pathlib import Path
 

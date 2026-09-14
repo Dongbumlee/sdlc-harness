@@ -4,7 +4,7 @@ description: "Use when running code reviews, quality assurance passes, requireme
 user-invocable: false
 tools: ['read', 'agent', 'search', 'web', 'browser', 'awesome-copilot/*', 'context7/*', 'azure-devops/*', 'microsoft-learn/*', 'playwright/*']
 agents: ['Architecture Reviewer', 'Azure Compliance Reviewer', 'Code Quality Reviewer', 'Security Reviewer', 'Test Coverage Reviewer', 'Requirements Completeness Reviewer', 'UX & Accessibility Reviewer', 'LLM Behavior Reviewer', 'Deployment Readiness Reviewer']
-skills: ['sdlc-reviewer-output-format']
+skills: ['sdlc-reviewer-output-format', 'sdlc-project-qa']
 ---
 
 # QA Coordinator — SDLC Phase 6: Quality Assurance
