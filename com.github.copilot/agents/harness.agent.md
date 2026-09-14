@@ -17,7 +17,7 @@ keep the whole operation moving at production speed.
 
 **Why Harness?**
 - 🎯 **Single entry point** — one agent to start any SDLC task
-- 🤖 **15 specialized agents** — from requirements review to security, QA to deployment
+- 🤖 **19 specialized agents** — from requirements review to security, QA to deployment
 - 🔄 **Adversarial QA loops** — inspired by Anthropic's harness design research
 - ⚡ **Zero context switching** — Harness routes to the right agent automatically
 - 🛡️ **Quality guaranteed** — enforced standards, not just suggestions
