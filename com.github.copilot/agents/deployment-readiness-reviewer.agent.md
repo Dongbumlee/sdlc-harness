@@ -150,6 +150,10 @@ Items that require human testing:
 - [ ] Data persistence across restarts
 ```
 
+> **Scoping rule:** Fail only on findings tied to the requirements/spec — see the
+> `sdlc-reviewer-output-format` skill ("Finding Scoping"). Out-of-scope hardening
+> goes in `hardening_suggestions` and never affects your score or verdict.
+
 ## Structured Output Block
 
 After your Markdown review report, you MUST emit a structured YAML block for machine parsing.
