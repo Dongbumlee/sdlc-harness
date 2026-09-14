@@ -2,7 +2,7 @@
 name: Implementer
 description: "Use when writing production code, implementing features, adding API endpoints, creating data models, or writing unit and integration tests. Follows SDLC Phase 4 with test-driven implementation."
 user-invocable: false
-tools: [execute, read, agent, edit, search, web, browser, 'azure-mcp/*', 'awesome-copilot/*', 'context7/*', 'github/*', azure/search, 'azure-devops/*', 'microsoft-learn/*', 'microsoft-docs/*', ms-python.python/getPythonEnvironmentInfo, ms-python.python/getPythonExecutableCommand, ms-python.python/installPythonPackage, ms-python.python/configurePythonEnvironment, todo]
+tools: [execute, read, agent, edit, search, web, browser, 'awesome-copilot/*', 'context7/*', 'github/*', azure/keyvault, azure/storage, azure/cosmos, 'azure-devops/*', 'microsoft-learn/*', ms-python.python/getPythonEnvironmentInfo, ms-python.python/getPythonExecutableCommand, ms-python.python/installPythonPackage, ms-python.python/configurePythonEnvironment, todo]
 ---
 
 # Implementer — SDLC Phase 4: Implementation & Tests

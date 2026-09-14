@@ -86,13 +86,15 @@
 | `agent` | Harness, Implementer, QA Bug Checklist Reviewer, QA Coordinator |
 | `awesome-copilot/*` | Analyst, Azure Compliance Reviewer, Code Quality Reviewer, Deployer, Harness, Implementer, QA Coordinator, RAI Reviewer, Scaffolder, Security Reviewer, Test Coverage Reviewer |
 | `azure-devops/*` | Analyst, Deployer, Harness, Implementer, QA Coordinator, Scaffolder |
-| `azure-mcp/*` | Harness, Implementer |
-| `azure-mcp/search` | QA Coordinator |
-| `azure/*` | Deployer, Harness |
-| `azure/search` | Implementer, QA Coordinator |
+| `azure/*` | Harness |
+| `azure/bicepschema` | Deployer |
+| `azure/cosmos` | Implementer |
+| `azure/deploy` | Deployer |
+| `azure/group` | Deployer |
+| `azure/keyvault` | Implementer |
+| `azure/storage` | Implementer |
 | `browser` | Harness, Implementer, QA Coordinator |
 | `context7/*` | Analyst, Harness, Implementer, QA Coordinator, Scaffolder |
-| `discogs/search` | QA Coordinator |
 | `edit` | Deployer, Documenter, Harness, Implementer, Release Manager, Scaffolder |
 | `execute` | Harness, Implementer |
 | `fetch` | Analyst, Harness |
@@ -100,7 +102,6 @@
 | `mermaidchart.vscode-mermaid-chart/get_syntax_docs` | QA Coordinator |
 | `mermaidchart.vscode-mermaid-chart/mermaid-diagram-preview` | QA Coordinator |
 | `mermaidchart.vscode-mermaid-chart/mermaid-diagram-validator` | QA Coordinator |
-| `microsoft-docs/*` | Harness, Implementer, QA Coordinator |
 | `microsoft-learn/*` | Deployer, Documenter, Harness, Implementer, QA Coordinator, RAI Reviewer |
 | `ms-python.python/configurePythonEnvironment` | Implementer |
 | `ms-python.python/getPythonEnvironmentInfo` | Implementer |

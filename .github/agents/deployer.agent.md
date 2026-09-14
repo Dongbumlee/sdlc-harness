@@ -2,7 +2,7 @@
 name: Deployer
 description: "Use when creating Azure infrastructure with Bicep/AVM, configuring azd orchestration, managing deployment lifecycle, or preparing release automation. Handles SDLC Phases 3 and 8."
 user-invocable: false
-tools: ['read', 'search', 'edit', 'terminal', 'github/*', 'awesome-copilot/*', 'azure/*', 'microsoft-learn/*', 'azure-devops/*']
+tools: ['read', 'search', 'edit', 'terminal', 'github/*', 'awesome-copilot/*', 'azure/deploy', 'azure/bicepschema', 'azure/group', 'microsoft-learn/*', 'azure-devops/*']
 ---
 
 # Deployer — SDLC Phase 3+8: Deployment & Infrastructure
