@@ -5,6 +5,9 @@ description: >-
   and application project patterns. Use when reviewing PRs, checking dependency
   boundaries, or validating pattern reuse. Triggers on architecture review,
   layering check, design review, or pattern compliance requests.
+version: "1.0"
+author: sdlc-harness
+user-invocable: false
 ---
 
 # SDLC Architecture Review

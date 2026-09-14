@@ -6,6 +6,9 @@ description: >-
   performing code quality reviews, cleaning up code, or enforcing naming and
   documentation standards. Triggers on code quality, code review, naming,
   docstring, dead code, or comment cleanup requests.
+version: "1.0"
+author: sdlc-harness
+user-invocable: false
 ---
 
 # SDLC Code Quality Review

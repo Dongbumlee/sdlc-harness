@@ -2,6 +2,7 @@
 name: Harness
 description: "Use when starting any SDLC task, building a new feature, fixing bugs, running QA, creating documentation, or deploying infrastructure. Orchestrates the full software development lifecycle across requirements, design, implementation, testing, QA, and release."
 tools: ['agent', 'read', 'search', 'edit', 'execute', 'terminal', 'fetch', 'web', 'browser', 'todo', 'github/*', 'awesome-copilot/*', 'context7/*', 'azure-devops/*', 'azure/*', 'microsoft-learn/*', 'playwright/*']
+skills: ['sdlc-canary-runner', 'sdlc-requirements-discovery', 'sdlc-workspace-init']
 agents: ['Analyst', 'Scaffolder', 'Deployer', 'Implementer', 'Documenter', 'QA Coordinator', 'RAI Reviewer', 'Release Manager', 'Requirements Completeness Reviewer']
 ---
 

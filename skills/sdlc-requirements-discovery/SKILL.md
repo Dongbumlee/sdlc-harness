@@ -5,6 +5,9 @@ description: >-
   Covers elicitation patterns, question strategies, restatement techniques, and the
   explicit approval checkpoint. Use when starting a new feature, clarifying requirements,
   or when Harness delegates Phase 1A discovery to the Analyst.
+version: "1.0"
+author: sdlc-harness
+user-invocable: false
 ---
 
 # SDLC Requirements Discovery

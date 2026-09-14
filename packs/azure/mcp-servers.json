@@ -1,0 +1,26 @@
+{
+  "servers": {
+    "azure": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@azure/mcp@latest",
+        "server",
+        "start",
+        "--namespace",
+        "deploy",
+        "--namespace",
+        "bicepschema",
+        "--namespace",
+        "group",
+        "--namespace",
+        "keyvault",
+        "--namespace",
+        "storage",
+        "--namespace",
+        "cosmos"
+      ]
+    }
+  }
+}

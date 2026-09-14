@@ -6,6 +6,9 @@ description: >-
   Bicep templates, configuring azure.yaml, setting up Container Apps, or
   preparing deployments. Triggers on Bicep, AVM, azd, infrastructure, or
   deployment requests.
+version: "1.0"
+author: sdlc-harness
+user-invocable: false
 ---
 
 # SDLC Azure Deployment — Bicep + AVM + azd

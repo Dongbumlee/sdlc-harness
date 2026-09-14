@@ -6,6 +6,9 @@ description: >-
   selections. Triggers on ADR, architecture decision, design proposal, or
   design document requests. Combines awesome-copilot ADR skill with SDLC-specific
   ADR template from .design/ADR-TEMPLATE.md.
+version: "1.0"
+author: sdlc-harness
+user-invocable: false
 ---
 
 # ADR Authoring — SDLC Phase 5
@@ -115,7 +118,7 @@ High-level description of the chosen approach.
 - OQ-1: ...
 
 ## References
-- [Reference Catalog](/.github/reference-catalog.md)
+- [Reference Catalog](../../.github/reference-catalog.md)
 ```
 
 ## Step 4: Validate the ADR

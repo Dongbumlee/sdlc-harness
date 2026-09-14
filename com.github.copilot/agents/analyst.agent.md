@@ -3,7 +3,7 @@ name: Analyst
 description: "Use when clarifying requirements, discovering what to build, producing requirements specifications, evaluating design options, proposing architecture decisions, or mapping features to cloud services. Operates in three modes: Phase 1A (collaborative discovery), Phase 1B (requirements specification), and Phase 2 (design proposal)."
 user-invocable: false
 tools: ['read', 'search', 'fetch', 'github/*', 'awesome-copilot/*', 'context7/*', 'azure-devops/*']
-skills: ['sdlc-requirements-discovery']
+skills: ['sdlc-requirements-discovery', 'sdlc-reference-catalog']
 ---
 
 <!-- Tools usage note:

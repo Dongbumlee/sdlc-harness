@@ -3,6 +3,7 @@ name: Documenter
 description: "Use when creating ADRs, updating API documentation, writing README sections, or generating architecture decision records. Handles SDLC Phase 5 documentation."
 user-invocable: false
 tools: ['read', 'search', 'edit', 'github/*', 'microsoft-learn/*']
+skills: ['sdlc-adr-authoring', 'sdlc-reference-catalog']
 ---
 
 # Documenter — SDLC Phase 5: Repository Documentation

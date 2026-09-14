@@ -3,7 +3,7 @@ name: Code Quality Reviewer
 description: "Use when reviewing code for naming conventions, docstring coverage, dead code, comment quality, type annotations, import organization, or DRY violations."
 user-invocable: false
 tools: ['read', 'search', 'awesome-copilot/*']
-skills: ['sdlc-reviewer-output-format']
+skills: ['sdlc-reviewer-output-format', 'sdlc-code-quality']
 ---
 
 # Code Quality Reviewer — QA Perspective: Readability & Maintainability

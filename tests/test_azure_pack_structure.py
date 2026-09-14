@@ -2,6 +2,8 @@
 # Licensed under the MIT License.
 """Validate the Azure pack metadata and plugin-discoverable skill layout."""
 
+from __future__ import annotations
+
 import json
 from pathlib import Path
 
@@ -64,8 +66,22 @@ class TestPluginPackJson:
             data = json.load(f)
         assert "agents" in data
         agents = data["agents"]
-        assert agents["deployer"] == "azure-deployer.agent.md"
+        assert agents["deployer"] == "deployer.agent.md"
         assert agents["complianceReviewer"] == "azure-compliance-reviewer.agent.md"
+
+    def test_pack_json_agent_files_exist(self):
+        """Every agent file referenced by the pack must exist on disk."""
+        with open(PLUGIN_PACK_JSON) as f:
+            data = json.load(f)
+        agents = data["agents"]
+        assert set(agents) == {"deployer", "complianceReviewer"}
+        for role, filename in agents.items():
+            for agent_dir in ("com.github.copilot/agents", ".github/agents"):
+                path = REPO_ROOT / agent_dir / filename
+                assert path.is_file(), f"Pack agent missing: {role} -> {path}"
+        for filename in data.get("reviewers", []):
+            path = REPO_ROOT / ".github/agents" / filename
+            assert path.is_file(), f"Pack reviewer missing: {path}"
 
     def test_pack_json_has_skills(self):
         with open(PLUGIN_PACK_JSON) as f:
@@ -80,6 +96,29 @@ class TestPluginPackJson:
         with open(PLUGIN_PACK_JSON) as f:
             data = json.load(f)
         assert data["mcpServers"] == "mcp-servers.json"
+
+    def test_pack_mcp_servers_file_exists_and_valid(self):
+        """The mcpServers file referenced by the pack must exist and define the azure server."""
+        with open(PLUGIN_PACK_JSON) as f:
+            data = json.load(f)
+        mcp_path = REPO_ROOT / "packs/azure" / data["mcpServers"]
+        assert mcp_path.is_file(), f"File missing: {mcp_path}"
+        with open(mcp_path) as f:
+            mcp = json.load(f)  # raises if invalid JSON
+        assert "azure" in mcp.get("servers", {}), "azure server missing from pack mcp-servers.json"
+
+    def test_pack_skills_all_exist(self):
+        """Every skill listed in the pack must be a real skill directory."""
+        with open(PLUGIN_PACK_JSON) as f:
+            data = json.load(f)
+        assert set(data["skills"]) == {
+            "sdlc-azure-deployment",
+            "sdlc-cosmos-repository",
+            "sdlc-blob-storage",
+        }
+        for skill in data["skills"]:
+            skill_file = REPO_ROOT / "skills" / skill / "SKILL.md"
+            assert skill_file.is_file(), f"Pack skill missing: {skill_file}"
 
     def test_pack_json_has_reviewers(self):
         with open(PLUGIN_PACK_JSON) as f:

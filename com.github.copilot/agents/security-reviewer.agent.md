@@ -3,7 +3,7 @@ name: Security Reviewer
 description: "Use when reviewing code for security vulnerabilities, OWASP Top 10 compliance, secrets exposure, injection risks, authentication patterns, or CORS configuration."
 user-invocable: false
 tools: ['read', 'search', 'awesome-copilot/*']
-skills: ['sdlc-reviewer-output-format']
+skills: ['sdlc-reviewer-output-format', 'sdlc-security-review']
 ---
 
 # Security Reviewer — QA Perspective: Security & Vulnerability

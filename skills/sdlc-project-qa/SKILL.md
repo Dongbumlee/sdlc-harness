@@ -8,6 +8,9 @@ description: >-
   manual QA checklists. Triggers on product QA, project QA, release readiness,
   or comprehensive review requests. Complements the sdlc-qa-bug-checklist skill
   (which focuses on known bug patterns from ADO data).
+version: "1.0"
+author: sdlc-harness
+user-invocable: false
 ---
 
 # SDLC Project QA Checklist
