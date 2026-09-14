@@ -26,12 +26,39 @@ verdict: PASS | FAIL | CRITICAL_FAIL
 findings:
   - severity: critical | high | medium | low
     category: <domain-specific category — see list below>
+    scope: in-scope
+    requirement: "<requirement/acceptance-criterion/ADR this relates to>"
     description: "<finding description>"
     location: "<file:line or component name>"
     recommendation: "<how to fix>"
+hardening_suggestions:
+  - severity: low
+    category: <domain-specific category>
+    description: "<out-of-scope hardening idea>"
+    location: "<file:line or component name>"
+    recommendation: "<how to harden>"
 reasoning: "<2-3 sentence evaluation summary>"
 ---end-sdlc-review-output---
 ```
+
+## Finding Scoping (spec relevance)
+
+Your checklists describe production-grade ideals. The score and verdict measure
+how well the work meets **its requirements** — not an unconditional hardening audit.
+Failing spec-compliant work for requirements that were never asked for creates
+false-positive QA loops.
+
+- Every entry in `findings` MUST be tied to the work's requirements: set
+  `scope: in-scope` and cite the requirement, acceptance criterion, or ADR section
+  in `requirement` (e.g., `requirement: "FR-3"`, `requirement: "ADR-012 §2"`).
+- A concern with no basis in the requirements is **not a defect**. Put it in
+  `hardening_suggestions` instead:
+  - Severity is capped at `low`.
+  - It MUST NOT lower the score below the pass threshold.
+  - It MUST NOT trigger `FAIL` or `CRITICAL_FAIL`.
+- `score` and `verdict` are computed from in-scope `findings` only.
+- When the requirements are silent on a concern (e.g., the spec never asked for
+  authentication), note it once as a hardening suggestion — do not fail the review.
 
 ## Field Rules
 
@@ -41,7 +68,8 @@ reasoning: "<2-3 sentence evaluation summary>"
 | `phase` | SDLC phase being reviewed (e.g., `"Phase 4 - Implementation"`) |
 | `score` | Integer 1–10. Must be consistent with the Markdown `Quality Score: X/10` |
 | `verdict` | `PASS` if score meets threshold and no critical findings; `FAIL` if score below threshold; `CRITICAL_FAIL` if any finding has severity `critical` |
-| `findings` | List of all findings. May be empty (`[]`) for a clean review. Include ALL findings from the Markdown report |
+| `findings` | List of all **in-scope** findings. May be empty (`[]`) for a clean review. Include ALL in-scope findings from the Markdown report |
+| `hardening_suggestions` | Out-of-scope hardening ideas (see Finding Scoping). Never affect score or verdict |
 | `severity` | `critical` = must fix before merge; `high` = important; `medium` = suggestion; `low` = minor |
 | `category` | Domain-specific value from the list below. Use the most specific applicable category |
 | `description` | Concise description of the finding |
@@ -56,10 +84,11 @@ reasoning: "<2-3 sentence evaluation summary>"
 | Security Reviewer | ≥ 8 | Higher bar — security issues are never minor |
 | All other 8 reviewers | ≥ 7 | Standard production threshold |
 
-**Verdict assignment:**
-- Any finding with `severity: critical` → verdict MUST be `CRITICAL_FAIL` regardless of score
+**Verdict assignment (in-scope findings only):**
+- Any in-scope finding with `severity: critical` → verdict MUST be `CRITICAL_FAIL` regardless of score
 - Score below threshold → verdict MUST be `FAIL`
-- Score at or above threshold AND no critical findings → verdict is `PASS`
+- Score at or above threshold AND no critical in-scope findings → verdict is `PASS`
+- `hardening_suggestions` never change the verdict
 
 ## Domain-Specific Category Values
 
