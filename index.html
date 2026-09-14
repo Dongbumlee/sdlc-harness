@@ -1,0 +1,877 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="theme-color" content="#0b0d0f" />
+  <link rel="icon" href="data:," />
+  <title>SDLC Harness — Agent-driven software delivery</title>
+  <meta name="description" content="A marketing and documentation landing page for SDLC Harness: 19 specialized agents, 9 SDLC phases, and adversarial QA for GitHub Copilot." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #f2f4f6;
+      --muted: #a7afb8;
+      --dim: #737c86;
+      --bg: #0b0d0f;
+      --panel: #111417;
+      --panel-2: #161a1e;
+      --line: #293038;
+      --line-strong: #3b454f;
+      --accent: #ffb224;
+      --accent-pale: #ffd884;
+      --green: #52d68a;
+      --red: #ff6d6d;
+      --blue: #73b7ff;
+      --radius: 14px;
+      --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --sans: "IBM Plex Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-width: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--sans);
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    a { color: inherit; }
+    button { font: inherit; }
+    code, pre { font-family: var(--mono); }
+    ::selection { background: var(--accent); color: #181000; }
+
+    .grain {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .028;
+      z-index: 10;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.8'/%3E%3C/svg%3E");
+    }
+
+    .shell {
+      width: min(1180px, calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(11, 13, 15, .92);
+      border-bottom: 1px solid rgba(59, 69, 79, .7);
+    }
+    .topbar-inner {
+      min-height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    .repo-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted);
+      min-width: 0;
+    }
+    .pulse {
+      width: 8px;
+      height: 8px;
+      background: var(--green);
+      box-shadow: 0 0 0 4px rgba(82, 214, 138, .1);
+      border-radius: 50%;
+      flex: 0 0 auto;
+    }
+    .nav-links { display: flex; align-items: center; gap: 24px; }
+    .nav-links a {
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .nav-links a:hover, .nav-links a:focus-visible { color: var(--ink); }
+    .repo-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 13px;
+      border: 1px solid var(--line-strong);
+      border-radius: 8px;
+      color: var(--ink) !important;
+      background: var(--panel);
+    }
+    .repo-button svg { width: 16px; height: 16px; }
+
+    .hero {
+      padding: 96px 0 62px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(410px, .92fr);
+      gap: clamp(48px, 7vw, 96px);
+      align-items: center;
+    }
+    .overline {
+      margin: 0 0 19px;
+      color: var(--accent);
+      font: 600 12px/1.3 var(--mono);
+      letter-spacing: .06em;
+    }
+    h1 {
+      margin: 0;
+      max-width: 720px;
+      font-size: clamp(48px, 6.7vw, 92px);
+      line-height: .94;
+      letter-spacing: -.057em;
+      font-weight: 700;
+    }
+    h1 .outline {
+      display: block;
+      color: transparent;
+      -webkit-text-stroke: 1.5px var(--accent-pale);
+      text-stroke: 1.5px var(--accent-pale);
+    }
+    .hero-copy {
+      max-width: 650px;
+      margin: 28px 0 0;
+      color: var(--muted);
+      font-size: clamp(17px, 2vw, 20px);
+      line-height: 1.6;
+    }
+    .hero-copy strong { color: var(--ink); font-weight: 600; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 48px;
+      padding: 0 18px;
+      border-radius: 8px;
+      border: 1px solid var(--line-strong);
+      text-decoration: none;
+      font-weight: 600;
+      transition: background .2s ease, border-color .2s ease, color .2s ease;
+    }
+    .btn-primary { background: var(--accent); color: #171006; border-color: var(--accent); }
+    .btn-primary:hover, .btn-primary:focus-visible { background: #ffc14d; border-color: #ffc14d; }
+    .btn-secondary { background: transparent; color: var(--ink); }
+    .btn-secondary:hover, .btn-secondary:focus-visible { background: var(--panel-2); border-color: #697580; }
+    .btn svg { width: 17px; height: 17px; }
+
+    .orchestrator {
+      position: relative;
+      min-height: 500px;
+      border: 1px solid var(--line);
+      background: #0e1114;
+      border-radius: 18px;
+      padding: 28px;
+      overflow: hidden;
+    }
+    .orchestrator::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(rgba(255,255,255,.033) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.033) 1px, transparent 1px);
+      background-size: 28px 28px;
+      mask-image: linear-gradient(to bottom, #000, transparent 90%);
+    }
+    .orchestrator-head {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font: 500 11px/1 var(--mono);
+      color: var(--dim);
+      letter-spacing: .04em;
+    }
+    .status-tag { color: var(--green); }
+    .architecture-visual {
+      position: relative;
+      height: 398px;
+      margin-top: 18px;
+    }
+    .agent-node {
+      position: absolute;
+      padding: 8px 10px;
+      background: #15191d;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      font: 500 10px/1.2 var(--mono);
+      color: #c2cad2;
+      white-space: nowrap;
+    }
+    .agent-node::before {
+      content: "";
+      display: inline-block;
+      width: 5px;
+      height: 5px;
+      margin-right: 7px;
+      border-radius: 50%;
+      background: var(--blue);
+      vertical-align: 1px;
+    }
+    .node-analyst { top: 40px; left: 0; }
+    .node-scaffold { top: 101px; left: 4%; }
+    .node-deploy { top: 162px; left: 0; }
+    .node-impl { top: 224px; left: 6%; }
+    .node-doc { top: 286px; left: 0; }
+    .node-rai { top: 347px; left: 8%; }
+    .harness-core {
+      position: absolute;
+      top: 135px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 136px;
+      height: 136px;
+      border: 1px solid #a86f09;
+      background: #201908;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      box-shadow: 0 0 0 10px rgba(255,178,36,.04), 0 0 0 22px rgba(255,178,36,.025);
+      text-align: center;
+      z-index: 2;
+    }
+    .core-mark { font: 600 13px/1.35 var(--mono); color: var(--accent-pale); }
+    .core-mark small { display: block; margin-top: 7px; color: #aa956d; font-size: 9px; font-weight: 400; }
+    .qa-bank {
+      position: absolute;
+      top: 37px;
+      right: 0;
+      width: 116px;
+      border-left: 1px solid var(--line-strong);
+      padding-left: 12px;
+      display: grid;
+      gap: 9px;
+    }
+    .qa-bank-label { color: var(--accent); font: 600 10px/1.4 var(--mono); margin-bottom: 2px; }
+    .qa-item { color: #aab3bb; font: 400 9px/1.2 var(--mono); }
+    .qa-item::before { content: "↳"; color: #66717b; margin-right: 5px; }
+    .flow-line {
+      position: absolute;
+      height: 1px;
+      background: var(--line-strong);
+      transform-origin: left center;
+      z-index: 0;
+    }
+    .l1 { width: 125px; top: 58px; left: 90px; transform: rotate(34deg); }
+    .l2 { width: 130px; top: 116px; left: 101px; transform: rotate(15deg); }
+    .l3 { width: 115px; top: 180px; left: 92px; transform: rotate(0); }
+    .l4 { width: 112px; top: 239px; left: 108px; transform: rotate(-20deg); }
+    .l5 { width: 126px; top: 302px; left: 94px; transform: rotate(-36deg); }
+    .l6 { width: 142px; top: 361px; left: 100px; transform: rotate(-47deg); }
+    .l7 { width: 105px; top: 202px; left: 263px; transform: rotate(0); }
+    .mini-caption {
+      position: absolute;
+      left: 50%;
+      bottom: 4px;
+      transform: translateX(-50%);
+      color: #66717b;
+      font: 400 9px/1.3 var(--mono);
+      white-space: nowrap;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      border-block: 1px solid var(--line);
+    }
+    .metric { padding: 30px 24px; border-right: 1px solid var(--line); }
+    .metric:last-child { border-right: 0; }
+    .metric b { display: block; font: 600 clamp(27px, 3vw, 36px)/1 var(--mono); color: var(--ink); }
+    .metric span { display: block; margin-top: 8px; color: var(--dim); font-size: 13px; }
+
+    section { scroll-margin-top: 78px; }
+    .section { padding: 112px 0; }
+    .section + .section { border-top: 1px solid var(--line); }
+    .section-header {
+      display: grid;
+      grid-template-columns: minmax(240px, .7fr) minmax(320px, 1fr);
+      gap: 48px;
+      align-items: end;
+      margin-bottom: 56px;
+    }
+    .section-index { color: var(--accent); font: 600 12px/1 var(--mono); }
+    h2 { margin: 10px 0 0; font-size: clamp(34px, 4vw, 56px); line-height: 1.04; letter-spacing: -.038em; }
+    .section-intro { margin: 0; color: var(--muted); font-size: 18px; max-width: 620px; }
+
+    .feature-layout {
+      display: grid;
+      grid-template-columns: 1.25fr .75fr;
+      gap: 18px;
+    }
+    .feature-main, .feature-small {
+      position: relative;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      overflow: hidden;
+    }
+    .feature-main { min-height: 420px; padding: clamp(28px, 4vw, 52px); border-radius: 18px 4px 18px 4px; }
+    .feature-main::after {
+      content: "19";
+      position: absolute;
+      right: -14px;
+      bottom: -70px;
+      color: rgba(255, 178, 36, .055);
+      font: 700 310px/.8 var(--mono);
+      letter-spacing: -.15em;
+      pointer-events: none;
+    }
+    .feature-stack { display: grid; gap: 18px; }
+    .feature-small { min-height: 201px; padding: 30px; border-radius: 4px 16px 4px 16px; }
+    .feature-label { color: var(--accent); font: 500 11px/1 var(--mono); }
+    .feature-main h3, .feature-small h3 { margin: 18px 0 10px; font-size: 25px; letter-spacing: -.02em; line-height: 1.16; }
+    .feature-main h3 { font-size: clamp(31px, 3vw, 44px); max-width: 560px; }
+    .feature-main p, .feature-small p { max-width: 620px; color: var(--muted); margin: 0; }
+    .feature-list {
+      position: relative;
+      z-index: 1;
+      margin: 40px 0 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 28px;
+      max-width: 560px;
+    }
+    .feature-list li { color: #c7ced5; font: 500 13px/1.45 var(--mono); }
+    .feature-list li::before { content: "+"; color: var(--accent); margin-right: 9px; }
+
+    .workflow-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-top: 1px solid var(--line-strong);
+      border-left: 1px solid var(--line-strong);
+    }
+    .phase {
+      position: relative;
+      min-height: 190px;
+      padding: 26px;
+      border-right: 1px solid var(--line-strong);
+      border-bottom: 1px solid var(--line-strong);
+      background: var(--panel);
+    }
+    .phase:nth-child(2n) { background: #0f1215; }
+    .phase-num { color: var(--accent); font: 500 12px/1 var(--mono); }
+    .phase h3 { margin: 33px 0 8px; font-size: 20px; line-height: 1.2; }
+    .phase p { margin: 0; color: var(--muted); font-size: 14px; }
+    .phase-agent { position: absolute; right: 16px; top: 18px; color: #69747f; font: 500 10px/1 var(--mono); }
+    .flow-note {
+      margin-top: 22px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .flow-note::before { content: ""; width: 48px; height: 1px; background: var(--accent); flex: 0 0 auto; }
+
+    .agents-layout { display: grid; grid-template-columns: .72fr 1.28fr; gap: 54px; align-items: start; }
+    .agent-count {
+      position: sticky;
+      top: 94px;
+      border-top: 1px solid var(--line-strong);
+      padding-top: 24px;
+    }
+    .agent-count strong { display: block; font: 600 clamp(90px, 14vw, 170px)/.9 var(--mono); color: var(--accent); letter-spacing: -.09em; }
+    .agent-count p { color: var(--muted); max-width: 340px; font-size: 17px; }
+    .agent-groups { display: grid; gap: 14px; }
+    .agent-group {
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      gap: 26px;
+      padding: 26px 0;
+      border-top: 1px solid var(--line);
+    }
+    .agent-group:last-child { border-bottom: 1px solid var(--line); }
+    .agent-group h3 { margin: 0; font-size: 17px; }
+    .group-count { display: block; color: var(--accent); font: 500 11px/1 var(--mono); margin-bottom: 9px; }
+    .agent-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+    .agent-tags span {
+      padding: 7px 10px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: #bcc4cc;
+      font: 400 11px/1.2 var(--mono);
+    }
+
+    .qa-section {
+      background: #f0eee7;
+      color: #171819;
+      padding: 112px 0;
+    }
+    .qa-section .section-index { color: #986100; }
+    .qa-section .section-intro { color: #54585d; }
+    .qa-layout { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(36px, 7vw, 84px); }
+    .score-panel { border: 1px solid #b8b5ad; background: #e8e5dc; padding: 32px; }
+    .score-top { display: flex; justify-content: space-between; align-items: baseline; gap: 20px; border-bottom: 1px solid #b8b5ad; padding-bottom: 21px; }
+    .score-top span { font: 500 11px/1 var(--mono); color: #66645e; }
+    .score-top strong { font: 600 34px/1 var(--mono); }
+    .review-row { display: grid; grid-template-columns: 1fr auto; gap: 20px; padding: 17px 0 10px; border-bottom: 1px solid #c9c6bd; }
+    .review-row:last-child { border-bottom: 0; }
+    .review-name { font: 500 12px/1.2 var(--mono); }
+    .review-score { font: 600 12px/1.2 var(--mono); }
+    .bar { grid-column: 1 / -1; height: 4px; background: #d4d0c5; }
+    .bar span { display: block; height: 100%; background: #202224; }
+    .bar.security span { background: #b06c00; }
+    .qa-copy h3 { font-size: clamp(30px, 3vw, 42px); margin: 0 0 20px; line-height: 1.1; letter-spacing: -.03em; }
+    .qa-copy > p { color: #52565b; font-size: 17px; }
+    .qa-rule { display: grid; grid-template-columns: 52px 1fr; gap: 18px; margin-top: 28px; align-items: start; }
+    .rule-num { width: 43px; height: 43px; display: grid; place-items: center; background: #171819; color: var(--accent); font: 600 12px/1 var(--mono); }
+    .qa-rule h4 { margin: 0 0 5px; font-size: 16px; }
+    .qa-rule p { margin: 0; color: #5f6266; font-size: 14px; }
+    .formula { margin-top: 30px; padding: 16px; border: 1px solid #b8b5ad; color: #5a5d61; font: 500 11px/1.55 var(--mono); overflow-wrap: anywhere; }
+    .formula b { color: #171819; }
+
+    .quick-grid { display: grid; grid-template-columns: .72fr 1.28fr; gap: 60px; align-items: start; }
+    .quick-copy h2 { margin-top: 10px; }
+    .quick-copy p { color: var(--muted); font-size: 17px; }
+    .requirements { margin: 30px 0 0; padding: 0; list-style: none; }
+    .requirements li { padding: 9px 0; border-bottom: 1px solid var(--line); color: #c2cad2; font-size: 14px; }
+    .requirements li::before { content: "✓"; color: var(--green); font-family: var(--mono); margin-right: 10px; }
+    .terminal { border: 1px solid var(--line-strong); background: #070809; border-radius: 12px; overflow: hidden; }
+    .terminal-tabs { display: flex; align-items: center; border-bottom: 1px solid var(--line); background: #111417; padding: 0 12px; }
+    .tab {
+      appearance: none;
+      border: 0;
+      border-bottom: 2px solid transparent;
+      background: transparent;
+      color: var(--dim);
+      padding: 15px 13px 13px;
+      cursor: pointer;
+      font: 500 11px/1 var(--mono);
+    }
+    .tab.active { color: var(--ink); border-bottom-color: var(--accent); }
+    .window-dots { display: flex; gap: 6px; margin-left: auto; padding-right: 5px; }
+    .window-dots i { width: 7px; height: 7px; border-radius: 50%; background: #3a424a; }
+    .code-pane { position: relative; padding: 28px 25px 30px; min-height: 300px; }
+    .code-content { display: none; }
+    .code-content.active { display: block; }
+    .code-line { display: block; color: #ced5dc; font: 400 13px/1.85 var(--mono); white-space: pre-wrap; overflow-wrap: anywhere; }
+    .code-comment { color: #67727c; }
+    .code-command { color: var(--accent-pale); }
+    .copy-btn {
+      position: absolute;
+      right: 16px;
+      bottom: 16px;
+      padding: 8px 10px;
+      border: 1px solid var(--line-strong);
+      border-radius: 6px;
+      background: #111417;
+      color: #b8c0c8;
+      cursor: pointer;
+      font: 500 10px/1 var(--mono);
+    }
+    .copy-btn:hover, .copy-btn:focus-visible { border-color: #717c86; color: white; }
+    .quick-note { margin-top: 14px; color: var(--dim); font: 400 11px/1.5 var(--mono); }
+
+    .cta {
+      padding: 110px 0 120px;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta::before {
+      content: "HARNESS";
+      position: absolute;
+      right: -25px;
+      bottom: -32px;
+      font: 700 clamp(90px, 17vw, 245px)/.8 var(--mono);
+      letter-spacing: -.09em;
+      color: rgba(255,255,255,.025);
+      pointer-events: none;
+    }
+    .cta-inner { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr auto; gap: 44px; align-items: end; }
+    .cta h2 { max-width: 780px; margin: 0; }
+    .cta p { max-width: 640px; color: var(--muted); font-size: 17px; }
+    .cta .btn { min-width: 190px; }
+
+    footer { border-top: 1px solid var(--line); padding: 28px 0 40px; color: var(--dim); }
+    .footer-inner { display: flex; justify-content: space-between; gap: 24px; font: 400 11px/1.7 var(--mono); }
+    .footer-inner p { margin: 0; }
+    .footer-links { display: flex; gap: 18px; flex-wrap: wrap; justify-content: flex-end; }
+    .footer-links a { color: #9ea7af; text-underline-offset: 3px; }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 22px;
+      transform: translate(-50%, 20px);
+      opacity: 0;
+      z-index: 30;
+      background: var(--ink);
+      color: #111;
+      padding: 10px 14px;
+      border-radius: 7px;
+      font: 600 11px/1 var(--mono);
+      transition: opacity .2s ease, transform .2s ease;
+      pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+    @media (max-width: 980px) {
+      .hero { grid-template-columns: 1fr; padding-top: 72px; }
+      .orchestrator { max-width: 640px; width: 100%; }
+      .metrics { grid-template-columns: repeat(3, 1fr); }
+      .metric:nth-child(3) { border-right: 0; }
+      .metric:nth-child(n+4) { border-top: 1px solid var(--line); }
+      .section-header, .agents-layout, .quick-grid { grid-template-columns: 1fr; }
+      .agent-count { position: static; }
+      .agent-count strong { font-size: 120px; }
+      .feature-layout { grid-template-columns: 1fr; }
+      .feature-stack { grid-template-columns: 1fr 1fr; }
+      .workflow-grid { grid-template-columns: repeat(2, 1fr); }
+      .phase:nth-child(2n) { background: var(--panel); }
+      .phase:nth-child(4n+2), .phase:nth-child(4n+3) { background: #0f1215; }
+      .cta-inner { grid-template-columns: 1fr; align-items: start; }
+      .cta .btn { justify-self: start; }
+    }
+
+    @media (max-width: 700px) {
+      .shell { width: min(100% - 28px, 1180px); }
+      .topbar-inner { min-height: 58px; }
+      .repo-meta span:last-child { display: none; }
+      .nav-links > a:not(.repo-button) { display: none; }
+      .hero { padding: 58px 0 46px; gap: 38px; }
+      h1 { font-size: clamp(46px, 15vw, 68px); }
+      .hero-copy { margin-top: 23px; }
+      .hero-actions { display: grid; }
+      .btn { width: 100%; }
+      .orchestrator { min-height: 440px; padding: 20px 16px; }
+      .architecture-visual { height: 350px; }
+      .agent-node { font-size: 8px; padding: 7px 8px; }
+      .node-analyst { top: 32px; }
+      .node-scaffold { top: 83px; }
+      .node-deploy { top: 135px; }
+      .node-impl { top: 190px; }
+      .node-doc { top: 245px; }
+      .node-rai { top: 298px; }
+      .harness-core { width: 112px; height: 112px; top: 118px; left: 52%; }
+      .qa-bank { top: 24px; width: 91px; padding-left: 8px; gap: 8px; }
+      .qa-bank-label { font-size: 8px; }
+      .qa-item { font-size: 7px; }
+      .flow-line { display: none; }
+      .mini-caption { font-size: 8px; }
+      .metrics { grid-template-columns: repeat(2, 1fr); }
+      .metric { padding: 24px 17px; }
+      .metric:nth-child(2) { border-right: 0; }
+      .metric:nth-child(3) { border-right: 1px solid var(--line); border-top: 1px solid var(--line); }
+      .metric:nth-child(4) { border-right: 0; }
+      .metric:nth-child(5) { grid-column: 1 / -1; border-right: 0; }
+      .section, .qa-section { padding: 82px 0; }
+      .section-header { gap: 22px; margin-bottom: 38px; }
+      .section-intro { font-size: 16px; }
+      .feature-main { min-height: 0; padding: 28px 24px 34px; }
+      .feature-main::after { display: none; }
+      .feature-list { grid-template-columns: 1fr; margin-top: 28px; }
+      .feature-stack { grid-template-columns: 1fr; }
+      .feature-small { min-height: 0; }
+      .workflow-grid { grid-template-columns: 1fr; }
+      .phase { min-height: 155px; }
+      .phase, .phase:nth-child(n) { background: var(--panel); }
+      .phase:nth-child(even) { background: #0f1215; }
+      .agent-count strong { font-size: 100px; }
+      .agent-group { grid-template-columns: 1fr; gap: 18px; }
+      .qa-layout { grid-template-columns: 1fr; }
+      .score-panel { padding: 24px 20px; }
+      .quick-grid { gap: 38px; }
+      .terminal-tabs { overflow: hidden; }
+      .tab { padding-inline: 10px; }
+      .code-pane { padding: 22px 17px 64px; min-height: 330px; }
+      .code-line { font-size: 11px; }
+      .cta { padding: 82px 0 100px; }
+      .footer-inner { flex-direction: column; }
+      .footer-links { justify-content: flex-start; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+
+  <nav class="topbar" aria-label="Primary">
+    <div class="shell topbar-inner">
+      <div class="repo-meta"><span class="pulse"></span><span>OPEN SOURCE · MIT</span></div>
+      <div class="nav-links">
+        <a href="#workflow">Workflow</a>
+        <a href="#quality">Quality engine</a>
+        <a href="#install">Install</a>
+        <a class="repo-button" href="https://github.com/Dongbumlee/sdlc-harness" target="_blank" rel="noopener noreferrer">
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .8a11.4 11.4 0 0 0-3.6 22.2c.6.1.8-.2.8-.5v-2c-3.3.7-4-1.4-4-1.4-.5-1.4-1.3-1.8-1.3-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.4 1 .1-.8.4-1.3.8-1.6-2.6-.3-5.4-1.3-5.4-5.6 0-1.2.4-2.2 1.2-3-.1-.3-.5-1.5.1-3 0 0 1-.3 3.1 1.1A10.8 10.8 0 0 1 12 6.4c1 0 1.9.1 2.8.4 2.2-1.5 3.1-1.1 3.1-1.1.6 1.5.2 2.7.1 3 .7.8 1.2 1.8 1.2 3 0 4.4-2.7 5.3-5.4 5.6.4.4.8 1.1.8 2.1v3.1c0 .3.2.6.8.5A11.4 11.4 0 0 0 12 .8Z"/></svg>
+          Repository
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <header class="shell hero">
+      <div>
+        <p class="overline">AGENT-DRIVEN SOFTWARE DELIVERY</p>
+        <h1>Build with agents.<span class="outline">Ship with evidence.</span></h1>
+        <p class="hero-copy"><strong>SDLC Harness</strong> turns GitHub Copilot into an orchestrated engineering team: 19 specialized agents move work through nine enforced phases, while independent reviewers challenge every release.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#install">Install the plugin <span aria-hidden="true">↓</span></a>
+          <a class="btn btn-secondary" href="https://github.com/Dongbumlee/sdlc-harness" target="_blank" rel="noopener noreferrer">
+            Explore on GitHub
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="orchestrator" role="img" aria-label="Diagram showing the Harness orchestrator routing work to phase agents and a bank of nine independent QA reviewers">
+        <div class="orchestrator-head"><span>ORCHESTRATION MAP</span><span class="status-tag">● ROUTING</span></div>
+        <div class="architecture-visual" aria-hidden="true">
+          <div class="agent-node node-analyst">Analyst</div>
+          <div class="agent-node node-scaffold">Scaffolder</div>
+          <div class="agent-node node-deploy">Deployer</div>
+          <div class="agent-node node-impl">Implementer</div>
+          <div class="agent-node node-doc">Documenter</div>
+          <div class="agent-node node-rai">RAI + Release</div>
+          <span class="flow-line l1"></span><span class="flow-line l2"></span><span class="flow-line l3"></span>
+          <span class="flow-line l4"></span><span class="flow-line l5"></span><span class="flow-line l6"></span><span class="flow-line l7"></span>
+          <div class="harness-core"><div class="core-mark">HARNESS<small>orchestrator</small></div></div>
+          <div class="qa-bank">
+            <div class="qa-bank-label">9× QA REVIEW</div>
+            <div class="qa-item">Architecture</div><div class="qa-item">Azure</div><div class="qa-item">Code quality</div>
+            <div class="qa-item">Security</div><div class="qa-item">Coverage</div><div class="qa-item">Requirements</div>
+            <div class="qa-item">UX / A11y</div><div class="qa-item">LLM behavior</div><div class="qa-item">Deployability</div>
+          </div>
+          <div class="mini-caption">engineer request → routed work → scored evidence</div>
+        </div>
+      </div>
+    </header>
+
+    <div class="shell metrics" aria-label="Project facts">
+      <div class="metric"><b>19</b><span>specialized agents</span></div>
+      <div class="metric"><b>9</b><span>SDLC phases</span></div>
+      <div class="metric"><b>9</b><span>independent QA views</span></div>
+      <div class="metric"><b>16</b><span>portable skills</span></div>
+      <div class="metric"><b>7</b><span>MCP servers</span></div>
+    </div>
+
+    <section class="shell section" id="features">
+      <div class="section-header">
+        <div><span class="section-index">01 / SYSTEM</span><h2>One front door.<br />A full engineering bench.</h2></div>
+        <p class="section-intro">Talk to one Harness agent. It identifies the SDLC phase, verifies prerequisites, delegates to the right specialist, and keeps quality gates in the path to release.</p>
+      </div>
+      <div class="feature-layout">
+        <article class="feature-main">
+          <div class="feature-label">ORCHESTRATED BY DESIGN</div>
+          <h3>Specialists do the work. Harness keeps the system coherent.</h3>
+          <p>Analysis, scaffolding, implementation, documentation, responsible AI review, and release each have a defined owner with scoped tool access.</p>
+          <ul class="feature-list">
+            <li>Least-privilege agent roles</li>
+            <li>Explicit phase routing</li>
+            <li>Visible subagent work</li>
+            <li>Validation before handoff</li>
+          </ul>
+        </article>
+        <div class="feature-stack">
+          <article class="feature-small">
+            <div class="feature-label">LIVE CONTEXT</div>
+            <h3>Current patterns, not stale recall</h3>
+            <p>Seven MCP servers bring in SDK patterns, framework docs, Azure guidance, work items, and browser testing context.</p>
+          </article>
+          <article class="feature-small">
+            <div class="feature-label">PORTABLE STANDARDS</div>
+            <h3>Quality travels with the repo</h3>
+            <p>Sixteen skills, structured prompt files, and file-type instructions make engineering expectations explicit and repeatable.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="shell section" id="workflow">
+      <div class="section-header">
+        <div><span class="section-index">02 / WORKFLOW</span><h2>Nine phases.<br />No silent shortcuts.</h2></div>
+        <p class="section-intro">Every request enters a traceable path from requirements to publish. The Harness chooses the route; engineers remain the decision-makers.</p>
+      </div>
+      <div class="workflow-grid">
+        <article class="phase"><span class="phase-num">01</span><span class="phase-agent">ANALYST</span><h3>Requirement analysis</h3><p>Clarify goals, constraints, non-functional requirements, and testable outcomes.</p></article>
+        <article class="phase"><span class="phase-num">02</span><span class="phase-agent">ANALYST</span><h3>Design</h3><p>Shape the architecture and document decisions without over-specifying implementation.</p></article>
+        <article class="phase"><span class="phase-num">03</span><span class="phase-agent">SCAFFOLDER</span><h3>Repo &amp; CI/CD</h3><p>Establish structure, templates, dependencies, and deployment foundations.</p></article>
+        <article class="phase"><span class="phase-num">04</span><span class="phase-agent">IMPLEMENTER</span><h3>Implementation</h3><p>Write production code and tests against explicit acceptance criteria.</p></article>
+        <article class="phase"><span class="phase-num">05</span><span class="phase-agent">DOCUMENTER</span><h3>Documentation</h3><p>Update ADRs and API documentation against the code that actually shipped.</p></article>
+        <article class="phase"><span class="phase-num">06</span><span class="phase-agent">QA COORDINATOR</span><h3>QA activities</h3><p>Run nine independent, parallel reviews and synthesize prioritized findings.</p></article>
+        <article class="phase"><span class="phase-num">07</span><span class="phase-agent">RAI REVIEWER</span><h3>Responsible AI</h3><p>Assess safety, transparency, grounding, and model-facing behavior.</p></article>
+        <article class="phase"><span class="phase-num">08</span><span class="phase-agent">RELEASE MANAGER</span><h3>Release prep</h3><p>Verify exit criteria, prepare the changelog, and assemble a reviewable pull request.</p></article>
+        <article class="phase"><span class="phase-num">09</span><span class="phase-agent">RELEASE MANAGER</span><h3>Publish</h3><p>Move the approved change across the final release boundary.</p></article>
+      </div>
+      <div class="flow-note">A request can enter at the phase it needs; prerequisites are checked before work proceeds.</div>
+    </section>
+
+    <section class="shell section" id="agents">
+      <div class="section-header">
+        <div><span class="section-index">03 / ARCHITECTURE</span><h2>Separation is the feature.</h2></div>
+        <p class="section-intro">Generation and evaluation do not share the same seat. The architecture keeps implementation focused, review independent, and accountability legible.</p>
+      </div>
+      <div class="agents-layout">
+        <div class="agent-count"><strong>19</strong><p>Specialized agents, grouped around a single user-facing orchestrator.</p></div>
+        <div class="agent-groups">
+          <div class="agent-group">
+            <h3><span class="group-count">01 AGENT</span>Orchestration</h3>
+            <div class="agent-tags"><span>Harness</span></div>
+          </div>
+          <div class="agent-group">
+            <h3><span class="group-count">08 AGENTS</span>Phase workers</h3>
+            <div class="agent-tags"><span>Analyst</span><span>Scaffolder</span><span>Deployer</span><span>Implementer</span><span>Documenter</span><span>QA Coordinator</span><span>RAI Reviewer</span><span>Release Manager</span></div>
+          </div>
+          <div class="agent-group">
+            <h3><span class="group-count">09 AGENTS</span>QA reviewers</h3>
+            <div class="agent-tags"><span>Architecture</span><span>Azure compliance</span><span>Code quality</span><span>Security</span><span>Test coverage</span><span>Requirements</span><span>UX &amp; accessibility</span><span>LLM behavior</span><span>Deploy readiness</span></div>
+          </div>
+          <div class="agent-group">
+            <h3><span class="group-count">01 AGENT</span>Cross-cutting</h3>
+            <div class="agent-tags"><span>QA Bug Checklist Reviewer · 338 patterns</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="qa-section" id="quality">
+      <div class="shell">
+        <div class="section-header">
+          <div><span class="section-index">04 / ADVERSARIAL QA</span><h2>A review engine that is allowed to say no.</h2></div>
+          <p class="section-intro">Independent contexts, anti-leniency instructions, numeric scoring, and hard failure rules turn review from a polite ritual into an evidence gate.</p>
+        </div>
+        <div class="qa-layout">
+          <div class="score-panel" aria-label="Illustration of QA score thresholds">
+            <div class="score-top"><span>QUALITY GATE</span><strong>PASS ≥ 7.0</strong></div>
+            <div class="review-row"><span class="review-name">Architecture</span><span class="review-score">≥ 7</span><div class="bar"><span style="width:78%"></span></div></div>
+            <div class="review-row"><span class="review-name">Security</span><span class="review-score">≥ 8</span><div class="bar security"><span style="width:86%"></span></div></div>
+            <div class="review-row"><span class="review-name">Code quality</span><span class="review-score">≥ 7</span><div class="bar"><span style="width:75%"></span></div></div>
+            <div class="review-row"><span class="review-name">Requirements</span><span class="review-score">≥ 7</span><div class="bar"><span style="width:81%"></span></div></div>
+            <div class="review-row"><span class="review-name">Deployment</span><span class="review-score">≥ 7</span><div class="bar"><span style="width:73%"></span></div></div>
+          </div>
+          <div class="qa-copy">
+            <h3>Find. Fix. Re-review the part that failed.</h3>
+            <p>Nine reviewers work in parallel without seeing one another's findings. If a domain misses its threshold, Harness routes targeted fixes and re-runs the failing review—up to three rounds.</p>
+            <div class="qa-rule"><div class="rule-num">01</div><div><h4>Independent contexts</h4><p>Reviewers do not inherit the generator's rationale or anchor on one another's verdicts.</p></div></div>
+            <div class="qa-rule"><div class="rule-num">02</div><div><h4>Hard-fail thresholds</h4><p>Security below 8, composite below 7, or any Critical finding stops the release.</p></div></div>
+            <div class="qa-rule"><div class="rule-num">03</div><div><h4>Structured output</h4><p>Scores, severity, location, recommendation, and reasoning arrive as machine-readable YAML.</p></div></div>
+            <div class="formula"><b>weighted composite</b> = (security × 1.5 + sum of other reviewers) / 8.5</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="shell section" id="install">
+      <div class="quick-grid">
+        <div class="quick-copy">
+          <span class="section-index">05 / QUICK START</span>
+          <h2>Install once.<br />Bring the whole system.</h2>
+          <p>Use the Agent Plugin in VS Code or GitHub Copilot CLI. Then open a project and ask Harness to initialize the workspace.</p>
+          <ul class="requirements">
+            <li>VS Code + GitHub Copilot Chat</li>
+            <li>Python 3.12+ and uv</li>
+            <li>Git 2.40+ and Docker</li>
+            <li>Azure tooling when using the included Azure Pack</li>
+          </ul>
+        </div>
+        <div>
+          <div class="terminal">
+            <div class="terminal-tabs" role="tablist" aria-label="Installation method">
+              <button class="tab active" role="tab" aria-selected="true" aria-controls="cli-pane" id="cli-tab" data-target="cli-pane">COPILOT CLI</button>
+              <button class="tab" role="tab" aria-selected="false" aria-controls="vscode-pane" id="vscode-tab" data-target="vscode-pane">FIRST USE</button>
+              <div class="window-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+            </div>
+            <div class="code-pane">
+              <div class="code-content active" id="cli-pane" role="tabpanel" aria-labelledby="cli-tab" data-copy="# Register the marketplace once\ncopilot plugin marketplace add Dongbumlee/sdlc-harness\n\n# Install the plugin\ncopilot plugin install sdlc-harness@sdlc-harness">
+                <span class="code-line code-comment"># Register the marketplace once</span>
+                <span class="code-line code-command">$ copilot plugin marketplace add Dongbumlee/sdlc-harness</span>
+                <span class="code-line"> </span>
+                <span class="code-line code-comment"># Install the plugin</span>
+                <span class="code-line code-command">$ copilot plugin install sdlc-harness@sdlc-harness</span>
+              </div>
+              <div class="code-content" id="vscode-pane" role="tabpanel" aria-labelledby="vscode-tab" data-copy="/agent harness\ninitialize workspace">
+                <span class="code-line code-comment"># Open your project, then start Harness</span>
+                <span class="code-line code-command">/agent harness</span>
+                <span class="code-line">initialize workspace</span>
+                <span class="code-line"> </span>
+                <span class="code-line code-comment"># Harness deploys MCP config, quality instructions,</span>
+                <span class="code-line code-comment"># and prompt files, then asks for project details.</span>
+              </div>
+              <button class="copy-btn" type="button">COPY COMMANDS</button>
+            </div>
+          </div>
+          <p class="quick-note">VS Code requires defaultApproval: autopilot and virtualTools.threshold: 0. Start MCP servers, then open a new Chat session so tools are registered.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="shell cta">
+      <div class="cta-inner">
+        <div>
+          <h2>Turn Copilot into a delivery system—not just a coding assistant.</h2>
+          <p>Explore the agents, skills, canary tests, and design docs. Fork it, inspect it, and adapt the workflow to your own engineering standards.</p>
+        </div>
+        <a class="btn btn-primary" href="https://github.com/Dongbumlee/sdlc-harness" target="_blank" rel="noopener noreferrer">
+          View the repository
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="shell footer-inner">
+      <p>SDLC Harness · MIT License · Built for GitHub Copilot</p>
+      <div class="footer-links">
+        <a href="https://github.com/Dongbumlee/sdlc-harness" target="_blank" rel="noopener noreferrer">README</a>
+        <a href="https://github.com/Dongbumlee/sdlc-harness/blob/main/docs/harness-design.md" target="_blank" rel="noopener noreferrer">Harness design</a>
+        <a href="https://github.com/Dongbumlee/sdlc-harness/blob/main/docs/workflow-guide.md" target="_blank" rel="noopener noreferrer">Workflow guide</a>
+      </div>
+    </div>
+  </footer>
+
+  <div class="toast" role="status" aria-live="polite">Copied to clipboard</div>
+
+  <script>
+    const tabs = [...document.querySelectorAll('.tab')];
+    const panes = [...document.querySelectorAll('.code-content')];
+    const copyButton = document.querySelector('.copy-btn');
+    const toast = document.querySelector('.toast');
+    let toastTimer;
+
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        tabs.forEach((item) => {
+          const active = item === tab;
+          item.classList.toggle('active', active);
+          item.setAttribute('aria-selected', String(active));
+        });
+        panes.forEach((pane) => pane.classList.toggle('active', pane.id === tab.dataset.target));
+      });
+    });
+
+    copyButton.addEventListener('click', async () => {
+      const active = document.querySelector('.code-content.active');
+      const text = active.dataset.copy.replace(/\\n/g, '\n');
+      try {
+        await navigator.clipboard.writeText(text);
+        toast.textContent = 'Copied to clipboard';
+      } catch (_) {
+        toast.textContent = 'Select and copy the commands above';
+      }
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 1800);
+    });
+  </script>
+</body>
+</html>
