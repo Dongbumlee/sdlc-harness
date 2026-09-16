@@ -1,0 +1,94 @@
+# Azure DevOps CI/CD scaffold with build, test, and deploy stages.
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - src/UserManagementAPI/*
+      - src/UserManagementAPI/**
+
+pr:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - src/UserManagementAPI/*
+      - src/UserManagementAPI/**
+
+variables:
+  - name: pythonVersion
+    value: "3.12"
+  - name: imageRepository
+    value: "user-management-api"
+  - name: dockerfilePath
+    value: "src/UserManagementAPI/Dockerfile"
+  - name: buildContext
+    value: "src/UserManagementAPI"
+  - name: imageTag
+    value: "$(Build.SourceVersion)"
+
+stages:
+  - stage: Build
+    displayName: Build
+    jobs:
+      - job: BuildJob
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - checkout: self
+
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: "$(pythonVersion)"
+            displayName: Use Python
+
+          - script: |
+              curl -LsSf https://astral.sh/uv/install.sh | sh
+              export PATH="$HOME/.local/bin:$PATH"
+              cd src/UserManagementAPI
+              uv sync
+            displayName: Install dependencies
+
+          - task: Docker@2
+            inputs:
+              command: build
+              repository: "$(imageRepository)"
+              dockerfile: "$(dockerfilePath)"
+              buildContext: "$(buildContext)"
+              tags: "$(imageTag)"
+            displayName: Build container image
+
+  - stage: Test
+    displayName: Test
+    dependsOn: Build
+    jobs:
+      - job: TestJob
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - checkout: self
+          - script: |
+              curl -LsSf https://astral.sh/uv/install.sh | sh
+              export PATH="$HOME/.local/bin:$PATH"
+              cd src/UserManagementAPI
+              uv sync
+              uv run ruff check app tests
+              uv run pytest -q
+            displayName: Lint and test
+
+  - stage: Deploy
+    displayName: Deploy
+    dependsOn: Test
+    condition: succeeded()
+    jobs:
+      - job: DeployJob
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - script: |
+              echo "Deploy stage scaffold."
+              echo "Replace this step with your target deployment workflow (ACA/AKS/App Service)."
+            displayName: Deploy placeholder
+

@@ -1,0 +1,418 @@
+{
+  "run_id": "canary-run-2026-09-16",
+  "timestamp": "2026-09-16T04:17:09Z",
+  "mode": "degraded",
+  "mcp_status": {
+    "awesome-copilot": "not_running_or_unavailable",
+    "github_mcp": "ready",
+    "context7": "not_running_or_unavailable"
+  },
+  "summary": {
+    "total": 15,
+    "passed": 12,
+    "failed": 3,
+    "composite_score": 0.801
+  },
+  "results": [
+    {
+      "id": "dep-001-azure-webapp",
+      "phase": "deploy",
+      "title": "Azure Web App Deployment Configuration",
+      "agent": "deployer",
+      "verdict": "PASS",
+      "composite_score": 0.9,
+      "grader_scores": {
+        "keyword": {
+          "score": 1.0,
+          "passed": true,
+          "matched": 10,
+          "required": 10,
+          "forbidden_found": []
+        },
+        "structural": {
+          "score": 0.83,
+          "passed": true
+        },
+        "llm-judge": {
+          "score": 0.82,
+          "passed": true
+        }
+      }
+    },
+    {
+      "id": "des-001-ecommerce-architecture",
+      "phase": "design",
+      "title": "E-commerce System Architecture Design",
+      "agent": "analyst",
+      "verdict": "PASS",
+      "composite_score": 0.93,
+      "grader_scores": {
+        "keyword": {
+          "score": 0.9,
+          "passed": true,
+          "matched": 9,
+          "required": 10,
+          "forbidden_found": []
+        },
+        "structural": {
+          "score": 1.0,
+          "passed": true
+        },
+        "llm-judge": {
+          "score": 0.92,
+          "passed": true
+        }
+      }
+    },
+    {
+      "id": "doc-001-api-documentation",
+      "phase": "document",
+      "title": "API Documentation Generation",
+      "agent": "documenter",
+      "verdict": "PASS",
+      "composite_score": 0.74,
+      "grader_scores": {
+        "keyword": {
+          "score": 0.8,
+          "passed": true,
+          "matched": 8,
+          "required": 10,
+          "forbidden_found": []
+        },
+        "structural": {
+          "score": 0.83,
+          "passed": true
+        },
+        "llm-judge": {
+          "score": 0.6,
+          "passed": false
+        }
+      }
+    },
+    {
+      "id": "impl-001-crud-endpoint",
+      "phase": "implement",
+      "title": "CRUD Endpoint Implementation",
+      "agent": "implementer",
+      "verdict": "FAIL",
+      "composite_score": 0.37,
+      "grader_scores": {
+        "keyword": {
+          "score": 0.56,
+          "passed": false,
+          "matched": 5,
+          "required": 9,
+          "forbidden_found": []
+        },
+        "structural": {
+          "score": 0.25,
+          "passed": false
+        },
+        "llm-judge": {
+          "score": 0.3,
+          "passed": false
+        }
+      },
+      "failure_reasons": [
+        "Returned acceptance-criteria contract only; no implementation/tests generated"
+      ]
+    },
+    {
+      "id": "des-002-catalog-population",
+      "phase": "design",
+      "title": "Analyst populates reference catalog",
+      "agent": "analyst",
+      "verdict": "FAIL",
+      "composite_score": 0.08,
+      "grader_scores": {
+        "keyword": {
+          "score": 0.0,
+          "passed": false,
+          "matched": 0,
+          "required": 3,
+          "forbidden_found": []
+        },
+        "structural": {
+          "score": 0.0,
+          "passed": false
+        },
+        "llm-judge": {
+          "score": 0.2,
+          "passed": false
+        }
+      },
+      "failure_reasons": [
+        "Agent stayed in discovery question mode; no catalog-population output"
+      ]
+    },
+    {
+      "id": "scf-002-catalog-consumption",
+      "phase": "scaffold",
+      "title": "Scaffolder consumes reference catalog",
+      "agent": "scaffolder",
+      "verdict": "FAIL",
+      "composite_score": 0.59,
+      "grader_scores": {
+        "keyword": {
+          "score": 0.67,
+          "passed": false,
+          "matched": 2,
+          "required": 3,
+          "forbidden_found": []
+        },
+        "structural": {
+          "score": 0.5,
+          "passed": false
+        },
+        "llm-judge": {
+          "score": 0.6,
+          "passed": false
+        }
+      },
+      "failure_reasons": [
+        "Did not clearly demonstrate full reference-catalog consumption workflow"
+      ]
+    },
+    {
+      "id": "pub-001-publish-release-execution",
+      "phase": "publish",
+      "title": "Publish Readiness and Production Publication",
+      "agent": "release-manager",
+      "verdict": "PASS",
+      "composite_score": 0.94,
+      "grader_scores": {
+        "keyword": {
+          "score": 1.0,
+          "passed": true,
+          "matched": 9,
+          "required": 9,
+          "forbidden_found": []
+        },
+        "structural": {
+          "score": 1.0,
+          "passed": true
+        },
+        "llm-judge": {
+          "score": 0.85,
+          "passed": true
+        }
+      }
+    },
+    {
+      "id": "pub-002-publish-blocked-missing-gates",
+      "phase": "publish",
+      "title": "Publish Blocked on Missing Gates",
+      "agent": "release-manager",
+      "verdict": "PASS",
+      "composite_score": 0.95,
+      "grader_scores": {
+        "keyword": {
+          "score": 1.0,
+          "passed": true,
+          "matched": 8,
+          "required": 8,
+          "forbidden_found": []
+        },
+        "structural": {
+          "score": 1.0,
+          "passed": true
+        },
+        "llm-judge": {
+          "score": 0.88,
+          "passed": true
+        }
+      },
+      "gate_checks": {
+        "publish_blocked": true,
+        "reason": "Missing QA, RAI, signed digest, migration guide"
+      }
+    },
+    {
+      "id": "qa-001-security-review",
+      "phase": "qa",
+      "title": "Security Review of API Code",
+      "agent": "qa-coordinator",
+      "verdict": "PASS",
+      "composite_score": 0.93,
+      "grader_scores": {
+        "keyword": {
+          "score": 1.0,
+          "passed": true,
+          "matched": 8,
+          "required": 8,
+          "forbidden_found": []
+        },
+        "structural": {
+          "score": 1.0,
+          "passed": true
+        },
+        "llm-judge": {
+          "score": 0.82,
+          "passed": true
+        }
+      },
+      "gate_checks": {
+        "critical_finding_detected": true,
+        "verdict_consistent": true
+      }
+    },
+    {
+      "id": "qa-002-threshold-gate-enforcement",
+      "phase": "qa",
+      "title": "QA Gate Threshold Enforcement",
+      "agent": "qa-coordinator",
+      "verdict": "PASS",
+      "composite_score": 0.95,
+      "grader_scores": {
+        "keyword": {
+          "score": 1.0,
+          "passed": true,
+          "matched": 9,
+          "required": 9,
+          "forbidden_found": []
+        },
+        "structural": {
+          "score": 1.0,
+          "passed": true
+        },
+        "llm-judge": {
+          "score": 0.88,
+          "passed": true
+        }
+      },
+      "gate_checks": {
+        "security_threshold": true,
+        "non_security_threshold": true,
+        "composite_formula_used": true
+      }
+    },
+    {
+      "id": "qa-003-critical-finding-autofail",
+      "phase": "qa",
+      "title": "Critical Finding Auto-Fail",
+      "agent": "qa-coordinator",
+      "verdict": "PASS",
+      "composite_score": 0.96,
+      "grader_scores": {
+        "keyword": {
+          "score": 1.0,
+          "passed": true,
+          "matched": 7,
+          "required": 7,
+          "forbidden_found": []
+        },
+        "structural": {
+          "score": 1.0,
+          "passed": true
+        },
+        "llm-judge": {
+          "score": 0.9,
+          "passed": true
+        }
+      },
+      "gate_checks": {
+        "auto_fail_on_critical": true
+      }
+    },
+    {
+      "id": "rai-001-bias-assessment",
+      "phase": "rai",
+      "title": "Responsible AI Bias Assessment",
+      "agent": "rai-reviewer",
+      "verdict": "PASS",
+      "composite_score": 0.97,
+      "grader_scores": {
+        "keyword": {
+          "score": 1.0,
+          "passed": true,
+          "matched": 10,
+          "required": 10,
+          "forbidden_found": []
+        },
+        "structural": {
+          "score": 1.0,
+          "passed": true
+        },
+        "llm-judge": {
+          "score": 0.92,
+          "passed": true
+        }
+      }
+    },
+    {
+      "id": "rel-001-changelog-generation",
+      "phase": "release",
+      "title": "Changelog and Release Notes Generation",
+      "agent": "release-manager",
+      "verdict": "PASS",
+      "composite_score": 0.95,
+      "grader_scores": {
+        "keyword": {
+          "score": 1.0,
+          "passed": true,
+          "matched": 10,
+          "required": 10,
+          "forbidden_found": []
+        },
+        "structural": {
+          "score": 1.0,
+          "passed": true
+        },
+        "llm-judge": {
+          "score": 0.87,
+          "passed": true
+        }
+      }
+    },
+    {
+      "id": "req-001-ecommerce-api",
+      "phase": "requirements",
+      "title": "E-commerce API Requirements Generation",
+      "agent": "analyst",
+      "verdict": "PASS",
+      "composite_score": 0.96,
+      "grader_scores": {
+        "keyword": {
+          "score": 1.0,
+          "passed": true,
+          "matched": 10,
+          "required": 10,
+          "forbidden_found": []
+        },
+        "structural": {
+          "score": 1.0,
+          "passed": true
+        },
+        "llm-judge": {
+          "score": 0.9,
+          "passed": true
+        }
+      }
+    },
+    {
+      "id": "scf-001-fastapi-project",
+      "phase": "scaffold",
+      "title": "FastAPI Project Scaffolding",
+      "agent": "scaffolder",
+      "verdict": "PASS",
+      "composite_score": 0.8,
+      "grader_scores": {
+        "keyword": {
+          "score": 0.78,
+          "passed": false,
+          "matched": 7,
+          "required": 9,
+          "forbidden_found": []
+        },
+        "structural": {
+          "score": 0.83,
+          "passed": true
+        },
+        "llm-judge": {
+          "score": 0.78,
+          "passed": true
+        }
+      }
+    }
+  ]
+}
