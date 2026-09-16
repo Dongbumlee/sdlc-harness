@@ -40,7 +40,9 @@ Activate canary mode when the user says any of:
 Each phase agent relies on MCP servers for its core behavior (coding guidance,
 security patterns, repo data, deployment schemas). When a required server is
 unavailable, the canary cannot meaningfully test the phase — it is recorded as
-**SKIP**, not FAIL (see Step 0).
+**FAIL** with reason `mcp_unavailable` and the run is marked **degraded**.
+Required MCP tools are never silently skipped: a missing tool is an environment
+failure, and the e2e result must show it as such (see Step 0).
 
 | Phase | Required MCP servers (default) | Why |
 |-------|-------------------------------|-----|
@@ -60,7 +62,7 @@ A canary spec may override this with its own `requires_mcp` list
 means the canary has no hard MCP dependency and always runs. All other servers
 present in `.vscode/mcp.json` (e.g. `microsoft-learn`, `playwright`, `azure-devops`)
 are treated as advisory: their status is recorded in `mcp_status` but never
-triggers a SKIP.
+triggers a failure.
 
 ## Step-by-Step Canary Run Procedure
 
@@ -94,7 +96,8 @@ MCP servers behind it — never let a dead server silently turn into a FAIL.
    }
    ```
 4. Resolve each canary's required servers later (Step 2) against this map.
-   If **any** required server is `unavailable`, that canary is SKIP.
+   If **any** required server is `unavailable`, that canary FAILS with reason
+   `mcp_unavailable` — it is never skipped.
 
 ### Step 1: Discover specs
 
@@ -124,20 +127,23 @@ For each spec:
 2. **Degraded-mode check.** Resolve the canary's required MCP servers: the spec's
    `requires_mcp` if present, otherwise the phase default from the table above.
    If any required server has preflight status `unavailable`, do NOT invoke the
-   agent. Record the result immediately as:
+   agent. Record the result immediately as a FAIL — required MCP tools are never skipped.
    ```json
    {
      "id": "<canary-id>",
      "phase": "<phase>",
      "title": "<title>",
      "agent": "<agent>",
-     "verdict": "SKIP",
-     "skip_reason": "mcp_unavailable",
-     "missing_mcp": ["awesome-copilot"],
-     "mcp_detail": "docker daemon not reachable"
+     "verdict": "FAIL",
+     "composite_score": 0.0,
+     "failure_reasons": [
+       "mcp_unavailable: awesome-copilot — docker daemon not reachable. Fix: start Docker and pre-pull ghcr.io/microsoft/mcp-dotnet-samples/awesome-copilot:latest, then re-run."
+     ],
+     "missing_mcp": ["awesome-copilot"]
    }
    ```
-   Skipped canaries are excluded from grading and from the composite score.
+   MCP-unavailable failures count as failures in the summary and force the run
+   into `degraded` mode. They must never be hidden or reclassified as skips.
 3. Delegate to that agent with **exactly** the `prompt` field from the spec as input.
    - Use the agent's normal invocation — canary mode uses the SAME agents and SAME evaluation gates as production.
    - Do NOT inject extra instructions or modify the prompt.
@@ -197,7 +203,7 @@ All grader weights in a spec should sum to 1.0. If they don't, normalize before 
 - For `publish` canaries, verify the output includes an explicit go/no-go publish decision
   and blocks publication when required phase gates or artifacts are missing.
 
-#### Pass/Fail/Skip determination
+#### Pass/Fail determination
 
 A canary **PASSES** if:
 - Composite score ≥ 0.7, AND
@@ -205,14 +211,15 @@ A canary **PASSES** if:
 
 A canary **FAILS** if:
 - Composite score < 0.7, OR
-- Any individual grader score < 0.5.
-
-A canary is **SKIPPED** (never graded, never counted as pass or fail) if:
+- Any individual grader score < 0.5, OR
 - Any of its required MCP servers was `unavailable` at preflight (Step 0).
+  Record `failure_reasons: ["mcp_unavailable: <servers> — <remediation>"]` and
+  `composite_score: 0.0`. This is an environment failure, not a harness failure —
+  but it is a failure of the e2e run all the same. Required MCP tools are never
+  skipped or excluded from the results.
 
-The run-level `composite_score` is computed over graded canaries only
-(passed + failed); skipped canaries are excluded from both numerator and
-denominator.
+The run-level `composite_score` is computed over all canaries. Any
+`mcp_unavailable` failure forces the run `mode` to `degraded`.
 
 ### Step 4: Write results to `bench/results/`
 
@@ -234,9 +241,8 @@ After all canaries complete, write a JSON result file:
   "summary": {
     "total": 10,
     "passed": 6,
-    "failed": 1,
-    "skipped": 3,
-    "composite_score": 0.87
+    "failed": 4,
+    "composite_score": 0.62
   },
   "results": [
     {
@@ -258,19 +264,21 @@ After all canaries complete, write a JSON result file:
       "phase": "implement",
       "title": "CRUD Endpoint Implementation",
       "agent": "Implementer",
-      "verdict": "SKIP",
-      "skip_reason": "mcp_unavailable",
-      "missing_mcp": ["awesome-copilot"],
-      "mcp_detail": "docker daemon not reachable"
+      "verdict": "FAIL",
+      "composite_score": 0.0,
+      "failure_reasons": [
+        "mcp_unavailable: awesome-copilot — docker daemon not reachable. Fix: start Docker and pre-pull ghcr.io/microsoft/mcp-dotnet-samples/awesome-copilot:latest, then re-run."
+      ],
+      "missing_mcp": ["awesome-copilot"]
     }
   ]
 }
 ```
 
 - `mode` is `"full"` when every required server was ready, `"degraded"` when any
-  canary was skipped due to MCP unavailability.
+  canary failed with `mcp_unavailable`.
 - `mcp_status` is the Step 0 preflight map — always present, even in full mode.
-- `summary.skipped` counts SKIP verdicts. `summary.total` = passed + failed + skipped.
+- `missing_mcp` on a result names the unavailable servers behind that failure.
 
 ### Step 5: Report to the user
 
@@ -283,25 +291,25 @@ Present a concise summary table:
 |----|-------|-------|-------|---------|
 | req-001 | requirements | E-commerce API Requirements | 0.91 | ✅ PASS |
 | des-001 | design        | E-commerce Architecture    | 0.88 | ✅ PASS |
-| scf-001 | scaffold      | FastAPI Project Scaffolding | —   | ⏭️ SKIP (mcp_unavailable: awesome-copilot) |
+| scf-001 | scaffold      | FastAPI Project Scaffolding | 0.00 | ❌ FAIL (mcp_unavailable: awesome-copilot) |
 ...
 
-**Summary:** 6 passed, 1 failed, 3 skipped / 10 total | Composite: 0.87 (graded only)
-**Mode:** degraded — 3 canaries skipped, `awesome-copilot` unavailable (docker daemon not reachable)
+**Summary:** 6 passed, 4 failed / 10 total | Composite: 0.62
+**Mode:** degraded — `awesome-copilot` unavailable (docker daemon not reachable); 4 canaries failed with `mcp_unavailable`. Fix: start Docker and pre-pull the image, then re-run.
 **Results:** bench/results/canary-run-2026-04-13.json
 ```
 
-- In degraded mode, lead with the banner: which servers were unavailable and how
-  many canaries were skipped because of it. Never present a degraded run as a
-  clean pass.
+- In degraded mode, lead with the banner: which servers were unavailable, how
+  many canaries failed because of it, and the exact remediation. Never present
+  a degraded run as a clean pass, and never silently drop the failed canaries.
 - For each FAIL, include:
   - Which grader(s) failed and why (missing keywords, missing sections, low LLM scores).
   - The specific criterion or keyword that caused the failure.
+  - For `mcp_unavailable` failures, include the missing server(s), the preflight
+    reason, and the remediation step — so the user knows exactly what to fix
+    to get a full run.
   - For `qa` and `publish` canaries, explicitly include gate failure reasons (threshold breach,
     Critical finding, missing required release/publish prerequisites).
-- For each SKIP, include the missing server(s) and the preflight reason, so the
-  user knows exactly what to fix (e.g. start Docker, pre-pull the image) to get
-  a full run.
 
 ## Running a Single Canary
 
