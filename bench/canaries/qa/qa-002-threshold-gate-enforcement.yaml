@@ -1,6 +1,6 @@
 # Canary: QA Gate Threshold Enforcement
 id: qa-002-threshold-gate-enforcement
-version: "1.0"
+version: "1.1"
 phase: qa
 title: "QA Gate Threshold Enforcement"
 description: >
@@ -15,7 +15,10 @@ prompt: |
   Gate Rules:
   - Security must be >= 8
   - Other reviewers must be >= 7
-  - Weighted composite = (security * 1.5 + sum(others)) / 8.5
+  - Weighted composite = (security * 1.5 + sum(others)) / 9.5
+    # Denominator 9.5 = 1.5 (security weight) + 8 (other reviewers) per the QA
+    # Coordinator persona formula for the full 9-reviewer panel.
+    # Expected composites: A = 71/9.5 = 7.47, B = 82.5/9.5 = 8.68, C = 60/9.5 = 6.32
   - Composite < 7 is FAIL
   - Any Critical finding is FAIL
 

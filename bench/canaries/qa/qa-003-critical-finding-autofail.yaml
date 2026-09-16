@@ -1,6 +1,6 @@
 # Canary: Critical Finding Auto-Fail
 id: qa-003-critical-finding-autofail
-version: "1.0"
+version: "1.1"
 phase: qa
 title: "Critical Finding Auto-Fail"
 description: >
@@ -12,7 +12,8 @@ prompt: |
 
   - Security score: 9
   - Other reviewer scores: 8,8,8,8,8,8,8,8
-  - Composite score: 8.18
+  - Composite score: 8.16
+    # (9*1.5 + 8*8) / 9.5 = 77.5 / 9.5 = 8.1579 -> 8.16 per the QA Coordinator persona formula
   - Findings:
     - Security reviewer reports one Critical vulnerability:
       "Broken object-level authorization allows cross-tenant data access."

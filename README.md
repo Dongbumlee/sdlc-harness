@@ -140,7 +140,7 @@ Inspired by [Anthropic's harness design research](https://www.anthropic.com/engi
 - **Adversarial posture** — every reviewer has explicit anti-leniency instructions.
 - **Numeric scoring** — each reviewer scores 1-10. Security requires ≥8, others ≥7. Any Critical finding = automatic fail.
 - **Iterative loops** — QA → fix → targeted re-QA, up to 3 rounds.
-- **Weighted composite** — `(security × 1.5 + sum(others)) / 8.5`. Composite < 7 = fail.
+- **Weighted composite** — `(security × 1.5 + sum(others)) / 9.5`. Composite < 7 = fail.
 
 See [docs/harness-design.md](docs/harness-design.md) for the full research-to-implementation mapping.
 

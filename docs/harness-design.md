@@ -29,7 +29,7 @@ to be skeptical — dramatically improves output quality.
 
 ## Evaluation gates
 
-- **Weighted scoring**: Security × 1.5, others × 1.0 → composite = `(security × 1.5 + sum(others)) / 8.5`
+- **Weighted scoring**: Security × 1.5, others × 1.0 → composite = `(security × 1.5 + sum(others)) / 9.5`
 - **Hard-fail rules**: composite < 7, security < 8, any Critical finding
 - **3-tier escalation**: auto-retry → targeted retry → user decision (max 3 rounds)
 - **Phase-specific routing**: not all phases need all 9 reviewers

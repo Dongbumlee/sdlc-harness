@@ -197,7 +197,7 @@ All grader weights in a spec should sum to 1.0. If they don't, normalize before 
 - For `qa` canaries, verify the output explicitly enforces production QA gates:
   - Security threshold `>= 8`
   - Non-security thresholds `>= 7`
-  - Weighted composite formula `(security × 1.5 + sum(others)) / 8.5`
+  - Weighted composite formula `(security × 1.5 + sum(others)) / 9.5`
   - Automatic fail when composite `< 7`
   - Automatic fail on any Critical finding
 - For `publish` canaries, verify the output includes an explicit go/no-go publish decision
