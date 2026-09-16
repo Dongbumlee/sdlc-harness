@@ -92,6 +92,11 @@
       "maximum": 600,
       "description": "Maximum execution time in seconds"
     },
+    "requires_mcp": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "MCP servers this canary requires, named as in .vscode/mcp.json (e.g. 'awesome-copilot', 'github', 'azure'). If omitted, the phase default from the sdlc-canary-runner skill applies. An empty array means no MCP dependency — the canary always runs. When any required server is unavailable at preflight, the canary is recorded as SKIP (not FAIL)."
+    },
     "tags": {
       "type": "array",
       "items": { "type": "string" },
