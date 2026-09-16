@@ -1,0 +1,73 @@
+# Canary: Publish Readiness and Production Publication
+id: pub-001-publish-release-execution
+version: "1.0"
+phase: publish
+title: "Publish Readiness and Production Publication"
+description: >
+  Tests the Release Manager's Phase 9 behavior for final publication decisions
+  after release preparation is complete, including go/no-go evaluation,
+  publication sequence, rollback readiness, and stakeholder communication.
+
+prompt: |
+  You are the Release Manager handling SDLC Phase 9 (Publish).
+  A release package for v3.2.0 is prepared with:
+  - Changelog and migration guide
+  - QA report marked PASS
+  - Signed artifact checksums
+  - Approved deployment evidence
+
+  Produce a publish execution report that includes:
+  1. Final go/no-go decision with justification
+  2. Ordered publish runbook (tag, release notes, publish actions)
+  3. Verification checklist after publication
+  4. Rollback trigger conditions and rollback plan
+  5. Stakeholder communication summary
+
+expected:
+  keywords:
+    - publish
+    - go/no-go
+    - release tag
+    - verification
+    - rollback
+    - release notes
+  graders:
+    - type: keyword
+      weight: 0.3
+      config:
+        required:
+          - publish
+          - go/no-go
+          - release tag
+          - release notes
+          - verification
+          - rollback
+          - stakeholder communication
+          - evidence
+          - PASS
+        forbidden: ["TODO", "placeholder"]
+    - type: structural
+      weight: 0.3
+      config:
+        required_sections:
+          - go/no-go decision
+          - publish runbook
+          - verification checklist
+          - rollback plan
+          - stakeholder communication
+    - type: llm-judge
+      weight: 0.4
+      config:
+        criteria:
+          - completeness
+          - technical_accuracy
+          - operational_readiness
+          - risk_management
+          - actionability
+
+timeout_seconds: 120
+tags:
+  - publish
+  - phase-9
+  - release-manager
+  - go-no-go

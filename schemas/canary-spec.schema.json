@@ -7,8 +7,8 @@
   "properties": {
     "id": {
       "type": "string",
-      "pattern": "^(req|des|scf|impl|qa|doc|dep|rel|rai)-\\d{3}",
-      "description": "Unique canary identifier with phase prefix and 3-digit number (e.g., req-001, des-001)"
+      "pattern": "^(req|des|scf|impl|qa|doc|dep|rel|pub|rai)-\\d{3}",
+      "description": "Unique canary identifier with phase prefix and 3-digit number (e.g., req-001, des-001, pub-001)"
     },
     "version": {
       "type": "string",
@@ -18,7 +18,7 @@
     },
     "phase": {
       "type": "string",
-      "enum": ["requirements", "design", "implement", "qa", "deploy", "document", "rai", "release", "scaffold"],
+      "enum": ["requirements", "design", "implement", "qa", "deploy", "document", "rai", "release", "publish", "scaffold"],
       "description": "SDLC phase this canary tests"
     },
     "title": {

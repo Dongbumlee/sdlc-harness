@@ -32,6 +32,7 @@ Activate canary mode when the user says any of:
 | `document` | Documenter | `doc-` |
 | `deploy` | Deployer | `dep-` |
 | `release` | Release Manager | `rel-` |
+| `publish` | Release Manager | `pub-` |
 | `rai` | RAI Reviewer | `rai-` |
 
 ## Step-by-Step Canary Run Procedure
@@ -50,6 +51,7 @@ bench/canaries/
   document/doc-001-api-documentation.yaml
   deploy/dep-001-azure-webapp.yaml
   release/rel-001-changelog-generation.yaml
+  publish/pub-001-publish-release-execution.yaml
   rai/rai-001-bias-assessment.yaml
 ```
 
@@ -107,6 +109,17 @@ composite = sum(grader.weight * grader.score for each grader)
 ```
 
 All grader weights in a spec should sum to 1.0. If they don't, normalize before computing.
+
+#### Phase-specific gate checks
+
+- For `qa` canaries, verify the output explicitly enforces production QA gates:
+  - Security threshold `>= 8`
+  - Non-security thresholds `>= 7`
+  - Weighted composite formula `(security × 1.5 + sum(others)) / 8.5`
+  - Automatic fail when composite `< 7`
+  - Automatic fail on any Critical finding
+- For `publish` canaries, verify the output includes an explicit go/no-go publish decision
+  and blocks publication when required phase gates or artifacts are missing.
 
 #### Pass/Fail determination
 
@@ -174,6 +187,8 @@ Present a concise summary table:
 For each FAIL, include:
 - Which grader(s) failed and why (missing keywords, missing sections, low LLM scores).
 - The specific criterion or keyword that caused the failure.
+- For `qa` and `publish` canaries, explicitly include gate failure reasons (threshold breach,
+  Critical finding, missing required release/publish prerequisites).
 
 ## Running a Single Canary
 

@@ -15,7 +15,8 @@ bench/
 │   ├── deploy/        # Deployment canaries
 │   ├── document/      # Documentation canaries
 │   ├── rai/           # Responsible AI canaries
-│   └── release/       # Release management canaries
+│   ├── release/       # Release preparation canaries (Phase 8)
+│   └── publish/       # Publish canaries (Phase 9)
 └── results/           # Canary test results (generated)
 ```
 
@@ -25,7 +26,7 @@ Canaries are E2E integration tests that validate "does the harness work correctl
 
 Each canary spec defines:
 - A scenario (input to the harness)
-- Expected agent routing and behavior
+- Expected phase routing and agent behavior
 - Pass/fail criteria based on agent outputs
 
 Canaries test the **harness itself**, not model quality. They feed a scenario into the

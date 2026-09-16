@@ -1,0 +1,83 @@
+# Canary: QA Gate Threshold Enforcement
+id: qa-002-threshold-gate-enforcement
+version: "1.0"
+phase: qa
+title: "QA Gate Threshold Enforcement"
+description: >
+  Tests whether QA evaluation applies harness pass/fail rules exactly:
+  security >= 8, others >= 7, composite < 7 fails, and verdict reasoning
+  tied to gate outcomes.
+
+prompt: |
+  You are the QA Coordinator. Evaluate the following reviewer scores using the
+  harness QA gates and provide verdicts with reasoning:
+
+  Gate Rules:
+  - Security must be >= 8
+  - Other reviewers must be >= 7
+  - Weighted composite = (security * 1.5 + sum(others)) / 8.5
+  - Composite < 7 is FAIL
+  - Any Critical finding is FAIL
+
+  Scenario A:
+  - Security 8, others: 7,7,8,7,8,7,7,8, no Critical findings
+
+  Scenario B:
+  - Security 7, others: 9,9,9,9,9,9,9,9, no Critical findings
+
+  Scenario C:
+  - Security 8, others: 6,6,6,6,6,6,6,6, no Critical findings
+
+  For each scenario, include:
+  1) composite score calculation
+  2) threshold checks
+  3) PASS/FAIL verdict
+
+expected:
+  keywords:
+    - security >= 8
+    - others >= 7
+    - composite
+    - PASS
+    - FAIL
+  graders:
+    - type: keyword
+      weight: 0.3
+      config:
+        required:
+          - security >= 8
+          - others >= 7
+          - composite
+          - Scenario A
+          - Scenario B
+          - Scenario C
+          - PASS
+          - FAIL
+          - threshold
+        forbidden: ["TODO", "placeholder"]
+    - type: structural
+      weight: 0.3
+      config:
+        required_sections:
+          - scenario a
+          - scenario b
+          - scenario c
+          - composite score calculation
+          - threshold checks
+          - verdict
+    - type: llm-judge
+      weight: 0.4
+      config:
+        criteria:
+          - correct_gate_interpretation
+          - arithmetic_consistency
+          - verdict_correctness
+          - clarity
+          - actionability
+
+timeout_seconds: 120
+tags:
+  - qa
+  - thresholds
+  - gates
+  - scoring
