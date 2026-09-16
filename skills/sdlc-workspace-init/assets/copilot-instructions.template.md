@@ -316,8 +316,16 @@
  Ensure credentials match the configured Azure DevOps organization.
 
  **Key use cases for agents:**
- - Fetch engineering standards, Bicep guidelines, and coding standards from the team's ADO wiki.
+ - Fetch engineering standards, Bicep guidelines, and coding standards from the team's ADO wiki (if configured below).
  - Browse ADO repositories for existing infrastructure patterns.
+
+ **Team standards wiki (optional):**
+ - ADO Wiki Project: `{{ADO_WIKI_PROJECT}}`
+ - ADO Wiki Identifier: `{{ADO_WIKI_IDENTIFIER}}`
+ - If both are set, agents fetch team-specific standards from this wiki; team standards take
+   precedence over public sources.
+ - If unset, agents use public sources only: awesome-copilot instructions/collections,
+   Microsoft Learn MCP, Context7, and the AVM module registry.
  - Query work items and iteration context for implementation planning.
  - Access pipeline definitions for CI/CD configuration.
 

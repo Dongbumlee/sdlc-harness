@@ -58,9 +58,12 @@ Before starting, load these resources for authoritative patterns:
    - ADO: `mcp_awesome-copil_load_instruction` → `"azure-devops-pipelines"`
    - GitHub Actions: `mcp_awesome-copil_load_instruction` → `"github-actions-ci-cd-best-practices"`
 5. **Package manager docs** — Use **Context7 MCP** to get current `uv` / `azd` / Docker documentation
-6. **ADO wiki** — Search the team's Azure DevOps wiki for scaffolding standards:
-   - Search: `mcp_ado_search_wiki(searchText: "scaffolding OR project structure", project: "CSA CTO Engineering")`
-   - Fetch content: `mcp_ado_wiki_get_page_content(wikiIdentifier: "CSA-CTO-Engineering.wiki", project: "CSA CTO Engineering", path: "/<page-path>")`
+6. **Team standards wiki (optional)** — If `.github/copilot-instructions.md` configures a team
+   Azure DevOps wiki, search it for team-specific scaffolding standards (they take precedence):
+   - Search: `mcp_ado_search_wiki(searchText: "scaffolding OR project structure", project: "<ADO_WIKI_PROJECT>")`
+   - Fetch content: `mcp_ado_wiki_get_page_content(wikiIdentifier: "<ADO_WIKI_IDENTIFIER>", project: "<ADO_WIKI_PROJECT>", path: "/<page-path>")`
+   - If no wiki is configured or ADO MCP authentication fails, proceed with the public sources
+     above (awesome-copilot instructions, Context7).
 
 ## IMPORTANT: Scope boundary
 

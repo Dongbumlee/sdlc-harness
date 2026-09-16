@@ -50,19 +50,23 @@ mcp_awesome-copil_load_instruction(
 )
 ```
 
-## Step 2: Fetch team standards from ADO wiki
+## Step 2: Load Bicep/AVM standards (public sources; optional team wiki override)
 
-Team-specific standards take precedence over generic practices:
+Start with public guidance (already loaded in Step 1 via awesome-copilot). Supplement with
+**Microsoft Learn MCP** for authoritative AVM module documentation.
+
+If `.github/copilot-instructions.md` configures a team Azure DevOps wiki, fetch team-specific
+standards — they take precedence over generic practices:
 
 ```
 mcp_ado_wiki_get_page_content(
-  wikiIdentifier: "CSA-CTO-Engineering.wiki",
-  project: "CSA CTO Engineering",
-  path: "/Bicep-development"
+  wikiIdentifier: "<ADO_WIKI_IDENTIFIER>",
+  project: "<ADO_WIKI_PROJECT>",
+  path: "/<team-standards-page>"
 )
 ```
 
-If ADO MCP authentication fails, proceed with the rules below.
+If no wiki is configured or ADO MCP authentication fails, proceed with the public sources above.
 
 ## Step 3: AVM modules — MANDATORY for ALL resources
 

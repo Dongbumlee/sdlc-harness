@@ -101,11 +101,13 @@ Include `Source: Scaffolder (Phase 3)` on your entries.
 3. **Load up-to-date docs via Context7:**
    - Use Context7 MCP to get current `uv` / `azd` / Docker documentation.
 
-4. **Fetch team engineering standards from Azure DevOps wiki (if available):**
-   - Search for scaffolding guidelines: `mcp_ado_search_wiki(searchText: "scaffolding OR project structure", project: "CSA CTO Engineering")`
-   - Fetch page content: `mcp_ado_wiki_get_page_content(wikiIdentifier: "CSA-CTO-Engineering.wiki", project: "CSA CTO Engineering", path: "/<page-path>")`
-   - If ADO MCP authentication fails (browser login required on first use), inform the user
-     and proceed without ADO wiki content.
+4. **Fetch team engineering standards from Azure DevOps wiki (if configured):**
+   - If `.github/copilot-instructions.md` defines a team ADO wiki (`ADO Wiki Project` /
+     `ADO Wiki Identifier`), search it for team-specific scaffolding guidelines:
+     - Search: `mcp_ado_search_wiki(searchText: "scaffolding OR project structure", project: "<ADO_WIKI_PROJECT>")`
+     - Fetch page content: `mcp_ado_wiki_get_page_content(wikiIdentifier: "<ADO_WIKI_IDENTIFIER>", project: "<ADO_WIKI_PROJECT>", path: "/<page-path>")`
+   - If no wiki is configured or ADO MCP authentication fails (browser login required on first use),
+     inform the user and proceed with public sources (awesome-copilot instructions, Context7).
 
 ## Skills
 
