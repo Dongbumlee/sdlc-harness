@@ -339,6 +339,6 @@ Example:
 ## Data Source
 
 - **338 bugs** from a production Azure DevOps organization
-- **9 projects**: CSA Solutioning (309), Multi-Agent BiB (10), Modernize Code v2 (5), Content Processing (4), Document Processing (4), Modernize Code Generic (2), MAAG Data Foundation (2), Agentic Content Processing (1), application Landing Page (1)
+- **9 projects**: `<project-1>` (309), `<project-2>` (10), `<project-3>` (5), `<project-4>` (4), `<project-5>` (4), `<project-6>` (2), `<project-7>` (2), `<project-8>` (1), `<project-9>` (1)
 - **Time range**: October 2024 – April 2026
 - **Detail level**: Repro steps, actual error messages, Azure error codes, and fix patterns extracted from bug work items
