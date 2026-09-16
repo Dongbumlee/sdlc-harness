@@ -42,7 +42,9 @@ expected:
           - missing prerequisites
           - corrective steps
           - publish blocked
-        forbidden: ["GO", "PASS", "TODO", "placeholder"]
+        # NOTE: do NOT forbid "GO"/"PASS" here — a correct NO-GO response must contain
+        # "NO-GO" and the prompt mandates "final pass report"; both would false-positive.
+        forbidden: ["TODO", "placeholder"]
     - type: structural
       weight: 0.3
       config:

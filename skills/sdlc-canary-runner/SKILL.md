@@ -159,12 +159,21 @@ Apply each grader in `expected.graders` and compute a weighted score.
 
 #### Keyword grader (`type: keyword`)
 
-Check the response text (case-insensitive) against `config.required` and `config.forbidden`:
+Check the response text (case-insensitive) against `config.required` and `config.forbidden`.
+Matching is whole-word (word-boundary): a term matches only when it appears as a
+complete word or phrase, not as a substring of a longer word (e.g. forbidden
+`placeholder` must not match `placeholders`; required `NO-GO` counts as its own
+term). Apply the same whole-word rule to multi-word phrases.
 
 - For each required keyword present in the response: +1 point.
 - For each forbidden keyword present in the response: deduct 1 point.
 - Score = `max(0, matched_required / total_required - forbidden_penalty)`.
 - Keyword grader passes if score ≥ 0.8.
+
+Spec-authoring rule: never put a term in `forbidden` that a correct response must
+contain — including as part of a required term (e.g. do not forbid `GO` when
+`NO-GO` is required, or `PASS` when the prompt mandates phrases like
+`final pass report`). The required keywords already enforce the expected outcome.
 
 #### Structural grader (`type: structural`)
 
