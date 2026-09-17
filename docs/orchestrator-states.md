@@ -80,7 +80,7 @@ Phase 6 takes a detour through the QA gate:
   phases need all reviewers; `implement` and `qa` phases get the full set.
 - The Coordinator dispatches reviewers **in parallel**, each in its own context
   window, and aggregates their structured YAML output:
-  - **Scoring:** composite = `(security × 1.5 + Σ others) / 8.5`
+  - **Scoring:** composite = `(security × 1.5 + Σ others) / 9.5`
   - **Hard-fail rules:** composite < 7, security < 8, or any Critical finding
   - **Finding scoping:** only requirement-tied findings affect score/verdict;
     out-of-scope hardening is recorded as suggestions, never as failures

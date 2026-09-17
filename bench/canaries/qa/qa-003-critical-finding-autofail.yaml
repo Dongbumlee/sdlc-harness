@@ -1,0 +1,67 @@
+# Canary: Critical Finding Auto-Fail
+id: qa-003-critical-finding-autofail
+version: "1.1"
+phase: qa
+title: "Critical Finding Auto-Fail"
+description: >
+  Negative-path canary that verifies QA output enforces automatic failure when
+  any reviewer reports a Critical finding, even if scores and composite look high.
+
+prompt: |
+  You are the QA Coordinator. Determine the final QA verdict for this review set:
+
+  - Security score: 9
+  - Other reviewer scores: 8,8,8,8,8,8,8,8
+  - Composite score: 8.16
+    # (9*1.5 + 8*8) / 9.5 = 77.5 / 9.5 = 8.1579 -> 8.16 per the QA Coordinator persona formula
+  - Findings:
+    - Security reviewer reports one Critical vulnerability:
+      "Broken object-level authorization allows cross-tenant data access."
+
+  Provide:
+  1) final PASS/FAIL verdict
+  2) exact reason using harness gate rules
+  3) immediate remediation routing recommendation
+
+expected:
+  keywords:
+    - Critical
+    - FAIL
+    - security
+    - remediation
+  graders:
+    - type: keyword
+      weight: 0.3
+      config:
+        required:
+          - Critical
+          - FAIL
+          - automatic fail
+          - security
+          - remediation
+          - Implementer
+          - re-review
+        forbidden: ["PASS", "TODO", "placeholder"]
+    - type: structural
+      weight: 0.3
+      config:
+        required_sections:
+          - final verdict
+          - gate rule rationale
+          - remediation routing
+    - type: llm-judge
+      weight: 0.4
+      config:
+        criteria:
+          - gate_enforcement_correctness
+          - consistency_with_hard_fail_rules
+          - clarity
+          - actionability
+          - risk_awareness
+
+timeout_seconds: 120
+tags:
+  - qa
+  - negative-path
+  - critical-finding
+  - auto-fail

@@ -23,8 +23,10 @@ expected:
       weight: 0.3
       config:
         required_sections:
-          - "output contains library recommendations with versions"
-          - "output mentions the reference catalog skill"
+          # Literal headers/labels a correct response must contain (structural
+          # grading is a literal heading/label match, not a semantic judgment).
+          - "Approved Libraries"
+          - "reference-catalog"
     - type: llm-judge
       weight: 0.4
       config:

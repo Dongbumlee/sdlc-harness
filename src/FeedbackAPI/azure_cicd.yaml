@@ -1,0 +1,195 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pr:
+  branches:
+    include:
+      - main
+
+parameters:
+  - name: environment
+    displayName: Target environment
+    type: string
+    default: staging
+    values:
+      - dev
+      - staging
+      - production
+
+variables:
+  # Configure these in a variable group or pipeline variables
+  - name: pythonVersion
+    value: '3.12'
+  - name: dockerRegistryServiceConnection
+    value: 'sc-feedbackapi-acr'
+  - name: azureServiceConnection
+    value: 'sc-feedbackapi-azure'
+  - name: acrLoginServer
+    value: '$(ACR_NAME).azurecr.io'
+  - name: imageRepository
+    value: 'feedbackapi'
+  - name: imageTag
+    value: '$(Build.SourceVersion)'
+  - name: dockerfilePath
+    value: 'src/FeedbackAPI/Dockerfile'
+  - name: buildContext
+    value: 'src/FeedbackAPI'
+  - name: bicepMainFile
+    value: 'src/FeedbackAPI/infra/main.bicep'
+  - name: bicepParameterFile
+    value: 'src/FeedbackAPI/infra/main.waf.parameters.json'
+
+stages:
+  - stage: Build
+    displayName: Lint, test, build, and push image
+    jobs:
+      - job: BuildAndTest
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - checkout: self
+
+          - task: UsePythonVersion@0
+            displayName: Use Python $(pythonVersion)
+            inputs:
+              versionSpec: '$(pythonVersion)'
+
+          - script: |
+              cd src/FeedbackAPI
+              curl -LsSf https://astral.sh/uv/install.sh | sh
+              export PATH="$HOME/.local/bin:$PATH"
+              uv sync
+              uv run ruff check app tests
+            displayName: Lint (ruff)
+
+          - script: |
+              cd src/FeedbackAPI
+              export PATH="$HOME/.local/bin:$PATH"
+              uv run pytest -q
+            displayName: Unit tests
+
+          - task: Docker@2
+            displayName: Build and push image to ACR
+            inputs:
+              command: buildAndPush
+              repository: '$(imageRepository)'
+              dockerfile: '$(dockerfilePath)'
+              buildContext: '$(buildContext)'
+              containerRegistry: '$(dockerRegistryServiceConnection)'
+              tags: |
+                $(imageTag)
+                latest
+
+  - stage: Deploy_Staging
+    displayName: Deploy to staging slot
+    dependsOn: Build
+    condition: succeeded()
+    jobs:
+      - deployment: DeployStaging
+        displayName: Provision infra + deploy staging slot
+        environment: feedbackapi-staging
+        pool:
+          vmImage: ubuntu-latest
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+
+                - task: AzureCLI@2
+                  displayName: Deploy infrastructure (Bicep)
+                  inputs:
+                    azureSubscription: '$(azureServiceConnection)'
+                    scriptType: bash
+                    scriptLocation: inlineScript
+                    inlineScript: |
+                      set -euo pipefail
+                      az deployment sub create \
+                        --location "$(AZURE_LOCATION)" \
+                        --template-file "$(bicepMainFile)" \
+                        --parameters @"$(bicepParameterFile)" \
+                        --parameters environmentName='${{ parameters.environment }}' imageTag='$(imageTag)'
+
+                - task: AzureCLI@2
+                  displayName: Configure container image on staging slot
+                  inputs:
+                    azureSubscription: '$(azureServiceConnection)'
+                    scriptType: bash
+                    scriptLocation: inlineScript
+                    inlineScript: |
+                      set -euo pipefail
+                      az webapp config container set \
+                        --name "$(WEBAPP_NAME)" \
+                        --resource-group "$(AZURE_RESOURCE_GROUP)" \
+                        --slot staging \
+                        --container-image-name "$(acrLoginServer)/$(imageRepository):$(imageTag)"
+
+                - task: AzureCLI@2
+                  displayName: Validate staging health
+                  inputs:
+                    azureSubscription: '$(azureServiceConnection)'
+                    scriptType: bash
+                    scriptLocation: inlineScript
+                    inlineScript: |
+                      set -euo pipefail
+                      chmod +x src/FeedbackAPI/scripts/smoke-test.sh
+                      src/FeedbackAPI/scripts/smoke-test.sh "https://$(WEBAPP_NAME)-staging.azurewebsites.net"
+
+  - stage: Approval_Gate
+    displayName: Manual approval before production swap
+    dependsOn: Deploy_Staging
+    condition: succeeded()
+    jobs:
+      - job: WaitForApproval
+        pool: server
+        steps:
+          - task: ManualValidation@0
+            timeoutInMinutes: 1440
+            inputs:
+              notifyUsers: '$(APPROVERS)'
+              instructions: |
+                Validate staging KPIs and approve blue/green swap to production.
+                Reject to stop promotion.
+              onTimeout: reject
+
+  - stage: Swap_To_Production
+    displayName: Swap staging slot into production
+    dependsOn: Approval_Gate
+    condition: succeeded()
+    jobs:
+      - job: SwapAndValidate
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - checkout: self
+
+          - task: AzureCLI@2
+            displayName: Swap staging -> production
+            inputs:
+              azureSubscription: '$(azureServiceConnection)'
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                set -euo pipefail
+                az webapp deployment slot swap \
+                  --resource-group "$(AZURE_RESOURCE_GROUP)" \
+                  --name "$(WEBAPP_NAME)" \
+                  --slot staging \
+                  --target-slot production
+
+          - task: AzureCLI@2
+            displayName: Production smoke test + rollback on failure
+            inputs:
+              azureSubscription: '$(azureServiceConnection)'
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                set -euo pipefail
+                chmod +x src/FeedbackAPI/scripts/smoke-test.sh src/FeedbackAPI/scripts/rollback.sh
+                if ! src/FeedbackAPI/scripts/smoke-test.sh "https://$(WEBAPP_NAME).azurewebsites.net"; then
+                  echo "Production smoke test failed. Executing rollback..."
+                  src/FeedbackAPI/scripts/rollback.sh "$(AZURE_RESOURCE_GROUP)" "$(WEBAPP_NAME)"
+                  exit 1
+                fi

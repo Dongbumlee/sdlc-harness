@@ -48,54 +48,35 @@ If any of these are unclear, ask 1–2 focused questions before proceeding.
 
 Before starting, load these resources in **priority order** (team standards first):
 
-1. **ADO wiki (team AVM/Bicep standards — check FIRST):**
-   Team-specific standards take precedence over generic best practices.
-   Fetch ALL subsections before writing any Bicep code:
+1. **Bicep/AVM standards — public sources:**
+   - **Bicep best practices** — `mcp_awesome-copil_load_instruction` → `"bicep-code-best-practices"`
+     (naming conventions, structure, parameters, security, AVM patterns)
+   - **AVM guidance collection** — `mcp_awesome-copil_load_collection` → `"azure-cloud-development"`
+     (includes the `update-avm-modules-in-bicep` prompt for updating AVM module versions)
+   - **Microsoft Learn MCP** — authoritative AVM module documentation
+   - **Azure MCP Bicep tools** — AVM module discovery, resource type schemas, Bicep file validation,
+     deployment best practices (IaC rules, WAF alignment)
+   - **AVM module registry** — look up module availability and latest versions from the official registry:
+     `#fetch https://azure.github.io/Azure-Verified-Modules/indexes/bicep/bicep-resource-modules/`
+     Cross-reference all `br/public:avm/res/...` references against this authoritative source.
+2. **Team standards wiki (optional)** — If `.github/copilot-instructions.md` configures a team Azure DevOps
+   wiki, team-specific Bicep/AVM standards take precedence over the generic best practices above:
    ```
-   # Parent page — overview and guidelines
    mcp_ado_wiki_get_page_content(
-     wikiIdentifier: "CSA-CTO-Engineering.wiki",
-     project: "CSA CTO Engineering",
-     path: "/Bicep-development"
+     wikiIdentifier: "<ADO_WIKI_IDENTIFIER>",
+     project: "<ADO_WIKI_PROJECT>",
+     path: "/<team-standards-page>"
    )
-
-   # Bicep coding standards (naming, structure, parameters)
-   mcp_ado_wiki_get_page_content(..., path: "/Bicep-development/Bicep-standards")
-
-   # WAF configuration per resource type
-   mcp_ado_wiki_get_page_content(..., path: "/Bicep-development/WAF-configuration-by-resource")
-
-   # AVM module publishing process
-   mcp_ado_wiki_get_page_content(..., path: "/Bicep-development/AVM-publishing-process")
-
-   # Reusable network module for AVM WAF
-   mcp_ado_wiki_get_page_content(..., path: "/Bicep-development/Reusable-Network-Module-for-AVM-WAF")
-
-   # Network architecture
-   mcp_ado_wiki_get_page_content(..., path: "/Bicep-development/network")
-
-   # Network subnet design
-   mcp_ado_wiki_get_page_content(..., path: "/Bicep-development/network/network_subnet_design")
    ```
-   If ADO MCP authentication fails (browser login required on first use), inform the user
-   and proceed with other available sources.
-2. **AVM module registry** — look up module availability and latest versions from the official registry:
-   `#fetch https://azure.github.io/Azure-Verified-Modules/indexes/bicep/bicep-resource-modules/`
-   Cross-reference all `br/public:avm/res/...` references against this authoritative source.
-3. **Azure MCP Bicep tools** — use Azure MCP for AVM module discovery, resource type schemas,
-   Bicep file validation, and deployment best practices (IaC rules, WAF alignment).
-4. **Bicep best practices** — `mcp_awesome-copil_load_instruction` → `"bicep-code-best-practices"`
-   (naming conventions, structure, parameters, security, AVM patterns)
-5. **Docker best practices** — `mcp_awesome-copil_load_instruction` → `"containerization-docker-best-practices"`
+   If no wiki is configured or ADO MCP authentication fails (browser login required on first use),
+   inform the user and proceed with the public sources above.
+3. **Docker best practices** — `mcp_awesome-copil_load_instruction` → `"containerization-docker-best-practices"`
    (multi-stage builds, layer caching, image security)
-6. **Kubernetes best practices** — `mcp_awesome-copil_load_instruction` → `"kubernetes-deployment-best-practices"`
+4. **Kubernetes best practices** — `mcp_awesome-copil_load_instruction` → `"kubernetes-deployment-best-practices"`
    (when deploying to AKS: pod security, resource limits, health checks)
-7. **CI/CD pipelines** — load the one matching your pipeline platform:
+5. **CI/CD pipelines** — load the one matching your pipeline platform:
    - ADO: `mcp_awesome-copil_load_instruction` → `"azure-devops-pipelines"`
    - GitHub Actions: `mcp_awesome-copil_load_instruction` → `"github-actions-ci-cd-best-practices"`
-8. **AVM update prompt** — for existing Bicep files, use `mcp_awesome-copil_load_collection` → `"azure-cloud-development"`
-   which includes the `update-avm-modules-in-bicep` prompt for updating AVM module versions.
-9. **Microsoft Learn** — use Microsoft Learn MCP for authoritative AVM module documentation.
 
 ## Steps
 

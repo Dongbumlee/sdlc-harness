@@ -1,0 +1,16 @@
+# Python cache and virtual environment artifacts.
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.venv/
+
+# Local environment files and editor metadata.
+.env
+.DS_Store
+.idea/
+.vscode/
+

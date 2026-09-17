@@ -1,6 +1,6 @@
 # Canary: Security Review of API Code
 id: qa-001-security-review
-version: "1.0"
+version: "1.1"
 phase: qa
 title: "Security Review of API Code"
 description: >
@@ -12,38 +12,43 @@ prompt: |
   the following Flask API code and identify all vulnerabilities:
 
   ```python
-  from flask import Flask, request, jsonify
-  import sqlite3
-  import os
-
-  app = Flask(__name__)
-  SECRET_KEY = "hardcoded-secret-key-123"
-
-  @app.route("/login", methods=["POST"])
-  def login():
-      username = request.form["username"]
-      password = request.form["password"]
-      conn = sqlite3.connect("users.db")
-      cursor = conn.execute(
-          f"SELECT * FROM users WHERE username='{username}' AND password='{password}'"
-      )
-      user = cursor.fetchone()
-      if user:
-          return jsonify({"token": SECRET_KEY + username})
-      return jsonify({"error": "Invalid credentials"}), 401
-
-  @app.route("/exec", methods=["POST"])
-  def run_command():
-      cmd = request.json["command"]
-      result = os.popen(cmd).read()
-      return jsonify({"output": result})
+  1   from flask import Flask, request, jsonify
+  2   import sqlite3
+  3   import os
+  4
+  5   app = Flask(__name__)
+  6   insecure_default = "CHANGEME-INSECURE-TEST-FIXTURE"  # intentionally hardcoded: reviewers must flag this
+  7   app.secret_key = insecure_default
+  7
+  8   @app.route("/login", methods=["POST"])
+  9   def login():
+  10      username = request.form["username"]
+  11      password = request.form["password"]
+  12      conn = sqlite3.connect("users.db")
+  13      cursor = conn.execute(
+  14          f"SELECT * FROM users WHERE username='{username}' AND password='{password}'"
+  15      )
+  16      user = cursor.fetchone()
+  17      if user:
+  18          return jsonify({"token": SECRET_KEY + username})
+  19      return jsonify({"error": "Invalid credentials"}), 401
+  20
+  21  @app.route("/exec", methods=["POST"])
+  22  def run_command():
+  23      cmd = request.json["command"]
+  24      result = os.popen(cmd).read()
+  25      return jsonify({"output": result})
   ```
 
   Deliverables:
   1. Vulnerability report listing each issue with:
      - Vulnerability type (e.g., SQL Injection, Command Injection)
-     - Severity (Critical / High / Medium / Low)
-     - Affected line(s) of code
+     - Severity (Critical / High / Medium / Low) using this scale exactly:
+       - Critical: exploitable vulnerability; must be fixed before merge
+       - High: significant risk; fix in the same sprint
+       - Medium: weakness or missing defense-in-depth control; plan remediation
+       - Low: hardening suggestion; future iteration
+     - Affected line(s) of code (use the line numbers shown above)
      - Explanation of the risk
   2. Remediation plan with corrected code for each vulnerability
   3. Security best practices checklist for this type of API
@@ -67,6 +72,7 @@ expected:
           - remediation
           - severity
           - authentication
+          - checklist
         forbidden: ["TODO", "placeholder"]
     - type: structural
       weight: 0.3
@@ -77,6 +83,7 @@ expected:
           - command injection
           - hardcoded
           - remediation
+          - best practices checklist
     - type: llm-judge
       weight: 0.4
       config:

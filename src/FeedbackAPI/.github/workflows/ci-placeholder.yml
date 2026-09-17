@@ -1,0 +1,11 @@
+name: feedbackapi-local-ci-placeholder
+
+on:
+  workflow_dispatch:
+
+jobs:
+  placeholder:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Use src/FeedbackAPI/azure_cicd.yaml for Azure DevOps CI/CD."
+

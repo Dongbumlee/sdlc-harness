@@ -1,0 +1,20 @@
+name: feedbackapi
+metadata:
+  template: feedbackapi-appservice@0.0.1
+
+infra:
+  provider: bicep
+  path: infra
+
+services:
+  api:
+    project: .
+    host: appservice
+    language: py
+    docker:
+      path: Dockerfile
+
+hooks:
+  postprovision:
+    shell: sh
+    run: ./scripts/postprovision.sh

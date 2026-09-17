@@ -46,58 +46,44 @@ Include `Source: Deployer (Phase 8)` on your entries.
      > ⚠️ awesome-copilot MCP is not running. Bicep/Docker/pipeline best practices will not be loaded.
      > I will proceed using local knowledge and Azure MCP tools. Infrastructure quality may be reduced.
 
-0c. **Check Azure DevOps MCP (MANDATORY for Bicep — blocks infrastructure creation):**
-   - Probe: `mcp_azure-devops_core_list_projects()`
-   - If it **fails**, WARN the user prominently and explain the impact:
-     > ⚠️ **Azure DevOps MCP is not available. Team AVM/Bicep wiki standards CANNOT be fetched.**
-     > The ADO wiki contains team-specific Bicep coding standards, WAF configuration
-     > per resource type, and AVM module publishing guidelines that MUST be followed.
-     > Infrastructure created without these standards may not pass QA review.
+0c. **Check Azure DevOps MCP (only if a team wiki is configured):**
+   - If `.github/copilot-instructions.md` configures a team ADO wiki, probe: `mcp_azure-devops_core_list_projects()`
+   - If the probe **fails**, WARN the user prominently and explain the impact:
+     > ⚠️ **Azure DevOps MCP is not available. Team wiki standards CANNOT be fetched.**
+     > Team-specific Bicep coding standards from the configured ADO wiki will not be applied.
+     > I will proceed using public sources (awesome-copilot, Microsoft Learn, Azure MCP).
      >
      > **Options:**
      > 1. Start the ADO MCP server and retry (recommended)
-     > 2. Proceed without ADO wiki — I will note this gap in the output
-   - If proceeding without ADO wiki, add a **prominent warning** at the top of every
+     > 2. Proceed without the team wiki — I will note this gap in the output
+   - If proceeding without the team wiki, add a **prominent warning** at the top of every
      generated Bicep file:
      ```
-     // ⚠️ WARNING: Generated without ADO wiki AVM/Bicep standards.
+     // ⚠️ WARNING: Generated without team wiki Bicep standards.
      // Review against team standards before deployment.
      ```
    - Also add a warning section in the output report:
-     > ### ⚠️ ADO Wiki Standards Not Applied
+     > ### ⚠️ Team Wiki Standards Not Applied
      > Team-specific Bicep standards from the ADO wiki were not loaded.
-     > The following wiki pages should be reviewed manually:
-     > - `/Bicep-development/Bicep-standards`
-     > - `/Bicep-development/WAF-configuration-by-resource`
-     > - `/Bicep-development/AVM-publishing-process`
-     > - `/Bicep-development/Reusable-Network-Module-for-AVM-WAF`
+     > The configured wiki pages should be reviewed manually.
+   - If no team wiki is configured, skip this check — the public sources in step 1 apply.
 
-1. **Fetch team AVM/Bicep standards from Azure DevOps wiki** (skip ONLY if ADO MCP unavailable):
-   - Team-specific standards take precedence over generic best practices.
-   - Fetch ALL subsections of the Bicep development wiki before writing any Bicep code:
-     ```
-     # Parent page — overview and guidelines
-     mcp_ado_wiki_get_page_content(wikiIdentifier: "CSA-CTO-Engineering.wiki",
-       project: "CSA CTO Engineering", path: "/Bicep-development")
-
-     # Bicep coding standards (naming, structure, parameters)
-     mcp_ado_wiki_get_page_content(..., path: "/Bicep-development/Bicep-standards")
-
-     # WAF configuration per resource type
-     mcp_ado_wiki_get_page_content(..., path: "/Bicep-development/WAF-configuration-by-resource")
-
-     # AVM module publishing process
-     mcp_ado_wiki_get_page_content(..., path: "/Bicep-development/AVM-publishing-process")
-
-     # Reusable network module for AVM WAF
-     mcp_ado_wiki_get_page_content(..., path: "/Bicep-development/Reusable-Network-Module-for-AVM-WAF")
-
-     # Network architecture
-     mcp_ado_wiki_get_page_content(..., path: "/Bicep-development/network")
-
-     # Network subnet design
-     mcp_ado_wiki_get_page_content(..., path: "/Bicep-development/network/network_subnet_design")
-     ```
+1. **Load Bicep/AVM standards:**
+   a. **Public sources** (always):
+      - `mcp_awesome-copil_load_instruction` → `"bicep-code-best-practices"` (naming, structure, parameters, security, AVM patterns)
+      - `mcp_awesome-copil_load_collection` → `"azure-cloud-development"` (includes `update-avm-modules-in-bicep`)
+      - Microsoft Learn MCP for authoritative AVM module documentation
+      - Azure MCP Bicep tools for AVM module discovery, resource schemas, and file validation
+   b. **Team wiki (optional)** — if `.github/copilot-instructions.md` configures a team ADO wiki,
+      team-specific standards take precedence over the public sources above:
+      ```
+      mcp_ado_wiki_get_page_content(
+        wikiIdentifier: "<ADO_WIKI_IDENTIFIER>",
+        project: "<ADO_WIKI_PROJECT>",
+        path: "/<team-standards-page>"
+      )
+      ```
+      If no wiki is configured or ADO MCP is unavailable, proceed with the public sources and note the gap.
    - If ADO MCP authentication fails (browser login required on first use), inform the user
      and proceed with other sources. Do NOT skip team standards silently.
 

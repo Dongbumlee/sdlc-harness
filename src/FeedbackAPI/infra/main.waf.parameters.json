@@ -1,0 +1,54 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "value": "${AZURE_LOCATION}"
+    },
+    "appName": {
+      "value": "feedbackapi"
+    },
+    "environmentName": {
+      "value": "${AZURE_ENV_NAME}"
+    },
+    "resourceGroupName": {
+      "value": "rg-feedbackapi-${AZURE_ENV_NAME}"
+    },
+    "owner": {
+      "value": "${OWNER}"
+    },
+    "costCenter": {
+      "value": "${COST_CENTER}"
+    },
+    "createdBy": {
+      "value": "azd"
+    },
+    "enablePrivateNetworking": {
+      "value": true
+    },
+    "enableMonitoring": {
+      "value": true
+    },
+    "enableRedundancy": {
+      "value": true
+    },
+    "enableScalability": {
+      "value": true
+    },
+    "postgresAdminUser": {
+      "value": "${POSTGRES_ADMIN_USER}"
+    },
+    "postgresAdminPassword": {
+      "value": "${POSTGRES_ADMIN_PASSWORD}"
+    },
+    "imageRepository": {
+      "value": "feedbackapi"
+    },
+    "imageTag": {
+      "value": "${IMAGE_TAG}"
+    },
+    "postgresFirewallRules": {
+      "value": []
+    }
+  }
+}

@@ -140,7 +140,7 @@ Inspired by [Anthropic's harness design research](https://www.anthropic.com/engi
 - **Adversarial posture** — every reviewer has explicit anti-leniency instructions.
 - **Numeric scoring** — each reviewer scores 1-10. Security requires ≥8, others ≥7. Any Critical finding = automatic fail.
 - **Iterative loops** — QA → fix → targeted re-QA, up to 3 rounds.
-- **Weighted composite** — `(security × 1.5 + sum(others)) / 8.5`. Composite < 7 = fail.
+- **Weighted composite** — `(security × 1.5 + sum(others)) / 9.5`. Composite < 7 = fail.
 
 See [docs/harness-design.md](docs/harness-design.md) for the full research-to-implementation mapping.
 
@@ -200,9 +200,10 @@ To create a new cloud pack, use the `packs/_template/` skeleton.
 ## Canary Testing
 
 SDLC Harness includes an E2E test framework for validating the harness itself.
-Canary specs define expected agent behavior for each SDLC phase.
+Canary specs define expected agent behavior for each SDLC phase, including
+separate release-preparation (Phase 8) and publish (Phase 9) checks.
 
-- **11 canary specs** across `bench/canaries/` (one per phase + catalog-specific tests)
+- **15 canary specs** across `bench/canaries/` (phase coverage + catalog + QA gate and negative-path tests)
 - **2 JSON schemas** in `schemas/` for validation (canary specs, cloud packs)
 - **CI integration** — `canary-test.yml` validates spec schema on PRs touching agents/skills
 - Results stored as structured JSON in `bench/results/`

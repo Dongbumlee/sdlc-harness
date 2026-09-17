@@ -1,0 +1,71 @@
+# Canary: Publish Blocked on Missing Gates
+id: pub-002-publish-blocked-missing-gates
+version: "1.0"
+phase: publish
+title: "Publish Blocked on Missing Gates"
+description: >
+  Negative-path canary that verifies Phase 9 publish is blocked when required
+  prerequisites are missing or phase routing is bypassed.
+
+prompt: |
+  You are the Release Manager for SDLC Phase 9 (Publish).
+  A team requests immediate publication, but the package has these gaps:
+  - No QA Coordinator final pass report
+  - No evidence of Responsible AI review for an AI-facing feature
+  - No signed release artifact digest
+  - Migration guide is missing
+
+  Produce a publish decision report that:
+  1) gives an explicit PASS/FAIL (or GO/NO-GO) decision
+  2) identifies missing phase gates and artifacts
+  3) explains why this is a phase routing mismatch
+  4) provides the exact corrective next steps before publish can proceed
+
+expected:
+  keywords:
+    - NO-GO
+    - FAIL
+    - phase routing mismatch
+    - QA
+    - RAI
+    - missing prerequisites
+  graders:
+    - type: keyword
+      weight: 0.3
+      config:
+        required:
+          - NO-GO
+          - FAIL
+          - phase routing mismatch
+          - QA Coordinator
+          - RAI review
+          - missing prerequisites
+          - corrective steps
+          - publish blocked
+        # NOTE: do NOT forbid "GO"/"PASS" here — a correct NO-GO response must contain
+        # "NO-GO" and the prompt mandates "final pass report"; both would false-positive.
+        forbidden: ["TODO", "placeholder"]
+    - type: structural
+      weight: 0.3
+      config:
+        required_sections:
+          - decision
+          - missing gates
+          - routing mismatch rationale
+          - corrective next steps
+    - type: llm-judge
+      weight: 0.4
+      config:
+        criteria:
+          - correctness_of_blocking_decision
+          - alignment_with_phase_workflow
+          - clarity
+          - actionability
+          - risk_management
+
+timeout_seconds: 120
+tags:
+  - publish
+  - phase-9
+  - negative-path
+  - routing

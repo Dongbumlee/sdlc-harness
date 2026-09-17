@@ -52,9 +52,14 @@ argument-hint: "Describe the feature or requirement to analyze"
     or `the agent template repo`)
  5. **Framework docs** — Use **Context7 MCP** to get current documentation for frameworks
     being evaluated (FastAPI, Pydantic, Azure AI Agent Framework, etc.)
- 6. **ADO wiki** — Search the team's Azure DevOps wiki for engineering guidelines:
-    - Search: `mcp_ado_search_wiki(searchText: "architecture", project: "CSA CTO Engineering")`
-    - Fetch content: `mcp_ado_wiki_get_page_content(wikiIdentifier: "CSA-CTO-Engineering.wiki", project: "CSA CTO Engineering", path: "/<page-path>")`
+ 6. **Public architecture guidance** — Use **Microsoft Learn MCP** and awesome-copilot
+    (`mcp_awesome-copil_load_collection` → `"azure-cloud-development"`) for current
+    architecture and Azure design guidance.
+ 7. **Team standards wiki (optional)** — If `.github/copilot-instructions.md` configures a team
+    Azure DevOps wiki, search it for team-specific guidelines (they take precedence over generic guidance):
+    - Search: `mcp_ado_search_wiki(searchText: "architecture", project: "<ADO_WIKI_PROJECT>")`
+    - Fetch content: `mcp_ado_wiki_get_page_content(wikiIdentifier: "<ADO_WIKI_IDENTIFIER>", project: "<ADO_WIKI_PROJECT>", path: "/<page-path>")`
+    - If no wiki is configured or ADO MCP authentication fails, proceed with the public sources above.
  ## Steps
 
  1. **Clarify requirements**

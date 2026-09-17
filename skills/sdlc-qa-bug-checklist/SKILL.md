@@ -1,7 +1,7 @@
 ---
 name: sdlc-qa-bug-checklist
 description: >-
-  Bug-driven QA checklist distilled from 338 real bugs across 9 CSACTOSOL ADO
+  Bug-driven QA checklist distilled from 338 real bugs across 9 production Azure DevOps
   projects with detailed error patterns, Azure error codes, and verification
   commands. Use when reviewing code, PRs, deployments, or running QA checks.
   Triggers on any QA review, pre-deployment validation, or bug-prevention audit.
@@ -12,7 +12,7 @@ user-invocable: false
 
 # SDLC QA Bug Checklist
 
-Actionable QA checklist derived from **338 production bugs** across 9 CSACTOSOL projects.
+Actionable QA checklist derived from **338 production bugs** across 9 production projects.
 Each item includes the **real error pattern**, **Azure error codes**, and **how to verify** —
 so the agent or reviewer can detect the exact conditions that caused real bugs.
 
@@ -338,7 +338,7 @@ Example:
 
 ## Data Source
 
-- **338 bugs** from CSACTOSOL Azure DevOps organization
-- **9 projects**: CSA Solutioning (309), Multi-Agent BiB (10), Modernize Code v2 (5), Content Processing (4), Document Processing (4), Modernize Code Generic (2), MAAG Data Foundation (2), Agentic Content Processing (1), application Landing Page (1)
+- **338 bugs** from a production Azure DevOps organization
+- **9 projects**: `<project-1>` (309), `<project-2>` (10), `<project-3>` (5), `<project-4>` (4), `<project-5>` (4), `<project-6>` (2), `<project-7>` (2), `<project-8>` (1), `<project-9>` (1)
 - **Time range**: October 2024 – April 2026
 - **Detail level**: Repro steps, actual error messages, Azure error codes, and fix patterns extracted from bug work items

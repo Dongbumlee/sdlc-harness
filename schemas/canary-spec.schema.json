@@ -7,8 +7,8 @@
   "properties": {
     "id": {
       "type": "string",
-      "pattern": "^(req|des|scf|impl|qa|doc|dep|rel|rai)-\\d{3}",
-      "description": "Unique canary identifier with phase prefix and 3-digit number (e.g., req-001, des-001)"
+      "pattern": "^(req|des|scf|impl|qa|doc|dep|rel|pub|rai)-\\d{3}",
+      "description": "Unique canary identifier with phase prefix and 3-digit number (e.g., req-001, des-001, pub-001)"
     },
     "version": {
       "type": "string",
@@ -18,7 +18,7 @@
     },
     "phase": {
       "type": "string",
-      "enum": ["requirements", "design", "implement", "qa", "deploy", "document", "rai", "release", "scaffold"],
+      "enum": ["requirements", "design", "implement", "qa", "deploy", "document", "rai", "release", "publish", "scaffold"],
       "description": "SDLC phase this canary tests"
     },
     "title": {
@@ -91,6 +91,11 @@
       "minimum": 30,
       "maximum": 600,
       "description": "Maximum execution time in seconds"
+    },
+    "requires_mcp": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "MCP servers this canary requires, named as in .vscode/mcp.json (e.g. 'awesome-copilot', 'github', 'azure'). If omitted, the phase default from the sdlc-canary-runner skill applies. An empty array means no MCP dependency — the canary always runs. When any required server is unavailable at preflight, the canary FAILS with reason mcp_unavailable (required tools are never silently skipped)."
     },
     "tags": {
       "type": "array",
