@@ -17,7 +17,8 @@ prompt: |
   3   import os
   4
   5   app = Flask(__name__)
-  6   SECRET_KEY = "CHANGEME-INSECURE-TEST-FIXTURE"  # intentionally hardcoded: reviewers must flag this
+  6   insecure_default = "CHANGEME-INSECURE-TEST-FIXTURE"  # intentionally hardcoded: reviewers must flag this
+  7   app.secret_key = insecure_default
   7
   8   @app.route("/login", methods=["POST"])
   9   def login():
