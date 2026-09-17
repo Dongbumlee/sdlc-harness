@@ -42,7 +42,7 @@ curl -X POST "https://api.example.com/v1/auth/login" \
   -H "X-Request-ID: 1f3ea8ec-6b7e-4587-b667-8965e0e1e2a2" \
   -d '{
     "email": "admin@example.com",
-    "password": "Str0ngPass!123"
+    "password": "<example-password>"
   }'
 ```
 
@@ -128,7 +128,7 @@ Authenticate user and issue tokens.
 ```json
 {
   "email": "admin@example.com",
-  "password": "Str0ngPass!123"
+  "password": "<example-password>"
 }
 ```
 
@@ -138,7 +138,7 @@ Authenticate user and issue tokens.
 {
   "data": {
     "access_token": "******",
-    "refresh_token": "d8f3c67d-2bdf-43dd-8ef7-8ac2f1e8f3c6",
+    "refresh_token": "<example-refresh-token>",
     "token_type": "Bearer",
     "expires_in": 3600,
     "refresh_expires_in": 2592000
@@ -170,7 +170,7 @@ Authenticate user and issue tokens.
 curl -X POST "https://api.example.com/v1/auth/login" \
   -H "Content-Type: application/json" \
   -H "X-Request-ID: 1f3ea8ec-6b7e-4587-b667-8965e0e1e2a2" \
-  -d '{"email":"admin@example.com","password":"Str0ngPass!123"}'
+  -d '{"email":"admin@example.com","password":"<example-password>"}'
 ```
 
 **Python (httpx)**
@@ -178,7 +178,7 @@ curl -X POST "https://api.example.com/v1/auth/login" \
 ```python
 import httpx
 
-payload = {"email": "admin@example.com", "password": "Str0ngPass!123"}
+payload = {"email": "admin@example.com", "password": "<example-password>"}
 headers = {"Content-Type": "application/json", "X-Request-ID": "1f3ea8ec-6b7e-4587-b667-8965e0e1e2a2"}
 
 with httpx.Client(base_url="https://api.example.com/v1", timeout=10.0) as client:
@@ -235,7 +235,7 @@ Examples: see [Standard Error Examples by Status](#standard-error-examples-by-st
 curl -X POST "https://api.example.com/v1/auth/refresh" \
   -H "Content-Type: application/json" \
   -H "X-Request-ID: c0e7b4d4-c8c9-4be5-b33a-baf9032ec9f9" \
-  -d '{"refresh_token":"d8f3c67d-2bdf-43dd-8ef7-8ac2f1e8f3c6"}'
+  -d '{"refresh_token":"<example-refresh-token>"}'
 ```
 
 **Python (httpx)**
@@ -244,7 +244,7 @@ curl -X POST "https://api.example.com/v1/auth/refresh" \
 import httpx
 
 headers = {"Content-Type": "application/json", "X-Request-ID": "c0e7b4d4-c8c9-4be5-b33a-baf9032ec9f9"}
-payload = {"refresh_token": "d8f3c67d-2bdf-43dd-8ef7-8ac2f1e8f3c6"}
+payload = {"refresh_token": "<example-refresh-token>"}
 
 with httpx.Client(base_url="https://api.example.com/v1") as client:
     resp = client.post("/auth/refresh", json=payload, headers=headers)
