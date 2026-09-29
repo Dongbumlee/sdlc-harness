@@ -155,8 +155,10 @@ N/A.
 
 - [ ] `schemas/cloud-pack.schema.json`: add `"core"` to the `cloud` enum, or make `cloud`
   optional / use a separate manifest shape for the core pack?
-- [ ] Is generating `.github/agents/` from the canonical source acceptable to Copilot
-  clients, or must both directories remain checked in during the transition?
+- [x] **Decided 2026-09-29:** checked-in generated files during the transition (option A:
+  flat dirs stay in the repo, assembled by CI, marked "do not edit"), moving to
+  release-time-only assembly (option B) later. Rationale: backward compatibility is a hard
+  constraint for the shipped 1.0.1 package; CI fails the PR on direct edits to generated dirs.
 - [ ] Phase 3 timing relative to AWS/GCP pack work — assemble first, or add AWS pack
   on the old layout?
 
