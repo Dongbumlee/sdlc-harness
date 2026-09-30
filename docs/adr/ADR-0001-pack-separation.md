@@ -91,8 +91,11 @@ from `packs/*/` (phase 3). Until then they remain checked in, with CI drift chec
 **Phase 2 — physical separation:**
 1. Move Azure-specific files into `packs/azure/{agents,skills}/`; update `pack.json`
    references to pack-relative paths.
-2. Decide the `deployer` ownership: keep the generic deployer in core and let cloud packs
-   reference or override it (schema already allows per-pack `agents.deployer`).
+2. **Decided 2026-09-29 (option A):** the generic deployer stays owned by the core
+   pack; cloud packs inherit it via a bare `deployer.agent.md` reference, resolved
+   pack-local `agents/` first, then core. A cloud pack may override it with its own
+   `packs/<name>/agents/deployer.agent.md` (schema already allows per-pack
+   `agents.deployer`).
 
 **Phase 3 — single source of truth:**
 1. CI assembles the root flat layout from `packs/*/`; flat dirs become build artifacts.

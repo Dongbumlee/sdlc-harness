@@ -1,19 +1,20 @@
 {
-  "name": "azure",
-  "displayName": "Azure Cloud Pack",
-  "version": "1.0.0",
-  "cloud": "azure",
   "agents": {
-    "deployer": "deployer.agent.md",
-    "complianceReviewer": "azure-compliance-reviewer.agent.md"
+    "complianceReviewer": "agents/azure-compliance-reviewer.agent.md",
+    "deployer": "deployer.agent.md"
   },
-  "skills": [
-    "sdlc-azure-deployment",
-    "sdlc-cosmos-repository",
-    "sdlc-blob-storage"
-  ],
+  "cloud": "azure",
+  "description": "Azure-specific agents and skills. The generic deployer agent is owned by the core pack and inherited here (ADR-0001, decision A, 2026-09-29).",
+  "displayName": "Azure Cloud Pack",
   "mcpServers": "mcp-servers.json",
+  "name": "azure",
   "reviewers": [
-    "azure-compliance-reviewer.agent.md"
-  ]
+    "agents/azure-compliance-reviewer.agent.md"
+  ],
+  "skills": [
+    "skills/sdlc-azure-deployment",
+    "skills/sdlc-cosmos-repository",
+    "skills/sdlc-blob-storage"
+  ],
+  "version": "1.0.0"
 }
