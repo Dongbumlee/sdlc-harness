@@ -1,16 +1,27 @@
 #!/usr/bin/env python3
-"""Phase 1 pack contracts check (ADR-0001).
+"""Phase 1+2 pack contracts check (ADR-0001).
 
-Enforces three contracts on every PR:
+Enforces the pack contracts on every PR:
 
 1. Canonical agent source: ``com.github.copilot/agents/`` is the single source of
-   truth for agent files. ``.github/agents/`` must be byte-identical; any divergence
-   fails the check. (Until Phase 3 CI assembly lands, both directories stay checked in.)
+   truth for the flat layout. ``.github/agents/`` must be byte-identical; any
+   divergence fails the check. (Until Phase 3 CI assembly lands, both directories
+   stay checked in.)
 2. Pack manifest schema: every ``packs/*/pack.json`` (except the ``_template/``
    skeleton) must validate against ``schemas/cloud-pack.schema.json``.
 3. Reference integrity: every agent file and skill directory referenced by a pack
-   manifest must exist (agents resolve against the canonical agent directory,
-   skills against the root ``skills/`` compatibility layout).
+   manifest must exist. Reference resolution:
+     - ``agents/<file>`` -> ``packs/<name>/agents/<file>`` (pack-local, required)
+     - ``skills/<name>`` -> ``packs/<name>/skills/<name>`` (pack-local, required)
+     - bare ``<file>`` (agents) -> pack-local ``agents/`` first, then the core
+       pack's agents (``packs/core/agents/`` in Phase 3, the canonical flat
+       directory until then). This is how cloud packs inherit core agents such
+       as the generic deployer (ADR-0001, decision A).
+     - bare ``<name>`` (skills) -> root ``skills/<name>`` compatibility layout.
+4. Pack-source sync (Phase 2): a pack-local file is the canonical home for that
+   file, so the flat-layout copies must be byte-identical:
+     - ``packs/<name>/agents/<file>`` == ``com.github.copilot/agents/<file>``
+     - ``packs/<name>/skills/<name>/`` tree == ``skills/<name>/`` tree
 
 Exit code is 0 when all contracts hold, 1 otherwise.
 """
@@ -29,10 +40,19 @@ CANONICAL_AGENTS = REPO_ROOT / "com.github.copilot" / "agents"
 MIRROR_AGENTS = REPO_ROOT / ".github" / "agents"
 SKILLS_DIR = REPO_ROOT / "skills"
 PACKS_DIR = REPO_ROOT / "packs"
+CORE_AGENTS_DIR = PACKS_DIR / "core" / "agents"  # Phase 3 layout; may not exist yet
 SCHEMA_PATH = REPO_ROOT / "schemas" / "cloud-pack.schema.json"
 TEMPLATE_DIR_NAME = "_template"
 
 failures: list[str] = []
+
+
+def rel(path: Path) -> str:
+    """Repository-relative path for readable failure messages."""
+    try:
+        return str(path.relative_to(REPO_ROOT))
+    except ValueError:
+        return str(path)
 
 
 def fail(message: str) -> None:
@@ -40,14 +60,28 @@ def fail(message: str) -> None:
     print(f"FAIL: {message}")
 
 
+def _dir_trees_identical(left: Path, right: Path) -> bool:
+    """Recursively compare two directory trees (names + file contents)."""
+    cmp = filecmp.dircmp(left, right)
+    if cmp.left_only or cmp.right_only or cmp.diff_files or cmp.funny_files:
+        return False
+    for sub in cmp.common_dirs:
+        if not _dir_trees_identical(left / sub, right / sub):
+            return False
+    for name in cmp.common_files:
+        if not filecmp.cmp(left / name, right / name, shallow=False):
+            return False
+    return True
+
+
 def check_agent_drift() -> None:
     """Contract 1: the mirror agent directory must match the canonical source."""
-    print(f"Checking agent drift: {MIRROR_AGENTS} vs canonical {CANONICAL_AGENTS} ...")
+    print(f"Checking agent drift: {rel(MIRROR_AGENTS)} vs canonical {rel(CANONICAL_AGENTS)} ...")
     if not CANONICAL_AGENTS.is_dir():
-        fail(f"canonical agent directory missing: {CANONICAL_AGENTS}")
+        fail(f"canonical agent directory missing: {rel(CANONICAL_AGENTS)}")
         return
     if not MIRROR_AGENTS.is_dir():
-        fail(f"mirror agent directory missing: {MIRROR_AGENTS}")
+        fail(f"mirror agent directory missing: {rel(MIRROR_AGENTS)}")
         return
 
     canonical = {p.name for p in CANONICAL_AGENTS.glob("*.agent.md")}
@@ -64,59 +98,101 @@ def check_agent_drift() -> None:
             )
 
 
+def _resolve_agent(pack_dir: Path, ref: str) -> Path | None:
+    """Resolve an agent reference to a file, or None if it exists nowhere."""
+    if ref.startswith("agents/"):
+        candidate = pack_dir / ref
+        return candidate if candidate.is_file() else None
+    for base in (pack_dir / "agents", CORE_AGENTS_DIR, CANONICAL_AGENTS):
+        candidate = base / ref
+        if candidate.is_file():
+            return candidate
+    return None
+
+
 def check_pack_manifests() -> None:
-    """Contracts 2 + 3: schema validation and reference integrity per pack."""
+    """Contracts 2-4: schema validation, reference integrity, pack-source sync."""
     schema = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
     validator = jsonschema.Draft7Validator(schema)
 
     pack_dirs = sorted(p for p in PACKS_DIR.iterdir() if p.is_dir())
     if not pack_dirs:
-        fail(f"no pack directories found under {PACKS_DIR}")
+        fail(f"no pack directories found under {rel(PACKS_DIR)}")
 
     for pack_dir in pack_dirs:
         if pack_dir.name == TEMPLATE_DIR_NAME:
             print(f"Skipping template skeleton: {pack_dir.name}/")
             continue
         manifest_path = pack_dir / "pack.json"
-        print(f"Checking pack manifest: {manifest_path.relative_to(REPO_ROOT)} ...")
+        print(f"Checking pack manifest: {rel(manifest_path)} ...")
         if not manifest_path.is_file():
             fail(f"pack {pack_dir.name}/ is missing pack.json")
             continue
         try:
             manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
         except json.JSONDecodeError as exc:
-            fail(f"{manifest_path}: invalid JSON: {exc}")
+            fail(f"{rel(manifest_path)}: invalid JSON: {exc}")
             continue
 
         for error in validator.iter_errors(manifest):
-            fail(f"{manifest_path}: schema violation at '{error.json_path}': {error.message}")
+            fail(f"{rel(manifest_path)}: schema violation at '{error.json_path}': {error.message}")
 
-        # Reference integrity: agents resolve against the canonical directory.
+        # Agents + reviewers: resolve, then verify pack-source sync for pack-local files.
         agents = manifest.get("agents") or {}
-        for role, filename in agents.items():
-            if not isinstance(filename, str):
+        agent_refs = [(role, ref) for role, ref in agents.items() if isinstance(ref, str)]
+        agent_refs += [("reviewer", ref) for ref in manifest.get("reviewers") or [] if isinstance(ref, str)]
+        seen_refs: set[str] = set()
+        for role, ref in agent_refs:
+            if ref in seen_refs:
                 continue
-            agent_file = CANONICAL_AGENTS / filename
-            if not agent_file.is_file():
-                fail(f"{manifest_path}: agent '{role}' -> {filename} not found in canonical agent dir")
-            # Warn (don't fail): pack-local agent files are a Phase 2 concept.
-            pack_local = pack_dir / "agents" / filename
-            if pack_local.is_file():
-                print(f"  note: {filename} also exists under {pack_dir.name}/agents/ (Phase 2 layout)")
+            seen_refs.add(ref)
+            resolved = _resolve_agent(pack_dir, ref)
+            if resolved is None:
+                fail(f"{rel(manifest_path)}: agent '{role}' -> {ref} not found in pack or core agent dirs")
+                continue
+            if ref.startswith("agents/"):
+                # Pack-local file is canonical: the flat copy must match it.
+                flat_copy = CANONICAL_AGENTS / Path(ref).name
+                if not flat_copy.is_file():
+                    fail(
+                        f"{rel(manifest_path)}: pack-local agent {ref} has no flat-layout copy "
+                        f"at {rel(flat_copy)} (kept for compatibility until Phase 3)"
+                    )
+                elif not filecmp.cmp(pack_dir / ref, flat_copy, shallow=False):
+                    fail(
+                        f"{rel(manifest_path)}: pack-local agent {ref} diverged from its "
+                        f"flat-layout copy -- edit only packs/{pack_dir.name}/agents/, then sync"
+                    )
 
-        for extra in manifest.get("reviewers") or []:
-            if isinstance(extra, str) and not (CANONICAL_AGENTS / extra).is_file():
-                fail(f"{manifest_path}: reviewer agent {extra} not found in canonical agent dir")
-
-        # Reference integrity: skills resolve against the root skills/ layout.
+        # Skills: resolve, then verify pack-source sync for pack-local skill trees.
         for skill in manifest.get("skills") or []:
-            if not (SKILLS_DIR / skill).is_dir():
-                fail(f"{manifest_path}: skill '{skill}' not found under skills/")
+            if skill.startswith("skills/"):
+                name = skill[len("skills/"):]
+                pack_skill = pack_dir / "skills" / name
+                flat_skill = SKILLS_DIR / name
+                if not pack_skill.is_dir():
+                    fail(f"{rel(manifest_path)}: skill '{skill}' not found under packs/{pack_dir.name}/skills/")
+                    continue
+                if not (pack_skill / "SKILL.md").is_file():
+                    fail(f"{rel(manifest_path)}: skill '{skill}' is missing SKILL.md")
+                if not flat_skill.is_dir():
+                    fail(
+                        f"{rel(manifest_path)}: pack-local skill {skill} has no flat-layout copy "
+                        f"at {rel(flat_skill)} (kept for compatibility until Phase 3)"
+                    )
+                elif not _dir_trees_identical(pack_skill, flat_skill):
+                    fail(
+                        f"{rel(manifest_path)}: pack-local skill {skill} diverged from its "
+                        f"flat-layout copy -- edit only packs/{pack_dir.name}/skills/, then sync"
+                    )
+            else:
+                if not (SKILLS_DIR / skill).is_dir():
+                    fail(f"{rel(manifest_path)}: skill '{skill}' not found under skills/")
 
         # mcpServers, when declared, must point at a real file inside the pack.
         mcp = manifest.get("mcpServers")
         if isinstance(mcp, str) and not (pack_dir / mcp).is_file():
-            fail(f"{manifest_path}: mcpServers -> {mcp} not found in {pack_dir.name}/")
+            fail(f"{rel(manifest_path)}: mcpServers -> {mcp} not found in {pack_dir.name}/")
 
 
 def main() -> int:

@@ -66,8 +66,10 @@ class TestPluginPackJson:
             data = json.load(f)
         assert "agents" in data
         agents = data["agents"]
+        # deployer is owned by the core pack and inherited here (ADR-0001, decision A)
         assert agents["deployer"] == "deployer.agent.md"
-        assert agents["complianceReviewer"] == "azure-compliance-reviewer.agent.md"
+        # pack-local agents use pack-relative paths (Phase 2 layout)
+        assert agents["complianceReviewer"] == "agents/azure-compliance-reviewer.agent.md"
 
     def test_pack_json_agent_files_exist(self):
         """Every agent file referenced by the pack must exist on disk."""
@@ -75,12 +77,21 @@ class TestPluginPackJson:
             data = json.load(f)
         agents = data["agents"]
         assert set(agents) == {"deployer", "complianceReviewer"}
-        for role, filename in agents.items():
-            for agent_dir in ("com.github.copilot/agents", ".github/agents"):
-                path = REPO_ROOT / agent_dir / filename
-                assert path.is_file(), f"Pack agent missing: {role} -> {path}"
-        for filename in data.get("reviewers", []):
-            path = REPO_ROOT / ".github/agents" / filename
+        # Inherited core agents resolve against the canonical flat agent dirs.
+        for agent_dir in ("com.github.copilot/agents", ".github/agents"):
+            path = REPO_ROOT / agent_dir / agents["deployer"]
+            assert path.is_file(), f"Pack agent missing: deployer -> {path}"
+        # Pack-local agents live under packs/azure/agents/; the flat copy is a
+        # compatibility mirror until Phase 3 CI assembly lands.
+        pack_agent = REPO_ROOT / "packs" / "azure" / agents["complianceReviewer"]
+        assert pack_agent.is_file(), f"Pack agent missing: {pack_agent}"
+        flat_agent = REPO_ROOT / "com.github.copilot" / "agents" / pack_agent.name
+        assert flat_agent.is_file(), f"Flat mirror missing: {flat_agent}"
+        assert pack_agent.read_bytes() == flat_agent.read_bytes(), (
+            f"Pack-local agent diverged from flat mirror: {pack_agent}"
+        )
+        for ref in data.get("reviewers", []):
+            path = REPO_ROOT / "packs" / "azure" / ref
             assert path.is_file(), f"Pack reviewer missing: {path}"
 
     def test_pack_json_has_skills(self):
@@ -88,9 +99,10 @@ class TestPluginPackJson:
             data = json.load(f)
         assert "skills" in data
         skills = data["skills"]
-        assert "sdlc-azure-deployment" in skills
-        assert "sdlc-cosmos-repository" in skills
-        assert "sdlc-blob-storage" in skills
+        # Pack-local skills use pack-relative paths (Phase 2 layout).
+        assert "skills/sdlc-azure-deployment" in skills
+        assert "skills/sdlc-cosmos-repository" in skills
+        assert "skills/sdlc-blob-storage" in skills
 
     def test_pack_json_has_mcp_servers(self):
         with open(PLUGIN_PACK_JSON) as f:
@@ -108,24 +120,28 @@ class TestPluginPackJson:
         assert "azure" in mcp.get("servers", {}), "azure server missing from pack mcp-servers.json"
 
     def test_pack_skills_all_exist(self):
-        """Every skill listed in the pack must be a real skill directory."""
+        """Every skill listed in the pack must exist under packs/azure/skills/."""
         with open(PLUGIN_PACK_JSON) as f:
             data = json.load(f)
         assert set(data["skills"]) == {
-            "sdlc-azure-deployment",
-            "sdlc-cosmos-repository",
-            "sdlc-blob-storage",
+            "skills/sdlc-azure-deployment",
+            "skills/sdlc-cosmos-repository",
+            "skills/sdlc-blob-storage",
         }
         for skill in data["skills"]:
-            skill_file = REPO_ROOT / "skills" / skill / "SKILL.md"
-            assert skill_file.is_file(), f"Pack skill missing: {skill_file}"
+            name = skill.removeprefix("skills/")
+            pack_skill = REPO_ROOT / "packs" / "azure" / "skills" / name / "SKILL.md"
+            assert pack_skill.is_file(), f"Pack skill missing: {pack_skill}"
+            # The root skills/ copy is a compatibility mirror until Phase 3.
+            flat_skill = REPO_ROOT / "skills" / name / "SKILL.md"
+            assert flat_skill.is_file(), f"Flat skill mirror missing: {flat_skill}"
 
     def test_pack_json_has_reviewers(self):
         with open(PLUGIN_PACK_JSON) as f:
             data = json.load(f)
         assert "reviewers" in data
         reviewers = data["reviewers"]
-        assert "azure-compliance-reviewer.agent.md" in reviewers
+        assert "agents/azure-compliance-reviewer.agent.md" in reviewers
 
 
 class TestPluginManifest:
