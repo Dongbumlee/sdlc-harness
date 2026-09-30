@@ -193,6 +193,9 @@ deployment, data access, and storage skills tailored to that provider.
 
 The Azure Pack metadata is bundled at `packs/azure/pack.json`; its three skills are also
 published in the root `skills/` directory so current Agent Plugins clients discover them.
+The root `skills/`, `com.github.copilot/agents/` and `.github/agents/` directories are
+generated from `packs/*/` by `tools/assemble_flat_layout.py` — edit the pack source,
+not the flat layout.
 To create a new cloud pack, use the `packs/_template/` skeleton.
 
 ---

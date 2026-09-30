@@ -101,6 +101,20 @@ from `packs/*/` (phase 3). Until then they remain checked in, with CI drift chec
 1. CI assembles the root flat layout from `packs/*/`; flat dirs become build artifacts.
 2. AWS/GCP packs become copy-template + fill-in work.
 
+Implemented 2026-09-29 (PR #17): `tools/assemble_flat_layout.py` derives
+`com.github.copilot/agents/`, `.github/agents/` (19 agents) and `skills/`
+(16 skills) from the pack manifests, using the same resolution rules as
+`tools/check_pack_contracts.py` (pack-local agents first, then core
+inheritance). Name conflicts across packs fail the assembly. Each flat dir
+carries a `.pack-generated` marker. The new `pack-assembly` CI job runs the
+assembler in `--check` mode on every PR: direct edits to the flat layout fail
+CI with "edit packs/, not the flat layout". Contributors regenerate locally
+with the script (no `--check`) and commit the result. Core content physically
+moved to `packs/core/agents/` + `packs/core/skills/` with `pack.json`
+references now pack-relative; the checked-in flat layout is byte-identical to
+what the assembler produces. The Phase 3 open item is closed: AWS/GCP packs
+are now copy-template + fill-in work.
+
 ### Azure Services
 
 N/A — no runtime services in this decision.
@@ -162,8 +176,8 @@ N/A.
   flat dirs stay in the repo, assembled by CI, marked "do not edit"), moving to
   release-time-only assembly (option B) later. Rationale: backward compatibility is a hard
   constraint for the shipped 1.0.1 package; CI fails the PR on direct edits to generated dirs.
-- [ ] Phase 3 timing relative to AWS/GCP pack work — assemble first, or add AWS pack
-  on the old layout?
+- [x] **Decided 2026-09-29:** Phase 3 (CI assembly) landed before AWS/GCP pack work
+  (PR #17) — assemble first, as the migration plan prescribed.
 
 ## References
 

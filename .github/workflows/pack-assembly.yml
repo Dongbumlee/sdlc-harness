@@ -1,0 +1,22 @@
+name: Pack assembly
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  assemble-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Verify flat layout matches packs/*
+        run: python3 tools/assemble_flat_layout.py --check
