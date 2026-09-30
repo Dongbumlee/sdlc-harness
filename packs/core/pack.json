@@ -1,1 +1,42 @@
-{"agents":{"analyst":"analyst.agent.md","architectureReviewer":"architecture-reviewer.agent.md","codeQualityReviewer":"code-quality-reviewer.agent.md","deployer":"deployer.agent.md","deploymentReadinessReviewer":"deployment-readiness-reviewer.agent.md","documenter":"documenter.agent.md","harness":"harness.agent.md","implementer":"implementer.agent.md","llmBehaviorReviewer":"llm-behavior-reviewer.agent.md","qaBugChecklistReviewer":"qa-bug-checklist-reviewer.agent.md","qaCoordinator":"qa-coordinator.agent.md","raiReviewer":"rai-reviewer.agent.md","releaseManager":"release-manager.agent.md","requirementsCompletenessReviewer":"requirements-completeness-reviewer.agent.md","scaffolder":"scaffolder.agent.md","securityReviewer":"security-reviewer.agent.md","testCoverageReviewer":"test-coverage-reviewer.agent.md","uxAccessibilityReviewer":"ux-accessibility-reviewer.agent.md"},"cloud":"core","description":"Cloud-agnostic agents and skills shared by all cloud packs.","displayName":"Core Pack","name":"core","skills":["sdlc-adr-authoring","sdlc-architecture-review","sdlc-canary-runner","sdlc-code-quality","sdlc-project-manifest","sdlc-project-qa","sdlc-project-scaffolding","sdlc-qa-bug-checklist","sdlc-reference-catalog","sdlc-requirements-discovery","sdlc-reviewer-output-format","sdlc-security-review","sdlc-workspace-init"],"version":"1.0.0"}
+{
+  "agents": {
+    "analyst": "agents/analyst.agent.md",
+    "architectureReviewer": "agents/architecture-reviewer.agent.md",
+    "codeQualityReviewer": "agents/code-quality-reviewer.agent.md",
+    "deployer": "agents/deployer.agent.md",
+    "deploymentReadinessReviewer": "agents/deployment-readiness-reviewer.agent.md",
+    "documenter": "agents/documenter.agent.md",
+    "harness": "agents/harness.agent.md",
+    "implementer": "agents/implementer.agent.md",
+    "llmBehaviorReviewer": "agents/llm-behavior-reviewer.agent.md",
+    "qaBugChecklistReviewer": "agents/qa-bug-checklist-reviewer.agent.md",
+    "qaCoordinator": "agents/qa-coordinator.agent.md",
+    "raiReviewer": "agents/rai-reviewer.agent.md",
+    "releaseManager": "agents/release-manager.agent.md",
+    "requirementsCompletenessReviewer": "agents/requirements-completeness-reviewer.agent.md",
+    "scaffolder": "agents/scaffolder.agent.md",
+    "securityReviewer": "agents/security-reviewer.agent.md",
+    "testCoverageReviewer": "agents/test-coverage-reviewer.agent.md",
+    "uxAccessibilityReviewer": "agents/ux-accessibility-reviewer.agent.md"
+  },
+  "cloud": "core",
+  "description": "Cloud-agnostic agents and skills shared by all cloud packs. Canonical home for the generic deployer agent (inherited by cloud packs, ADR-0001 decision A).",
+  "displayName": "Core Pack",
+  "name": "core",
+  "skills": [
+    "skills/sdlc-adr-authoring",
+    "skills/sdlc-architecture-review",
+    "skills/sdlc-canary-runner",
+    "skills/sdlc-code-quality",
+    "skills/sdlc-project-manifest",
+    "skills/sdlc-project-qa",
+    "skills/sdlc-project-scaffolding",
+    "skills/sdlc-qa-bug-checklist",
+    "skills/sdlc-reference-catalog",
+    "skills/sdlc-requirements-discovery",
+    "skills/sdlc-reviewer-output-format",
+    "skills/sdlc-security-review",
+    "skills/sdlc-workspace-init"
+  ],
+  "version": "1.0.0"
+}
