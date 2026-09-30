@@ -1,0 +1,1 @@
+{"mcpServers":{"<server-name>":{"args":["<arg1>","<arg2>"],"command":"<command>","env":{"<ENV_VAR>":"<value>"}}}}

@@ -1,0 +1,47 @@
+name: Pack Contracts
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, dev, evo]
+    paths:
+      - 'packs/**'
+      - 'schemas/cloud-pack.schema.json'
+      - 'com.github.copilot/agents/**'
+      - '.github/agents/**'
+      - 'skills/**'
+      - 'tools/check_pack_contracts.py'
+      - '.github/workflows/pack-contracts.yml'
+  pull_request:
+    paths:
+      - 'packs/**'
+      - 'schemas/cloud-pack.schema.json'
+      - 'com.github.copilot/agents/**'
+      - '.github/agents/**'
+      - 'skills/**'
+      - 'tools/check_pack_contracts.py'
+      - '.github/workflows/pack-contracts.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  pack-contracts:
+    name: Pack contracts (ADR-0001 Phase 1)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install jsonschema
+
+      - name: Check pack contracts
+        run: python tools/check_pack_contracts.py

@@ -1,0 +1,1 @@
+{"agents":{"deployer":"<deployer>.agent.md"},"cloud":"<azure|aws|gcp>","description":"TODO: describe what this cloud pack provides.","displayName":"<Pack Display Name>","mcpServers":"mcp-servers.json","name":"<pack-name>","skills":["<skill-directory-name>"],"version":"0.0.0"}
