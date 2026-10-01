@@ -73,6 +73,11 @@ data-service security, and cost guardrails**.
       endpoints used for S3/DynamoDB?
 - [ ] **Cost: logs** — CloudWatch Logs retention set (no infinite retention)?
 - [ ] **Tags** — Standard tags (`Project`, `Environment`, `ManagedBy=cdk`) on all stacks?
+- [ ] **No App Runner for new work** — App Runner closed to new customers
+      2026-04-30; any new App Runner usage is a critical finding (migrate to
+      Lambda container or Fargate)?
+- [ ] **Compute fit** — Long-running work (>15 min) on Fargate, not Lambda;
+      Lambda container image architecture matches the function setting?
 
 ## Output format
 
