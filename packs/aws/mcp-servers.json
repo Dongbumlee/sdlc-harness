@@ -1,0 +1,57 @@
+{
+  "servers": {
+    "aws-cdk": {
+      "args": [
+        "awslabs.cdk-mcp-server@latest"
+      ],
+      "command": "uvx",
+      "env": {
+        "AWS_REGION": "us-west-2",
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      },
+      "type": "stdio"
+    },
+    "aws-docs": {
+      "args": [
+        "awslabs.aws-documentation-mcp-server@latest"
+      ],
+      "command": "uvx",
+      "env": {
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      },
+      "type": "stdio"
+    },
+    "aws-dynamodb": {
+      "args": [
+        "awslabs.dynamodb-mcp-server@latest"
+      ],
+      "command": "uvx",
+      "env": {
+        "AWS_REGION": "us-west-2",
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      },
+      "type": "stdio"
+    },
+    "aws-ecs": {
+      "args": [
+        "awslabs.ecs-mcp-server@latest"
+      ],
+      "command": "uvx",
+      "env": {
+        "AWS_REGION": "us-west-2",
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      },
+      "type": "stdio"
+    },
+    "aws-pricing": {
+      "args": [
+        "awslabs.aws-pricing-mcp-server@latest"
+      ],
+      "command": "uvx",
+      "env": {
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      },
+      "type": "stdio"
+    }
+  }
+}
