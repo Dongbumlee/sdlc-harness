@@ -1,0 +1,20 @@
+{
+  "agents": {
+    "complianceReviewer": "agents/aws-compliance-reviewer.agent.md",
+    "deployer": "deployer.agent.md"
+  },
+  "cloud": "aws",
+  "description": "AWS-specific agents and skills. The generic deployer agent is owned by the core pack and inherited here (ADR-0001, decision A, 2026-09-29).",
+  "displayName": "AWS Cloud Pack",
+  "mcpServers": "mcp-servers.json",
+  "name": "aws",
+  "reviewers": [
+    "agents/aws-compliance-reviewer.agent.md"
+  ],
+  "skills": [
+    "skills/sdlc-aws-deployment",
+    "skills/sdlc-dynamodb-repository",
+    "skills/sdlc-s3-storage"
+  ],
+  "version": "1.0.0"
+}
