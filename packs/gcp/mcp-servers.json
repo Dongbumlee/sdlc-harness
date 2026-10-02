@@ -1,0 +1,1 @@
+{"_comment":"No official Google Cloud MCP server pack exists (unlike AWS awslabs/* or @azure/mcp). The GCP pack's skills are written to stand alone — MCP servers are accelerators, never prerequisites (lesson from the AWS pack's MCP-assumption gap). If a Google-maintained MCP server appears, register it here.","servers":{}}
