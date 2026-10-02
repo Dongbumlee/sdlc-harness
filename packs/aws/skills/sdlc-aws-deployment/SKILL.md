@@ -10,7 +10,7 @@ description: >-
   CloudFormation or L1 (Cfn*) constructs — always use L2/L3 CDK constructs.
   Never use App Runner for new work — it is closed to new customers since
   2026-04-30.
-version: "1.1"
+version: "1.2"
 author: sdlc-harness
 user-invocable: false
 ---
@@ -32,9 +32,9 @@ One CDK app, two compute targets — this is the pack's core opinion:
 
 ```
              ┌──────────────────────┐
-             │ Lambda (container    │  HTTP API — same Docker image,
-             │ image) + Function URL│  $0 at test scale (always-free tier)
-             └──────────┬───────────┘
+             │ Lambda (container    │  HTTP API — same ECR repo as the worker
+             │ image) + Function URL│  ($0 at test scale: always-free tier);
+             └──────────┬───────────┘  two tagged images, api-<tag>/worker-<tag>
                         │ enqueue job
              ┌──────────▼───────────┐      ┌──────────────┐
              │ SQS queue            ├─────►│ DLQ          │  poison messages, retryable
@@ -53,12 +53,18 @@ One CDK app, two compute targets — this is the pack's core opinion:
 ```
 
 **Why this split:** the API is request-driven and short-lived — a container
-image on Lambda with a Function URL keeps the Docker story (same image as the
-worker) at $0 idle via the always-free tier (1M requests + 400k GB-seconds/mo),
+image on Lambda with a Function URL keeps the Docker story (same ECR repo as the
+worker, two tagged images) at $0 idle via the always-free tier (1M requests + 400k GB-seconds/mo),
 with HTTPS and no ALB/API Gateway bill. The worker (planner → researchers →
 critic → writer pipeline, up to 25 min/job) exceeds Lambda's 15-minute limit,
 so it runs on Fargate — where the SQS + DLQ retry contract also unlocks
 Fargate Spot pricing (~70% cheaper, interruption-safe).
+
+**Single-table key design.** DynamoDB uses one table per the pack's reference
+key design: list access patterns first, then model them as `PK`/`SK` with a
+sparse `GSI1` (`STATUS#<status>`). The canonical reference layout lives in the
+`sdlc-dynamodb-repository` skill (Step 1) — every table design in this pack
+starts there.
 
 **⛔ App Runner is dead for new work.** AWS closed it to new customers on
 2026-04-30 (maintenance mode, no new features). Never recommend it; if you
@@ -66,8 +72,8 @@ find it in existing code, flag migration to the road below.
 
 **Scale-up path:** when the API outgrows Lambda (sustained high traffic,
 connections beyond response streaming, VPC subtleties), move it to an ECS
-Fargate service + ALB (or ECS Express Mode) — same container image, same SQS
-contract, no API redesign.
+Fargate service + ALB (or ECS Express Mode) — same image contract (one ECR repo,
+`api-`/`worker-` tags), same SQS contract, no API redesign.
 
 ## Step 1: Load CDK best practices
 
@@ -80,6 +86,11 @@ Use the CDK MCP server for construct selection and patterns:
 For authoritative service docs, use the AWS documentation MCP server
 (`awslabs.aws-documentation-mcp-server`). For cost checks on the chosen
 architecture, use the pricing MCP server (`awslabs.aws-pricing-mcp-server`).
+
+**Offline fallback:** if the MCP servers are unavailable in the environment,
+do not block the build — proceed from CDK API knowledge plus this skill, and
+note the limitation in the build log. The pack's guidance must stand on its
+own; MCP servers are accelerators, not prerequisites.
 
 ## Step 2: L2/L3 constructs — MANDATORY
 
@@ -160,6 +171,56 @@ apiKey.grantRead(apiFn);
 // never put the secret value in `environment`
 ```
 
+### Creating secrets in CDK
+
+The examples above import existing secrets. To create them in the stack:
+
+```typescript
+const apiKeys = new secretsmanager.Secret(this, 'ApiKeys', {
+  secretName: 'deep-research/api-keys',
+  generateSecretString: {
+    secretStringTemplate: JSON.stringify({ keys: [] }),
+    generateStringKey: 'placeholder', // replaced post-deploy, see below
+  },
+});
+```
+
+Post-deploy, set the real values out of band — never commit them:
+
+```bash
+aws secretsmanager put-secret-value \
+  --secret-id deep-research/api-keys \
+  --secret-string '{"keys":["<key>"]}'
+```
+
+Secret rotation needs a custom rotation Lambda — out of v1 scope. Document
+the rotation plan instead of pretending rotation exists.
+
+### Application-level auth for Function URL (`authType: NONE`)
+
+v1 uses `authType: NONE` + application-level auth. The paved pattern:
+
+- API keys live in Secrets Manager as JSON: `{"keys": ["<key>", ...]}`.
+- The Lambda handler fetches the secret **at runtime** (never in
+  `environment`) and caches it in memory with a ~60s TTL, so key rotation
+  takes effect without a redeploy and Secrets Manager calls stay cheap.
+- Per-key rate limits (spec: 10 jobs/hour) are DynamoDB counter items with
+  TTL: `RATE#<key>#<hour>` → `{count, expires_at}`; a conditional write
+  fails the request with 429 when the count exceeds the limit.
+
+```python
+# handler sketch: cached key fetch
+_api_keys, _keys_fetched_at = None, 0.0
+
+def _valid_key(provided: str) -> bool:
+    global _api_keys, _keys_fetched_at
+    if time.time() - _keys_fetched_at > 60:  # 60s in-memory cache
+        resp = secrets_client.get_secret_value(SecretId=API_KEYS_SECRET_NAME)
+        _api_keys = set(json.loads(resp["SecretString"])["keys"])
+        _keys_fetched_at = time.time()
+    return provided in _api_keys
+```
+
 ## Step 5: Cost guardrails (enforced, not advisory)
 
 - **Lambda always-free tier covers the API** at dev/test scale (1M req +
@@ -168,12 +229,59 @@ apiKey.grantRead(apiFn);
   custom authorizers at scale).
 - **Fargate Spot** for the worker: the job queue + DLQ makes work retryable, so
   Spot interruption is safe and ~70% cheaper.
+- **The "$0 at test scale" story covers the API, not the worker.** Lambda's
+  always-free tier makes the API free at dev scale; the Fargate worker at
+  `desiredCount: 1` (0.25 vCPU / 0.5 GB on Spot) still costs ~$15/mo idle.
+  For dev: scale the service to zero when idle, add SQS-driven autoscaling
+  (scale on `ApproximateNumberOfMessagesVisible`), or destroy the stack after
+  testing — a forgotten `desiredCount: 1` is the actual money leak.
 - **NAT Gateway is guilty until proven innocent.** S3 and DynamoDB have **free
   gateway VPC endpoints** — use them instead of routing through NAT. A NAT
   Gateway with no justification is a compliance finding.
 - **CloudWatch Logs**: always set a retention period (e.g. 30 days). Forgotten
   log groups with infinite retention are a classic money leak.
 - Run `cdk-nag` on every stack; suppressions require a written justification.
+  Starter triage for the findings every L2-based app hits:
+
+  | Finding | Triage |
+  |---|---|
+  | IAM4/IAM5 on L2 default roles | Suppress with justification: CDK-managed roles need the wildcarded actions. `ecr:GetAuthorizationToken` *requires* `Resource: "*"` — AWS mandates it, there is no narrower form. |
+  | IAM5 on DynamoDB GSI ARNs | Resource-level `appliesTo` cannot match synth-time logical IDs (e.g. `<Table.Arn>/index/*`); suppress at stack level and document the exact scope in prose instead. |
+  | S3 server access logging | Needs a *second* bucket as the log target; for v1, suppress with justification or add the logging bucket. |
+  | VPC flow logs | Recurring CloudWatch Logs cost; document the decision (on for prod, off with justification for dev). |
+  | Secret rotation | Needs a custom rotation Lambda — out of v1 scope; suppress with justification and a rotation plan. |
+
+## Fargate network design (no-NAT)
+
+The no-NAT rule is only half the story: gateway VPC endpoints cover S3 and
+DynamoDB for free, but the Fargate worker must also reach **SQS, Secrets
+Manager, ECR, and CloudWatch Logs** — none of which have gateway endpoints.
+Pick one of these two compliant designs and document the choice:
+
+**Option A — dev/test default: public subnets + public IP ($0 extra).**
+The task gets a public IP and reaches AWS services over the internet; no NAT
+Gateway, no interface endpoints. Lock it down with an egress-only security
+group (no ingress rules — the worker only long-polls SQS):
+
+```typescript
+new ecs.FargateService(this, 'Worker', {
+  // ...
+  vpcSubnets: { subnetType: ec2.SubnetType.PUBLIC },
+  assignPublicIp: true,
+  securityGroups: [egressOnlySg], // allowAllOutbound: true, no ingress
+});
+```
+
+Acceptable when the spec says private networking is not required for v1.
+
+**Option B — production: private subnets + interface VPC endpoints.**
+No public IPs on tasks; add interface endpoints for SQS, Secrets Manager,
+ECR (api + dkr), and CloudWatch Logs — roughly $7.50/mo each (~$35+/mo idle
+for the full set). Choose this when compliance requires no public IPs.
+
+**Rule:** the network design must be written down (which option and why).
+"No NAT" without one of these two designs is an incomplete design, not a
+cost saving — the compliance reviewer checks for it.
 
 ## Step 6: CDK app layout
 
@@ -196,6 +304,36 @@ Conventions:
 - One stack per concern above; cross-stack references via exported values.
 - Default region `us-west-2` (v1); make it a context parameter, not hardcoded.
 - Standard tags on all stacks: `Project`, `Environment`, `ManagedBy=cdk`.
+- `cdk.context.json` carries per-environment, **non-secret** context:
+  `environment`, `region`, `imageTag` (plus CDK feature flags). Secrets never
+  go there (see Gotchas).
+- **ECR image tag wiring:** the tag comes from the `imageTag` CDK context
+  parameter (default `"dev"`). CI sets it from the git SHA:
+  `npx cdk deploy -c imageTag=$GITHUB_SHA`. Images are tagged
+  `api-<imageTag>` and `worker-<imageTag>` (see "ECR image pipeline" below).
+
+## ECR image pipeline (who builds what, in which order)
+
+Lambda's `DockerImageCode.fromEcr` resolves the image URI **at deploy time**,
+so the repository and the images must exist *before* `cdk deploy` runs.
+Creating the repo inside the compute stack does not work — the image is not
+there yet when the Lambda function is created.
+
+Order of operations:
+
+1. Create the ECR repo **outside** the compute stack (one CLI step, or a
+   bootstrap stack):
+   `aws ecr create-repository --repository-name <name>`.
+2. Build (matching arch — see Gotchas) and push both images:
+   `api-<imageTag>` and `worker-<imageTag>`.
+3. Deploy with the repo imported, not created:
+   `ecr.Repository.fromRepositoryName(this, 'Images', '<name>')`.
+4. `npx cdk deploy -c imageTag=$GITHUB_SHA`.
+
+**One repo, two images** — this is the pack's answer to "one image or two":
+`api-<tag>` carries the Lambda runtime interface (AWS base image or the
+Lambda Web Adapter); `worker-<tag>` does not need it. Both live in the same
+ECR repository.
 
 ## Gotchas
 
@@ -205,8 +343,17 @@ Conventions:
   `AWS_IAM` only when callers can sign requests.
 - **Container image architecture**: the ECR image arch (arm64/x86_64) must match
   the Lambda architecture setting — mismatches fail at invoke time, not deploy.
+  Pin `--platform=linux/amd64` at build time when targeting `X86_64`, and add
+  a CI check: `docker inspect --format '{{.Architecture}}' <image>` must agree
+  with the CDK `Architecture` / `CpuArchitecture` setting.
 - **Lambda container images** need the Lambda runtime interface — use AWS base
   images or the Lambda Web Adapter; a plain web-server image will not boot.
+- **Lambda runs containers as non-root**: source files in the image must be
+  world-readable. Docker `COPY` preserves host file modes — `660` files (e.g.
+  from a restrictive umask) cause an init-time `PermissionError` and every
+  invocation returns HTTP 502 with no application logs. Fix modes at the
+  source (`chmod -R a+rX`) and add a defensive `RUN chmod -R a+r /var/task`
+  to the Lambda Dockerfile.
 - **Cold starts**: measure before adding provisioned concurrency — at test scale
   you will not need it.
 - **L1 constructs are the #1 mistake** — the same way raw `resource`
@@ -218,7 +365,36 @@ Conventions:
 - **ECR image immutability** — tag images by git SHA, never redeploy `:latest`
   and assume it moved.
 - **SQS visibility timeout** must exceed the longest single poll-process cycle
-  of the worker, or messages return to the queue mid-processing.
+  of the worker, or messages return to the queue mid-processing. Formula:
+  `visibility timeout ≥ long-poll (20s) + max processing time + clock skew`.
+  Worked example: stub worker → 10 min; a real 25-min job → ≥30 min, or keep
+  the timeout shorter and extend it with `ChangeMessageVisibility` heartbeats
+  while the job runs.
+
+## Troubleshooting
+
+- **`cdk bootstrap` / `cdk deploy` dies with `ECONNRESET` mid-call.**
+  The CLI sometimes creates the CloudFormation change set and then dies before
+  executing it, leaving the stack in `REVIEW_IN_PROGRESS` with no visible
+  error. Recover with the AWS CLI — first list stuck stacks, then execute the
+  pending change set manually:
+
+  ```bash
+  aws cloudformation list-stacks \
+    --stack-status-filter REVIEW_IN_PROGRESS
+  aws cloudformation execute-change-set \
+    --stack-name <stack-name> --change-set-name <pending-change-set-name>
+  ```
+
+  Then re-run the CDK command.
+
+- **Raw CloudFormation recovery skips asset publishing.** If you deploy from
+  synthesized `cdk.out/` templates with `aws cloudformation create-stack`
+  (passing `BootstrapVersion=/cdk-bootstrap/<hash>/version`), `cdk deploy`'s
+  asset-publishing step does not run: any template referencing an S3 asset
+  (e.g. the log-retention provider's code zip) fails with `NoSuchKey` until
+  you manually upload `cdk.out/asset.<hash>` to the bootstrap staging bucket
+  under the key the template expects.
 
 ## Where files go
 
@@ -226,6 +402,6 @@ Conventions:
 |---|---|
 | CDK app | `infra/` |
 | Stacks | `infra/lib/*-stack.ts` |
-| Container images | ECR repositories (created by CDK) |
+| Container images | ECR repository — one repo, `api-<tag>`/`worker-<tag>` images; repo created outside the compute stack (see "ECR image pipeline") |
 | API service code | `src/<Name>API/` |
 | Worker service code | `src/<Name>Worker/` |
