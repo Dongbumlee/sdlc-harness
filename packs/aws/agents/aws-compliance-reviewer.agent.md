@@ -69,10 +69,20 @@ data-service security, and cost guardrails**.
       in `cdk.context.json`, env files, images, or the repo?
 - [ ] **Encryption** — SSE-S3 (or SSE-KMS where required) on buckets; DynamoDB
       encryption at rest; KMS customer keys only where compliance demands?
-- [ ] **Cost: NAT** — No NAT Gateway without written justification; gateway VPC
-      endpoints used for S3/DynamoDB?
+- [ ] **Cost: NAT + Fargate networking** — No NAT Gateway without written
+      justification; gateway VPC endpoints used for S3/DynamoDB? Fargate
+      network design documented: public subnets + `assignPublicIp` with an
+      egress-only security group (dev default) OR private subnets + interface
+      endpoints (SQS, Secrets Manager, ECR, CloudWatch Logs) with written
+      justification?
 - [ ] **Cost: logs** — CloudWatch Logs retention set (no infinite retention)?
 - [ ] **Tags** — Standard tags (`Project`, `Environment`, `ManagedBy=cdk`) on all stacks?
+- [ ] **No App Runner for new work** — App Runner closed to new customers
+      2026-04-30; any new App Runner usage is a critical finding (migrate to
+      Lambda container or Fargate)?
+- [ ] **Compute fit** — Long-running work (>15 min) on Fargate, not Lambda;
+      Lambda container image architecture matches the function setting
+      (CI check: `docker inspect` arch vs the CDK `Architecture`)?
 
 ## Output format
 
