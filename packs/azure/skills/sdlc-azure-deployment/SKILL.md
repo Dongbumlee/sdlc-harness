@@ -94,9 +94,9 @@ resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2023-09-01' = {
 
 **CORRECT — AVM module reference:**
 ```bicep
-// ✅ CORRECT: AVM module
+// ✅ CORRECT: AVM module (omit name: — Bicep auto-generates a unique
+// deployment name; explicit names collide at resource-group scope)
 module cosmosDb 'br/public:avm/res/document-db/database-account:0.11.2' = {
-  name: 'cosmosDbDeployment'
   params: {
     name: cosmosAccountName
     location: location
@@ -106,7 +106,6 @@ module cosmosDb 'br/public:avm/res/document-db/database-account:0.11.2' = {
 
 // ✅ CORRECT: AVM module
 module logAnalytics 'br/public:avm/res/operational-insights/workspace:0.9.1' = {
-  name: 'logAnalyticsDeployment'
   params: {
     name: logAnalyticsName
     location: location
@@ -194,6 +193,41 @@ hooks:
 
 ## Gotchas
 
+- **Omit `name:` on Bicep module declarations at resource-group scope** —
+  nested deployment names are flat at RG scope, so an explicit `name:` on a
+  module can collide with an inner module's deployment name → the deployment
+  sits in `DeploymentActive` forever. Bicep auto-generates unique names
+  (`deployStorage-{uniqueString}`…). (Found in real deploy: 4 stuck runs
+  before the fix.)
+- **AVM Cosmos `isZoneRedundant` defaults to true** — regions without
+  zone-redundant capacity (e.g. westus2) reject the account. For test/dev
+  slices pass explicit
+  `locations: [{ failoverPriority: 0, locationName: location, isZoneRedundant: false }]`.
+- **AVM Cosmos `publicNetworkAccess` defaults to `Disabled`** — a non-private
+  slice (no VNet) gets `Forbidden … blocked by your Cosmos DB account
+  firewall settings` on every data-plane call. Set
+  `networkRestrictions: { publicNetworkAccess: 'Enabled', ipRules: [],
+  virtualNetworkRules: [] }`.
+- **Key Vault `secretRef` must exist at Container App creation time** —
+  Container Apps validates secret references on create; creating secrets in a
+  postprovision hook runs too late. Either grant the deployer Key Vault
+  Secrets Officer and create placeholder secrets in a pre-deploy step, or
+  split into a two-phase deploy (infra → secrets → apps).
+- **User-assigned managed identity needs `AZURE_CLIENT_ID`** —
+  `DefaultAzureCredential` with a user-assigned MI requires the
+  `AZURE_CLIENT_ID` env var. Wire it via Bicep outputs (e.g. `apiClientId` /
+  `workerClientId` from the AVM identities module) into both the app and the
+  job environment.
+- **Never set container images via CLI** — `az containerapp update` image
+  changes are silently reverted by the next incremental Bicep deploy (the
+  template default wins). Always pass `apiImage` / `workerImage` as
+  deployment parameters: the flow is build → deploy with image params.
+- **KEDA azure-queue scaler + MI auth needs `accountName` metadata** — with
+  managed-identity auth the scaler fails with
+  `error parsing azure queue metadata: no accountName given` when metadata
+  carries only `storageAccountResourceId`. Use
+  `metadata: { queueName, queueLength, accountName }`. Confirmed working
+  MI-only with no connection strings.
 - **NEVER use raw `resource` declarations** when an AVM module exists — this is the #1
   mistake. Always use `module ... 'br/public:avm/res/...'`. The same way you never use
   raw `CosmosClient` when `the approved Cosmos DB library` exists.
