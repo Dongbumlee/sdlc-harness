@@ -129,7 +129,24 @@ def _bump(transaction, ref, ttl):
     used = snap.get("used") + 1 if snap.exists else 1
     transaction.set(ref, {"used": used, "expires_at": ttl}, merge=True)
     return used
+
+used = _bump(db.transaction(), ref, ttl)
 ```
+
+**⛔ `transactional` decorates the FUNCTION — never call it with the
+transaction.** `firestore_v1.transactional` takes the function to wrap, not a
+transaction object. `transactional(transaction)` wraps the *transaction
+itself* as the callable and fails at runtime with
+`AttributeError: 'function' object has no attribute '_read_only'`
+(real-deploy bug 2026-10-03). The pattern is always: decorate the function
+with `@transactional`, then call the wrapped function passing the
+transaction as its first argument.
+
+**Test blind spot:** unit tests that stub the Firestore SDK (ImportError
+fallback) will NOT catch this misuse — the failure only surfaces against the
+real client. If you wrap SDK access for testability, keep the
+`@transactional` application on the real decorator path and test it in the
+deployed environment.
 
 ## Gotchas
 

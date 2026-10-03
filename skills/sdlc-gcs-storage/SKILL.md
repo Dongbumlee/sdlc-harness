@@ -57,20 +57,30 @@ def signed_download_url(bucket_name: str, blob_name: str, ttl_seconds: int = 600
     )
 ```
 
-**Signing permission is separate from read permission.**
-`storage.objects.get` lets you *read* the object; *signing* a URL additionally
-requires `iam.serviceAccounts.signBlob` on the runtime service account (the
-default compute SA gets this via the IAM grant below, or attach a dedicated
-signing identity). Test signed-URL generation in the deployed environment —
-local ADC signing behaves differently from the runtime SA.
+**Signing permission is separate from read permission — and lives on the SA
+itself.** `storage.objects.get` lets you *read* the object; *signing* a URL
+additionally requires `iam.serviceAccounts.signBlob` on the runtime service
+account. Grant `roles/iam.serviceAccountTokenCreator` via
+`google_service_account_iam_member` with the SA as its own member
+(self-impersonation) — granting it on the bucket via
+`google_storage_bucket_iam_member` fails with Error 400 (real-deploy finding
+2026-10-03). Test signed-URL generation in the deployed environment — local
+ADC signing behaves differently from the runtime SA.
 
 ```hcl
-# The API service account can sign URLs for the reports bucket.
-resource "google_storage_bucket_iam_member" "api_signer" {
-  bucket = google_storage_bucket.reports.name
-  role   = "roles/iam.serviceAccountTokenCreator"
-  member = "serviceAccount:${google_service_account.api.email}"
+# ✅ CORRECT: signBlob on the SA itself (self-impersonation)
+resource "google_service_account_iam_member" "api_signblob_self" {
+  service_account_id = google_service_account.api.name
+  role               = "roles/iam.serviceAccountTokenCreator"
+  member             = "serviceAccount:${google_service_account.api.email}"
 }
+
+# ❌ WRONG: TokenCreator on a bucket fails with Error 400
+# resource "google_storage_bucket_iam_member" "api_signer" {
+#   bucket = google_storage_bucket.reports.name
+#   role   = "roles/iam.serviceAccountTokenCreator"
+#   member = "serviceAccount:${google_service_account.api.email}"
+# }
 ```
 
 ## Step 3: Lifecycle rules — data must have an expiry story

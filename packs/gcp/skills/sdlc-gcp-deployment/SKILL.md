@@ -115,6 +115,41 @@ The order is fixed:
   Cloud Run execution environment accordingly. Add a CI check
   (`docker inspect --format '{{.Architecture}}'`) — the pack does not trust
   humans to remember this.
+- **One `image_tag` variable means TWO images.** The paved road tags images
+  as `api-<tag>` / `worker-<tag>` off a single `var.image_tag` — both images
+  must be built and pushed with that tag before `terraform apply`, or one
+  target deploys a revision that never starts (real-deploy finding
+  2026-10-03). CI should check both tags exist in Artifact Registry
+  before apply.
+
+### Dockerfile rules (non-root + gunicorn)
+
+```dockerfile
+FROM --platform=linux/amd64 python:3.12-slim
+
+# World-readable source: container runtimes run as non-root and must be able
+# to read the code. Capital X = +x on directories ONLY (traversal), so a
+# non-root user can stat/read files inside. Plain `a+r` is NOT enough —
+# directories need +x for traversal (real-deploy bug 2026-10-03:
+# ModuleNotFoundError despite correct PYTHONPATH).
+COPY src/ /app/src/
+RUN chmod -R a+rX /app && useradd -m appuser
+WORKDIR /app/src
+# gunicorn does not reliably add cwd to sys.path — set PYTHONPATH explicitly
+# (real-deploy bug 2026-10-03: ModuleNotFoundError: No module named 'api.app').
+ENV PYTHONPATH=/app/src
+RUN pip install --no-cache-dir -r /app/src/api/requirements.txt
+
+USER appuser
+ENV PORT=8080
+EXPOSE 8080
+CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--workers", "2", "api.app:create_app()"]
+```
+
+Rules:
+- **Always `chmod -R a+rX`, never `a+r`** when the image runs as non-root.
+- **Always `ENV PYTHONPATH`** for gunicorn/WSGI entrypoints — never assume
+  the working directory is on `sys.path`.
 
 ## Step 3: IAM — least privilege via google_*_iam_member, one SA per target
 
@@ -141,6 +176,21 @@ Rules:
   critical finding.
 - Secret access: `roles/secretmanager.secretAccessor` on each secret,
   per-service-account — never project-wide.
+- **API → Cloud Run Jobs trigger (verified 2026-10-03):** the API SA gets
+  `roles/run.developer` scoped to the worker job to call the Run API
+  (`run.projects.locations.jobs.run`). No extra `iam.serviceAccount.actAs`
+  binding was needed in the slice.
+
+```hcl
+# ✅ CORRECT: API SA can trigger the worker job (verified at real deploy)
+resource "google_cloud_run_v2_job_iam_member" "api_triggers_worker" {
+  project  = var.project_id
+  location = var.region
+  name     = google_cloud_run_v2_job.worker.name
+  role     = "roles/run.developer"
+  member   = "serviceAccount:${google_service_account.api.email}"
+}
+```
 
 ## Step 4: Secrets — Secret Manager, mounted by Cloud Run at runtime
 
@@ -172,6 +222,34 @@ resource "google_cloud_run_v2_service" "api" {
 Secret *values* are added post-deploy (`gcloud secrets versions add`) or via
 CI — Terraform creates the secret containers only. Values in `.tfvars` or
 `terraform.tfstate` are a critical finding.
+
+**Name vs value — pick the right one (real-deploy bug 2026-10-03):**
+`value_source.secret_key_ref` injects the secret **value** into the env var.
+If the app constructs the secret resource path from the **name** itself
+(e.g. builds `projects/<p>/secrets/<name>/versions/latest` in code), pass the
+name as a plain value instead:
+
+```hcl
+# ✅ CORRECT when the app expects the NAME and builds the path itself
+env {
+  name  = "API_KEYS_SECRET_NAME"
+  value = google_secret_manager_secret.api_keys.secret_id
+}
+
+# ❌ WRONG here: this injects the VALUE, and the app chokes building a
+#    resource path out of it ("Secret ID ... does not match format")
+env {
+  name = "API_KEYS_SECRET_NAME"
+  value_source { secret_key_ref {
+    secret  = google_secret_manager_secret.api_keys.secret_id
+    version = "latest"
+  } }
+}
+```
+
+Rule: read the app's expectation first. App reads by name → plain `value`
+with the secret ID. App reads the env var as the secret itself →
+`value_source.secret_key_ref`.
 
 ## Step 5: Pub/Sub queue contract
 
@@ -208,6 +286,23 @@ Rules:
 - Terminal outcomes (done/failed/cancelled) ack the message. A failed job is
   not new work — do not let it redeliver as if it were.
 
+**Worker pull pattern — `timeout` is a method argument, not a request field**
+(real-deploy bug 2026-10-03: `ValueError: Unknown field for PullRequest:
+timeout` crashed the worker):
+
+```python
+# ✅ CORRECT
+resp = subscriber.pull(
+    request={"subscription": sub_path, "max_messages": 1},
+    timeout=20,
+)
+
+# ❌ WRONG: timeout inside the request dict
+resp = subscriber.pull(
+    request={"subscription": sub_path, "max_messages": 1, "timeout": 20}
+)
+```
+
 ## Step 6: Cost guardrails (enforced, not advisory)
 
 - **Cloud Run services scale to zero by default** — keep `min_instance_count = 0`
@@ -243,10 +338,30 @@ must stand on its own; MCP servers are accelerators, not prerequisites.
   API (or Scheduler/Eventarc). The paved road is: API publishes to Pub/Sub
   *and* triggers one Job execution per message — the queue is the durable
   record + DLQ story, not the trigger.
-- **Signed URLs need signing permission.** `storage.objects.get` is not
-  enough — the signer needs `iam.serviceAccounts.signBlob` on the runtime
-  service account (or use a dedicated signing key). Test signed-URL
-  generation in the deployed environment, not just locally.
+- **Signed URLs need signing permission — on the SA itself.** The signer
+  needs `iam.serviceAccounts.signBlob` on the runtime service account, granted
+  via `google_service_account_iam_member` where the member is the SA's own
+  email (self-impersonation). Do NOT grant `roles/iam.serviceAccountTokenCreator`
+  on the bucket via `google_storage_bucket_iam_member` — that fails with
+  Error 400 (real-deploy finding 2026-10-03). Test signed-URL generation in
+  the deployed environment, not just locally.
+- **Cloud Run Jobs block destroy by default.** The provider defaults
+  `deletion_protection = true`, which blocks `terraform destroy` and job
+  replacement on config change. Test slices must set
+  `deletion_protection = false` on the job; production keeps it true and
+  replaces explicitly.
+- **A Job in error state needs a force update to clear.** New executions use
+  the job template captured at creation time — if a bad template went out,
+  update the job (or destroy/recreate) before re-triggering; re-running the
+  same execution reuses the broken template.
+- **`gcloud builds submit` has no `--dockerfile` flag.** To build with a
+  non-default Dockerfile, pass a `--config cloudbuild.yaml` whose build step
+  uses `args: ["build", "-f", "path/to/Dockerfile", ...]` — and watch the
+  context path: the `-f` path is relative to the build context you submit.
+- **GCS buckets block destroy when non-empty.** Either set
+  `force_destroy = true` on test buckets or empty them before
+  `terraform destroy` — otherwise destroy fails partway and leaves a stale
+  state lock (force-unlock with `terraform force-unlock`, then re-run).
 - **Firestore composite indexes** are required for `where(status) +
   orderBy(createdAt)` listings — declare them in Terraform
   (`google_firestore_index`), never click them into existence in the console.
