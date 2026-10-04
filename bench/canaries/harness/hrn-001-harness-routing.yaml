@@ -28,9 +28,9 @@ prompt: |
   | 8-9: Release & Publish | Release Manager |
 
   Requests:
-  1. "쇼핑몰에 장바구니 기능을 새로 만들어줘" (Build a new shopping-cart feature for the store)
-  2. "스테이징 배포 파이프라인이 실패해, 고쳐줘" (The staging deploy pipeline is failing, fix it)
-  3. "이번 릴리즈 노트 작성해줘" (Write the release notes for this release)
+  1. "Build a new shopping-cart feature for the store"
+  2. "The staging deploy pipeline is failing, fix it"
+  3. "Write the release notes for this release"
 
   Deliverables:
   1. For each request: phase, agent, and one-line justification quoting the
