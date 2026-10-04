@@ -86,6 +86,13 @@ Include `Source: Implementer (Phase 5)` on your entries.
    It tells you which template was used and what patterns to follow.
    Match your code to these patterns exactly.
 
+0a. **Read the scaffolder's quality instruction files** — the scaffolder places
+   language-specific quality rules in `.github/instructions/` (e.g.
+   `code-quality-py.instructions.md`). Read the applicable file BEFORE writing
+   any code and follow it (copyright headers, docstring conventions, etc.).
+   The code-quality reviewer will check these mechanically — a missing header
+   is a Critical finding even when the logic is correct.
+
 1. **Verify GitHub MCP authentication (required):**
    - Perform a probe call: use `mcp_github_get_file_contents` to fetch `README.md` from
      `the project's Cosmos DB library repo (from copilot-instructions.md)`.

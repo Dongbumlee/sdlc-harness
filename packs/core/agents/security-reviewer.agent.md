@@ -62,7 +62,9 @@ fresh OWASP guidance from awesome-copilot MCP on every review.
 ## Additional checks
 
 - [ ] **Secrets** — No API keys, tokens, passwords, or connection strings in code?
-- [ ] **Credentials** — Using `DefaultAzureCredential` or Managed Identity?
+- [ ] **Credentials** — Using the cloud's managed identity / workload identity
+  (e.g. `DefaultAzureCredential`, GCP Workload Identity, IAM roles for
+  service accounts) instead of hardcoded keys?
 - [ ] **CORS** — Properly configured, not wildcard `*` in production?
 - [ ] **Headers** — Security headers set (CSP, HSTS, X-Frame-Options)?
 - [ ] **Dependencies** — No known CVEs in direct dependencies?
