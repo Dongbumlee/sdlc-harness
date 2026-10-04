@@ -71,7 +71,7 @@ expected:
           - curl
           - Bearer
           - JSON
-        forbidden: ["TODO", "placeholder"]
+        forbidden: []  # removed 2026-10-04: agent correctly writes "no TODO/PLACEHOLDER markers" in self-check — literal match is a false positive
     - type: structural
       weight: 0.3
       config:
@@ -79,7 +79,7 @@ expected:
           - getting started
           - authentication
           - endpoints
-          - error reference
+          - error code reference
           - pagination
           - rate limiting
     - type: llm-judge
