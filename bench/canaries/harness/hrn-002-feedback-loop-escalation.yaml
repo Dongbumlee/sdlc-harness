@@ -1,7 +1,7 @@
 # Canary: QA Feedback Loop Escalation Protocol
-id: qa-012-feedback-loop-escalation
+id: hrn-002-feedback-loop-escalation
 version: "1.0"
-phase: qa
+phase: harness
 title: "QA Feedback Loop Escalation Protocol"
 description: >
   Tests knowledge of the harness's own QA feedback-loop escalation protocol:

@@ -1,0 +1,370 @@
+{
+  "run_id": "canary-run-2026-10-04",
+  "timestamp": "2026-10-04T19:23:58Z",
+  "mode": "degraded",
+  "mcp_status": {
+    "awesome-copilot": {
+      "status": "unavailable",
+      "reason": "docker daemon not reachable (no docker on this VM)"
+    },
+    "github": {
+      "status": "ready",
+      "reason": "http endpoint (assumed reachable, not probed)"
+    },
+    "azure": {
+      "status": "ready",
+      "reason": "npx present (shallow check)"
+    },
+    "azure-devops": {
+      "status": "ready",
+      "reason": "npx present (shallow check); advisory only"
+    },
+    "microsoft-learn": {
+      "status": "ready",
+      "reason": "http endpoint (assumed reachable, not probed); advisory only"
+    },
+    "context7": {
+      "status": "ready",
+      "reason": "npx present (shallow check)"
+    },
+    "playwright": {
+      "status": "ready",
+      "reason": "npx present (shallow check); advisory only"
+    }
+  },
+  "summary": {
+    "total": 15,
+    "passed": 3,
+    "failed": 1,
+    "degraded": 11,
+    "composite_score": 0.219
+  },
+  "results": [
+    {
+      "id": "dep-001-azure-webapp",
+      "phase": "deploy",
+      "title": "Azure Web App Deployment Configuration",
+      "agent": "Deployer",
+      "verdict": "degraded",
+      "composite_score": 0.0,
+      "failure_reasons": [
+        "mcp_unavailable: awesome-copilot — docker daemon not reachable on this VM. Fix: start Docker and pre-pull ghcr.io/microsoft/mcp-dotnet-samples/awesome-copilot:latest, then re-run."
+      ],
+      "missing_mcp": [
+        "awesome-copilot"
+      ]
+    },
+    {
+      "id": "des-001-ecommerce-architecture",
+      "phase": "design",
+      "title": "E-commerce System Architecture Design",
+      "agent": "Analyst",
+      "verdict": "degraded",
+      "composite_score": 0.0,
+      "failure_reasons": [
+        "mcp_unavailable: awesome-copilot — docker daemon not reachable on this VM. Fix: start Docker and pre-pull ghcr.io/microsoft/mcp-dotnet-samples/awesome-copilot:latest, then re-run."
+      ],
+      "missing_mcp": [
+        "awesome-copilot"
+      ]
+    },
+    {
+      "id": "des-002-catalog-population",
+      "phase": "design",
+      "title": "Analyst populates reference catalog",
+      "agent": "Analyst",
+      "verdict": "degraded",
+      "composite_score": 0.0,
+      "failure_reasons": [
+        "mcp_unavailable: awesome-copilot — docker daemon not reachable on this VM. Fix: start Docker and pre-pull ghcr.io/microsoft/mcp-dotnet-samples/awesome-copilot:latest, then re-run."
+      ],
+      "missing_mcp": [
+        "awesome-copilot"
+      ]
+    },
+    {
+      "id": "doc-001-api-documentation",
+      "phase": "document",
+      "title": "API Documentation Generation",
+      "agent": "Documenter",
+      "verdict": "FAIL",
+      "composite_score": 0.618,
+      "grader_scores": {
+        "keyword": {
+          "score": 0.0,
+          "passed": false,
+          "matched": 10,
+          "required": 10,
+          "forbidden_found": [
+            "TODO",
+            "placeholder"
+          ],
+          "note": "all 10 required matched, but forbidden tokens appear in the agent's SDLC exit-criteria self-check section ('no TODO/TBD/PLACEHOLDER markers')"
+        },
+        "structural": {
+          "score": 0.833,
+          "passed": true,
+          "sections_found": 5,
+          "sections_required": 6,
+          "missing": [
+            "error reference"
+          ],
+          "note": "doc has 'Error Code Reference' heading; literal 'error reference' substring not present"
+        },
+        "llm-judge": {
+          "score": 0.92,
+          "passed": true,
+          "criteria": {
+            "completeness": 1.0,
+            "technical_accuracy": 0.9,
+            "clarity": 0.9,
+            "usability": 0.9,
+            "example_quality": 0.9
+          }
+        }
+      },
+      "failure_reasons": [
+        "keyword grader score 0.0 < 0.5: forbidden tokens TODO/placeholder emitted in exit-criteria boilerplate"
+      ],
+      "duration_seconds": 110
+    },
+    {
+      "id": "impl-001-crud-endpoint",
+      "phase": "implement",
+      "title": "CRUD Endpoint Implementation",
+      "agent": "Implementer",
+      "verdict": "degraded",
+      "composite_score": 0.0,
+      "failure_reasons": [
+        "mcp_unavailable: awesome-copilot — docker daemon not reachable on this VM. Fix: start Docker and pre-pull ghcr.io/microsoft/mcp-dotnet-samples/awesome-copilot:latest, then re-run."
+      ],
+      "missing_mcp": [
+        "awesome-copilot"
+      ]
+    },
+    {
+      "id": "scf-001-fastapi-project",
+      "phase": "scaffold",
+      "title": "FastAPI Project Scaffolding",
+      "agent": "Scaffolder",
+      "verdict": "degraded",
+      "composite_score": 0.0,
+      "failure_reasons": [
+        "mcp_unavailable: awesome-copilot — docker daemon not reachable on this VM. Fix: start Docker and pre-pull ghcr.io/microsoft/mcp-dotnet-samples/awesome-copilot:latest, then re-run."
+      ],
+      "missing_mcp": [
+        "awesome-copilot"
+      ]
+    },
+    {
+      "id": "scf-002-catalog-consumption",
+      "phase": "scaffold",
+      "title": "Scaffolder consumes reference catalog",
+      "agent": "Scaffolder",
+      "verdict": "degraded",
+      "composite_score": 0.0,
+      "failure_reasons": [
+        "mcp_unavailable: awesome-copilot — docker daemon not reachable on this VM. Fix: start Docker and pre-pull ghcr.io/microsoft/mcp-dotnet-samples/awesome-copilot:latest, then re-run."
+      ],
+      "missing_mcp": [
+        "awesome-copilot"
+      ]
+    },
+    {
+      "id": "pub-001-publish-release-execution",
+      "phase": "publish",
+      "title": "Publish Readiness and Production Publication",
+      "agent": "Release Manager",
+      "verdict": "PASS",
+      "composite_score": 0.968,
+      "grader_scores": {
+        "keyword": {
+          "score": 1.0,
+          "passed": true,
+          "matched": 9,
+          "required": 9,
+          "forbidden_found": []
+        },
+        "structural": {
+          "score": 1.0,
+          "passed": true,
+          "sections_found": 5,
+          "sections_required": 5,
+          "missing": []
+        },
+        "llm-judge": {
+          "score": 0.92,
+          "passed": true,
+          "criteria": {
+            "completeness": 1.0,
+            "technical_accuracy": 0.9,
+            "operational_readiness": 0.9,
+            "risk_management": 0.9,
+            "actionability": 0.9
+          }
+        }
+      },
+      "gate_check": "explicit GO decision with all 4 phase gates verified present",
+      "duration_seconds": 20
+    },
+    {
+      "id": "pub-002-publish-blocked-missing-gates",
+      "phase": "publish",
+      "title": "Publish Blocked on Missing Gates",
+      "agent": "Release Manager",
+      "verdict": "PASS",
+      "composite_score": 0.722,
+      "grader_scores": {
+        "keyword": {
+          "score": 0.625,
+          "passed": false,
+          "matched": 5,
+          "required": 8,
+          "missing": [
+            "missing prerequisites",
+            "corrective steps",
+            "publish blocked"
+          ],
+          "forbidden_found": [],
+          "note": "agent used natural phrasing ('missing phase gates', 'corrective next steps', 'publish stays blocked') instead of the spec's literal phrases"
+        },
+        "structural": {
+          "score": 0.5,
+          "passed": false,
+          "sections_found": 2,
+          "sections_required": 4,
+          "missing": [
+            "missing gates",
+            "routing mismatch rationale"
+          ],
+          "note": "agent covered all 4 concepts with different labels ('Missing Phase Gates and Artifacts', 'Why This Is a Phase Routing Mismatch'); literal-match brittleness in spec"
+        },
+        "llm-judge": {
+          "score": 0.96,
+          "passed": true,
+          "criteria": {
+            "correctness_of_blocking_decision": 1.0,
+            "alignment_with_phase_workflow": 1.0,
+            "clarity": 0.9,
+            "actionability": 1.0,
+            "risk_management": 0.9
+          }
+        }
+      },
+      "gate_check": "explicit NO-GO (FAIL) decision; publication correctly blocked on 4 missing gates",
+      "duration_seconds": 31,
+      "note": "composite 0.722 passes but keyword/structural literal-phrase brittleness in the spec is a canary-design issue, not an agent failure"
+    },
+    {
+      "id": "qa-001-security-review",
+      "phase": "qa",
+      "title": "Security Review",
+      "agent": "QA Coordinator",
+      "verdict": "degraded",
+      "composite_score": 0.0,
+      "failure_reasons": [
+        "mcp_unavailable: awesome-copilot — docker daemon not reachable on this VM. Fix: start Docker and pre-pull ghcr.io/microsoft/mcp-dotnet-samples/awesome-copilot:latest, then re-run."
+      ],
+      "missing_mcp": [
+        "awesome-copilot"
+      ]
+    },
+    {
+      "id": "qa-002-threshold-gate-enforcement",
+      "phase": "qa",
+      "title": "Threshold Gate Enforcement",
+      "agent": "QA Coordinator",
+      "verdict": "degraded",
+      "composite_score": 0.0,
+      "failure_reasons": [
+        "mcp_unavailable: awesome-copilot — docker daemon not reachable on this VM. Fix: start Docker and pre-pull ghcr.io/microsoft/mcp-dotnet-samples/awesome-copilot:latest, then re-run."
+      ],
+      "missing_mcp": [
+        "awesome-copilot"
+      ]
+    },
+    {
+      "id": "qa-003-critical-finding-autofail",
+      "phase": "qa",
+      "title": "Critical Finding Auto-fail",
+      "agent": "QA Coordinator",
+      "verdict": "degraded",
+      "composite_score": 0.0,
+      "failure_reasons": [
+        "mcp_unavailable: awesome-copilot — docker daemon not reachable on this VM. Fix: start Docker and pre-pull ghcr.io/microsoft/mcp-dotnet-samples/awesome-copilot:latest, then re-run."
+      ],
+      "missing_mcp": [
+        "awesome-copilot"
+      ]
+    },
+    {
+      "id": "rai-001-bias-assessment",
+      "phase": "rai",
+      "title": "Bias Assessment",
+      "agent": "RAI Reviewer",
+      "verdict": "degraded",
+      "composite_score": 0.0,
+      "failure_reasons": [
+        "mcp_unavailable: awesome-copilot — docker daemon not reachable on this VM. Fix: start Docker and pre-pull ghcr.io/microsoft/mcp-dotnet-samples/awesome-copilot:latest, then re-run."
+      ],
+      "missing_mcp": [
+        "awesome-copilot"
+      ]
+    },
+    {
+      "id": "rel-001-changelog-generation",
+      "phase": "release",
+      "title": "Changelog and Release Notes Generation",
+      "agent": "Release Manager",
+      "verdict": "PASS",
+      "composite_score": 0.984,
+      "grader_scores": {
+        "keyword": {
+          "score": 1.0,
+          "passed": true,
+          "matched": 10,
+          "required": 10,
+          "forbidden_found": []
+        },
+        "structural": {
+          "score": 1.0,
+          "passed": true,
+          "sections_found": 7,
+          "sections_required": 7,
+          "missing": []
+        },
+        "llm-judge": {
+          "score": 0.96,
+          "passed": true,
+          "criteria": {
+            "completeness": 1.0,
+            "technical_accuracy": 0.9,
+            "clarity": 0.9,
+            "categorization_quality": 1.0,
+            "breaking_change_handling": 1.0
+          }
+        }
+      },
+      "duration_seconds": 25
+    },
+    {
+      "id": "req-001-ecommerce-api",
+      "phase": "requirements",
+      "title": "E-commerce API Requirements Generation",
+      "agent": "Analyst",
+      "verdict": "degraded",
+      "composite_score": 0.0,
+      "failure_reasons": [
+        "mcp_unavailable: awesome-copilot — docker daemon not reachable on this VM. Fix: start Docker and pre-pull ghcr.io/microsoft/mcp-dotnet-samples/awesome-copilot:latest, then re-run."
+      ],
+      "missing_mcp": [
+        "awesome-copilot"
+      ]
+    }
+  ],
+  "method_notes": [
+    "mcp_unavailable canaries recorded as verdict 'degraded' (not FAIL) per task instruction; environment failure, not harness failure",
+    "doc-001 prompt was passed with one token altered ('Bearer <redacted>' -> 'Bearer token'); no grading impact (neither term in required/forbidden)",
+    "agents invoked via role-play subagents reading the pack agent definitions; same prompts, same graders as production canary mode"
+  ]
+}
