@@ -290,6 +290,54 @@ After all canaries complete, write a JSON result file:
 - `mcp_status` is the Step 0 preflight map — always present, even in full mode.
 - `missing_mcp` on a result names the unavailable servers behind that failure.
 
+### Step 4b: Write the work journal
+
+Alongside the JSON, write a human-readable work journal — the primary artifact
+Dongbum reads. One file per run:
+
+**Path:** `bench/journal/canary-run-{YYYY-MM-DD}.md`
+
+**Template:**
+```markdown
+# Harness Work Journal — canary-run {YYYY-MM-DD}
+
+## Summary
+- Canaries: {total} ({passed} PASS / {failed} FAIL / {degraded} degraded)
+- Agents: {distinct} kinds, {invocations} invocations | Wall time: {Xm}
+  | Tokens: ~{N}k (estimated — see Cost)
+- Verdict: {✅ all pass | ⚠️ N failures}
+
+## Timeline
+| # | Agent | Task | Result | Duration |
+|---|-------|------|--------|----------|
+| 1 | Analyst | req-001: requirements | PASS 0.91 | 45s |
+...
+
+## Findings
+### 🔁 Loops detected
+- {agent A} → {agent B} → {agent A} ×{n}: {by design | WASTE — reason}
+### ⚠️ Anomalies
+- {what happened, which step, impact}
+
+## Cost
+| Agent | Invocations | Time | Tokens (est.) |
+|-------|-------------|------|---------------|
+...
+*Token estimates = (input chars + output chars) / 4. Not measured — label as estimate.*
+```
+
+**Telemetry to record per agent invocation** (this is what makes the journal possible):
+- agent name, canary id, start/end timestamps
+- input prompt char count, output char count
+- tool calls made (count by tool name)
+- verdict and score
+
+**Loop detection heuristics** — flag in Findings:
+- Same agent invoked 3+ times with near-identical prompts → likely stuck loop
+- A→B→A ping-pong (e.g. QA→Implementer→QA beyond 3 rounds) → escalate
+- QA Tier escalation ≤3 rounds → "by design", note it; >3 → anomaly
+- Same tool call repeated 3+ times with same args → waste
+
 ### Step 5: Report to the user
 
 Present a concise summary table:
