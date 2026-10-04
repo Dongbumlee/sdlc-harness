@@ -1,6 +1,6 @@
 # Pulse API — Dogfood Reference App Spec 2
 
-**Status:** draft (2026-10-03) — awaiting Dongbum's approval
+**Status:** approved by Dongbum (2026-10-03) — Pulse deployment cycle completed 2026-10-04, all 3 clouds PASS
 **Purpose:** the second fixed-spec reference app for pack validation. Scenario 1
 (Deep Research API, `reference-app-spec.md`) validated the async-job paved road
 (API + worker + queue + NoSQL + object storage). This spec validates what
@@ -111,6 +111,6 @@ Logical contract; no pack owns this yet — expect improvisation, file it as gap
 
 | Date | Cloud | PR / notes | Result |
 |------|-------|-----------|--------|
-| — | Azure | not started | — |
-| — | AWS | not started | — |
-| — | GCP | not started | — |
+| 2026-10-04 | AWS | CDK, us-east-2. 3 deploy bugs fixed (ElastiCache TLS, Fargate entrypoint, image tag prefix). E2E PASS except POST /admin/collect (no-NAT pack rule conflict — pack gap). Teardown clean. Cost ~$0. | PASS |
+| 2026-10-04 | GCP | Terraform, us-central1. 3 deploy bugs fixed (missing secretmanager dep, Scheduler OAuth token not OIDC, deletion_protection). E2E 6/7 (source-failure drill = unit test only). Teardown clean. Cost <$1. | PASS |
+| 2026-10-04 | Azure | Bicep+AVM, eastus2 (+centralus for Redis). 8 deploy attempts (Redis B0/B1 refused in eastus2, empty-secret rejection). E2E PASS. Teardown clean. Cost ~$0. | PASS |
