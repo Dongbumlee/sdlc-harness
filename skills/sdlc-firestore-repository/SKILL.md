@@ -87,6 +87,23 @@ resource "google_firestore_index" "jobs_by_status" {
 }
 ```
 
+**`location_id` is immutable.** Changing regions later cannot update the
+database in place — the procedure is `gcloud firestore databases delete`,
+wait for full deletion, then `terraform apply` recreates it in the new
+region (scenario 2+3 finding 2026-10-03).
+
+**The pack owns the database.** Never assume a `(default)` database
+exists — declare `google_firestore_database` in Terraform (or list it as
+an explicit runbook prerequisite). The Pulse slice assumed it and the real
+deploy needed a manual `gcloud firestore databases create` (2026-10-04).
+
+**`terraform destroy` does not delete the database.** The provider reports
+"Destruction complete" while the database still exists (scenario 2+3
+finding 2026-10-03). Delete explicitly —
+`gcloud firestore databases delete --quiet` — and verify with
+`gcloud firestore databases list`. Never trust destroy output for this
+resource.
+
 **Billing rule:** Firestore Native with the free tier (1 GiB + 50k
 reads/day) covers test scale. Spiky AI workloads stay on the default
 pay-per-use — no provisioned capacity to tune.

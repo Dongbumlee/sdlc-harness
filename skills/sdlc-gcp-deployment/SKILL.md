@@ -92,6 +92,35 @@ Conventions:
 - Default region `us-west1` (v1); make it a variable, not hardcoded.
 - Standard labels on all resources: `project`, `environment`, `managed-by=terraform`.
 
+### APIs to enable
+
+Declare every API the slice touches — a missing enablement fails `apply`
+with "has not been used in project ... before or it is disabled". Base set:
+
+```hcl
+locals {
+  base_apis = [
+    "run.googleapis.com",              # Cloud Run + Jobs
+    "artifactregistry.googleapis.com",
+    "firestore.googleapis.com",
+    "pubsub.googleapis.com",
+    "secretmanager.googleapis.com",
+    "storage.googleapis.com",
+    "cloudbuild.googleapis.com",
+  ]
+  # Private-networking variant ONLY:
+  private_apis = [
+    "compute.googleapis.com",          # VPC network
+    "vpcaccess.googleapis.com",        # Serverless VPC Access connector
+  ]
+}
+```
+
+The private-networking variant needs `compute` + `vpcaccess` on top of the
+base set (scenario 2+3 finding 2026-10-03: `apply` failed on
+`google_compute_network` without them). Do not enable them for v1 — the
+"No VPC needed for v1" rule still holds.
+
 ## Step 2: The image pipeline — registry BEFORE images, images BEFORE deploy
 
 **⛔ NEVER reference an image tag that has not been pushed yet.**
@@ -150,6 +179,12 @@ Rules:
 - **Always `chmod -R a+rX`, never `a+r`** when the image runs as non-root.
 - **Always `ENV PYTHONPATH`** for gunicorn/WSGI entrypoints — never assume
   the working directory is on `sys.path`.
+- **Smoke-test the image before wiring traffic.** Boot one container (or
+  import the app module) and hit `/health` — pytest with injected fakes is
+  blind to missing dependencies (Pulse deploy 2026-10-04:
+  `google-cloud-secret-manager` absent from requirements → gunicorn workers
+  failed to boot → 503 on every endpoint, invisible to the 22/22 unit
+  tests).
 
 ## Step 3: IAM — least privilege via google_*_iam_member, one SA per target
 
@@ -189,6 +224,29 @@ resource "google_cloud_run_v2_job_iam_member" "api_triggers_worker" {
   name     = google_cloud_run_v2_job.worker.name
   role     = "roles/run.developer"
   member   = "serviceAccount:${google_service_account.api.email}"
+}
+```
+
+**Cloud Scheduler → Cloud Run Job (verified 2026-10-04):** the scheduler
+calls the Run Admin API directly. The token must be an **OAuth access
+token — not OIDC**. `jobs:run` rejects OIDC with `401 UNAUTHENTICATED`
+(Pulse deploy 2026-10-04: two scheduled executions failed on OIDC before
+the fix).
+
+```hcl
+# ✅ CORRECT: oauth_token, never oidc_token, for the Run Admin API
+resource "google_cloud_scheduler_job" "collector" {
+  name     = "pulse-collector"
+  schedule = "*/30 * * * *"
+  http_target {
+    http_method = "POST"
+    uri         = "https://${var.region}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${var.project_id}/jobs/${google_cloud_run_v2_job.worker.name}:run"
+    oauth_token {
+      service_account_email = google_service_account.scheduler.email
+      # scope defaults to cloud-platform; the SA needs roles/run.developer
+      # on the job (same binding pattern as the API trigger above)
+    }
+  }
 }
 ```
 
@@ -250,6 +308,14 @@ env {
 Rule: read the app's expectation first. App reads by name → plain `value`
 with the secret ID. App reads the env var as the secret itself →
 `value_source.secret_key_ref`.
+
+**Placeholder secret versions must exist before Job creation**
+(scenario 2+3 finding 2026-10-03): `value_source.secret_key_ref` with
+`version = "latest"` fails at `google_cloud_run_v2_job` creation —
+"Secret .../versions/latest was not found". Terraform-created secrets have
+no versions until values are added post-deploy. Prescribe: create secrets
+→ add placeholder versions (`gcloud secrets versions add`) → apply (or a
+two-phase apply). Same class as the Azure secretRef pre-existence finding.
 
 ## Step 5: Pub/Sub queue contract
 
@@ -365,6 +431,19 @@ must stand on its own; MCP servers are accelerators, not prerequisites.
 - **Firestore composite indexes** are required for `where(status) +
   orderBy(createdAt)` listings — declare them in Terraform
   (`google_firestore_index`), never click them into existence in the console.
+- **`google_compute_network` rejects `labels`** (provider 6.x) — unlike
+  most other resources it has no `labels` argument; `terraform validate`
+  fails with 'An argument named "labels" is not expected here'. Drop it
+  from VPC network resources (scenario 2+3 finding 2026-10-03).
+- **First Job execution in a new region is slow — don't rush to
+  re-trigger.** The first API-triggered execution can sit in "Waiting for
+  execution to start" for minutes (cold provisioning); it started on its
+  own and completed (~2 min POST→done). Allow a 5+ min grace before
+  intervening (scenario 2+3 finding 2026-10-03).
+- **External dependency URLs must be env-overridable.** A hardcoded feed
+  URL makes the source-failure drill impossible — the deployed collector
+  cannot be pointed at a failing feed. Expose `FEED_URL`-style env vars
+  (Pulse finding 2026-10-04).
 - **Artifact Registry repo must exist before `docker push`** — same
   chicken-and-egg as ECR (AWS lesson). Terraform creates the repo; the
   pipeline pushes; then the full apply runs.
