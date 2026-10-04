@@ -75,6 +75,30 @@ connections beyond response streaming, VPC subtleties), move it to an ECS
 Fargate service + ALB (or ECS Express Mode) — same image contract (one ECR repo,
 `api-`/`worker-` tags), same SQS contract, no API redesign.
 
+## Step 0: Probe the target region before anything else (SCP-aware)
+
+An organization Service Control Policy can deny **every** AWS API call
+outside an allow-listed region. The scenario-2 "different region" variant
+died on this: the org SCP explicitly denied ECR, Lambda, EC2, and DynamoDB
+calls in every probed region except `us-east-2` — discovered only at
+deploy time (2026-10-03).
+
+**Probe effective permissions before synth, not after deploy:**
+
+```bash
+# Lightweight, read-only, per service — fail fast with a clear message
+for svc in "ec2 describe-availability-zones" \
+           "ecr describe-repositories" \
+           "lambda list-functions" \
+           "dynamodb list-tables"; do
+  aws $svc --region <target-region> || echo "BLOCKED: $svc in <target-region>"
+done
+```
+
+`AccessDeniedException ... explicit deny in a service control policy`
+means the region is unreachable — no synthesis or deploy will fix it.
+Do not let the builder discover this mid-deploy.
+
 ## Step 1: Load CDK best practices
 
 Use the CDK MCP server for construct selection and patterns:
@@ -250,6 +274,20 @@ def _valid_key(provided: str) -> bool:
   | S3 server access logging | Needs a *second* bucket as the log target; for v1, suppress with justification or add the logging bucket. |
   | VPC flow logs | Recurring CloudWatch Logs cost; document the decision (on for prod, off with justification for dev). |
   | Secret rotation | Needs a custom rotation Lambda — out of v1 scope; suppress with justification and a rotation plan. |
+- **cdk-nag `AwsSolutions-EC23` false positive on VPC CIDR intrinsics.**
+  The rule ("security groups should not allow ingress from 0.0.0.0/0")
+  cannot resolve `Fn::GetAtt` VPC CIDR references — it reports a validation
+  *error* (not a finding) on SG rules allowing 443 from the VPC CIDR via
+  intrinsic. Verify the synthesized template manually for this pattern; do
+  not treat nag output as a pure pass/fail gate here (found 2026-10-03).
+- **The "no NAT" rule has a sharp edge for synchronous endpoints.** A Lambda
+  in isolated subnets has **no internet access**. If a synchronous endpoint
+  must reach a public dependency (Pulse `/admin/collect` → public feed,
+  2026-10-03), it fails outright — the scheduled path (EventBridge →
+  Fargate) worked, the sync admin path did not. Default to (a): the endpoint
+  only *triggers* async work and never calls the public dependency itself.
+  If the endpoint itself needs egress, justify a NAT gateway for the API
+  subnets or move the endpoint to a target with egress — and document it.
 
 ## Fargate network design (no-NAT)
 
@@ -282,6 +320,22 @@ for the full set). Choose this when compliance requires no public IPs.
 **Rule:** the network design must be written down (which option and why).
 "No NAT" without one of these two designs is an incomplete design, not a
 cost saving — the compliance reviewer checks for it.
+=======
+- **cdk-nag `AwsSolutions-EC23` false positive on VPC CIDR intrinsics.**
+  The rule ("security groups should not allow ingress from 0.0.0.0/0")
+  cannot resolve `Fn::GetAtt` VPC CIDR references — it reports a validation
+  *error* (not a finding) on SG rules allowing 443 from the VPC CIDR via
+  intrinsic. Verify the synthesized template manually for this pattern; do
+  not treat nag output as a pure pass/fail gate here (found 2026-10-03).
+- **The "no NAT" rule has a sharp edge for synchronous endpoints.** A Lambda
+  in isolated subnets has **no internet access**. If a synchronous endpoint
+  must reach a public dependency (Pulse `/admin/collect` → public feed,
+  2026-10-03), it fails outright — the scheduled path (EventBridge →
+  Fargate) worked, the sync admin path did not. Default to (a): the endpoint
+  only *triggers* async work and never calls the public dependency itself.
+  If the endpoint itself needs egress, justify a NAT gateway for the API
+  subnets or move the endpoint to a target with egress — and document it.
+>>>>>>> feat/pack-gaps-scenarios-234
 
 ## Step 6: CDK app layout
 
@@ -335,6 +389,63 @@ Order of operations:
 Lambda Web Adapter); `worker-<tag>` does not need it. Both live in the same
 ECR repository.
 
+## Container image contracts (deploy-verified 2026-10-03)
+
+- **Region comes from the stack, never from code.** `AWS_REGION` (and
+  `AWS_DEFAULT_REGION`) are required container env vars, sourced from the
+  stack region. The worker once hardcoded a `us-west-2` default while
+  deployed in `us-east-2` — botocore performs **no** SQS QueueUrl region
+  redirection (the request goes to the client's region endpoint), so this
+  was a latent multi-region bug that "worked anyway" for unexplained
+  reasons.
+
+  ```typescript
+  // ✅ CORRECT
+  workerTaskDefinition.addContainer('worker', {
+    image: ...,
+    environment: {
+      AWS_REGION: this.region,
+      AWS_DEFAULT_REGION: this.region,
+    },
+  });
+  ```
+
+  ```python
+  # ⛔ WRONG: region default baked into application code
+  AWS_REGION = os.environ.get('AWS_REGION', 'us-west-2')
+  ```
+
+- **Reusing a Lambda base image on Fargate: override the entrypoint.**
+  Lambda base images set `ENTRYPOINT` to the Lambda runtime interface
+  client, which demands a handler argument — on Fargate the task exits
+  immediately (exit 142, Pulse deploy 2026-10-03). Override it:
+
+  ```typescript
+  entryPoint: ['/var/lang/bin/python3'],
+  command: ['-m', 'collector.collect'],
+  ```
+
+- **Image tag prefixes must match between build and deploy.** If the CDK
+  app prefixes tags (e.g. `pulse-<tag>`), CI must push with the same
+  prefix — otherwise the deploy references an image that was never pushed
+  (Pulse deploy 2026-10-03: build pushed `<tag>`, CDK expected
+  `pulse-<tag>`, recovered with an ECR retag). One convention, enforced in
+  CI.
+
+## ElastiCache Serverless notes (deploy-verified 2026-10-03)
+
+No L2 construct exists — use the L1 escape hatch (`CfnServerlessCache`)
+with the comment from Step 2.
+
+- **TLS is mandatory.** ElastiCache Serverless requires TLS; connecting
+  without `ssl=True` hangs the read forever — surfaced as a Lambda timeout
+  with no error at all. Always:
+
+  ```python
+  redis.Redis(host=..., port=..., ssl=True, socket_timeout=5,
+              decode_responses=True)
+  ```
+
 ## Gotchas
 
 - **Lambda 15-minute timeout.** Long-running background jobs go on Fargate.
@@ -370,6 +481,9 @@ ECR repository.
   Worked example: stub worker → 10 min; a real 25-min job → ≥30 min, or keep
   the timeout shorter and extend it with `ChangeMessageVisibility` heartbeats
   while the job runs.
+- **CDK CLI behind an egress proxy** — set `no_proxy` to bypass the proxy
+  for AWS endpoints, or synth/deploy calls hang or fail (agent-VM finding
+  2026-10-03).
 
 ## Troubleshooting
 

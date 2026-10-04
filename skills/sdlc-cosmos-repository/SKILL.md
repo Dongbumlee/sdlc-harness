@@ -144,6 +144,13 @@ class TestCustomerRepository:
 
 ## Gotchas
 
+- **Document ids forbid `#` (also `/`, `\`, `?`)** — composite ids like
+  `{job_id}#{finding_id}` fail with `ValueError: Id contains illegal chars`.
+  Use `-` or `_` as the separator.
+- **Patch `replace` fails on absent paths** — patching a field that doesn't
+  exist yet fails with `Node('report') to be replaced is absent`. Use the
+  `set` patch op for fields that may not exist yet (works for both new and
+  existing paths).
 - **Never create raw `CosmosClient`** — `the approved Cosmos DB library` manages connection pooling,
   retry policies, and auth internally.
 - **Partition key is handled automatically** by `RepositoryBase` — do not add custom

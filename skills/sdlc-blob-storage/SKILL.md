@@ -122,6 +122,12 @@ class TestDocumentStorage:
 
 ## Gotchas
 
+- **`QueueClient` needs the queue endpoint** — construct
+  `https://{account}.queue.core.windows.net` explicitly. Passing the blob
+  endpoint fails with `UnsupportedHttpVerb` on `send_message`.
+- **Pin transitive SDK dependencies** — e.g. `azure-storage-queue` requires
+  `six`; a missing transitive dep crash-loops workers with
+  `ModuleNotFoundError`. Declare them explicitly in requirements.
 - **Never create raw `BlobServiceClient` or `QueueServiceClient`** — `the approved Storage library`
   manages connection lifecycle, retry policies, and auth.
 - **Always use `async with`** — this ensures proper resource cleanup. Forgetting it
