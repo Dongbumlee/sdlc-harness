@@ -53,7 +53,7 @@ expected:
           - label
           - severity
           - score
-        forbidden: ["TODO", "placeholder"]
+        forbidden: []  # NOTE: "placeholder" must NOT be forbidden — the planted trap IS placeholder-as-label, so a correct review must discuss it (spec-authoring rule, canary-runner SKILL.md)
     - type: structural
       weight: 0.3
       config:
