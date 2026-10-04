@@ -34,6 +34,7 @@ Activate canary mode when the user says any of:
 | `release` | Release Manager | `rel-` |
 | `publish` | Release Manager | `pub-` |
 | `rai` | RAI Reviewer | `rai-` |
+| `harness` | Harness | `hrn-` |
 
 ## Phase MCP Dependencies (defaults)
 

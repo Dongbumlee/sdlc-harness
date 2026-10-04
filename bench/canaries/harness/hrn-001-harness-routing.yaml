@@ -1,7 +1,7 @@
 # Canary: Harness Request Routing
-id: qa-013-harness-routing
+id: hrn-001-harness-routing
 version: "1.0"
-phase: qa
+phase: harness
 title: "Harness Request Routing"
 description: >
   Tests the harness agent's own routing judgment: given three user requests,
