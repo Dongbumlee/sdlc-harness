@@ -71,7 +71,9 @@ the native model per cloud (Cosmos DB containers, Firestore collections).
 - Containerized API + worker (may be one image, separate processes).
 - Each cloud uses its pack's paved road:
   - Azure: Bicep + AVM + `azd`, Azure Container Apps.
-  - AWS: CDK, App Runner.
+  - AWS: CDK, Lambda (container image + Function URL) for the API, ECS Fargate
+    (Spot) for the worker. (App Runner is closed to new customers since
+    2026-04-30 — never use it for new work.)
   - GCP: Terraform, Cloud Run.
 - Secrets (LLM API key, search API key) live in the cloud's secret manager
   (Key Vault / Secrets Manager / Secret Manager) and are injected at runtime —

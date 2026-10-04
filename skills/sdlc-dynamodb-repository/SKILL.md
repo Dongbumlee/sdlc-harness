@@ -7,7 +7,7 @@ description: >-
   repository, data model, or data access requests. Never use Scan on hot paths
   and never substitute FilterExpression for key design — always model access
   patterns as keys and sparse GSIs first.
-version: "1.0"
+version: "1.1"
 author: sdlc-harness
 user-invocable: false
 ---
@@ -25,6 +25,10 @@ user-invocable: false
 
 Write down every query the application needs, then design keys to serve them.
 Keys are designed from queries — never the reverse.
+
+The table below is the pack's **reference key design** — the canonical
+starting point every single-table design in this pack derives from. Adapt the
+entity prefixes to your domain; keep the `PK`/`SK` + sparse-GSI shape.
 
 Example (research-job domain):
 
