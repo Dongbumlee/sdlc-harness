@@ -1,0 +1,81 @@
+# Canary: UX Accessibility Review of Inaccessible UI
+id: qa-010-ux-accessibility-review
+version: "1.0"
+phase: qa
+title: "UX Accessibility Review of Inaccessible UI"
+description: >
+  Tests the reviewer's ability to flag missing accessible labels, missing
+  alt text, and a low-contrast color pattern in UI markup.
+
+prompt: |
+  You are a UX/accessibility reviewer. Review the following UI markup for
+  accessibility compliance:
+
+  ```html
+  <div class="toolbar">
+    <button class="icon-btn"><img src="search.png"></button>
+    <button class="icon-btn"><img src="cart.png"></button>
+  </div>
+
+  <form>
+    <input type="text" id="q" placeholder="Search">
+    <div class="hint" style="color: #9a9a9a; background: #f5f5f5;">
+      Press Enter to search
+    </div>
+  </form>
+  ```
+
+  Problems deliberately planted: icon buttons have no accessible label
+  (no aria-label, no text); `<img>` elements have no `alt` attribute;
+  the search input relies on `placeholder` instead of a `<label>`;
+  the hint text is #9a9a9a on #f5f5f5 — a low-contrast pattern.
+
+  Deliverables:
+  1. Findings list — each with severity (Critical / High / Medium / Low)
+  2. Corrected markup for each finding
+  3. A numeric quality score (1-10)
+
+expected:
+  keywords:
+    - aria-label
+    - alt text
+    - contrast
+    - label
+    - placeholder
+  graders:
+    - type: keyword
+      weight: 0.3
+      config:
+        required:
+          - aria-label
+          - alt
+          - contrast
+          - label
+          - severity
+          - score
+        forbidden: ["TODO", "placeholder"]
+    - type: structural
+      weight: 0.3
+      config:
+        required_sections:
+          - findings
+          - aria
+          - contrast
+          - corrected
+          - score
+    - type: llm-judge
+      weight: 0.4
+      config:
+        criteria:
+          - completeness
+          - technical_accuracy
+          - severity_assessment
+          - remediation_quality
+          - actionability
+
+timeout_seconds: 120
+tags:
+  - qa
+  - ux
+  - accessibility
+  - aria

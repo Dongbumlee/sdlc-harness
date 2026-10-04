@@ -1,0 +1,79 @@
+# Canary: Architecture Review of Layer Violation
+id: qa-005-architecture-review
+version: "1.0"
+phase: qa
+title: "Architecture Review of Layer Violation"
+description: >
+  Tests the reviewer's ability to detect a cross-layer shortcut: an API
+  controller calling infrastructure (Cosmos DB client) directly, bypassing
+  the Application and Domain layers.
+
+prompt: |
+  You are an architecture reviewer. Review the following design for layering
+  and dependency-direction violations. The project mandates API → Application
+  → Domain layering, with Infrastructure depending on Domain (never the reverse):
+
+  ```python
+  # src/ShopAPI/controllers/orders_controller.py
+  from infrastructure.cosmos import CosmosOrderStore   # direct infra import
+
+  @app.get("/orders/{order_id}")
+  def get_order(order_id: str):
+      store = CosmosOrderStore(connection_string=DB_CONN)  # controller builds infra object
+      order = store.get_by_id(order_id)
+      return {"id": order.id, "total": order.total}
+  ```
+
+  There is no service, repository interface, or domain entity involved —
+  the controller talks to Cosmos DB directly.
+
+  Deliverables:
+  1. Findings list — each with severity (Critical / High / Medium / Low)
+     and the violated principle
+  2. A corrected layering sketch (controller → service → repository → infrastructure)
+  3. A numeric quality score (1-10)
+
+expected:
+  keywords:
+    - layer violation
+    - cross-layer
+    - infrastructure
+    - dependency direction
+    - repository
+  graders:
+    - type: keyword
+      weight: 0.3
+      config:
+        required:
+          - layer violation
+          - infrastructure
+          - controller
+          - repository
+          - severity
+          - score
+        forbidden: ["TODO", "placeholder"]
+    - type: structural
+      weight: 0.3
+      config:
+        required_sections:
+          - findings
+          - layer
+          - infrastructure
+          - corrected
+          - score
+    - type: llm-judge
+      weight: 0.4
+      config:
+        criteria:
+          - completeness
+          - technical_accuracy
+          - severity_assessment
+          - remediation_quality
+          - actionability
+
+timeout_seconds: 120
+tags:
+  - qa
+  - architecture
+  - layering
+  - dependency-direction

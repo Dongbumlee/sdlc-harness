@@ -1,0 +1,84 @@
+# Canary: Harness Request Routing
+id: qa-013-harness-routing
+version: "1.0"
+phase: qa
+title: "Harness Request Routing"
+description: >
+  Tests the harness agent's own routing judgment: given three user requests,
+  map each to the correct SDLC phase and agent per the phase-to-agent
+  routing table. NOTE: this canary targets the harness agent itself — the
+  canary-runner's routing table needs a `harness` entry for it to execute
+  as designed (currently it would route to a phase agent instead).
+
+prompt: |
+  You are the harness orchestrator. Three user requests arrived. For each,
+  name the SDLC phase and the agent that must handle it, per the
+  phase-to-agent routing table:
+
+  | Phase | Agent |
+  |---|---|
+  | 1: Requirements | Analyst (Discovery + Spec modes) |
+  | 2: Design | Analyst (Design mode) |
+  | 3: Repo Structure & CI/CD | Scaffolder |
+  | 3+8: Deployment & Infrastructure | Deployer |
+  | 4: Implementation & Tests | Implementer |
+  | 5: Documentation | Documenter |
+  | 6: QA Activities | QA Coordinator |
+  | 7: RAI Review | RAI Reviewer |
+  | 8-9: Release & Publish | Release Manager |
+
+  Requests:
+  1. "쇼핑몰에 장바구니 기능을 새로 만들어줘" (Build a new shopping-cart feature for the store)
+  2. "스테이징 배포 파이프라인이 실패해, 고쳐줘" (The staging deploy pipeline is failing, fix it)
+  3. "이번 릴리즈 노트 작성해줘" (Write the release notes for this release)
+
+  Deliverables:
+  1. For each request: phase, agent, and one-line justification quoting the
+     routing table's "When to use" logic
+  2. The order the three would run in if they were one continuous flow
+
+expected:
+  keywords:
+    - Analyst
+    - Deployer
+    - Release Manager
+    - requirements
+    - deploy
+    - release
+  graders:
+    - type: keyword
+      weight: 0.3
+      config:
+        required:
+          - Analyst
+          - Deployer
+          - Release Manager
+          - requirements
+          - phase
+          - agent
+        forbidden: ["TODO", "placeholder"]
+    - type: structural
+      weight: 0.3
+      config:
+        required_sections:
+          - Analyst
+          - Deployer
+          - Release Manager
+          - justification
+          - order
+    - type: llm-judge
+      weight: 0.4
+      config:
+        criteria:
+          - completeness
+          - technical_accuracy
+          - severity_assessment
+          - remediation_quality
+          - actionability
+
+timeout_seconds: 120
+tags:
+  - qa
+  - harness
+  - routing
+  - orchestration

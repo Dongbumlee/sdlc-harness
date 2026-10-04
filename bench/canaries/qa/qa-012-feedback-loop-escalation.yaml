@@ -1,0 +1,90 @@
+# Canary: QA Feedback Loop Escalation Protocol
+id: qa-012-feedback-loop-escalation
+version: "1.0"
+phase: qa
+title: "QA Feedback Loop Escalation Protocol"
+description: >
+  Tests knowledge of the harness's own QA feedback-loop escalation protocol:
+  given a round-1 QA result with one Critical finding and score 5 (FAIL),
+  the correct next step is Tier 1 — forward the QA feedback template to the
+  Implementer and loop back for a targeted re-review.
+
+prompt: |
+  You are the harness orchestrator. Round 1 of QA review just completed with
+  this result:
+
+  ```yaml
+  round: 1
+  verdict: FAIL
+  composite_score: 5
+  failed_reviewers:
+    - name: Security Reviewer
+      score: 4
+      findings:
+        - severity: Critical
+          category: secrets
+          description: "Hardcoded API key in src/ShopAPI/config.py"
+  passed_reviewers: 8
+  ```
+
+  The harness escalation protocol defines:
+  - Any `verdict: CRITICAL_FAIL` → Critical: STOP, require user decision
+  - 1-2 reviewers failed, scores 5-6, no Critical findings → Tier 1:
+    forward the QA feedback template to the Implementer, loop back to QA
+    for targeted re-review
+  - Tier 1 still fails OR 3+ reviewers failed → Tier 2: present score
+    progression to user, ask about a targeted fix attempt
+  - After 2 fix attempts OR 3 total rounds → Tier 3: user chooses
+    override / manual fix / abandon
+
+  Question: what is the correct next step for THIS result, and why?
+  Note the trap: the failed reviewer scored 4 (below the 5-6 band) and has
+  a Critical finding — but the overall verdict is FAIL, not CRITICAL_FAIL.
+
+  Deliverables:
+  1. The correct tier and the exact next action, quoted from the protocol
+  2. Why the other tiers do NOT apply to this result
+  3. What happens after the Implementer signals fixes are ready
+
+expected:
+  keywords:
+    - Tier 1
+    - Implementer
+    - re-review
+    - feedback template
+    - escalation
+  graders:
+    - type: keyword
+      weight: 0.3
+      config:
+        required:
+          - Tier 1
+          - Implementer
+          - re-review
+          - feedback template
+          - escalation
+        forbidden: ["TODO", "placeholder"]
+    - type: structural
+      weight: 0.3
+      config:
+        required_sections:
+          - Tier 1
+          - Implementer
+          - re-review
+          - why
+    - type: llm-judge
+      weight: 0.4
+      config:
+        criteria:
+          - completeness
+          - technical_accuracy
+          - severity_assessment
+          - remediation_quality
+          - actionability
+
+timeout_seconds: 120
+tags:
+  - qa
+  - feedback-loop
+  - escalation
+  - orchestration

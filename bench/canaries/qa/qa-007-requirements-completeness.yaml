@@ -1,0 +1,82 @@
+# Canary: Requirements Completeness Review of Vague Spec
+id: qa-007-requirements-completeness
+version: "1.0"
+phase: qa
+title: "Requirements Completeness Review of Vague Spec"
+description: >
+  Tests the reviewer's ability to flag missing acceptance criteria, ambiguous
+  language, and unmeasurable NFRs in a requirements specification.
+
+prompt: |
+  You are a requirements completeness reviewer. Review the following spec
+  excerpt for completeness and testability:
+
+  ```markdown
+  ## Feature: User Login
+
+  ### Functional Requirements
+  - FR-1: Users can log in quickly and securely.
+  - FR-2: The system should handle many users efficiently.
+  - FR-3: Password reset should be user-friendly.
+
+  ### Non-Functional Requirements
+  - NFR-1: The login flow must be fast.
+  - NFR-2: The system must be highly available.
+  ```
+
+  Problems deliberately planted: no acceptance criteria on any FR; ambiguous
+  words ("quickly", "securely", "many", "efficiently", "user-friendly", "fast",
+  "highly available"); NFRs have no measurable targets; no edge cases
+  (locked accounts, expired sessions); no non-goals.
+
+  Deliverables:
+  1. Findings list — each with severity (Critical / High / Medium / Low),
+     quoting the offending text
+  2. Rewritten FR-1 with a testable acceptance criterion (Given/When/Then)
+  3. Rewritten NFR-1 with a measurable target
+  4. A numeric quality score (1-10)
+
+expected:
+  keywords:
+    - acceptance criteria
+    - ambiguous
+    - measurable
+    - NFR
+    - testable
+  graders:
+    - type: keyword
+      weight: 0.3
+      config:
+        required:
+          - acceptance criteria
+          - ambiguous
+          - measurable
+          - NFR
+          - severity
+          - score
+        forbidden: ["TODO", "placeholder"]
+    - type: structural
+      weight: 0.3
+      config:
+        required_sections:
+          - findings
+          - acceptance criteria
+          - ambiguous
+          - measurable
+          - score
+    - type: llm-judge
+      weight: 0.4
+      config:
+        criteria:
+          - completeness
+          - technical_accuracy
+          - severity_assessment
+          - remediation_quality
+          - actionability
+
+timeout_seconds: 120
+tags:
+  - qa
+  - requirements
+  - completeness
+  - testability

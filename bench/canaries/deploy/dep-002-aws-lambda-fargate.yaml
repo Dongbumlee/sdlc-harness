@@ -1,0 +1,94 @@
+# Canary: AWS Lambda+Fargate Deploy with Real-World Gotchas
+id: dep-002-aws-lambda-fargate
+version: "1.0"
+phase: deploy
+title: "AWS Lambda+Fargate Deploy with Real-World Gotchas"
+description: >
+  Tests the deployer's knowledge of two real AWS gotchas found in production
+  dogfood: ElastiCache Serverless mandates TLS (ssl=True), and a Fargate
+  task reusing a Lambda base image must override the ENTRYPOINT.
+
+prompt: |
+  You are an AWS deployment specialist. Review the following CDK deployment
+  design for a scheduled collector (Fargate) plus sync API (Lambda) with an
+  ElastiCache Serverless cache:
+
+  ```typescript
+  // Cache client used by both Lambda and Fargate
+  const cache = new redis.Redis({
+    host: cacheEndpoint,
+    port: 6379,
+    // TLS not configured — "it worked locally without it"
+  });
+
+  // Fargate collector reuses the Lambda base image for a small footprint
+  new ecs.FargateTaskDefinition(this, 'CollectorTask', {
+    cpu: 256, memoryLimitMiB: 512,
+  }).addContainer('collector', {
+    image: ecs.ContainerImage.fromRegistry('123456789012.dkr.ecr.us-east-2.amazonaws.com/collector:latest'),
+    // image built FROM public.ecr.aws/lambda/python:3.12 — no entryPoint override
+    command: ['collector.main'],
+  });
+  ```
+
+  Problems deliberately planted:
+  1. ElastiCache Serverless REQUIRES TLS. Connecting without `ssl=True` hangs
+     the read forever and surfaces as a Lambda timeout — "worked locally"
+     means nothing against the managed service.
+  2. A Lambda base image's ENTRYPOINT expects a Lambda handler. Running it on
+     Fargate without overriding `entryPoint` (e.g. to `/var/lang/bin/python3`)
+     crashes the task on boot.
+
+  Deliverables:
+  1. Findings list — each with severity (Critical / High / Medium / Low)
+     and the AWS-specific rule violated
+  2. Corrected Redis client config and corrected container definition
+  3. A deployment-readiness verdict: GO / NO-GO
+
+expected:
+  keywords:
+    - TLS
+    - ssl=True
+    - entrypoint
+    - entryPoint
+    - Lambda base image
+  graders:
+    - type: keyword
+      weight: 0.3
+      config:
+        required:
+          - TLS
+          - ssl=True
+          - entryPoint
+          - Lambda
+          - severity
+          - verdict
+        forbidden: ["TODO", "placeholder"]
+    - type: structural
+      weight: 0.3
+      config:
+        required_sections:
+          - findings
+          - TLS
+          - entryPoint
+          - corrected
+          - verdict
+    - type: llm-judge
+      weight: 0.4
+      config:
+        criteria:
+          - completeness
+          - technical_accuracy
+          - severity_assessment
+          - remediation_quality
+          - actionability
+
+timeout_seconds: 120
+requires_mcp:
+  - awesome-copilot
+tags:
+  - deploy
+  - aws
+  - elasticache
+  - fargate
+  - lambda

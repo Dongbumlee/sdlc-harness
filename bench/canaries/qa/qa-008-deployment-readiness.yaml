@@ -1,0 +1,79 @@
+# Canary: Deployment Readiness Review of Incomplete Design
+id: qa-008-deployment-readiness
+version: "1.0"
+phase: qa
+title: "Deployment Readiness Review of Incomplete Design"
+description: >
+  Tests the reviewer's ability to flag a missing health endpoint, missing
+  rollback plan, and raw error exposure in a deployment design.
+
+prompt: |
+  You are a deployment readiness reviewer. Review the following deployment
+  design for production readiness. Do NOT be generous — "it works in dev"
+  is not a pass:
+
+  ```markdown
+  ## Deployment Design: Orders API
+
+  - Packaged as a container image, deployed to the cloud container platform.
+  - Liveness: the platform restarts the container if the process exits.
+  - Rollback plan: "redeploy the previous image tag manually if something breaks."
+  - Error handling: API returns `{"error": str(e)}` so operators can see
+    the full exception for debugging.
+  - External calls: the payment client has no explicit timeout ("the default
+    should be fine").
+  ```
+
+  Problems deliberately planted: no `/health` endpoint (process-alive is not
+  readiness); rollback is manual with no tested procedure; `str(e)` exposes
+  stack traces and internal paths; external HTTP call without explicit timeout.
+
+  Deliverables:
+  1. Findings list — each with severity (Critical / High / Medium / Low)
+  2. Concrete remediation for each finding
+  3. A numeric quality score (1-10)
+
+expected:
+  keywords:
+    - health check
+    - rollback
+    - stack trace
+    - timeout
+    - readiness
+  graders:
+    - type: keyword
+      weight: 0.3
+      config:
+        required:
+          - health
+          - rollback
+          - stack trace
+          - timeout
+          - severity
+          - score
+        forbidden: ["TODO", "placeholder"]
+    - type: structural
+      weight: 0.3
+      config:
+        required_sections:
+          - findings
+          - health
+          - rollback
+          - remediation
+          - score
+    - type: llm-judge
+      weight: 0.4
+      config:
+        criteria:
+          - completeness
+          - technical_accuracy
+          - severity_assessment
+          - remediation_quality
+          - actionability
+
+timeout_seconds: 120
+tags:
+  - qa
+  - deployment-readiness
+  - health-check
+  - rollback

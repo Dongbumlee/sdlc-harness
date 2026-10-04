@@ -1,0 +1,73 @@
+# Canary: Code Quality Review of Buggy Python Function
+id: qa-004-code-quality-review
+version: "1.0"
+phase: qa
+title: "Code Quality Review of Buggy Python Function"
+description: >
+  Tests the reviewer's ability to catch logic correctness bugs: a mutable
+  default argument and an off-by-one boundary error in a Python function.
+
+prompt: |
+  You are a code quality reviewer. Review the following Python function for
+  correctness, readability, and maintainability. List every issue you find
+  with severity and a concrete fix:
+
+  ```python
+  def get_high_value_orders(orders, seen={}):
+      """Return orders over $100. Tracks previously seen counts."""
+      result = []
+      for i in range(1, len(orders)):
+          if orders[i]["total"] > 100:
+              result.append(orders[i])
+      seen[len(result)] = result
+      return result
+  ```
+
+  Deliverables:
+  1. Findings list — each with severity (Critical / High / Medium / Low),
+     category, and explanation
+  2. Corrected version of the function
+  3. A numeric quality score (1-10)
+
+expected:
+  keywords:
+    - mutable default
+    - off-by-one
+    - boundary
+    - first element skipped
+  graders:
+    - type: keyword
+      weight: 0.3
+      config:
+        required:
+          - mutable default
+          - off-by-one
+          - boundary
+          - severity
+          - score
+        forbidden: ["TODO", "placeholder"]
+    - type: structural
+      weight: 0.3
+      config:
+        required_sections:
+          - findings
+          - mutable default
+          - off-by-one
+          - corrected
+          - score
+    - type: llm-judge
+      weight: 0.4
+      config:
+        criteria:
+          - completeness
+          - technical_accuracy
+          - severity_assessment
+          - remediation_quality
+          - actionability
+
+timeout_seconds: 120
+tags:
+  - qa
+  - code-quality
+  - correctness
+  - python

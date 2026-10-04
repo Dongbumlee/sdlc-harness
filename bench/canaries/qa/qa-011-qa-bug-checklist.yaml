@@ -1,0 +1,90 @@
+# Canary: QA Bug Checklist Review of Known Bug Patterns
+id: qa-011-qa-bug-checklist
+version: "1.0"
+phase: qa
+title: "QA Bug Checklist Review of Known Bug Patterns"
+description: >
+  Tests the reviewer's ability to match code against known production bug
+  patterns: raw error exposure in an API handler and a deployment missing
+  a health probe — both recurring real-world bug classes.
+
+prompt: |
+  You are a QA bug checklist reviewer. Validate the following code and
+  deployment snippet against known production bug patterns (recurring
+  classes: raw error exposure, missing health probes, unhandled external
+  failures):
+
+  ```python
+  # src/ShopAPI/app.py
+  @app.get("/orders/{order_id}")
+  def get_order(order_id: str):
+      try:
+          return order_service.get(order_id)
+      except Exception as e:
+          return {"error": str(e)}, 500   # full exception to the client
+  ```
+
+  ```yaml
+  # deploy/container.yaml
+  containers:
+    - name: orders-api
+      image: orders-api:1.4.2
+      ports: [{containerPort: 8000}]
+      # no livenessProbe, no readinessProbe
+  ```
+
+  Problems deliberately planted: `str(e)` returns stack traces and internal
+  paths to API clients (known recurring bug); the container has no liveness
+  or readiness probe, so a hung process is never restarted and bad pods keep
+  receiving traffic (known recurring bug).
+
+  Deliverables:
+  1. Findings list — each mapped to its bug-pattern class, with severity
+     (Critical / High / Medium / Low)
+  2. Corrected code and corrected container spec
+  3. A numeric quality score (1-10)
+
+expected:
+  keywords:
+    - str(e)
+    - stack trace
+    - liveness probe
+    - readiness probe
+    - bug pattern
+  graders:
+    - type: keyword
+      weight: 0.3
+      config:
+        required:
+          - str(e)
+          - stack trace
+          - livenessProbe
+          - readinessProbe
+          - severity
+          - score
+        forbidden: ["TODO", "placeholder"]
+    - type: structural
+      weight: 0.3
+      config:
+        required_sections:
+          - findings
+          - bug pattern
+          - livenessProbe
+          - corrected
+          - score
+    - type: llm-judge
+      weight: 0.4
+      config:
+        criteria:
+          - completeness
+          - technical_accuracy
+          - severity_assessment
+          - remediation_quality
+          - actionability
+
+timeout_seconds: 120
+tags:
+  - qa
+  - bug-checklist
+  - production-bugs
+  - probes

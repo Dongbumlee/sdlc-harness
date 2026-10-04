@@ -1,0 +1,100 @@
+# Canary: GCP Cloud Run Deploy with Real-World Gotchas
+id: dep-003-gcp-cloud-run
+version: "1.0"
+phase: deploy
+title: "GCP Cloud Run Deploy with Real-World Gotchas"
+description: >
+  Tests the deployer's knowledge of two real GCP gotchas found in production
+  dogfood: Cloud Scheduler must call the Run Admin API with an OAuth access
+  token (never OIDC), and every google-cloud-* client library must be in
+  requirements (pytest fakes hide the gap).
+
+prompt: |
+  You are a GCP deployment specialist. Review the following Terraform
+  deployment design for a scheduled collector (Cloud Run Job) plus sync API
+  (Cloud Run service):
+
+  ```hcl
+  resource "google_cloud_scheduler_job" "collector" {
+    schedule = "*/30 * * * *"
+    http_target {
+      uri         = "https://us-central1-run.googleapis.com/v2/projects/p/locations/us-central1/jobs/collector:run"
+      http_method = "POST"
+      oidc_token {                       # <-- triggers the Run Admin API
+        service_account_email = google_service_account.scheduler.email
+      }
+    }
+  }
+  ```
+
+  ```text
+  # requirements.txt (API service)
+  fastapi
+  uvicorn
+  gunicorn
+  google-cloud-firestore
+  redis
+  # note: the code imports google.cloud.secretmanager — "tests pass, so it's fine"
+  ```
+
+  Problems deliberately planted:
+  1. The Run Admin API (`jobs:run`) requires an **OAuth access token**, not
+     OIDC. Sending `oidc_token` returns 401 UNAUTHENTICATED and the schedule
+     silently never runs.
+  2. `google-cloud-secret-manager` is missing from requirements. Unit tests
+     pass because they use a fake client — the real container crashes on boot
+     with an ImportError (503 from every instance).
+
+  Deliverables:
+  1. Findings list — each with severity (Critical / High / Medium / Low)
+     and the GCP-specific rule violated
+  2. Corrected scheduler auth block and corrected requirements.txt
+  3. A deployment-readiness verdict: GO / NO-GO
+
+expected:
+  keywords:
+    - OAuth
+    - OIDC
+    - secretmanager
+    - requirements
+    - 401
+  graders:
+    - type: keyword
+      weight: 0.3
+      config:
+        required:
+          - OAuth
+          - OIDC
+          - secretmanager
+          - requirements
+          - severity
+          - verdict
+        forbidden: ["TODO", "placeholder"]
+    - type: structural
+      weight: 0.3
+      config:
+        required_sections:
+          - findings
+          - OAuth
+          - requirements
+          - corrected
+          - verdict
+    - type: llm-judge
+      weight: 0.4
+      config:
+        criteria:
+          - completeness
+          - technical_accuracy
+          - severity_assessment
+          - remediation_quality
+          - actionability
+
+timeout_seconds: 120
+requires_mcp:
+  - awesome-copilot
+tags:
+  - deploy
+  - gcp
+  - cloud-run
+  - scheduler
+  - oauth

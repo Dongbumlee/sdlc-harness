@@ -1,0 +1,86 @@
+# Canary: Test Coverage Review of Missing Error-Path Tests
+id: qa-006-test-coverage-review
+version: "1.0"
+phase: qa
+title: "Test Coverage Review of Missing Error-Path Tests"
+description: >
+  Tests the reviewer's ability to spot missing error-path and edge-case
+  tests: a division helper tested only on the happy path, with no test for
+  division by zero or invalid input.
+
+prompt: |
+  You are a test coverage reviewer. Review the following code and its tests.
+  Assess whether the tests adequately cover edge cases and error paths:
+
+  ```python
+  # src/calc.py
+  def divide(a, b):
+      return a / b
+
+  def parse_rate(text):
+      return float(text)
+  ```
+
+  ```python
+  # tests/test_calc.py
+  from calc import divide, parse_rate
+
+  def test_divide():
+      assert divide(10, 2) == 5
+
+  def test_parse_rate():
+      assert parse_rate("0.05") == 0.05
+  ```
+
+  Note what is NOT tested: `divide(10, 0)` raises ZeroDivisionError,
+  `parse_rate("abc")` raises ValueError, and neither function validates input.
+
+  Deliverables:
+  1. Findings list — each with severity (Critical / High / Medium / Low),
+     naming the uncovered edge case or error path
+  2. The missing test cases, written out (pytest style)
+  3. A numeric quality score (1-10)
+
+expected:
+  keywords:
+    - error path
+    - edge case
+    - ZeroDivisionError
+    - missing test
+    - boundary
+  graders:
+    - type: keyword
+      weight: 0.3
+      config:
+        required:
+          - error path
+          - edge case
+          - ZeroDivisionError
+          - missing
+          - severity
+          - score
+        forbidden: ["TODO", "placeholder"]
+    - type: structural
+      weight: 0.3
+      config:
+        required_sections:
+          - findings
+          - error path
+          - missing test
+          - score
+    - type: llm-judge
+      weight: 0.4
+      config:
+        criteria:
+          - completeness
+          - technical_accuracy
+          - severity_assessment
+          - remediation_quality
+          - actionability
+
+timeout_seconds: 120
+tags:
+  - qa
+  - test-coverage
+  - edge-cases
+  - python
