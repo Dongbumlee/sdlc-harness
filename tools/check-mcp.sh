@@ -1,158 +1,106 @@
 #!/bin/bash
-# Pre-flight MCP server check for sdlc-harness
-# Verifies that required MCP servers are configured before running the harness.
+# Pre-flight MCP server check and auto-setup for sdlc-harness
 # Checks VSCode, Copilot CLI, Claude Code, and Claude Desktop config locations.
-# If no config exists, offers to create one automatically.
-# Usage: ./tools/check-mcp.sh [--config <path>] [--auto] [--all]
-#   --all: create config for ALL supported tools
+# Automatically creates missing configs and adds missing servers. No prompts.
+# Usage: ./check-mcp.sh
+# Requires: python3 (for JSON merging)
 
 set -e
 
-AUTO=0
-ALL=0
-CONFIG_OVERRIDE=""
-
-while [ $# -gt 0 ]; do
-    case "$1" in
-        --config) CONFIG_OVERRIDE="$2"; shift 2 ;;
-        --auto) AUTO=1; shift ;;
-        --all) ALL=1; shift ;;
-        *) shift ;;
-    esac
-done
-
-REQUIRED_SERVERS=("awesome-copilot" "github" "context7")
-OPTIONAL_SERVERS=("azure" "azure-devops")
-
-read -r -d '' DEFAULT_MCP_JSON << 'JSONEOF' || true
-{
-  "servers": {
-    "awesome-copilot": {
-      "type": "stdio",
-      "command": "docker",
-      "args": ["run", "--rm", "-i", "ghcr.io/github/awesome-copilot:latest"]
-    },
-    "github": {
-      "type": "http",
-      "url": "https://api.githubcopilot.com/mcp/"
-    },
-    "context7": {
-      "type": "stdio",
-      "command": "npx",
-      "args": ["-y", "@upstash/context7-mcp@latest"]
-    }
-  }
-}
-JSONEOF
-
-# Config locations: "path|tool_name"
-if [ -n "$CONFIG_OVERRIDE" ]; then
-    CONFIG_LIST=("$CONFIG_OVERRIDE|Custom")
-else
-    CONFIG_LIST=(
-        ".vscode/mcp.json|VSCode"
-        "$HOME/.copilot/mcp.json|Copilot CLI"
-        "$HOME/.claude.json|Claude Code"
-        "$HOME/Library/Application Support/Claude/claude_desktop_config.json|Claude Desktop"
-        "$HOME/.config/Claude/claude_desktop_config.json|Claude Desktop (Linux)"
-    )
-fi
-
-echo "=== sdlc-harness MCP pre-flight check ==="
-echo ""
-
-FOUND_CONFIG=""
-FOUND_TOOL=""
-for entry in "${CONFIG_LIST[@]}"; do
-    p="${entry%%|*}"
-    t="${entry##*|}"
-    if [ -f "$p" ]; then
-        FOUND_CONFIG="$p"
-        FOUND_TOOL="$t"
-        echo "Config found ($t): $p"
-        break
-    fi
-done
-
-if [ -z "$FOUND_CONFIG" ]; then
-    echo "No MCP config found. Checked:"
-    for entry in "${CONFIG_LIST[@]}"; do
-        p="${entry%%|*}"
-        t="${entry##*|}"
-        echo "  - [$t] $p"
-    done
-    echo ""
-
-    TARGETS=()
-    if [ $ALL -eq 1 ]; then
-        for entry in "${CONFIG_LIST[@]}"; do
-            TARGETS+=("$entry")
-        done
-        LABEL="all tools (${#TARGETS[@]} locations)"
-    else
-        TARGETS=("${CONFIG_LIST[0]}")
-        LABEL="${TARGETS[0]%%|*}"
-    fi
-    DO_CREATE=0
-
-    if [ $AUTO -eq 1 ]; then
-        DO_CREATE=1
-    else
-        read -p "Create default MCP config for $LABEL ? (y/n) " ANSWER
-        if [ "$ANSWER" = "y" ] || [ "$ANSWER" = "Y" ]; then
-            DO_CREATE=1
-        fi
-    fi
-
-    if [ $DO_CREATE -eq 1 ]; then
-        for entry in "${TARGETS[@]}"; do
-            t="${entry%%|*}"
-            tool="${entry##*|}"
-            if [ -f "$t" ]; then
-                echo "Skipped (exists): [$tool] $t"
-                continue
-            fi
-            mkdir -p "$(dirname "$t")"
-            echo "$DEFAULT_MCP_JSON" > "$t"
-            echo "Created: [$tool] $t"
-        done
-        echo ""
-        echo "Restart your sessions for the servers to load."
-        FOUND_CONFIG="${TARGETS[0]%%|*}"
-    else
-        echo ""
-        echo "Skipped. See Step 0 in the Harness agent for manual setup."
-        exit 1
-    fi
-fi
-
-echo ""
-echo "--- Required servers ---"
-MISSING=0
-for srv in "${REQUIRED_SERVERS[@]}"; do
-    if grep -q "\"$srv\"" "$FOUND_CONFIG"; then
-        echo "  [OK] $srv"
-    else
-        echo "  [MISSING] $srv"
-        MISSING=1
-    fi
-done
-
-echo ""
-echo "--- Optional servers (degraded mode if missing) ---"
-for srv in "${OPTIONAL_SERVERS[@]}"; do
-    if grep -q "\"$srv\"" "$FOUND_CONFIG"; then
-        echo "  [OK] $srv"
-    else
-        echo "  [--] $srv (not configured, will use degraded mode)"
-    fi
-done
-
-echo ""
-if [ $MISSING -eq 1 ]; then
-    echo "RESULT: FAIL — required MCP servers are missing."
+if ! command -v python3 &> /dev/null; then
+    echo "ERROR: python3 is required for JSON config merging."
     exit 1
-else
-    echo "RESULT: PASS — all required MCP servers are configured."
+fi
+
+echo "=== sdlc-harness MCP setup ==="
+echo ""
+
+# "path|tool|claude_format(0/1)"
+CONFIG_LIST=(
+    ".vscode/mcp.json|VSCode|0"
+    "$HOME/.copilot/mcp.json|Copilot CLI|0"
+    "$HOME/.claude.json|Claude Code|1"
+    "$HOME/Library/Application Support/Claude/claude_desktop_config.json|Claude Desktop|1"
+    "$HOME/.config/Claude/claude_desktop_config.json|Claude Desktop (Linux)|1"
+)
+
+ALL_OK=1
+
+for entry in "${CONFIG_LIST[@]}"; do
+    P="${entry%%|*}"
+    REST="${entry#*|}"
+    TOOL="${REST%%|*}"
+    IS_CLAUDE="${REST##*|}"
+
+    python3 - "$P" "$TOOL" "$IS_CLAUDE" << 'PYEOF'
+import json, os, sys
+
+path, tool, is_claude = sys.argv[1], sys.argv[2], sys.argv[3] == "1"
+key = "mcpServers" if is_claude else "servers"
+
+servers = {
+    "awesome-copilot": {"command": "docker", "args": ["run", "--rm", "-i", "ghcr.io/github/awesome-copilot:latest"]},
+    "github": {"type": "http", "url": "https://api.githubcopilot.com/mcp/"},
+    "context7": {"command": "npx", "args": ["-y", "@upstash/context7-mcp@latest"]},
+}
+
+config = {}
+if os.path.exists(path):
+    try:
+        with open(path) as f:
+            config = json.load(f)
+    except (json.JSONDecodeError, OSError):
+        print(f"[{tool}] WARNING: existing config is invalid JSON, skipping: {path}")
+        sys.exit(2)
+
+if key not in config:
+    config[key] = {}
+
+added = []
+for name, definition in servers.items():
+    if name not in config[key]:
+        if is_claude:
+            entry = {}
+            if "command" in definition:
+                entry["command"] = definition["command"]
+            if "args" in definition:
+                entry["args"] = definition["args"]
+            if definition.get("type") == "http":
+                entry["type"] = "http"
+                entry["url"] = definition["url"]
+        else:
+            entry = dict(definition)
+            if "type" not in entry:
+                entry["type"] = "stdio"
+        config[key][name] = entry
+        added.append(name)
+
+if added:
+    parent = os.path.dirname(path)
+    if parent:
+        os.makedirs(parent, exist_ok=True)
+    with open(path, "w") as f:
+        json.dump(config, f, indent=2)
+    print(f"[{tool}] Added: {', '.join(added)} -> {path}")
+else:
+    print(f"[{tool}] OK (all servers present)")
+PYEOF
+
+    RC=$?
+    if [ $RC -eq 2 ]; then
+        ALL_OK=0
+    elif [ $RC -ne 0 ]; then
+        echo "[$TOOL] ERROR during setup."
+        ALL_OK=0
+    fi
+done
+
+echo ""
+if [ $ALL_OK -eq 1 ]; then
+    echo "RESULT: PASS - all tools configured."
+    echo "Restart your sessions for the servers to load."
     exit 0
+else
+    echo "RESULT: WARNING - some configs need manual attention (see above)."
+    exit 1
 fi

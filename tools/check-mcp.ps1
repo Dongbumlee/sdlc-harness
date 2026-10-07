@@ -1,169 +1,90 @@
-# Pre-flight MCP server check for sdlc-harness (Windows PowerShell)
-# Verifies that required MCP servers are configured before running the harness.
+# Pre-flight MCP server check and auto-setup for sdlc-harness (Windows PowerShell)
 # Checks VSCode, Copilot CLI, Claude Code, and Claude Desktop config locations.
-# If no config exists, offers to create one automatically.
-# Usage: .\tools\check-mcp.ps1 [-Config <path>] [-Auto] [-All]
-#   -All: create config for ALL supported tools (VSCode, Copilot CLI, Claude Code, Claude Desktop)
-
-param(
-    [string]$Config = "",
-    [switch]$Auto,
-    [switch]$All
-)
+# Automatically creates missing configs and adds missing servers. No prompts.
+# Usage: .\check-mcp.ps1
 
 $ErrorActionPreference = "Stop"
 
 $requiredServers = @("awesome-copilot", "github", "context7")
-$optionalServers = @("azure", "azure-devops")
 
-$defaultMcpJson = @'
-{
-  "servers": {
-    "awesome-copilot": {
-      "type": "stdio",
-      "command": "docker",
-      "args": ["run", "--rm", "-i", "ghcr.io/github/awesome-copilot:latest"]
-    },
-    "github": {
-      "type": "http",
-      "url": "https://api.githubcopilot.com/mcp/"
-    },
-    "context7": {
-      "type": "stdio",
-      "command": "npx",
-      "args": ["-y", "@upstash/context7-mcp@latest"]
-    }
-  }
+$serverDefs = @{
+    "awesome-copilot" = @{ command = "docker"; args = @("run", "--rm", "-i", "ghcr.io/github/awesome-copilot:latest") }
+    "github"          = @{ type = "http"; url = "https://api.githubcopilot.com/mcp/" }
+    "context7"        = @{ command = "npx"; args = @("-y", "@upstash/context7-mcp@latest") }
 }
-'@
 
-# Claude uses "mcpServers" key instead of "servers"
-$defaultClaudeJson = @'
-{
-  "mcpServers": {
-    "awesome-copilot": {
-      "command": "docker",
-      "args": ["run", "--rm", "-i", "ghcr.io/github/awesome-copilot:latest"]
-    },
-    "github": {
-      "type": "http",
-      "url": "https://api.githubcopilot.com/mcp/"
-    },
-    "context7": {
-      "command": "npx",
-      "args": ["-y", "@upstash/context7-mcp@latest"]
-    }
-  }
-}
-'@
-
-Write-Host "=== sdlc-harness MCP pre-flight check ==="
+Write-Host "=== sdlc-harness MCP setup ==="
 Write-Host ""
 
-$configPaths = @()
-if ($Config -ne "") {
-    $configPaths = @(@{ Path = $Config; Tool = "Custom"; Claude = $false })
-} else {
-    $configPaths = @(
-        @{ Path = (Join-Path (Get-Location) ".vscode\mcp.json"); Tool = "VSCode"; Claude = $false },
-        @{ Path = (Join-Path $env:USERPROFILE ".copilot\mcp.json"); Tool = "Copilot CLI"; Claude = $false },
-        @{ Path = (Join-Path $env:USERPROFILE ".claude.json"); Tool = "Claude Code"; Claude = $true },
-        @{ Path = (Join-Path $env:APPDATA "Claude\claude_desktop_config.json"); Tool = "Claude Desktop"; Claude = $true }
-    )
-}
+$configPaths = @(
+    @{ Path = (Join-Path (Get-Location) ".vscode\mcp.json"); Tool = "VSCode"; Claude = $false },
+    @{ Path = (Join-Path $env:USERPROFILE ".copilot\mcp.json"); Tool = "Copilot CLI"; Claude = $false },
+    @{ Path = (Join-Path $env:USERPROFILE ".claude.json"); Tool = "Claude Code"; Claude = $true },
+    @{ Path = (Join-Path $env:APPDATA "Claude\claude_desktop_config.json"); Tool = "Claude Desktop"; Claude = $true }
+)
 
-$foundConfig = $null
-$foundTool = ""
-$isClaude = $false
+$allOk = $true
+
 foreach ($c in $configPaths) {
-    if (Test-Path $c.Path) {
-        $foundConfig = $c.Path
-        $foundTool = $c.Tool
-        $isClaude = $c.Claude
-        Write-Host "Config found ($foundTool): $($c.Path)"
-        break
-    }
-}
+    $path = $c.Path
+    $tool = $c.Tool
+    $key = if ($c.Claude) { "mcpServers" } else { "servers" }
 
-if ($null -eq $foundConfig) {
-    Write-Host "No MCP config found. Checked:"
-    foreach ($c in $configPaths) { Write-Host "  - [$($c.Tool)] $($c.Path)" }
-    Write-Host ""
-
-    # Determine targets: -All creates for every tool, otherwise just the first
-    $targets = @()
-    if ($All) {
-        foreach ($c in $configPaths) {
-            $tpl = if ($c.Claude) { $defaultClaudeJson } else { $defaultMcpJson }
-            $targets += @{ Path = $c.Path; Template = $tpl; Tool = $c.Tool }
+    # Load existing config or start fresh
+    $config = $null
+    if (Test-Path $path) {
+        try {
+            $config = Get-Content $path -Raw | ConvertFrom-Json -AsHashtable
+        } catch {
+            Write-Host "[$tool] WARNING: existing config is invalid JSON, skipping: $path"
+            $allOk = $false
+            continue
         }
-    } else {
-        $c = $configPaths[0]
-        $tpl = if ($c.Claude) { $defaultClaudeJson } else { $defaultMcpJson }
-        $targets += @{ Path = $c.Path; Template = $tpl; Tool = $c.Tool }
     }
+    if ($null -eq $config) { $config = @{} }
+    if (-not $config.ContainsKey($key)) { $config[$key] = @{} }
 
-    $label = if ($All) { "all tools ($($targets.Count) locations)" } else { $targets[0].Path }
-    $doCreate = $false
-
-    if ($Auto) {
-        $doCreate = $true
-    } else {
-        $answer = Read-Host "Create default MCP config for $label ? (y/n)"
-        if ($answer -eq "y" -or $answer -eq "Y") { $doCreate = $true }
-    }
-
-    if ($doCreate) {
-        foreach ($t in $targets) {
-            $dir = Split-Path $t.Path -Parent
-            if (-not (Test-Path $dir)) { New-Item -ItemType Directory -Force -Path $dir | Out-Null }
-            # Don't overwrite existing files
-            if (Test-Path $t.Path) {
-                Write-Host "Skipped (exists): [$($t.Tool)] $($t.Path)"
-                continue
+    # Add missing servers
+    $added = @()
+    foreach ($srv in $requiredServers) {
+        if (-not $config[$key].ContainsKey($srv)) {
+            $def = $serverDefs[$srv]
+            if ($c.Claude) {
+                # Claude format: no "type" for stdio, uses command/args directly
+                $entry = @{}
+                if ($def.ContainsKey("command")) { $entry["command"] = $def["command"] }
+                if ($def.ContainsKey("args")) { $entry["args"] = $def["args"] }
+                if ($def.ContainsKey("type") -and $def["type"] -eq "http") {
+                    $entry["type"] = "http"; $entry["url"] = $def["url"]
+                }
+            } else {
+                $entry = @{}
+                if ($def.ContainsKey("type")) { $entry["type"] = $def["type"] } else { $entry["type"] = "stdio" }
+                if ($def.ContainsKey("command")) { $entry["command"] = $def["command"] }
+                if ($def.ContainsKey("args")) { $entry["args"] = $def["args"] }
+                if ($def.ContainsKey("url")) { $entry["url"] = $def["url"] }
             }
-            Set-Content -Path $t.Path -Value $t.Template -Encoding UTF8
-            Write-Host "Created: [$($t.Tool)] $($t.Path)"
+            $config[$key][$srv] = $entry
+            $added += $srv
         }
-        Write-Host ""
-        Write-Host "Restart your sessions for the servers to load."
-        $foundConfig = $targets[0].Path
-    } else {
-        Write-Host ""
-        Write-Host "Skipped. See Step 0 in the Harness agent for manual setup."
-        exit 1
     }
-}
 
-$content = Get-Content $foundConfig -Raw
-
-Write-Host ""
-Write-Host "--- Required servers ---"
-$missing = $false
-foreach ($srv in $requiredServers) {
-    if ($content -match "`"$srv`"") {
-        Write-Host "  [OK] $srv"
+    if ($added.Count -gt 0) {
+        $dir = Split-Path $path -Parent
+        if (-not (Test-Path $dir)) { New-Item -ItemType Directory -Force -Path $dir | Out-Null }
+        $config | ConvertTo-Json -Depth 10 | Set-Content -Path $path -Encoding UTF8
+        Write-Host "[$tool] Added: $($added -join ', ') -> $path"
     } else {
-        Write-Host "  [MISSING] $srv"
-        $missing = $true
+        Write-Host "[$tool] OK (all servers present)"
     }
 }
 
 Write-Host ""
-Write-Host "--- Optional servers (degraded mode if missing) ---"
-foreach ($srv in $optionalServers) {
-    if ($content -match "`"$srv`"") {
-        Write-Host "  [OK] $srv"
-    } else {
-        Write-Host "  [--] $srv (not configured, will use degraded mode)"
-    }
-}
-
-Write-Host ""
-if ($missing) {
-    Write-Host "RESULT: FAIL - required MCP servers are missing."
-    exit 1
-} else {
-    Write-Host "RESULT: PASS - all required MCP servers are configured."
+if ($allOk) {
+    Write-Host "RESULT: PASS - all tools configured."
+    Write-Host "Restart your sessions for the servers to load."
     exit 0
+} else {
+    Write-Host "RESULT: WARNING - some configs need manual attention (see above)."
+    exit 1
 }
