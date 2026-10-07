@@ -1,16 +1,38 @@
 # Pre-flight MCP server check for sdlc-harness (Windows PowerShell)
 # Verifies that required MCP servers are configured before running the harness.
-# Usage: .\tools\check-mcp.ps1 [-Config <path>]
-# Default config locations checked: .vscode\mcp.json, $env:USERPROFILE\.copilot\mcp.json
+# If no config exists, offers to create one automatically.
+# Usage: .\tools\check-mcp.ps1 [-Config <path>] [-Auto]
 
 param(
-    [string]$Config = ""
+    [string]$Config = "",
+    [switch]$Auto
 )
 
 $ErrorActionPreference = "Stop"
 
 $requiredServers = @("awesome-copilot", "github", "context7")
 $optionalServers = @("azure", "azure-devops")
+
+$defaultMcpJson = @'
+{
+  "servers": {
+    "awesome-copilot": {
+      "type": "stdio",
+      "command": "docker",
+      "args": ["run", "--rm", "-i", "ghcr.io/github/awesome-copilot:latest"]
+    },
+    "github": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/"
+    },
+    "context7": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp@latest"]
+    }
+  }
+}
+'@
 
 Write-Host "=== sdlc-harness MCP pre-flight check ==="
 Write-Host ""
@@ -35,12 +57,35 @@ foreach ($p in $configPaths) {
 }
 
 if ($null -eq $foundConfig) {
-    Write-Host "ERROR: No MCP config found. Checked:"
+    Write-Host "No MCP config found. Checked:"
     foreach ($p in $configPaths) { Write-Host "  - $p" }
     Write-Host ""
-    Write-Host "Copy the template from the harness repo:"
-    Write-Host "  Copy-Item <harness>\.vscode\mcp.json .vscode\mcp.json"
-    exit 1
+
+    $target = $configPaths[0]
+    $doCreate = $false
+
+    if ($Auto) {
+        $doCreate = $true
+    } else {
+        $answer = Read-Host "Create default MCP config at $target ? (y/n)"
+        if ($answer -eq "y" -or $answer -eq "Y") { $doCreate = $true }
+    }
+
+    if ($doCreate) {
+        $dir = Split-Path $target -Parent
+        if (-not (Test-Path $dir)) { New-Item -ItemType Directory -Force -Path $dir | Out-Null }
+        Set-Content -Path $target -Value $defaultMcpJson -Encoding UTF8
+        Write-Host ""
+        Write-Host "Created: $target"
+        Write-Host "Restart your Copilot session for the servers to load."
+        $foundConfig = $target
+    } else {
+        Write-Host ""
+        Write-Host "Skipped. Manual setup:"
+        Write-Host "  1. Create .vscode\mcp.json with the required servers"
+        Write-Host "  2. See Step 0 in the Harness agent for the JSON template"
+        exit 1
+    }
 }
 
 $content = Get-Content $foundConfig -Raw
