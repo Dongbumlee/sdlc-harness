@@ -1,6 +1,7 @@
 #!/bin/bash
 # Pre-flight MCP server check for sdlc-harness
 # Verifies that required MCP servers are configured before running the harness.
+# Checks VSCode, Copilot CLI, Claude Code, and Claude Desktop config locations.
 # If no config exists, offers to create one automatically.
 # Usage: ./tools/check-mcp.sh [--config <path>] [--auto]
 
@@ -16,11 +17,6 @@ while [ $# -gt 0 ]; do
         *) shift ;;
     esac
 done
-
-CONFIG_PATHS=(".vscode/mcp.json" "$HOME/.copilot/mcp.json")
-if [ -n "$CONFIG_OVERRIDE" ]; then
-    CONFIG_PATHS=("$CONFIG_OVERRIDE")
-fi
 
 REQUIRED_SERVERS=("awesome-copilot" "github" "context7")
 OPTIONAL_SERVERS=("azure" "azure-devops")
@@ -46,24 +42,45 @@ read -r -d '' DEFAULT_MCP_JSON << 'JSONEOF' || true
 }
 JSONEOF
 
+# Config locations: "path|tool_name"
+if [ -n "$CONFIG_OVERRIDE" ]; then
+    CONFIG_LIST=("$CONFIG_OVERRIDE|Custom")
+else
+    CONFIG_LIST=(
+        ".vscode/mcp.json|VSCode"
+        "$HOME/.copilot/mcp.json|Copilot CLI"
+        "$HOME/.claude.json|Claude Code"
+        "$HOME/Library/Application Support/Claude/claude_desktop_config.json|Claude Desktop"
+        "$HOME/.config/Claude/claude_desktop_config.json|Claude Desktop (Linux)"
+    )
+fi
+
 echo "=== sdlc-harness MCP pre-flight check ==="
 echo ""
 
 FOUND_CONFIG=""
-for p in "${CONFIG_PATHS[@]}"; do
+FOUND_TOOL=""
+for entry in "${CONFIG_LIST[@]}"; do
+    p="${entry%%|*}"
+    t="${entry##*|}"
     if [ -f "$p" ]; then
         FOUND_CONFIG="$p"
-        echo "Config found: $p"
+        FOUND_TOOL="$t"
+        echo "Config found ($t): $p"
         break
     fi
 done
 
 if [ -z "$FOUND_CONFIG" ]; then
     echo "No MCP config found. Checked:"
-    for p in "${CONFIG_PATHS[@]}"; do echo "  - $p"; done
+    for entry in "${CONFIG_LIST[@]}"; do
+        p="${entry%%|*}"
+        t="${entry##*|}"
+        echo "  - [$t] $p"
+    done
     echo ""
 
-    TARGET="${CONFIG_PATHS[0]}"
+    TARGET="${CONFIG_LIST[0]%%|*}"
     DO_CREATE=0
 
     if [ $AUTO -eq 1 ]; then
@@ -80,13 +97,11 @@ if [ -z "$FOUND_CONFIG" ]; then
         echo "$DEFAULT_MCP_JSON" > "$TARGET"
         echo ""
         echo "Created: $TARGET"
-        echo "Restart your Copilot session for the servers to load."
+        echo "Restart your session for the servers to load."
         FOUND_CONFIG="$TARGET"
     else
         echo ""
-        echo "Skipped. Manual setup:"
-        echo "  1. Create .vscode/mcp.json with the required servers"
-        echo "  2. See Step 0 in the Harness agent for the JSON template"
+        echo "Skipped. See Step 0 in the Harness agent for manual setup."
         exit 1
     fi
 fi
@@ -116,7 +131,6 @@ done
 echo ""
 if [ $MISSING -eq 1 ]; then
     echo "RESULT: FAIL — required MCP servers are missing."
-    echo "See Step 0 in the Harness agent for installation instructions."
     exit 1
 else
     echo "RESULT: PASS — all required MCP servers are configured."

@@ -1,5 +1,6 @@
 # Pre-flight MCP server check for sdlc-harness (Windows PowerShell)
 # Verifies that required MCP servers are configured before running the harness.
+# Checks VSCode, Copilot CLI, Claude Code, and Claude Desktop config locations.
 # If no config exists, offers to create one automatically.
 # Usage: .\tools\check-mcp.ps1 [-Config <path>] [-Auto]
 
@@ -34,34 +35,62 @@ $defaultMcpJson = @'
 }
 '@
 
+# Claude uses "mcpServers" key instead of "servers"
+$defaultClaudeJson = @'
+{
+  "mcpServers": {
+    "awesome-copilot": {
+      "command": "docker",
+      "args": ["run", "--rm", "-i", "ghcr.io/github/awesome-copilot:latest"]
+    },
+    "github": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/"
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp@latest"]
+    }
+  }
+}
+'@
+
 Write-Host "=== sdlc-harness MCP pre-flight check ==="
 Write-Host ""
 
 $configPaths = @()
 if ($Config -ne "") {
-    $configPaths = @($Config)
+    $configPaths = @(@{ Path = $Config; Tool = "Custom"; Claude = $false })
 } else {
     $configPaths = @(
-        (Join-Path (Get-Location) ".vscode\mcp.json"),
-        (Join-Path $env:USERPROFILE ".copilot\mcp.json")
+        @{ Path = (Join-Path (Get-Location) ".vscode\mcp.json"); Tool = "VSCode"; Claude = $false },
+        @{ Path = (Join-Path $env:USERPROFILE ".copilot\mcp.json"); Tool = "Copilot CLI"; Claude = $false },
+        @{ Path = (Join-Path $env:USERPROFILE ".claude.json"); Tool = "Claude Code"; Claude = $true },
+        @{ Path = (Join-Path $env:APPDATA "Claude\claude_desktop_config.json"); Tool = "Claude Desktop"; Claude = $true }
     )
 }
 
 $foundConfig = $null
-foreach ($p in $configPaths) {
-    if (Test-Path $p) {
-        $foundConfig = $p
-        Write-Host "Config found: $p"
+$foundTool = ""
+$isClaude = $false
+foreach ($c in $configPaths) {
+    if (Test-Path $c.Path) {
+        $foundConfig = $c.Path
+        $foundTool = $c.Tool
+        $isClaude = $c.Claude
+        Write-Host "Config found ($foundTool): $($c.Path)"
         break
     }
 }
 
 if ($null -eq $foundConfig) {
     Write-Host "No MCP config found. Checked:"
-    foreach ($p in $configPaths) { Write-Host "  - $p" }
+    foreach ($c in $configPaths) { Write-Host "  - [$($c.Tool)] $($c.Path)" }
     Write-Host ""
 
-    $target = $configPaths[0]
+    # Default to VSCode location for new config
+    $target = $configPaths[0].Path
+    $template = $defaultMcpJson
     $doCreate = $false
 
     if ($Auto) {
@@ -74,16 +103,14 @@ if ($null -eq $foundConfig) {
     if ($doCreate) {
         $dir = Split-Path $target -Parent
         if (-not (Test-Path $dir)) { New-Item -ItemType Directory -Force -Path $dir | Out-Null }
-        Set-Content -Path $target -Value $defaultMcpJson -Encoding UTF8
+        Set-Content -Path $target -Value $template -Encoding UTF8
         Write-Host ""
         Write-Host "Created: $target"
-        Write-Host "Restart your Copilot session for the servers to load."
+        Write-Host "Restart your session for the servers to load."
         $foundConfig = $target
     } else {
         Write-Host ""
-        Write-Host "Skipped. Manual setup:"
-        Write-Host "  1. Create .vscode\mcp.json with the required servers"
-        Write-Host "  2. See Step 0 in the Harness agent for the JSON template"
+        Write-Host "Skipped. See Step 0 in the Harness agent for manual setup."
         exit 1
     }
 }
@@ -115,7 +142,6 @@ foreach ($srv in $optionalServers) {
 Write-Host ""
 if ($missing) {
     Write-Host "RESULT: FAIL - required MCP servers are missing."
-    Write-Host "See Step 0 in the Harness agent for installation instructions."
     exit 1
 } else {
     Write-Host "RESULT: PASS - all required MCP servers are configured."
