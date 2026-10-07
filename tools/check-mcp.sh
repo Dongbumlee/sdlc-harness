@@ -39,7 +39,7 @@ path, tool, is_claude = sys.argv[1], sys.argv[2], sys.argv[3] == "1"
 key = "mcpServers" if is_claude else "servers"
 
 servers = {
-    "awesome-copilot": {"command": "docker", "args": ["run", "--rm", "-i", "ghcr.io/github/awesome-copilot:latest"]},
+    "awesome-copilot": {"command": "docker", "args": ["run", "--rm", "-i", "ghcr.io/microsoft/mcp-dotnet-samples/awesome-copilot:latest"]},
     "github": {"type": "http", "url": "https://api.githubcopilot.com/mcp/"},
     "context7": {"command": "npx", "args": ["-y", "@upstash/context7-mcp@latest"]},
 }

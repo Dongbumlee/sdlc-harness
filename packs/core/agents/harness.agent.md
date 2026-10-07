@@ -70,7 +70,7 @@ the probe calls. Run each probe call exactly as written.
   >     "awesome-copilot": {
   >       "type": "stdio",
   >       "command": "docker",
-  >       "args": ["run", "--rm", "-i", "ghcr.io/github/awesome-copilot:latest"]
+  >       "args": ["run", "--rm", "-i", "ghcr.io/microsoft/mcp-dotnet-samples/awesome-copilot:latest"]
   >     },
   >     "github": {
   >       "type": "http",

@@ -8,7 +8,7 @@ $ErrorActionPreference = "Stop"
 $requiredServers = @("awesome-copilot", "github", "context7")
 
 $serverDefs = @{
-    "awesome-copilot" = @{ command = "docker"; args = @("run", "--rm", "-i", "ghcr.io/github/awesome-copilot:latest") }
+    "awesome-copilot" = @{ command = "docker"; args = @("run", "--rm", "-i", "ghcr.io/microsoft/mcp-dotnet-samples/awesome-copilot:latest") }
     "github"          = @{ type = "http"; url = "https://api.githubcopilot.com/mcp/" }
     "context7"        = @{ command = "npx"; args = @("-y", "@upstash/context7-mcp@latest") }
 }
