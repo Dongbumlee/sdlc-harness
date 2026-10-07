@@ -188,10 +188,10 @@ deployment, data access, and storage skills tailored to that provider.
 | Pack | Skills | Status |
 |------|--------|--------|
 | **Azure** | `sdlc-azure-deployment`, `sdlc-cosmos-repository`, `sdlc-blob-storage` | Included |
-| **AWS** | `sdlc-aws-deployment`, `sdlc-dynamodb-repository`, `sdlc-s3-storage` | Planned |
-| **GCP** | `sdlc-gcp-deployment`, `sdlc-firestore-repository`, `sdlc-gcs-storage` | Planned |
+| **AWS** | `sdlc-aws-deployment`, `sdlc-dynamodb-repository`, `sdlc-s3-storage` | Included |
+| **GCP** | `sdlc-gcp-deployment`, `sdlc-firestore-repository`, `sdlc-gcs-storage` | Included |
 
-The Azure Pack metadata is bundled at `packs/azure/pack.json`; its three skills are also
+Each pack's metadata lives at `packs/<cloud>/pack.json`; skills are also
 published in the root `skills/` directory so current Agent Plugins clients discover them.
 The root `skills/`, `com.github.copilot/agents/` and `.github/agents/` directories are
 generated from `packs/*/` by `tools/assemble_flat_layout.py` — edit the pack source,
