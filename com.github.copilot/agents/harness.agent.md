@@ -30,10 +30,12 @@ Your role is to **orchestrate**, not implement. You never edit files directly
 
 Before processing any task, perform these checks in order:
 
-### Step 0: MCP server readiness check
+### Step 0: MCP server readiness check — MANDATORY, DO NOT SKIP
 
 **Before doing ANY work**, verify that the required MCP servers are running.
-Run these probe calls and report the status to the user:
+This step is a hard gate. Do NOT proceed to Phase 1 until you have shown
+the status table below to the user. Do NOT summarize, approximate, or skip
+the probe calls. Run each probe call exactly as written.
 
 | # | MCP Server | Probe Call | Required For |
 |---|---|---|---|
@@ -41,7 +43,7 @@ Run these probe calls and report the status to the user:
 | 2 | **GitHub MCP** | `mcp_github_get_me()` or any lightweight GitHub API call | Repository access, PR creation, code search |
 | 3 | **Context7** | `mcp_context7_resolve-library-id(libraryName: "fastapi")` | Framework documentation |
 
-**Report results to the user as a status table:**
+**Report results to the user as a status table — this table is required output, not optional:**
 
 > **MCP Server Status**
 >
@@ -68,6 +70,11 @@ Run these probe calls and report the status to the user:
 - **GitHub MCP fails -> warn and proceed with degraded mode.** GitHub MCP enhances
   the workflow (repo access, PR creation, code search across repos) but is not
   strictly required. Agents can work with local files and inline patterns.
+
+- **If you cannot run a probe call at all** (tool not available in this
+  environment): report "Unknown — could not probe" for that server, explain
+  why, and proceed with degraded mode. Do NOT mark it as Ready and do NOT
+  skip the table.
   Tell the user what capabilities are reduced without it.
 
 - **Context7 fails -> warn and proceed.** Agents can work without framework docs
