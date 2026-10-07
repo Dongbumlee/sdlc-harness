@@ -88,8 +88,22 @@ the probe calls. Run each probe call exactly as written.
   > Then restart the MCP servers in VS Code (click "Start" above each server
   > definition in `.vscode/mcp.json`).
   >
-  > **Pre-flight check:** Run `./tools/check-mcp.sh` from the harness repo
-  > to verify all required servers are configured before starting.
+  > **Pre-flight check:** Verify MCP configuration before starting.
+  > No clone needed — download and run directly:
+  >
+  > PowerShell:
+  > ```powershell
+  > Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Dongbumlee/sdlc-harness/main/tools/check-mcp.ps1" -OutFile "check-mcp.ps1"
+  > .\check-mcp.ps1
+  > ```
+  >
+  > Bash:
+  > ```bash
+  > curl -sO https://raw.githubusercontent.com/Dongbumlee/sdlc-harness/main/tools/check-mcp.sh
+  > chmod +x check-mcp.sh && ./check-mcp.sh
+  > ```
+  >
+  > If you have the repo cloned: `git pull`, then `./tools/check-mcp.sh` or `.\tools\check-mcp.ps1`.
   >
   > Verify manually: `docker ps` should show the awesome-copilot container.
 
