@@ -244,7 +244,7 @@ python tools/validate_canaries.py
 | **Deployment Readiness Reviewer** | QA: Error handling, perf, observability |
 | **QA Bug Checklist Reviewer** | Standalone: 338 real bug patterns |
 
-### Skills (16)
+### Skills (22)
 
 | Skill | Purpose |
 |-------|---------|
@@ -264,6 +264,12 @@ python tools/validate_canaries.py
 | `sdlc-azure-deployment` | Azure Pack: Bicep/AVM deployment |
 | `sdlc-cosmos-repository` | Azure Pack: Cosmos DB Repository Pattern |
 | `sdlc-blob-storage` | Azure Pack: Blob Storage + Queue operations |
+| `sdlc-aws-deployment` | AWS Pack: CDK deployment (Lambda container + Fargate Spot) |
+| `sdlc-dynamodb-repository` | AWS Pack: DynamoDB Repository Pattern |
+| `sdlc-s3-storage` | AWS Pack: S3 + presigned URL operations |
+| `sdlc-gcp-deployment` | GCP Pack: Terraform deployment (Cloud Run + Jobs) |
+| `sdlc-firestore-repository` | GCP Pack: Firestore Repository Pattern |
+| `sdlc-gcs-storage` | GCP Pack: Cloud Storage + signed URL operations |
 
 ### Quality instructions (14 files, auto-applied by file type)
 
