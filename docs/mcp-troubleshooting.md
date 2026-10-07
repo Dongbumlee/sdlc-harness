@@ -25,27 +25,7 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Dongbumlee/sdlc-harnes
 
 ## Issues
 
-### 1. Script downloads old version (CDN cache)
-
-**Symptom:** Downloaded script doesn't match the latest on GitHub.
-
-**Cause:** `raw.githubusercontent.com` caches aggressively at edge nodes.
-
-**Fix:** Add `-Headers @{"Cache-Control"="no-cache"}` (PowerShell) or wait a few minutes.
-
-```powershell
-Invoke-WebRequest -Uri "<url>" -OutFile "check-mcp.ps1" -Headers @{"Cache-Control"="no-cache"}
-```
-
-### 2. PowerShell 5.1 compatibility
-
-**Symptom:** `ConvertFrom-Json -AsHashtable` fails.
-
-**Cause:** `-AsHashtable` requires PowerShell 7+.
-
-**Fix:** The script now uses a `ConvertTo-Hashtable` helper for PS 5.1 compatibility. No action needed.
-
-### 3. MCP servers not loaded after config
+### 1. MCP servers not loaded after config
 
 **Symptom:** Step 0 reports servers as "Not configured" even though config files exist.
 
@@ -53,7 +33,7 @@ Invoke-WebRequest -Uri "<url>" -OutFile "check-mcp.ps1" -Headers @{"Cache-Contro
 
 **Fix:** Completely close and reopen your terminal/VSCode, then re-run.
 
-### 4. GitHub MCP authentication fails
+### 2. GitHub MCP authentication fails
 
 **Symptom:** Twirp error "not_found" when probing GitHub MCP.
 
@@ -65,7 +45,7 @@ gh auth login
 ```
 Then restart your session.
 
-### 5. Claude Code config invalid JSON warning
+### 3. Claude Code config invalid JSON warning
 
 **Symptom:** Script reports "existing config is invalid JSON" for `.claude.json`.
 
@@ -76,7 +56,7 @@ Then restart your session.
 Get-Content "$env:USERPROFILE\.claude.json" -Raw | ConvertFrom-Json
 ```
 
-### 6. Step 0 skipped by model
+### 4. Step 0 skipped by model
 
 **Symptom:** Model says "let me try a simpler approach" and skips MCP checks.
 
@@ -84,7 +64,7 @@ Get-Content "$env:USERPROFILE\.claude.json" -Raw | ConvertFrom-Json
 
 **Fix:** Updated in Harness agent v1.0.2+. Step 0 is now a hard gate with mandatory status table output.
 
-### 7. Non-interactive mode (`-p`) limitations
+### 5. Non-interactive mode (`-p`) limitations
 
 **Symptom:** Shell commands fail with "Permission denied because no interactive user response was available."
 
