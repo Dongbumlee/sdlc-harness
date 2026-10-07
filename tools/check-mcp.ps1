@@ -30,18 +30,33 @@ foreach ($c in $configPaths) {
     $tool = $c.Tool
     $key = if ($c.Claude) { "mcpServers" } else { "servers" }
 
-    # Load existing config or start fresh
-    $config = $null
+    # Load existing config or start fresh (PS 5.1 compatible, no -AsHashtable)
+    $configRaw = $null
     if (Test-Path $path) {
         try {
-            $config = Get-Content $path -Raw | ConvertFrom-Json -AsHashtable
+            $configRaw = Get-Content $path -Raw | ConvertFrom-Json
         } catch {
             Write-Host "[$tool] WARNING: existing config is invalid JSON, skipping: $path"
             $allOk = $false
             continue
         }
     }
-    if ($null -eq $config) { $config = @{} }
+
+    # Convert PSCustomObject to Hashtable for PS 5.1 compatibility
+    function ConvertTo-Hashtable($obj) {
+        if ($obj -is [System.Collections.IEnumerable] -and $obj -isnot [string]) {
+            return @($obj | ForEach-Object { ConvertTo-Hashtable $_ })
+        } elseif ($obj -is [PSCustomObject]) {
+            $ht = @{}
+            $obj.PSObject.Properties | ForEach-Object { $ht[$_.Name] = (ConvertTo-Hashtable $_.Value) }
+            return $ht
+        } else {
+            return $obj
+        }
+    }
+
+    $config = @{}
+    if ($null -ne $configRaw) { $config = ConvertTo-Hashtable $configRaw }
     if (-not $config.ContainsKey($key)) { $config[$key] = @{} }
 
     # Add missing servers
