@@ -18,7 +18,7 @@ Write-Host ""
 
 $configPaths = @(
     @{ Path = (Join-Path (Get-Location) ".vscode\mcp.json"); Tool = "VSCode"; Claude = $false },
-    @{ Path = (Join-Path $env:USERPROFILE ".copilot\mcp-config.json"); Tool = "Copilot CLI"; Claude = $false },
+    @{ Path = (Join-Path $env:USERPROFILE ".copilot\mcp-config.json"); Tool = "Copilot CLI"; Claude = $true },
     @{ Path = (Join-Path $env:USERPROFILE ".claude.json"); Tool = "Claude Code"; Claude = $true },
     @{ Path = (Join-Path $env:APPDATA "Claude\claude_desktop_config.json"); Tool = "Claude Desktop"; Claude = $true }
 )
