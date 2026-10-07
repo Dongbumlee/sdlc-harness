@@ -225,6 +225,25 @@ When the requirements spec is approved and QA has passed:
    - Ask the Analyst to revise the affected sections.
    - Review the revised proposal before proceeding to ADR creation.
 
+#### Project workspace isolation (before Phase 3)
+
+Before the Scaffolder creates any files, establish a dedicated project
+directory. Agents must NEVER write project files into the harness
+repository itself or the user's current working directory unless the
+user explicitly names it.
+
+1. Ask the user for the project directory, or default to
+   `./<project-name>/` under the current working directory.
+2. Create the directory if it does not exist.
+3. Instruct every downstream agent (Scaffolder, Implementer, Documenter,
+   Deployer) to scope ALL file operations to that directory.
+4. If an agent references templates or ADRs from another repository
+   (e.g. the harness repo's own `docs/adr/`), redirect it: templates are
+   read-only references; new project files go in the project directory.
+
+(Rationale: e2e finding 2026-10-06 — the Documenter searched the harness
+repo for ADR templates instead of the new project directory.)
+
 #### Phase 3: Scaffolding validation (Scaffolder)
 
 After the Scaffolder completes, verify the output:
