@@ -57,31 +57,43 @@ if key not in config:
     config[key] = {}
 
 added = []
-for name, definition in servers.items():
-    if name not in config[key]:
-        if is_claude:
-            entry = {}
-            if "command" in definition:
-                entry["command"] = definition["command"]
-            if "args" in definition:
-                entry["args"] = definition["args"]
-            if definition.get("type") == "http":
-                entry["type"] = "http"
-                entry["url"] = definition["url"]
-        else:
-            entry = dict(definition)
-            if "type" not in entry:
-                entry["type"] = "stdio"
-        config[key][name] = entry
-        added.append(name)
+updated = []
 
-if added:
+def build_entry(definition):
+    if is_claude:
+        entry = {}
+        if "command" in definition:
+            entry["command"] = definition["command"]
+        if "args" in definition:
+            entry["args"] = definition["args"]
+        if definition.get("type") == "http":
+            entry["type"] = "http"
+            entry["url"] = definition["url"]
+    else:
+        entry = dict(definition)
+        if "type" not in entry:
+            entry["type"] = "stdio"
+    return entry
+
+for name, definition in servers.items():
+    expected = build_entry(definition)
+    if name not in config[key]:
+        config[key][name] = expected
+        added.append(name)
+    elif config[key][name] != expected:
+        config[key][name] = expected
+        updated.append(name)
+
+if added or updated:
     parent = os.path.dirname(path)
     if parent:
         os.makedirs(parent, exist_ok=True)
     with open(path, "w") as f:
         json.dump(config, f, indent=2)
-    print(f"[{tool}] Added: {', '.join(added)} -> {path}")
+    if added:
+        print(f"[{tool}] Added: {', '.join(added)} -> {path}")
+    if updated:
+        print(f"[{tool}] Updated: {', '.join(updated)} -> {path}")
 else:
     print(f"[{tool}] OK (all servers present)")
 PYEOF

@@ -59,13 +59,43 @@ foreach ($c in $configPaths) {
     if ($null -ne $configRaw) { $config = ConvertTo-Hashtable $configRaw }
     if (-not $config.ContainsKey($key)) { $config[$key] = @{} }
 
-    # Add missing servers
+    # Add missing servers or update outdated definitions
     $added = @()
+    $updated = @()
     foreach ($srv in $requiredServers) {
+        $def = $serverDefs[$srv]
+        $shouldWrite = $false
+
         if (-not $config[$key].ContainsKey($srv)) {
-            $def = $serverDefs[$srv]
+            $shouldWrite = $true
+            $added += $srv
+        } else {
+            # Check if existing definition matches expected (e.g. wrong Docker image)
+            $existing = $config[$key][$srv]
+            $existingJson = ($existing | ConvertTo-Json -Compress -Depth 10)
+            # Build expected entry to compare
+            $expectedEntry = @{}
             if ($c.Claude) {
-                # Claude format: no "type" for stdio, uses command/args directly
+                if ($def.ContainsKey("command")) { $expectedEntry["command"] = $def["command"] }
+                if ($def.ContainsKey("args")) { $expectedEntry["args"] = $def["args"] }
+                if ($def.ContainsKey("type") -and $def["type"] -eq "http") {
+                    $expectedEntry["type"] = "http"; $expectedEntry["url"] = $def["url"]
+                }
+            } else {
+                if ($def.ContainsKey("type")) { $expectedEntry["type"] = $def["type"] } else { $expectedEntry["type"] = "stdio" }
+                if ($def.ContainsKey("command")) { $expectedEntry["command"] = $def["command"] }
+                if ($def.ContainsKey("args")) { $expectedEntry["args"] = $def["args"] }
+                if ($def.ContainsKey("url")) { $expectedEntry["url"] = $def["url"] }
+            }
+            $expectedJson = ($expectedEntry | ConvertTo-Json -Compress -Depth 10)
+            if ($existingJson -ne $expectedJson) {
+                $shouldWrite = $true
+                $updated += $srv
+            }
+        }
+
+        if ($shouldWrite) {
+            if ($c.Claude) {
                 $entry = @{}
                 if ($def.ContainsKey("command")) { $entry["command"] = $def["command"] }
                 if ($def.ContainsKey("args")) { $entry["args"] = $def["args"] }
@@ -80,15 +110,15 @@ foreach ($c in $configPaths) {
                 if ($def.ContainsKey("url")) { $entry["url"] = $def["url"] }
             }
             $config[$key][$srv] = $entry
-            $added += $srv
         }
     }
 
-    if ($added.Count -gt 0) {
+    if ($added.Count -gt 0 -or $updated.Count -gt 0) {
         $dir = Split-Path $path -Parent
         if (-not (Test-Path $dir)) { New-Item -ItemType Directory -Force -Path $dir | Out-Null }
         $config | ConvertTo-Json -Depth 10 | Set-Content -Path $path -Encoding UTF8
-        Write-Host "[$tool] Added: $($added -join ', ') -> $path"
+        if ($added.Count -gt 0) { Write-Host "[$tool] Added: $($added -join ', ') -> $path" }
+        if ($updated.Count -gt 0) { Write-Host "[$tool] Updated: $($updated -join ', ') -> $path" }
     } else {
         Write-Host "[$tool] OK (all servers present)"
     }
