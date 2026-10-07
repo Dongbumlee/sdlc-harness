@@ -452,6 +452,26 @@ must stand on its own; MCP servers are accelerators, not prerequisites.
   versions via `gcloud` or CI.
 - **`terraform apply -auto-approve` in CI** is convenient and dangerous —
   keep manual approval for IAM-changing applies.
+- **Model IDs retire — env-inject, never hardcode.** `gemini-2.0-flash`
+  404'd in 2026-10 ("no longer available", use `gemini-3.8-flash`). Slices
+  must take the model ID from an env var (`GEMINI_MODEL`) so a redeploy,
+  not a rebuild, fixes the next retirement. (AI Brief 2026-10-04)
+- **"API key not valid" is 400 `InvalidArgument`, not 401/403.** The worker
+  mapped only `Unauthenticated`/`PermissionDenied` to auth failures; a bad
+  key bypassed the catches and crashed the worker. Map the 400 body text
+  too. (AI Brief 2026-10-04)
+- **Unmapped model errors must not crash the worker.** `ResourceExhausted`
+  (429, free-tier quota) also bypassed the catches — add a dedicated quota
+  error plus a catch-all so every provider failure lands on a terminal
+  brief status. (AI Brief 2026-10-04)
+- **`google_project_service` defaults `disable_on_destroy=true`.** The
+  first destroy disabled run/artifactregistry/secretmanager mid-teardown.
+  Test slices should set `disable_on_destroy=false` on project services.
+  (AI Brief 2026-10-04)
+- **Cloud Run Job cold start ~4 min in a fresh region.** First execution
+  sat in "Waiting for execution to start" for ~4 min. E2E polling must
+  allow for this; not a bug, but budget it in test timeouts.
+  (AI Brief 2026-10-04)
 
 ## Where files go
 

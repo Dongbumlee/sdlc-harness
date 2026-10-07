@@ -152,7 +152,11 @@ When delegating to **QA Coordinator**, specify which reviewers to invoke based o
 | implement | All 9 (full review) |
 | document | Code Quality |
 | qa | All 9 (full review) |
-| deploy | Deployment Readiness, Security, Azure Compliance |
+| deploy | Deployment Readiness, Security, {Cloud} Compliance* |
+
+\* {Cloud} Compliance = the compliance reviewer matching the deployment
+target: **AWS Compliance** for AWS, **GCP Compliance** for GCP,
+**Azure Compliance** for Azure (default when no cloud target is set).
 | rai | Security, LLM Behavior |
 | release | Deployment Readiness, Code Quality |
 

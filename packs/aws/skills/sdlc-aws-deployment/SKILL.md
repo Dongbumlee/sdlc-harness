@@ -484,6 +484,14 @@ with the comment from Step 2.
 - **CDK CLI behind an egress proxy** — set `no_proxy` to bypass the proxy
   for AWS endpoints, or synth/deploy calls hang or fail (agent-VM finding
   2026-10-03).
+- **SQS cannot directly trigger Fargate — poller Lambda + `RunTask`.**
+  There is no SQS→Fargate event source. The paved road is a small poller
+  Lambda (long-poll SQS) that calls ECS `RunTask` per message; the Fargate
+  task then deletes the message on terminal outcome. (AI Brief 2026-10-04)
+- **Google "API key not valid" surfaces as HTTP 400, not 401/403** — same
+  lesson as Azure/GCP: error mapping must inspect the response body, not
+  just the status code, when classifying auth failures.
+  (AI Brief 2026-10-04)
 
 ## Troubleshooting
 

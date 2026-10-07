@@ -238,6 +238,37 @@ hooks:
   carries only `storageAccountResourceId`. Use
   `metadata: { queueName, queueLength, accountName }`. Confirmed working
   MI-only with no connection strings.
+- **Key Vault secret must exist before the deploy references it** — ARM
+  validates the `keyVaultUrl` at deployment time; a missing secret fails the
+  whole deploy. Set the value (`az keyvault secret set`) before running
+  Bicep. (AI Brief 2026-10-04)
+- **Key Vault secret names forbid underscores** — allowed charset is
+  `[0-9a-zA-Z-]`; `gemini_api_key` is rejected, use `gemini-api-key`.
+  (AI Brief 2026-10-04)
+- **Google "API key not valid" surfaces as HTTP 400, not 401/403** — error
+  mapping must inspect the response body, not just the status code, when
+  classifying auth failures. (AI Brief 2026-10-04)
+- **LLM provider 429/5xx → retry with backoff, don't fail fast** — transient
+  provider errors deserve at least one retry before the job is marked
+  failed. (AI Brief 2026-10-04)
+- **Model IDs retire — env-inject, never hardcode** — `gemini-2.0-flash`
+  404'd in 2026-10. Slices must take the model ID from an env var
+  (`GEMINI_MODEL`) so a redeploy, not a rebuild, fixes the next
+  retirement. (AI Brief 2026-10-04)
+- **Provider 503 overload spikes can persist ≥90 min on the free tier** —
+  the worker's single short retry cannot cover this class; the test
+  harness should back off in tens of minutes, and provider error bodies
+  should stay greppable in logs so quota-429 vs overload-503 are
+  distinguishable without diagnostics. (AI Brief 2026-10-05)
+- **Provider fallback via `LLM_PROVIDER` env switch** — an env-selectable
+  LLM client lets a slice run E2E against an alternate provider without
+  code forks (OpenRouter fallback, AI Brief 2026-10-06). New Key Vault
+  secrets follow the no-underscore rule above.
+- **OpenRouter `openrouter/free` router** — OpenAI-compatible, $0,
+  ~20 req/min; serves a random free model per request (observed:
+  nvidia/nemotron-3.5-lightning:free). Free-tier quality variance makes
+  client-side schema validation + repair retry load-bearing, not
+  optional. (AI Brief 2026-10-06)
 - **Two secret patterns, two rotation stories** (verified 2026-10-03).
   Secrets read via Key Vault SDK with a 60s in-memory cache rotate
   **without restart** (old key → 401 immediately, new key live within

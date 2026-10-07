@@ -81,7 +81,7 @@ argument-hint: "Describe the feature or change to review and release"
     | Perspective | What to check |
     |---|---|
     | **Architecture** | Layering (API → Application → Domain), dependency direction, pattern reuse, template alignment |
-    | **Azure Compliance** | Uses `the approved Cosmos DB library`/`the approved Storage library` (not raw SDK), Repository Pattern, `async with`, Managed Identity, AVM modules, tags, diagnostics |
+    | **{Cloud} Compliance** | Cloud-specific: Azure → `the approved Cosmos DB library`/`the approved Storage library` (not raw SDK), Repository Pattern, `async with`, Managed Identity, AVM modules, tags, diagnostics; AWS → CDK L2 constructs, IAM grant methods; GCP → Terraform standards, least-privilege IAM |
     | **Code Quality** | Naming, docstrings, dead code, comment quality, import organization, copyright headers |
     | **Security** | OWASP Top 10 mapped review, no secrets in code, parameterized queries, CORS config, security headers |
     | **Test Coverage** | Tests exist for new code, Arrange–Act–Assert structure, proper mocking, coverage thresholds |
@@ -130,7 +130,7 @@ argument-hint: "Describe the feature or change to review and release"
    - Automated tests to run/add.
    - Manual test scenarios.
  - **Code Review Findings** (by perspective)
-   - Architecture, Azure Compliance, Code Quality, Security, Test Coverage.
+   - Architecture, {Cloud} Compliance, Code Quality, Security, Test Coverage.
    - Classify each finding as: Critical / Important / Suggestion / Positive.
  - **RAI Review** (if applicable)
    - Risks.

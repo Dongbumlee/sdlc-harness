@@ -100,8 +100,11 @@ Use the categories matching your reviewer domain:
 ### Architecture Reviewer
 `layering` | `dependency-direction` | `pattern-reuse` | `god-service` | `cross-layer-shortcut` | `template-alignment` | `documentation-structure`
 
-### Azure Compliance Reviewer
-`sdk-abstraction` | `repository-pattern` | `context-manager` | `identity` | `bicep-avm` | `waf-toggles` | `resource-tags` | `diagnostics` | `secrets`
+### Cloud Compliance Reviewer (AWS / GCP / Azure)
+`sdk-abstraction` | `repository-pattern` | `context-manager` | `identity` | `secrets`
+Cloud-specific IaC values: Azure → `bicep-avm` | `waf-toggles` | `resource-tags` | `diagnostics`;
+AWS → `cdk-l2` | `iam-grants` | `no-inline-policy`;
+GCP → `terraform-standards` | `least-privilege-iam` | `secret-manager`.
 
 ### Code Quality Reviewer
 `copyright` | `docstrings` | `naming` | `dead-code` | `comments` | `error-handling` | `type-safety` | `imports` | `function-size` | `dry` | `terminology` | `placeholder-text` | `debug-code`

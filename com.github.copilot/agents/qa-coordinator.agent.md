@@ -1,9 +1,9 @@
 ---
 name: QA Coordinator
-description: "Use when running code reviews, quality assurance passes, requirements validation, or pre-merge validation. Orchestrates 9 parallel reviewer subagents covering architecture, security, code quality, testing, requirements completeness, UX, LLM behavior, Azure compliance, and deployment readiness."
+description: "Use when running code reviews, quality assurance passes, requirements validation, or pre-merge validation. Orchestrates 9 parallel reviewer subagents covering architecture, security, code quality, testing, requirements completeness, UX, LLM behavior, cloud compliance (AWS/GCP/Azure), and deployment readiness."
 user-invocable: false
 tools: ['read', 'agent', 'search', 'web', 'browser', 'awesome-copilot/*', 'context7/*', 'azure-devops/*', 'microsoft-learn/*', 'playwright/*']
-agents: ['Architecture Reviewer', 'Azure Compliance Reviewer', 'Code Quality Reviewer', 'Security Reviewer', 'Test Coverage Reviewer', 'Requirements Completeness Reviewer', 'UX & Accessibility Reviewer', 'LLM Behavior Reviewer', 'Deployment Readiness Reviewer']
+agents: ['Architecture Reviewer', 'Azure Compliance Reviewer', 'AWS Compliance Reviewer', 'GCP Compliance Reviewer', 'Code Quality Reviewer', 'Security Reviewer', 'Test Coverage Reviewer', 'Requirements Completeness Reviewer', 'UX & Accessibility Reviewer', 'LLM Behavior Reviewer', 'Deployment Readiness Reviewer']
 skills: ['sdlc-reviewer-output-format', 'sdlc-project-qa']
 ---
 
@@ -20,7 +20,7 @@ reviewers are available. Run these probe calls and report status to the user:
 
 | # | MCP Server | Probe Call | Used By |
 |---|---|---|---|
-| 1 | **awesome-copilot** | `mcp_awesome-copil_search_instructions(keywords: "security")` | Code Quality, Security, Test Coverage, RAI, Azure Compliance Reviewers (skill loading) |
+| 1 | **awesome-copilot** | `mcp_awesome-copil_search_instructions(keywords: "security")` | Code Quality, Security, Test Coverage, RAI, Cloud Compliance Reviewers (skill loading) |
 | 2 | **Azure DevOps** | `mcp_azure-devops_core_list_projects()` | QA Coordinator (bug filing in Step 3) |
 
 **Run both probes in parallel.**
@@ -106,7 +106,11 @@ When asked to review code, run these subagents **in parallel**:
 
 ### Code-level reviewers (5)
 1. **Architecture Reviewer** — layering rules, dependency boundaries, design consistency
-2. **Azure Compliance Reviewer** — SDK usage, AVM patterns, identity best practices
+2. **{Cloud} Compliance Reviewer** — pick ONE matching the deployment target:
+   Azure → SDK usage, AVM patterns, identity best practices;
+   AWS → CDK L2 constructs, IAM grant methods, no inline policy JSON;
+   GCP → Terraform standards, least-privilege IAM, Secret Manager usage.
+   When no cloud target is set, default to Azure Compliance Reviewer.
 3. **Code Quality Reviewer** — naming, docstrings, dead code, commenting patterns
 4. **Security Reviewer** — secrets, injection risks, auth patterns, OWASP compliance
 5. **Test Coverage Reviewer** — test patterns, coverage, assertions, mocking quality
@@ -173,7 +177,7 @@ Before synthesizing, validate each reviewer's output:
 | Reviewer | Score (1-10) | Threshold | Verdict |
 |---|---|---|---|
 | Architecture | X/10 | ≥7 | ✅ Pass / ⛔ Fail |
-| Azure Compliance | X/10 | ≥7 | ✅ Pass / ⛔ Fail |
+| {Cloud} Compliance | X/10 | ≥7 | ✅ Pass / ⛔ Fail |
 | Code Quality | X/10 | ≥7 | ✅ Pass / ⛔ Fail |
 | Security | X/10 | ≥8 | ✅ Pass / ⛔ Fail |
 | Test Coverage | X/10 | ≥7 | ✅ Pass / ⛔ Fail |
