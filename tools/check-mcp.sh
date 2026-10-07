@@ -18,7 +18,7 @@ echo ""
 # "path|tool|claude_format(0/1)"
 CONFIG_LIST=(
     ".vscode/mcp.json|VSCode|0"
-    "$HOME/.copilot/mcp.json|Copilot CLI|0"
+    "$HOME/.copilot/mcp-config.json|Copilot CLI|0"
     "$HOME/.claude.json|Claude Code|1"
     "$HOME/Library/Application Support/Claude/claude_desktop_config.json|Claude Desktop|1"
     "$HOME/.config/Claude/claude_desktop_config.json|Claude Desktop (Linux)|1"
