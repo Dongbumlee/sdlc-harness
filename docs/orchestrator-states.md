@@ -172,4 +172,4 @@ from the spec's `prompt` field instead of the user.
 - `com.github.copilot/agents/harness.agent.md` — the authoritative orchestration prompts
 - `docs/harness-design.md` — why the model is built this way (Anthropic harness research)
 - `docs/workflow-guide.md` — contributor-facing workflow walkthrough
-- `docs/agent-inventory.md` — generated inventory of all 19 agents and 16 skills
+- `docs/agent-inventory.md` — generated inventory of all 21 agents and 22 skills

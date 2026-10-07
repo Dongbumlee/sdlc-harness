@@ -9,12 +9,12 @@
 > lifecycle — so you can focus on building what matters.*
 
 **SDLC Harness** is a multi-agent orchestration system for GitHub Copilot that drives
-software projects through 9 SDLC phases using 19 specialized AI agents. It combines
+software projects through 9 SDLC phases using 21 specialized AI agents. It combines
 adversarial QA evaluation, live MCP-powered context, and iterative feedback loops to
 deliver production-quality code with enforced development standards.
 
 Distributed as an [Agent Plugin](#quick-start) for VS Code and GitHub Copilot CLI.
-Install once — get all 19 agents, 16 skills, and the full SDLC workflow instantly.
+Install once — get all 21 agents, 22 skills, and the full SDLC workflow instantly.
 
 ---
 
@@ -79,7 +79,7 @@ The two directories must remain identical. In Copilot CLI, use `/agent` and sele
 
 ## Architecture
 
-### Agent system (19 agents)
+### Agent system (21 agents)
 
 A single user-facing agent — **Harness** — orchestrates specialized workers,
 each scoped to a specific SDLC phase with least-privilege tool access.
@@ -98,7 +98,7 @@ flowchart TD
     H --> R["Release Manager<br/>Phase 8-9"]
 
     QA -->|parallel| R1["Architecture"]
-    QA -->|parallel| R2["Azure Compliance"]
+    QA -->|parallel| R2["{Cloud} Compliance<br/>AWS/GCP/Azure"]
     QA -->|parallel| R3["Code Quality"]
     QA -->|parallel| R4["Security"]
     QA -->|parallel| R5["Test Coverage"]

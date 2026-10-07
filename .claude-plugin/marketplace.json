@@ -4,14 +4,14 @@
     "name": "SDLC Harness Contributors"
   },
   "metadata": {
-    "description": "SDLC Harness — a multi-agent system that orchestrates your entire software development lifecycle with 19 specialized agents and 16 domain skills.",
+    "description": "SDLC Harness — a multi-agent system that orchestrates your entire software development lifecycle with 21 specialized agents and 22 domain skills.",
     "version": "1.0.1"
   },
   "plugins": [
     {
       "name": "sdlc-harness",
       "source": ".",
-      "description": "Full SDLC orchestration with 19 agents (harness, analyst, scaffolder, implementer, deployer, documenter, QA coordinator, 8 QA reviewers, RAI reviewer, release manager) and 16 skills covering code quality, security, architecture, testing, scaffolding, and Azure cloud patterns.",
+      "description": "Full SDLC orchestration with 21 agents (harness, analyst, scaffolder, implementer, deployer, documenter, QA coordinator, 9 QA reviewers incl. cloud compliance, RAI reviewer, release manager) and 22 skills covering code quality, security, architecture, testing, scaffolding, and AWS/GCP/Azure cloud patterns.",
       "version": "1.0.1",
       "author": {
         "name": "SDLC Harness Contributors"
