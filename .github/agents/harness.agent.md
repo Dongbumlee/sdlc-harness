@@ -62,8 +62,34 @@ the probe calls. Run each probe call exactly as written.
   > The `awesome-copilot` MCP server is not running. This server is required for
   > loading best practices used by skills (security, deployment, scaffolding, code quality).
   >
-  > **To fix:** Ensure Docker Desktop is running, then start the `awesome-copilot` server
-  > in `.vscode/mcp.json` (click the "Start" button above the server definition).
+  > **To fix:** Add this to your `.vscode/mcp.json` (create the file if it does not exist):
+  >
+  > ```json
+  > {
+  >   "servers": {
+  >     "awesome-copilot": {
+  >       "type": "stdio",
+  >       "command": "docker",
+  >       "args": ["run", "--rm", "-i", "ghcr.io/github/awesome-copilot:latest"]
+  >     },
+  >     "github": {
+  >       "type": "http",
+  >       "url": "https://api.githubcopilot.com/mcp/"
+  >     },
+  >     "context7": {
+  >       "type": "stdio",
+  >       "command": "npx",
+  >       "args": ["-y", "@upstash/context7-mcp@latest"]
+  >     }
+  >   }
+  > }
+  > ```
+  >
+  > Then restart the MCP servers in VS Code (click "Start" above each server
+  > definition in `.vscode/mcp.json`).
+  >
+  > **Pre-flight check:** Run `./tools/check-mcp.sh` from the harness repo
+  > to verify all required servers are configured before starting.
   >
   > Verify manually: `docker ps` should show the awesome-copilot container.
 
