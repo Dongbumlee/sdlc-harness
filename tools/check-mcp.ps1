@@ -2,11 +2,13 @@
 # Verifies that required MCP servers are configured before running the harness.
 # Checks VSCode, Copilot CLI, Claude Code, and Claude Desktop config locations.
 # If no config exists, offers to create one automatically.
-# Usage: .\tools\check-mcp.ps1 [-Config <path>] [-Auto]
+# Usage: .\tools\check-mcp.ps1 [-Config <path>] [-Auto] [-All]
+#   -All: create config for ALL supported tools (VSCode, Copilot CLI, Claude Code, Claude Desktop)
 
 param(
     [string]$Config = "",
-    [switch]$Auto
+    [switch]$Auto,
+    [switch]$All
 )
 
 $ErrorActionPreference = "Stop"
@@ -88,26 +90,44 @@ if ($null -eq $foundConfig) {
     foreach ($c in $configPaths) { Write-Host "  - [$($c.Tool)] $($c.Path)" }
     Write-Host ""
 
-    # Default to VSCode location for new config
-    $target = $configPaths[0].Path
-    $template = $defaultMcpJson
+    # Determine targets: -All creates for every tool, otherwise just the first
+    $targets = @()
+    if ($All) {
+        foreach ($c in $configPaths) {
+            $tpl = if ($c.Claude) { $defaultClaudeJson } else { $defaultMcpJson }
+            $targets += @{ Path = $c.Path; Template = $tpl; Tool = $c.Tool }
+        }
+    } else {
+        $c = $configPaths[0]
+        $tpl = if ($c.Claude) { $defaultClaudeJson } else { $defaultMcpJson }
+        $targets += @{ Path = $c.Path; Template = $tpl; Tool = $c.Tool }
+    }
+
+    $label = if ($All) { "all tools ($($targets.Count) locations)" } else { $targets[0].Path }
     $doCreate = $false
 
     if ($Auto) {
         $doCreate = $true
     } else {
-        $answer = Read-Host "Create default MCP config at $target ? (y/n)"
+        $answer = Read-Host "Create default MCP config for $label ? (y/n)"
         if ($answer -eq "y" -or $answer -eq "Y") { $doCreate = $true }
     }
 
     if ($doCreate) {
-        $dir = Split-Path $target -Parent
-        if (-not (Test-Path $dir)) { New-Item -ItemType Directory -Force -Path $dir | Out-Null }
-        Set-Content -Path $target -Value $template -Encoding UTF8
+        foreach ($t in $targets) {
+            $dir = Split-Path $t.Path -Parent
+            if (-not (Test-Path $dir)) { New-Item -ItemType Directory -Force -Path $dir | Out-Null }
+            # Don't overwrite existing files
+            if (Test-Path $t.Path) {
+                Write-Host "Skipped (exists): [$($t.Tool)] $($t.Path)"
+                continue
+            }
+            Set-Content -Path $t.Path -Value $t.Template -Encoding UTF8
+            Write-Host "Created: [$($t.Tool)] $($t.Path)"
+        }
         Write-Host ""
-        Write-Host "Created: $target"
-        Write-Host "Restart your session for the servers to load."
-        $foundConfig = $target
+        Write-Host "Restart your sessions for the servers to load."
+        $foundConfig = $targets[0].Path
     } else {
         Write-Host ""
         Write-Host "Skipped. See Step 0 in the Harness agent for manual setup."

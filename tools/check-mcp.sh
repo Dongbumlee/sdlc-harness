@@ -3,17 +3,20 @@
 # Verifies that required MCP servers are configured before running the harness.
 # Checks VSCode, Copilot CLI, Claude Code, and Claude Desktop config locations.
 # If no config exists, offers to create one automatically.
-# Usage: ./tools/check-mcp.sh [--config <path>] [--auto]
+# Usage: ./tools/check-mcp.sh [--config <path>] [--auto] [--all]
+#   --all: create config for ALL supported tools
 
 set -e
 
 AUTO=0
+ALL=0
 CONFIG_OVERRIDE=""
 
 while [ $# -gt 0 ]; do
     case "$1" in
         --config) CONFIG_OVERRIDE="$2"; shift 2 ;;
         --auto) AUTO=1; shift ;;
+        --all) ALL=1; shift ;;
         *) shift ;;
     esac
 done
@@ -80,25 +83,42 @@ if [ -z "$FOUND_CONFIG" ]; then
     done
     echo ""
 
-    TARGET="${CONFIG_LIST[0]%%|*}"
+    TARGETS=()
+    if [ $ALL -eq 1 ]; then
+        for entry in "${CONFIG_LIST[@]}"; do
+            TARGETS+=("$entry")
+        done
+        LABEL="all tools (${#TARGETS[@]} locations)"
+    else
+        TARGETS=("${CONFIG_LIST[0]}")
+        LABEL="${TARGETS[0]%%|*}"
+    fi
     DO_CREATE=0
 
     if [ $AUTO -eq 1 ]; then
         DO_CREATE=1
     else
-        read -p "Create default MCP config at $TARGET ? (y/n) " ANSWER
+        read -p "Create default MCP config for $LABEL ? (y/n) " ANSWER
         if [ "$ANSWER" = "y" ] || [ "$ANSWER" = "Y" ]; then
             DO_CREATE=1
         fi
     fi
 
     if [ $DO_CREATE -eq 1 ]; then
-        mkdir -p "$(dirname "$TARGET")"
-        echo "$DEFAULT_MCP_JSON" > "$TARGET"
+        for entry in "${TARGETS[@]}"; do
+            t="${entry%%|*}"
+            tool="${entry##*|}"
+            if [ -f "$t" ]; then
+                echo "Skipped (exists): [$tool] $t"
+                continue
+            fi
+            mkdir -p "$(dirname "$t")"
+            echo "$DEFAULT_MCP_JSON" > "$t"
+            echo "Created: [$tool] $t"
+        done
         echo ""
-        echo "Created: $TARGET"
-        echo "Restart your session for the servers to load."
-        FOUND_CONFIG="$TARGET"
+        echo "Restart your sessions for the servers to load."
+        FOUND_CONFIG="${TARGETS[0]%%|*}"
     else
         echo ""
         echo "Skipped. See Step 0 in the Harness agent for manual setup."
