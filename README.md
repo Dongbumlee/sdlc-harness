@@ -158,6 +158,10 @@ Agents fetch live context from external tools — no stale training data:
 | **Context7** | Current framework docs (FastAPI, React, etc.) | Implementer, Analyst |
 | **Playwright** | Browser automation for E2E testing | QA Coordinator |
 
+> **Setup:** Run `tools/check-mcp.ps1` (Windows) or `tools/check-mcp.sh` (Linux/macOS)
+> to auto-configure MCP servers for VSCode, Copilot CLI, Claude Code, and Claude Desktop.
+> See [MCP Troubleshooting](docs/mcp-troubleshooting.md) for common issues.
+
 ---
 
 ## How It Works
