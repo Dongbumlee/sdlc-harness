@@ -130,6 +130,9 @@ initialization using the `sdlc-workspace-init` skill:
 1. Invoke `/sdlc-workspace-init` and follow its procedure.
 2. This will:
    - Ask the user for project name, domain, and tech stack.
+   - When filling TECH_STACK, use these defaults unless the user specifies otherwise:
+     * Python: uv (package manager), FastAPI (API framework), pytest, ruff, mypy
+     * TypeScript: pnpm (package manager), TypeScript 7, React + Next.js, shadcn/ui, Vitest, ESLint, Prettier
    - Generate `.github/copilot-instructions.md` from the template in the skill's assets.
    - Copy quality instruction files to `.github/instructions/`.
    - Copy SDLC prompt files to `.github/prompts/`.
