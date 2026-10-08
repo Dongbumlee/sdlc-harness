@@ -294,11 +294,24 @@ repo for ADR templates instead of the new project directory.)
 
 #### Phase 3: Scaffolding validation (Scaffolder)
 
-After the Scaffolder completes, verify the output:
+After the Scaffolder completes, verify the output against this MANDATORY checklist.
+Do NOT proceed to Phase 4 until ALL items pass:
 
-1. Check that key files exist (pyproject.toml, Dockerfile, tests/).
-2. If files are missing or don't match the template, ask the Scaffolder to fix.
-3. Only proceed to Phase 4 when the structure is complete.
+**Required files and directories:**
+- [ ] `.SDLC/project-manifest.md` exists and lists templates used
+- [ ] `src/` directory exists with project structure
+- [ ] `tests/` directory exists
+- [ ] `pyproject.toml` (Python) or `package.json` (TypeScript) exists
+- [ ] `.gitignore` exists
+- [ ] `README.md` exists (can be minimal stub)
+
+**If any item is missing:**
+1. Tell the Scaffolder exactly which items are missing.
+2. Ask the Scaffolder to create them.
+3. Re-verify before proceeding.
+
+**Rationale:** Downstream phases (Implementer, QA, Documenter) depend on this
+structure. Skipping validation causes cascading failures.
 
 #### Phase 3+8: Infrastructure validation (Deployer)
 
