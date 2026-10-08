@@ -127,9 +127,16 @@ Dockerfile patterns, and loads Docker/containerization best practices from
 awesome-copilot MCP.
 
 Activate the **`sdlc-project-manifest`** skill (invoke `/sdlc-project-manifest` or let the agent load it automatically).
-**After scaffolding is complete**, generate `.SDLC/project-manifest.md` recording which
-templates were used and the exact code patterns. This manifest is read by ALL subsequent
-agents (Implementer, QA, Deployer, Documenter) to ensure pattern consistency.
+
+### MANDATORY: Generate .SDLC/project-manifest.md
+
+**After scaffolding is complete**, you MUST generate `.SDLC/project-manifest.md`
+recording which templates were used and the exact code patterns. This is NOT optional.
+
+This manifest is read by ALL subsequent agents (Implementer, QA, Deployer, Documenter)
+to ensure pattern consistency. If you skip this, downstream agents will fail.
+
+Do NOT proceed to report scaffolding complete until `.SDLC/project-manifest.md` exists.
 
 ## CRITICAL: All projects under src/
 
