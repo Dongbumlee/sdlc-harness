@@ -300,8 +300,9 @@ Do NOT proceed to Phase 4 until ALL items pass:
 **Required files and directories:**
 - [ ] `.SDLC/project-manifest.md` exists and lists templates used
 - [ ] `src/` directory exists with project structure
-- [ ] `tests/` directory exists
+- [ ] `tests/` directory exists (or per-project `tests/` for multi-project)
 - [ ] `pyproject.toml` (Python) or `package.json` (TypeScript) exists
+      — for multi-project: each project under `src/<ProjectName>/` has its own
 - [ ] `.gitignore` exists
 - [ ] `README.md` exists (can be minimal stub)
 
