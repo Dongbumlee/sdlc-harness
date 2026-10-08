@@ -310,6 +310,11 @@ After the Deployer generates Bicep/azd configuration:
 
 #### Phase 4: Implementation feedback (Implementer)
 
+Delegate to the Implementer with explicit structure guidance:
+> "Implement the feature following the approved design. All source code MUST go
+> inside `src/` (e.g., `src/<project-name>/`), never at the project root.
+> Tests go in `tests/` at the project root."
+
 The Implementer has its own acceptance criteria and self-evaluation checklist.
 If the self-evaluation reveals gaps, the Implementer fixes them before handoff to QA.
 
