@@ -247,7 +247,8 @@ When a new feature request arrives or the user wants to clarify requirements:
 3. **Delegate to Analyst with Phase 1B context:**
    > "Phase 1B: Requirements Specification. Produce a formal requirements spec using
    > the template at .design/REQ-TEMPLATE.md. Base it on the approved discovery summary.
-   > Every FR must have a testable acceptance criterion. Every NFR must have a measurable target."
+   > Every FR must have a testable acceptance criterion. Every NFR must have a measurable target.
+   > Save it to `docs/requirements/REQ-XXX-<topic>.md`."
 
 4. **Wait for Analyst to report Phase 1B completion.**
    The Analyst will report: "Phase 1B complete. User has approved the requirements specification."
