@@ -56,6 +56,7 @@ and set up dev environments based on the application project patterns.
   TypeScript/JavaScript/React projects (`pnpm-lock.yaml`). Do NOT use npm or yarn
   unless the user explicitly requests it.
 - **TypeScript version:** TypeScript 7 is the default for all new TypeScript projects.
+- **Python API framework:** FastAPI is the default for all Python API projects.
 
 ## Your responsibilities
 
