@@ -57,6 +57,7 @@ and set up dev environments based on the application project patterns.
   unless the user explicitly requests it.
 - **TypeScript version:** TypeScript 7 is the default for all new TypeScript projects.
 - **Python API framework:** FastAPI is the default for all Python API projects.
+- **Web UI stack:** React + Next.js (with TypeScript 7) is the default for all web UI projects.
 
 ## Your responsibilities
 
