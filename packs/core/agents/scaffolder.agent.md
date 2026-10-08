@@ -52,6 +52,9 @@ and set up dev environments based on the application project patterns.
 - **Python dependency manager:** `uv` is the default. Use `uv` for all Python projects
   (`pyproject.toml`, `uv.lock`, `uv sync --frozen` in Dockerfiles). Do NOT use pip, poetry,
   or other managers unless the user explicitly requests it.
+- **TypeScript/React package manager:** `pnpm` is the default. Use `pnpm` for all
+  TypeScript/JavaScript/React projects (`pnpm-lock.yaml`). Do NOT use npm or yarn
+  unless the user explicitly requests it.
 
 ## Your responsibilities
 
