@@ -295,9 +295,18 @@ user explicitly names it.
 (Rationale: e2e finding 2026-10-06 — the Documenter searched the harness
 repo for ADR templates instead of the new project directory.)
 
-#### Phase 3: Scaffolding validation (Scaffolder)
+#### Phase 3: Scaffolding (Scaffolder)
 
-After the Scaffolder completes, verify the output against this MANDATORY checklist.
+1. **Delegate to Scaffolder:** Create the full project scaffold before any
+   implementation begins:
+   > "Phase 3: Scaffolding. Create the project structure following the harness
+   > defaults: `src/<ProjectName>API/` (Python/FastAPI) and `src/<ProjectName>UI/`
+   > (TypeScript/React) for multi-project, or `src/` for single-project.
+   > Include `.SDLC/project-manifest.md`, `.gitignore`, `README.md` stub,
+   > and per-project `pyproject.toml`/`package.json` with test directories.
+   > Do NOT use `backend/`/`frontend/` at the root."
+
+2. After the Scaffolder completes, verify the output against this MANDATORY checklist.
 Do NOT proceed to Phase 4 until ALL items pass:
 
 **Required files and directories:**
