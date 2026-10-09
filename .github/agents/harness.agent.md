@@ -317,9 +317,9 @@ Do NOT proceed to Phase 4 until ALL items pass:
 **Rationale:** Downstream phases (Implementer, QA, Documenter) depend on this
 structure. Skipping validation causes cascading failures.
 
-#### Phase 3+8: Infrastructure validation (Deployer)
+#### Phase 3B: Infrastructure validation (Deployer)
 
-After the Deployer generates Bicep/azd configuration:
+Runs in parallel with Phase 3 scaffolding. After the Deployer generates Bicep/azd configuration:
 
 1. Check that Bicep files reference valid AVM module versions.
 2. Verify no hardcoded secrets or connection strings.
@@ -372,6 +372,9 @@ protocol based on failure severity:
 
 5. **After the loop completes**, summarize the improvement trajectory:
    > "QA completed in X rounds. Composite score: Round 1 [X/10] → Round 2 [Y/10] → Final [Z/10]."
+
+6. **Refresh documentation:** If the Implementer changed code during QA fixes,
+   delegate to the Documenter to update affected docs. Verify no stale references remain.
 
 **Do NOT skip validation steps.** Every phase transition is an evaluation point.
 Fixes applied without verification may introduce new issues.
