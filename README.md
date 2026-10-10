@@ -58,7 +58,7 @@ Open your project and bootstrap:
 
 ```
 # Recommended: explicit invocation
-/harness
+/sdlc-start
 initialize workspace
 ```
 
