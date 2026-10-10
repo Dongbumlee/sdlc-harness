@@ -1,5 +1,5 @@
 ---
-name: harness
+name: sdlc-start
 description: "Start or continue an SDLC workflow using the sdlc-harness plugin. Use for any feature development, bug fix, or project task that should go through the full software development lifecycle (requirements, design, scaffolding, implementation, testing, QA, documentation)."
 ---
 
