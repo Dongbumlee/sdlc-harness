@@ -57,6 +57,14 @@ Install once — get all 21 agents, 22 skills, and the full SDLC workflow instan
 Open your project and bootstrap:
 
 ```
+# Recommended: explicit invocation
+/harness
+initialize workspace
+```
+
+Or via the agent picker:
+
+```
 /agent harness
 initialize workspace
 ```
