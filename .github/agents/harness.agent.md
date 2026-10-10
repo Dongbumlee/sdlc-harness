@@ -239,6 +239,14 @@ feedback loop:
 
 When a new feature request arrives or the user wants to clarify requirements:
 
+**For existing projects:** If `.SDLC/project-manifest.md` or `docs/requirements/` already
+exists, this is a feature request on an existing project — NOT a greenfield build.
+You MUST still run the full Phase 1-2 flow:
+1. Read the existing manifest, requirements, and ADRs to understand context.
+2. Create a NEW requirements spec `docs/requirements/REQ-XXX-<feature>.md` (increment the number).
+3. Create a NEW ADR or ADR addendum for design decisions.
+4. Do NOT skip to implementation. Every feature gets its own REQ and design review.
+
 1. **Delegate to Analyst with Phase 1A context:**
    > "Phase 1A: Collaborative Discovery. The user wants to build [summary of request].
    > Use the sdlc-requirements-discovery skill to elicit requirements through iterative
