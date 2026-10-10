@@ -36,7 +36,8 @@
     "skills/sdlc-requirements-discovery",
     "skills/sdlc-reviewer-output-format",
     "skills/sdlc-security-review",
-    "skills/sdlc-workspace-init"
+    "skills/sdlc-workspace-init",
+    "skills/harness"
   ],
   "version": "1.0.0"
 }
