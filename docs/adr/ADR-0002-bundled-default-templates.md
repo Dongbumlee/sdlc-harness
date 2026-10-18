@@ -11,9 +11,8 @@
 
 The harness's north star is consistency: one adopted standard, applied the
 same way across languages and implementation solutions, so that any engineer
-who knows the standard can work in any project that follows it — minimizing
-dependence on individual engineers, the way an FDE brings a client's own code
-standards to every engagement.
+who knows the standard can work in any project that follows it, minimizing
+dependence on individual engineers.
 
 Two layers of that standard already ship:
 
