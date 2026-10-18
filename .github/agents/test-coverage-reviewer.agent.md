@@ -38,10 +38,15 @@ and assertion effectiveness**.
    - For Python tests: read `.github/instructions/test-quality.instructions.md`.
    - For TypeScript tests: read `.github/instructions/test-quality-ts.instructions.md`.
    - For React tests: read `.github/instructions/test-quality-tsx.instructions.md`.
+   - For C# tests: read `.github/instructions/test-quality-csharp.instructions.md`.
+   - Other stacks: the `test-quality-<stack>` file for the project's stack
+     profile (see `sdlc-stack-profiles`).
 
-3. **Run tests to verify coverage (when possible):**
+3. **Run tests to verify coverage (when possible)** — use the project's stack
+   profile Test command (the stack is recorded in `.SDLC/project-manifest.md`):
    - Python: run `uv run pytest --cov --cov-report=term-missing` in the service directory.
    - TypeScript: run `npx vitest run --coverage` in the service directory.
+   - .NET: run `dotnet test <Name>.sln -c Release --collect "XPlat Code Coverage"` from the repo root.
 
 4. **Run Playwright tests (if project has frontend):**
    - Check if `playwright.config.ts` or `playwright.config.js` exists in the frontend project.

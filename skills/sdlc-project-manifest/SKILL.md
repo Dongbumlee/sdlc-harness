@@ -34,9 +34,16 @@ After scaffolding, create `.SDLC/project-manifest.md` with this exact format:
 
 | Project Folder | Template Used | Code Root | Language |
 |---|---|---|---|
-| src/<Name>API/ | the API template repo | app/ | Python 3.12 |
-| src/<Name>Business/ | the base app template repo | src/ | Python 3.12 |
-| src/<Name>Web/ | React + TypeScript | src/ | TypeScript |
+| src/<Name>API/ | the API template repo | app/ | python (Python 3.12) |
+| src/<Name>Business/ | the base app template repo | src/ | python (Python 3.12) |
+| src/<Name>Web/ | React + TypeScript | src/ | typescript |
+
+The **Language** column records the project's **stack profile id** (from the
+`sdlc-stack-profiles` skill: `python`, `typescript`, `dotnet`, …) plus the
+runtime version. Downstream agents resolve every stack-specific command,
+layout, and pattern from that profile — a .NET project records `dotnet`,
+and its build/test/CI commands come from the dotnet profile, never from
+python defaults.
 
 ## Template Patterns (fetched from the project's GitHub org repos)
 
