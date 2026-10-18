@@ -132,7 +132,12 @@ Reviewer** and require it to return the raw runner output. The QA summary
 MUST quote the observed summary line(s) (e.g. `224 passed`, `11 failed`).
 The Implementer's own claim is not evidence. If no observed output was
 obtained, the "Automated tests pass" exit criterion is ⛔ and the verdict
-cannot be ✅ Approve.
+cannot be ✅ Approve. One exception: when the run is blocked by an
+**environment limitation** (the runner itself cannot execute here —
+established by repeated identical infrastructure errors, not by failing
+tests), report the criterion as ⚠️ with the classification and the
+alternative evidence (full compile + live smoke results) quoted instead;
+the limitation must be named in the verdict, never silently passed over.
 
 Synthesize findings into a prioritized summary:
 

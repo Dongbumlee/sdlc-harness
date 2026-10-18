@@ -78,6 +78,15 @@ Step 6: Run all tests                             → `uv run pytest --cov`
   and re-run them. A failing stale test is a defect in your change, not in
   the test suite, and "existing tests pass" may never be reported while any
   of them fail.
+- **Environment failures have an exit condition.** If the same test or build
+  command fails twice with identical infrastructure errors (the runner cannot
+  start or connect, the toolchain is missing, a service is unreachable),
+  STOP retrying and re-diagnosing. Classify it as an **environment
+  limitation**, verify by the strongest available alternative (full compile
+  including the test project, plus a live smoke test of the running app),
+  and report the limitation explicitly in your handoff — tests written and
+  compiling, execution blocked by the environment. Never loop diagnostics,
+  and never convert an environment failure into a pass claim.
 - Never move to the next step without writing the unit test for the current step.
 - Unit tests go in `tests/` at the project root (NOT inside `app/` or `src/`).
 - Integration tests also go in `tests/` (e.g., `tests/integration/`).
