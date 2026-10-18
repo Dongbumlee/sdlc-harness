@@ -3,7 +3,7 @@ name: Implementer
 description: "Use when writing production code, implementing features, adding API endpoints, creating data models, or writing unit and integration tests. Follows SDLC Phase 4 with test-driven implementation."
 user-invocable: false
 tools: ['execute', 'read', 'agent', 'edit', 'search', 'web', 'browser', 'awesome-copilot/*', 'context7/*', 'github/*', 'azure/keyvault', 'azure/storage', 'azure/cosmos', 'azure-devops/*', 'microsoft-learn/*', 'ms-python.python/getPythonEnvironmentInfo', 'ms-python.python/getPythonExecutableCommand', 'ms-python.python/installPythonPackage', 'ms-python.python/configurePythonEnvironment', 'todo']
-skills: ['sdlc-blob-storage', 'sdlc-cosmos-repository', 'sdlc-project-manifest', 'sdlc-reference-catalog']
+skills: ['sdlc-blob-storage', 'sdlc-cosmos-repository', 'sdlc-project-manifest', 'sdlc-reference-catalog', 'sdlc-stack-profiles']
 ---
 
 # Implementer — SDLC Phase 4: Implementation & Tests
@@ -61,14 +61,22 @@ Step 2: Implement repository / data access        → Unit test with mocked DB
 Step 3: Implement business service                → Unit test with mocked repo
 Step 4: Implement API route / controller          → Unit test for route handler
 Step 5: Write integration tests                   → HTTP-level tests for API endpoints
-Step 6: Run all tests                             → `uv run pytest --cov`
+Step 6: Run all tests                             → the stack profile's Test command
 ```
+
+**Stack commands come from the project's stack profile** (`sdlc-stack-profiles`
+skill; the project's stack is recorded in `.SDLC/project-manifest.md`). Never
+assume a test runner from the file extensions alone: python →
+`uv run pytest --cov`, typescript → `npx vitest run`, dotnet →
+`dotnet test <Name>.sln -c Release`, and so on per the profile.
 
 **Rules:**
 - Never move to the next step without writing the unit test for the current step.
-- Unit tests go in `tests/` at the project root (NOT inside `app/` or `src/`).
+- Unit tests go in `tests/` at the project root (NOT inside `app/` or `src/`) —
+  except where the stack profile says otherwise (dotnet: the sibling
+  `<Name>.Tests` project).
 - Integration tests also go in `tests/` (e.g., `tests/integration/`).
-- Run `uv run pytest --cov` after all steps to verify everything passes.
+- Run the stack profile's Test command after all steps to verify everything passes.
 
 ## Reference catalog
 
@@ -224,7 +232,7 @@ Even single-project repos use `src/<Name>API/` as the project folder.
 - `the agent template repo`: `src/libs/agent_framework/` (MCPContext, middleware), `src/samples/`
 
 **Dependency management:**
-- All templates use **`uv`** — Dockerfiles use `uv sync --frozen` (never `pip install`)
+- All **python** templates use **`uv`** — Dockerfiles use `uv sync --frozen` (never `pip install`). Other stacks use their profile's package manager (typescript: `pnpm`; dotnet: NuGet via `dotnet restore`).
 - `pyproject.toml` uses `[project]` format with `requires-python = ">=3.12"`
 - Dev dependencies in `[dependency-groups] dev` section
 - `pytest-asyncio` is used by the templates (included in dev deps)
@@ -267,7 +275,9 @@ Activate these skills based on the task (they are available via the installed pl
 - Python: pytest with `pytest-asyncio` for async tests. Arrange–Act–Assert structure.
 - TypeScript: Vitest. Follow `.github/instructions/test-quality-ts.instructions.md`.
 - React: Vitest + React Testing Library. Follow `.github/instructions/test-quality-tsx.instructions.md`.
-- Run `uv run pytest --cov` or `npx vitest run` before reporting completion.
+- .NET: xUnit. Follow `.github/instructions/test-quality-csharp.instructions.md`.
+- Run the stack profile's Test command (python: `uv run pytest --cov`;
+  typescript: `npx vitest run`; dotnet: `dotnet test`) before reporting completion.
 
 ## Self-evaluation before QA handoff
 
@@ -316,7 +326,7 @@ At the end of your implementation, include an **SDLC Exit Criteria Check** secti
 - Feature implemented following architecture layering rules: ✅/⚠️/⛔
 - Unit tests written with Arrange–Act–Assert structure: ✅/⚠️/⛔
 - Integration tests written for API/data access layers: ✅/⚠️/⛔
-- All tests pass (`pytest --cov` / `npx vitest run`): ✅/⚠️/⛔
+- All tests pass (the stack profile's Test command): ✅/⚠️/⛔
 - Code-quality and test-quality instruction files respected: ✅/⚠️/⛔
 - Approved Azure SDK abstractions used (no raw clients): ✅/⚠️/⛔
 - Self-evaluation completed with acceptance criteria coverage table: ✅/⚠️/⛔
