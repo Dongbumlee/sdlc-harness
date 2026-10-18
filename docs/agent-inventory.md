@@ -22,14 +22,14 @@
 | 8 | `documenter.agent.md` | Documenter | Phase Worker | 5 | No | `sdlc-adr-authoring`, `sdlc-reference-catalog` |
 | 9 | `gcp-compliance-reviewer.agent.md` | GCP Compliance Reviewer | QA Reviewer | 6 (sub) | No | `sdlc-reviewer-output-format` |
 | 10 | `harness.agent.md` | Harness | Orchestrator | All (1–9) | — | `sdlc-canary-runner`, `sdlc-requirements-discovery`, `sdlc-workspace-init` |
-| 11 | `implementer.agent.md` | Implementer | Phase Worker | 4 | No | `sdlc-blob-storage`, `sdlc-cosmos-repository`, `sdlc-project-manifest`, `sdlc-reference-catalog` |
+| 11 | `implementer.agent.md` | Implementer | Phase Worker | 4 | No | `sdlc-blob-storage`, `sdlc-cosmos-repository`, `sdlc-project-manifest`, `sdlc-reference-catalog`, `sdlc-stack-profiles` |
 | 12 | `llm-behavior-reviewer.agent.md` | LLM Behavior Reviewer | QA Reviewer | 6 (sub) | No | `sdlc-project-qa`, `sdlc-security-review`, `sdlc-reviewer-output-format` |
 | 13 | `qa-bug-checklist-reviewer.agent.md` | QA Bug Checklist Reviewer | Standalone | On-demand | Yes | `sdlc-qa-bug-checklist`, `sdlc-security-review`, `sdlc-azure-deployment` |
 | 14 | `qa-coordinator.agent.md` | QA Coordinator | Orchestrator + Phase Worker | 6 | No | `sdlc-reviewer-output-format`, `sdlc-project-qa` |
 | 15 | `rai-reviewer.agent.md` | RAI Reviewer | QA Reviewer | 7 | No | — |
 | 16 | `release-manager.agent.md` | Release Manager | Phase Worker | 8-9 | No | — |
 | 17 | `requirements-completeness-reviewer.agent.md` | Requirements Completeness Reviewer | QA Reviewer | 6 (sub) | No | `sdlc-reviewer-output-format` |
-| 18 | `scaffolder.agent.md` | Scaffolder | Phase Worker | 3 | No | `sdlc-project-manifest`, `sdlc-project-scaffolding`, `sdlc-reference-catalog` |
+| 18 | `scaffolder.agent.md` | Scaffolder | Phase Worker | 3 | No | `sdlc-project-manifest`, `sdlc-project-scaffolding`, `sdlc-reference-catalog`, `sdlc-stack-profiles` |
 | 19 | `security-reviewer.agent.md` | Security Reviewer | QA Reviewer | 6 (sub) | No | `sdlc-reviewer-output-format`, `sdlc-security-review` |
 | 20 | `test-coverage-reviewer.agent.md` | Test Coverage Reviewer | QA Reviewer | 6 (sub) | No | `sdlc-reviewer-output-format`, `sdlc-project-qa` |
 | 21 | `ux-accessibility-reviewer.agent.md` | UX & Accessibility Reviewer | QA Reviewer | 6 (sub) | No | `sdlc-project-qa`, `sdlc-reviewer-output-format` |
