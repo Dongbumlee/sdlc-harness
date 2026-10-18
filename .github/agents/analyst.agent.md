@@ -116,6 +116,12 @@ Present the complete spec inline in your response, formatted exactly as the
 REQ-TEMPLATE.md template specifies. This is the **contract** — downstream agents
 implement exactly what it says, nothing more, nothing less.
 
+You cannot create files — the **Documenter** saves your spec as
+`docs/requirements/REQ-XXX-<topic>.md` using the number the Harness assigns.
+For an existing project, the Harness will give you that number plus the
+existing REQs and ADRs: spec ONLY the new feature's delta, treat existing
+specs as constraints, and never re-spec behavior that is already specified.
+
 ### After presenting the spec
 
 1. Ask the user to review: "Please review this requirements specification. Once you approve it, I'll proceed to design."
@@ -137,11 +143,10 @@ implement exactly what it says, nothing more, nothing less.
 0. **Verify GitHub MCP authentication (required):**
    - Perform a probe call: use `mcp_github_get_file_contents` to fetch `README.md` from
      the project's reference library repo (from `copilot-instructions.md`).
-   - If the call **fails or returns an auth error**, STOP and inform the user:
-     > GitHub MCP authentication is required to access reference repos.
-     > Please sign in with an account that has org access, then retry.
-   - If the user cannot authenticate, fall back to patterns in `.github/reference-catalog.md`
-     and warn that live verification was not possible.
+   - If the call **fails or returns an auth error**, WARN and proceed (Harness
+     policy — GitHub MCP is an enhancement, never a gate): fall back to patterns
+     in `.github/reference-catalog.md` and state in your output that live
+     verification was not possible. Do NOT stop the workflow.
 
 0b. **Check awesome-copilot MCP (recommended):**
    - Probe: `mcp_awesome-copil_search_instructions(keywords: "planning")`

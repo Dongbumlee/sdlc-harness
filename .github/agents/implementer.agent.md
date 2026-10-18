@@ -53,6 +53,13 @@ Example acceptance criteria:
 
 ### Steps 1-6: Implementation with inline testing
 
+**Step 0 (existing projects — mandatory baseline):** Before changing any code,
+run the project's FULL existing test suite and record the raw summary line
+(e.g. `199 passed`). If the baseline is already red, report the failing tests
+to the Harness before you touch anything — your change is judged against this
+baseline, and pre-existing failures must never be attributed to (or hidden by)
+your work.
+
 For each feature, follow this sequence:
 
 ```
@@ -65,6 +72,12 @@ Step 6: Run all tests                             → `uv run pytest --cov`
 ```
 
 **Rules:**
+- **Contract changes update their tests in the same change.** If you alter an
+  existing behavior contract (status codes, response shapes, routes, error
+  semantics), you MUST update the existing tests that assert the old contract
+  and re-run them. A failing stale test is a defect in your change, not in
+  the test suite, and "existing tests pass" may never be reported while any
+  of them fail.
 - Never move to the next step without writing the unit test for the current step.
 - Unit tests go in `tests/` at the project root (NOT inside `app/` or `src/`).
 - Integration tests also go in `tests/` (e.g., `tests/integration/`).
@@ -158,7 +171,7 @@ Include `Source: Implementer (Phase 5)` on your entries.
        chat_client=ai_client,
        name="SmartDocAgent",
        instructions="...",
-       model_id="gpt-4o",
+       model_id="<chat-model-deployment>",  # the project's configured chat model — never hardcode a model name
        tools=[search_tool],
        middleware=debugging_middleware,
    )
@@ -286,6 +299,10 @@ before the formal review, reducing QA round-trips.
    - Does the implementation actually satisfy the criterion, or does it only appear to?
 
 2. **Run all tests.** Do they actually pass? Check the output — don't assume.
+   Your handoff MUST quote the raw summary line(s) from the test runner(s)
+   (e.g. `224 passed in 31.2s`), including the baseline numbers from Step 0
+   for existing projects. A pass/fail claim without the quoted runner output
+   is an incomplete handoff.
 
 3. **Review your own code as if you didn't write it.** Look for:
    - Edge cases you forgot to handle
@@ -316,7 +333,7 @@ At the end of your implementation, include an **SDLC Exit Criteria Check** secti
 - Feature implemented following architecture layering rules: ✅/⚠️/⛔
 - Unit tests written with Arrange–Act–Assert structure: ✅/⚠️/⛔
 - Integration tests written for API/data access layers: ✅/⚠️/⛔
-- All tests pass (`pytest --cov` / `npx vitest run`): ✅/⚠️/⛔
+- All tests pass (`pytest --cov` / `npx vitest run`) — raw summary line quoted in this report: ✅/⚠️/⛔
 - Code-quality and test-quality instruction files respected: ✅/⚠️/⛔
 - Approved Azure SDK abstractions used (no raw clients): ✅/⚠️/⛔
 - Self-evaluation completed with acceptance criteria coverage table: ✅/⚠️/⛔

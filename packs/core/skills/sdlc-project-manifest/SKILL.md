@@ -107,7 +107,29 @@ After scaffolding, create `.SDLC/project-manifest.md` with this exact format:
 - Async methods: suffix with `Async`
 - Test files: `test_<module_name>.py` mirroring source structure
 - API routes: `/api/v1/<resource>`
+
+## Phase-State Ledger
+
+| Phase | Status | Artifacts | Updated |
+|---|---|---|---|
+| 1 Requirements | Not started | — | — |
+| 2 Design | Not started | — | — |
+| 3 Scaffold | Not started | — | — |
+| 4 Implementation | Not started | — | — |
+| 5 Documentation | Not started | — | — |
+| 6 QA | Not started | — | — |
+| 7 RAI | Not started | — | — |
+| 8-9 Release | Not started | — | — |
 ```
+
+**The Phase-State Ledger** is maintained by the **Harness** (via the
+Documenter) at every phase transition: Status (`Not started` / `In progress` /
+`Complete`), the artifact paths the phase produced, and the date. It is the
+single source of truth for run state — an interrupted run resumes from it
+(Harness Step 0.5), and the Release Manager refuses to release while a phase
+the ledger covers is not Complete. For feature work on an existing project,
+add one ledger row-set (or a dated section) per task so the state of each
+feature stays visible.
 
 **CRITICAL: Read the actual template files from GitHub MCP when generating this manifest.**
 Do NOT invent patterns — fetch and record what the templates actually contain.

@@ -20,14 +20,17 @@ and ensure the release process is repeatable and documented.
 
 ## Before creating a release
 
-0. **Verify GitHub MCP authentication (required):**
-   - Perform a probe call: use `mcp_github_list_commits` or `mcp_github_get_file_contents`
-     to verify GitHub MCP connectivity.
-   - If the call **fails or returns an auth error**, STOP and inform the user:
-     > GitHub MCP authentication is required to gather commit history and create PRs.
-     > Please sign in with an account that has repo access, then retry.
-   - Release creation cannot proceed without GitHub MCP — there is no local fallback
-     for commit history and PR creation.
+**Read `.SDLC/project-manifest.md` FIRST** (if it exists) and check the
+Phase-State Ledger: every phase through QA must be marked Complete for this
+task before any release step. A phase the ledger does not record as complete
+is treated as not done — report it to the Harness instead of releasing.
+
+0. **Check GitHub MCP connectivity:**
+   - Perform a probe call: use `mcp_github_list_commits` or `mcp_github_get_file_contents`.
+   - If the call **fails or returns an auth error**, WARN and proceed with local
+     fallbacks: gather commit history from local `git log` and prepare the
+     changelog and release checklist offline. Only the PR-creation step itself
+     waits for GitHub access — do not block the whole release preparation.
 
 1. **Gather commit history via GitHub MCP:**
    - Use `mcp_github_list_commits` to get recent changes since last release.

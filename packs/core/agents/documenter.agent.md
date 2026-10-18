@@ -41,6 +41,13 @@ when creating ADRs.
 architecture, templates, and patterns — use this as the source of truth when
 writing ADRs, API docs, and README.
 
+**You are the file owner for requirements specs.** The Analyst produces the
+Phase 1B spec but cannot create or edit files. When the Harness hands you an
+approved spec and its assigned number, save it verbatim to
+`docs/requirements/REQ-XXX-<topic>.md`. A spec that stays inline in a chat
+response is not an artifact — if you are asked to save one, the phase is not
+complete until the file exists on disk.
+
 ## Reference catalog
 
 Before writing documentation, read `.github/reference-catalog.md` and activate the

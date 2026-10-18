@@ -120,6 +120,20 @@ the probe calls. Run each probe call exactly as written.
 - **Context7 fails -> warn and proceed.** Agents can work without framework docs
   but may use stale training data.
 
+### Step 0.5: Resume check — continue an interrupted run, don't restart it
+
+Read `.SDLC/project-manifest.md` if it exists and look for the
+**Phase-State Ledger**. If the ledger shows a previous run of the SAME task
+with incomplete phases:
+
+1. Report the recorded state to the user (phases complete, artifacts produced).
+2. Resume at the first incomplete phase. Do NOT re-run completed phases and
+   do NOT re-create artifacts the ledger lists as produced.
+3. If artifacts the ledger claims are missing on disk, treat that phase as
+   incomplete and say so.
+
+If there is no ledger or no manifest, proceed normally (Step 1).
+
 ### Step 1: Bootstrap workspace files (if missing)
 
 Check if `.github/copilot-instructions.md` exists in the workspace.
@@ -217,11 +231,21 @@ For `implement` and `qa` phases, invoke all 9 reviewers (full review).
 
 ## Workflow rules
 
+- **Maintain the Phase-State Ledger.** At every phase transition, delegate a
+  small update to the Documenter (or the Scaffolder during Phase 3): append or
+  update the row for the completed phase in the `## Phase-State Ledger` section
+  of `.SDLC/project-manifest.md` — status, artifact paths produced, date. The
+  ledger is the resume source (Step 0.5) and the exit gates' cross-check.
 - **Always check the reference catalog** before allowing new dependencies. Use GitHub MCP to fetch
   `.github/reference-catalog.md` if needed.
 - **Always verify quality instruction compliance** after implementation — delegate to QA Coordinator.
 - **For complex features**, follow this sequence: Analyst → Documenter (create ADR) → Implementer → QA Coordinator → Documenter (update docs) → Release Manager.
-- **For bug fixes**, you may skip Analyst and go directly to Implementer → QA Coordinator.
+- **For bug fixes**, you may skip Analyst and go directly to Implementer → QA Coordinator
+  — ONLY when the fix restores behavior that an existing REQ or test already specifies.
+  If the work changes behavior (new or altered status codes, response shapes, routes,
+  or user-visible flows) it is a feature, not a bug fix: run the full Phase 1–2 flow
+  and create a new REQ. Record the classification (bug fix vs feature) and its basis
+  in the Phase-State Ledger.
 - **For documentation-only changes**, delegate directly to Documenter.
 
 ### Iterative feedback loops (harness design pattern)
@@ -255,19 +279,31 @@ You MUST still run the full Phase 1-2 flow:
 2. **Wait for Analyst to report Phase 1A completion.**
    The Analyst will report: "Phase 1A discovery complete. User has approved the requirements summary."
 
-3. **Delegate to Analyst with Phase 1B context:**
+3. **Assign the REQ number, then delegate to Analyst with Phase 1B context:**
+   List `docs/requirements/` first. The new spec's number is one higher than the
+   highest existing REQ number (greenfield: `REQ-001`). Record the assigned
+   number — the exit gate below verifies a file with this number.
    > "Phase 1B: Requirements Specification. Produce a formal requirements spec using
    > the template at .design/REQ-TEMPLATE.md. Base it on the approved discovery summary.
    > Every FR must have a testable acceptance criterion. Every NFR must have a measurable target.
-   > Save it to `docs/requirements/REQ-XXX-<topic>.md`."
+   > This spec is REQ-XXX. Return the complete spec inline in your response.
+   > Do NOT try to save it to a file — the Analyst cannot write files;
+   > the Documenter saves it in the next step."
 
 4. **Wait for Analyst to report Phase 1B completion.**
    The Analyst will report: "Phase 1B complete. User has approved the requirements specification."
 
-5. **Delegate to QA Coordinator for requirements review:**
+5. **Delegate to Documenter to SAVE the spec (mandatory — do not skip):**
+   > "Save the approved requirements specification below to
+   > `docs/requirements/REQ-XXX-<topic>.md` exactly as written. This file is the
+   > requirements artifact of record for this feature."
+   The Analyst produces the spec but cannot create files; if this step is
+   skipped, the REQ document does not exist and the Phase 1–2 exit gate fails.
+
+6. **Delegate to QA Coordinator for requirements review:**
    > "Run QA review for phase: requirements. Invoke only: Requirements Completeness, Architecture."
 
-6. **If QA passes**, proceed to Phase 2. If QA fails, route feedback to Analyst for spec revision.
+7. **If QA passes**, proceed to Phase 2. If QA fails, route feedback to Analyst for spec revision.
 
 #### Phase 2: Design feedback loop (Analyst — Design mode)
 
@@ -283,6 +319,35 @@ When the requirements spec is approved and QA has passed:
    - Point out the specific gaps to the Analyst.
    - Ask the Analyst to revise the affected sections.
    - Review the revised proposal before proceeding to ADR creation.
+
+#### Phase 1–2 exit gate — MANDATORY before Phase 3 or Phase 4
+
+Do NOT delegate to the Scaffolder or the Implementer until you have verified
+the Phase 1–2 artifacts **on disk** — never from a worker's claim alone.
+Run these checks in the project directory and quote the output in your
+phase report:
+
+```bash
+ls docs/requirements/REQ-*.md   # the REQ assigned in Phase 1B exists for THIS feature
+ls docs/adr/ADR-*.md            # a NEW ADR (or dated addendum) exists for THIS feature
+```
+
+**Pass conditions (all must hold):**
+- [ ] The REQ file with the number assigned in Phase 1B exists.
+- [ ] A new ADR or addendum for this feature exists (created by the Documenter
+      from the Phase 2 design proposal — see the ADR generation rule below).
+- [ ] The Phase-State Ledger in `.SDLC/project-manifest.md` (if a manifest
+      exists) records Phases 1–2 as Complete with these artifact paths.
+
+**If any check fails:** route back to the responsible worker (Analyst for spec
+content, Documenter for a missing file) and re-verify. Proceeding to
+implementation with a missing REQ or ADR is a process violation — this gate
+exists because feature work on existing projects repeatedly skipped the
+requirements artifact when it was enforced by prose alone.
+
+For greenfield projects the same checks apply once the Scaffolder has run
+(the manifest is created in Phase 3); verify the REQ and ADR files before
+Phase 4 in that case.
 
 #### Project workspace isolation (before Phase 3)
 
