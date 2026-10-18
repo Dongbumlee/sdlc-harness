@@ -185,10 +185,17 @@ def run_template(template_dir: Path, data: dict) -> None:
         for step in data["verify"]:
             cwd = root / substitute(step["cwd"], defaults)
             command = substitute(step["command"], defaults)
-            proc = subprocess.run(
-                command, shell=True, cwd=cwd,
-                capture_output=True, text=True, timeout=1200,
-            )
+            if not cwd.is_dir():
+                fail(f"{rel}: verify step '{step['step']}' cwd missing: {cwd}")
+                continue
+            try:
+                proc = subprocess.run(
+                    command, shell=True, cwd=cwd,
+                    capture_output=True, text=True, timeout=1200,
+                )
+            except (OSError, subprocess.SubprocessError) as exc:
+                fail(f"{rel}: verify step '{step['step']}' could not start: {exc}")
+                continue
             tail = (proc.stdout + proc.stderr).strip().splitlines()
             last = tail[-1] if tail else ""
             if proc.returncode == 0:
