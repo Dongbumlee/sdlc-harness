@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/{{ProjectName}}API/**"
+      - "src/{{ProjectName}}API.Tests/**"
+      - "{{ProjectName}}.sln"
+      - ".github/workflows/ci.yml"
+  pull_request:
+    paths:
+      - "src/{{ProjectName}}API/**"
+      - "src/{{ProjectName}}API.Tests/**"
+      - "{{ProjectName}}.sln"
+      - ".github/workflows/ci.yml"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+      - name: Restore
+        run: dotnet restore {{ProjectName}}.sln
+      - name: Build
+        run: dotnet build {{ProjectName}}.sln -c Release --no-restore
+      - name: Test
+        run: dotnet test {{ProjectName}}.sln -c Release --no-build
+      - name: Build Docker image
+        run: docker build -f src/{{ProjectName}}API/Dockerfile -t {{project-name}}-api .
+
+  deploy:
+    needs: build
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy (organization step)
+        run: echo "Deploy {{ProjectName}}API here — wire the organization's deployment action (see the sdlc deployment skills)."

@@ -1,6 +1,6 @@
 # ADR-0002: Bundled Default Templates
 
-> **Status:** Proposed
+> **Status:** Accepted (2026-10-18; merged via PR #21, implementation follows in the bundled-templates change)
 > **SDLC Phase:** 1-2 (Requirements & Design)
 > **Date:** 2026-10-18
 > **Author:** Dongbum(DB) Lee
@@ -242,11 +242,13 @@ after the fact.
 
 ## Testing Strategy
 
-- **Canary per bundled template** (extends `bench/canaries`): instantiate
-  the template with a canary project name into a temporary directory, run
-  the profile's install, Build, and Test commands, assert exit code 0 and
-  the presence of the FR5 obligation files. A template that does not pass
-  its own golden path does not ship.
+- **Canary per bundled template** (`tools/verify_templates.py --run`):
+  instantiate the template with a canary project name into a temporary
+  directory, run the profile's install, Build, and Test commands, assert
+  exit code 0 and the presence of the FR5 obligation files. A template that
+  does not pass its own golden path does not ship. (Implemented as a
+  deterministic tool rather than a `bench/canaries` prompt spec: template
+  verification is mechanical, not agent-behavioral.)
 - **Contract checks:** extend `tools/check_pack_contracts.py` — every
   profile that declares a bundled template has a matching template
   directory; every template directory has a `template.yaml`; every token

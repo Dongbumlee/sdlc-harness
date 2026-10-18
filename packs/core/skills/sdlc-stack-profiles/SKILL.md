@@ -60,11 +60,50 @@ Every profile declares the same fields:
 | Test | Exact test command (+ coverage variant) |
 | Lint / format | Exact check commands |
 | Dockerfile | Base images and multi-stage outline |
-| CI steps | Build-stage commands for the CI stub (ADO `azure_cicd.yaml` by default; GitHub Actions equivalent where given) |
+| CI steps | Build-stage commands for the CI stub — GitHub Actions (`.github/workflows/ci.yml`) by default; ADO `azure_cicd.yaml` where the organization declares Azure DevOps |
 | Devcontainer | Image |
-| Template source | Org template repo (from copilot-instructions) if any; the profile layout is the fallback |
+| Template source | Org template repo (from copilot-instructions) if any; otherwise the bundled default template (below); the profile layout is the last-resort fallback |
 
 ---
+
+## Bundled default templates
+
+Every profile ships a **bundled default template** in this skill's assets:
+`assets/templates/<profile>/<kind>/` (python/api, dotnet/api,
+typescript/web). A template is the profile expressed as files: project
+files, layout, Dockerfile, CI stub, devcontainer, a health endpoint, one
+sample vertical slice (an `items` resource), and tests that prove the
+wiring. Template resolution mirrors profile resolution:
+
+1. An explicit instruction from the user or the organization.
+2. The organization template repo named in `.github/copilot-instructions.md`
+   (fetched via GitHub MCP).
+3. **The bundled default template** for the resolved profile.
+4. This profile's prose layout, as the last-resort fallback.
+
+**Instantiation contract** (performed by the Scaffolder): copy the template
+tree to the repository root; substitute the tokens declared in its
+`template.yaml` in file names and contents (`{{ProjectName}}` — PascalCase
+base name; `{{project-name}}` — the kebab-case name derived from it); delete
+`template.yaml`; generate lock files with the profile's install command
+(lock files are never templated); then run the template's `verify` steps —
+the profile's install, build, and test commands. The scaffold is not
+complete until verification passes or an environment limitation is reported
+per the harness's environment-failure rule.
+
+**Provenance:** the Scaffolder records the template source in the project's
+manifest row: `bundled <profile>/<kind>@<harness version>`,
+`org <repo>@<ref>`, or `prose fallback`. Deviations from the template are
+recorded in the manifest with reasons, like any pattern deviation.
+
+**Template content is copied verbatim** — including its sample slice and
+tests. They are the template's golden-path fixture, not Phase 3 output: the
+Implementer replaces or extends the sample slice in Phase 4. The
+Scaffolder's no-business-logic rule governs what it creates *beyond* the
+resolved template.
+
+If a bundled template and its profile ever disagree, that is a harness
+defect: follow the profile (the declared standard) and report the mismatch.
 
 ## Profile: python
 
@@ -83,7 +122,9 @@ Every profile declares the same fields:
   Python base, `COPY --from=ghcr.io/astral-sh/uv:latest`, `uv sync --frozen`
 - **CI steps:** `uv sync --frozen` → `uv run pytest --cov --junitxml=results.xml` → `docker build`
 - **Template source:** the org's base / API / agent template repos from
-  copilot-instructions; `.github/reference-catalog.md` patterns are the fallback.
+  copilot-instructions; otherwise the bundled default template
+  (`assets/templates/python/api`); `.github/reference-catalog.md` patterns
+  are the last-resort fallback.
 
 Defaults that belong to this profile: FastAPI is the default API framework;
 Python 3.12 is the default runtime version.
@@ -101,11 +142,15 @@ Python 3.12 is the default runtime version.
 - **Lint / format:** `npx eslint .` and `npx prettier --check src`
 - **Dockerfile:** multi-stage — Node build stage → nginx serve stage
 - **CI steps:** `pnpm install --frozen-lockfile` → `pnpm test` → `pnpm build` → `docker build`
-- **Template source:** custom React + TypeScript structure in
-  `sdlc-project-scaffolding`; an org template repo overrides it when declared.
+- **Template source:** an org template repo overrides when declared;
+  otherwise the bundled default template (`assets/templates/typescript/web`),
+  which follows the React + TypeScript structure in
+  `sdlc-project-scaffolding`.
 
 Defaults that belong to this profile: TypeScript 7, React + Next.js,
-shadcn/ui components, Tailwind CSS.
+shadcn/ui components, Tailwind CSS. TypeScript 7 requires Next.js 16.2.11
+or later — Next 15's TypeScript integration cannot use the TS 7 native
+compiler API (measured 2026-10-18 building the bundled template).
 
 ## Profile: dotnet
 
@@ -146,10 +191,10 @@ shadcn/ui components, Tailwind CSS.
   `mcr.microsoft.com/dotnet/sdk:10.0` (restore → `dotnet publish -c Release`),
   runtime stage `mcr.microsoft.com/dotnet/aspnet:10.0`, non-root `APP_UID`
   user, `EXPOSE 8080`, `ENTRYPOINT ["dotnet", "<Name>API.dll"]`.
-- **CI steps (ADO):** `DotNetCoreCLI@2` restore → build → test with
-  `PublishTestResults@2`. **GitHub Actions equivalent:**
-  `actions/setup-dotnet` → `dotnet restore` → `dotnet build -c Release` →
-  `dotnet test -c Release`.
+- **CI steps (GitHub Actions, default):** `actions/setup-dotnet` →
+  `dotnet restore` → `dotnet build -c Release` → `dotnet test -c Release`.
+  **ADO variant** (organization declares Azure DevOps): `DotNetCoreCLI@2`
+  restore → build → test with `PublishTestResults@2` in `azure_cicd.yaml`.
 - **Devcontainer:** `mcr.microsoft.com/devcontainers/dotnet` (org-pinned tag).
 - **Patterns:** dependency injection uses the built-in
   `Microsoft.Extensions.DependencyInjection` container — register services in
@@ -159,7 +204,9 @@ shadcn/ui components, Tailwind CSS.
   health endpoints via `AddHealthChecks()` mapped at `/health` (the .NET
   counterpart of the python template's http_probes).
 - **Template source:** the org's .NET template repo from copilot-instructions
-  when declared; this profile's layout is the fallback.
+  when declared; otherwise the bundled default template
+  (`assets/templates/dotnet/api`); this profile's layout is the last-resort
+  fallback.
 
 ---
 
@@ -168,5 +215,8 @@ shadcn/ui components, Tailwind CSS.
 A new stack is **data, not code**: add one profile section above (all fields),
 confirm a matching instruction pair exists in `sdlc-workspace-init` assets
 (`code-quality-<stack>` / `test-quality-<stack>` — go, java, and rust already
-have theirs), and the Scaffolder, Implementer, and QA agents pick the stack
-up through profile resolution. No agent file changes.
+have theirs), add a bundled default template under `assets/templates/` whose
+`verify` steps pass, and the Scaffolder, Implementer, and QA agents pick the
+stack up through profile resolution. No agent file changes. A stack counts
+as fully supported only when profile, instruction pair, bundled template,
+and a passing greenfield run all exist.
