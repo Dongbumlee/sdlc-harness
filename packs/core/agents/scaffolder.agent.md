@@ -83,7 +83,9 @@ apply to every stack unchanged. Record the resolved stack in the manifest.
 
 1. Scaffold new project structures from templates.
 2. Set up per-project devcontainer configurations.
-3. Generate per-project `azure_cicd.yaml` pipeline stubs (build + test + deploy stages).
+3. Generate CI pipeline stubs for the resolved CI system (build + test + deploy
+   stages): GitHub Actions `.github/workflows/ci.yml` by default, per-project
+   ADO `azure_cicd.yaml` when the organization declares Azure DevOps.
 4. Create the stack profile's project file, `Dockerfile`, and build configurations.
 5. Set up root-level compliance files and quality instruction files.
 
@@ -99,14 +101,18 @@ Include `Source: Scaffolder (Phase 3)` on your entries.
 
 ## Before scaffolding
 
-0. **Verify GitHub MCP authentication (required):**
-   - Perform a probe call: use `mcp_github_get_file_contents` to fetch `README.md` from
-     `the project's app template (from copilot-instructions.md)`.
-   - If the call **fails or returns an auth error**, STOP and inform the user:
-     > GitHub MCP authentication is required to access template repos in `the project's GitHub org`.
-     > Please sign in with an account that has org access, then retry.
-   - If the user cannot authenticate, fall back to patterns in `.github/reference-catalog.md`
-     and warn that live verification was not possible.
+0. **Verify GitHub MCP authentication (only when org templates are declared):**
+   - If `.github/copilot-instructions.md` declares organization template repos,
+     perform a probe call: use `mcp_github_get_file_contents` to fetch `README.md`
+     from the project's app template repo.
+   - If the call **fails or returns an auth error**, WARN the user and fall back
+     to the profile's **bundled default template** (`sdlc-stack-profiles`
+     assets); record the fallback as the manifest provenance:
+     > ⚠️ GitHub MCP could not reach the organization template repos.
+     > Scaffolding from the bundled default template instead; provenance is
+     > recorded in the manifest.
+   - If no org template repos are declared, skip the probe — the bundled
+     default template needs no network access.
 
 0b. **Check awesome-copilot MCP (recommended):**
    - Probe: `mcp_awesome-copil_search_instructions(keywords: "docker")`
@@ -114,14 +120,20 @@ Include `Source: Scaffolder (Phase 3)` on your entries.
      > ⚠️ awesome-copilot MCP is not running. Docker/CI-CD best practices will not be loaded.
      > I will proceed using local knowledge only. Dockerfile and pipeline quality may be reduced.
 
-1. **Fetch the latest template structure from GitHub MCP:**
-   - Use `mcp_github_get_file_contents` to get the directory structure from the matching template repo for the project's stack.
-   - Base app → `the project's app template (from copilot-instructions.md)`
-   - FastAPI → `the project's API template (from copilot-instructions.md)`
-   - AI agent → `the project's agent template (from copilot-instructions.md)`
-   - Other stacks (e.g. .NET) → the org's template repo for that stack, as named
-     in copilot-instructions; when none is named, the stack profile's layout
-     in `sdlc-stack-profiles` is the fallback pattern.
+1. **Fetch the template structure from the resolved template source:**
+   - Organization template repos (from copilot-instructions): use
+     `mcp_github_get_file_contents` to get the directory structure from the
+     matching template repo for the project's stack.
+     - Base app → `the project's app template (from copilot-instructions.md)`
+     - FastAPI → `the project's API template (from copilot-instructions.md)`
+     - AI agent → `the project's agent template (from copilot-instructions.md)`
+     - Other stacks (e.g. .NET) → the org's template repo for that stack, as named
+       in copilot-instructions.
+   - When no org template is declared (or the probe above fell back), use the
+     profile's **bundled default template** from the `sdlc-stack-profiles`
+     skill assets (`assets/templates/<profile>/<kind>/`) and instantiate it
+     per that skill's contract. The stack profile's prose layout is only the
+     last-resort fallback.
 
 2. **Load containerization and CI/CD best practices from awesome-copilot** (skip if unavailable):
    - Use `mcp_awesome-copil_load_instruction` to load `"containerization-docker-best-practices"` — multi-stage
@@ -157,6 +169,8 @@ Activate the **`sdlc-project-manifest`** skill (invoke `/sdlc-project-manifest` 
 
 **After scaffolding is complete**, you MUST generate `.SDLC/project-manifest.md`
 recording which templates were used and the exact code patterns. This is NOT optional.
+For each project, record the template provenance: `bundled <profile>/<kind>@<harness version>`,
+`org <repo>@<ref>`, or `prose fallback`, plus any deviations from the template with reasons.
 
 This manifest is read by ALL subsequent agents (Implementer, QA, Deployer, Documenter)
 to ensure pattern consistency. If you skip this, downstream agents will fail.
@@ -269,7 +283,7 @@ src/
     ├── .gitignore
     ├── .env
     ├── README.md                  ← Per-project README
-    ├── azure_cicd.yaml            ← Per-project ADO CI/CD pipeline stub
+    ├── azure_cicd.yaml            ← ADO CI stub (ADO organizations only; default CI is the repo-level .github/workflows/ci.yml)
     └── es-metadata.yml            ← Engineering system metadata
 ```
 
@@ -344,7 +358,8 @@ At the end of your scaffolding output, include an **SDLC Exit Criteria Check** s
 
 - Repository folders match the selected template / stack profile layout: ✅/⚠️/⛔
 - Project file for the stack (`pyproject.toml` / `package.json` / `.csproj`) configured with correct dependencies: ✅/⚠️/⛔
-- Per-project `azure_cicd.yaml` pipeline stubs created: ✅/⚠️/⛔
+- CI stub created for the resolved CI system (GitHub Actions `.github/workflows/ci.yml`, or ADO `azure_cicd.yaml` for ADO organizations): ✅/⚠️/⛔
+- Template source and provenance recorded in the manifest for each project: ✅/⚠️/⛔
 - Quality instruction files in place for the repo's language stack: ✅/⚠️/⛔
 - `.gitignore` and `.dockerignore` properly configured: ✅/⚠️/⛔
 - Dockerfile per project with multi-stage build: ✅/⚠️/⛔
@@ -359,7 +374,10 @@ This agent is for **scaffolding only** — folder structure, configuration files
 - Folder structure with empty/stub files
 - The stack profile's project file (`pyproject.toml` / `package.json` / `.csproj`) with dependencies listed
 - `Dockerfile` per project (multi-stage build template)
-- Per-project `azure_cicd.yaml` pipeline stubs (build + test + deploy stages)
+- CI pipeline stubs for the resolved CI system (build + test + deploy stages)
+- The resolved template's own content, copied verbatim — including its sample
+  slice and tests (they are the template's golden-path fixture; the Implementer
+  replaces or extends the sample slice in Phase 4)
 - `.gitignore`, `.dockerignore`, `.env.example`
 - Per-project `.devcontainer/` and `.github/`
 - Stub `main.py` or `App.tsx` with minimal boilerplate (imports + app initialization only)

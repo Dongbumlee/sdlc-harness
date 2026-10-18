@@ -1,0 +1,8 @@
+.git
+**/bin
+**/obj
+**/TestResults
+src/{{ProjectName}}API.Tests
+docs
+.devcontainer
+.github

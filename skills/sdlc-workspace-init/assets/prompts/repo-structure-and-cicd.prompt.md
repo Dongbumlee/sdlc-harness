@@ -39,7 +39,9 @@ If any of these are unclear, ask 1–2 focused questions before proceeding.
 
 1. Scaffold repo structure aligned with the matching template from the reference catalog.
 2. Set up per-project devcontainer configurations.
-3. Generate per-project `azure_cicd.yaml` pipeline stubs (build + test + deploy stages).
+3. Generate CI pipeline stubs (build + test + deploy stages) for the resolved
+   CI system: GitHub Actions `.github/workflows/ci.yml` by default;
+   per-project `azure_cicd.yaml` when the organization declares Azure DevOps.
 4. Include quality gates (linting/type-checking configs).
 5. Ensure the structure supports the SDLC phases (implementation, testing, docs, release).
 
@@ -73,7 +75,7 @@ This prompt is for **scaffolding only** — folder structure, configuration file
 - Folder structure with empty/stub files
 - `pyproject.toml` / `package.json` with dependencies listed
 - `Dockerfile` per project (multi-stage build template)
-- Per-project `azure_cicd.yaml` pipeline stubs (build + test + deploy stages)
+- CI pipeline stubs for the resolved CI system (build + test + deploy stages)
 - `.gitignore`, `.dockerignore`, `.env.example`
 - Per-project `.devcontainer/` and `.github/`
 - Stub `main.py` or `App.tsx` with minimal boilerplate (imports + app initialization only)
@@ -159,7 +161,7 @@ src/
     ├── .gitignore
     ├── .env
     ├── README.md
-    ├── azure_cicd.yaml            ← Per-project ADO CI/CD pipeline stub
+    ├── azure_cicd.yaml            ← ADO CI stub (ADO organizations only; default CI is the repo-level .github/workflows/ci.yml)
     └── es-metadata.yml
 ```
 

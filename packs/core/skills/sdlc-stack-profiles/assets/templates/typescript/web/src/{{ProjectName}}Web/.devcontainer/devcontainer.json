@@ -1,0 +1,1 @@
+{"image":"mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm","name":"{{ProjectName}}Web (Node 22)","postCreateCommand":"corepack enable && pnpm install"}

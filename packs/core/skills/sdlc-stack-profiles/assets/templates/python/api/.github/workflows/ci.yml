@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/{{ProjectName}}API/**"
+      - ".github/workflows/ci.yml"
+  pull_request:
+    paths:
+      - "src/{{ProjectName}}API/**"
+      - ".github/workflows/ci.yml"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/{{ProjectName}}API
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - name: Install dependencies
+        run: uv sync --frozen
+      - name: Test
+        run: uv run pytest --cov --junitxml=results.xml
+      - name: Build Docker image
+        run: docker build -t {{project-name}}-api .
+
+  deploy:
+    needs: build
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy (organization step)
+        run: echo "Deploy {{ProjectName}}API here — wire the organization's deployment action (see the sdlc deployment skills)."

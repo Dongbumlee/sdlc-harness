@@ -26,17 +26,30 @@ Resolve the project's stack first (explicit instruction → copilot-instructions
 → manifest → defaults: python for API/business/agent, typescript for web) and
 use that profile's layout, project files, commands, Dockerfile, and CI steps.
 
-Steps 1–6 below spell out the **python profile** in full, because its
-templates live in the org's template repos. The typescript (web) layout is in
-Step 3–4. For **dotnet** and any other stack, the profile in
-`sdlc-stack-profiles` carries the complete pattern — the `src/` container
+Steps 1–6 below spell out the **python profile** in full. The typescript
+(web) layout is in Step 3–4. For **dotnet** and any other stack, the profile
+in `sdlc-stack-profiles` carries the complete pattern — the `src/` container
 rule, `<ProjectName><Layer>` naming, per-project Dockerfile/CI/devcontainer,
 and manifest obligations are identical across stacks.
 
-## Step 1: Fetch the actual template files from GitHub MCP
+Template source resolves like the stack does: an organization template repo
+declared in copilot-instructions first; otherwise the profile's **bundled
+default template** (`sdlc-stack-profiles` assets, `assets/templates/<profile>/<kind>/`),
+instantiated per that skill's contract; the profile layout is the
+last-resort fallback. Record the source in the manifest (provenance).
+
+## Step 1: Fetch the actual template files from the resolved template source
 
 **CRITICAL: Do NOT generate code from your training data. You MUST read the actual
-template files from the private repo and replicate their patterns.**
+template files from the resolved source and replicate their patterns.**
+
+The resolved source is the organization template repo (fetched via GitHub
+MCP, below) when copilot-instructions declares one. Otherwise it is the
+profile's **bundled default template**: read the files under the installed
+`sdlc-stack-profiles` skill's `assets/templates/<profile>/<kind>/` and
+instantiate them per that skill's contract (token substitution, lock-file
+generation, verify steps). The fetch list below applies to the organization
+repos; the bundled templates carry the same files.
 
 For API projects, fetch these key files and use them as the basis for scaffolding:
 
@@ -219,7 +232,7 @@ addopts = ["--import-mode=importlib"]
 | Console / worker / CLI | `the base app template repo` | `src/` (nested inside project) |
 | AI agent / chatbot / MCP | `the agent template repo` | `src/` (nested inside project) |
 | Web frontend | React + TypeScript (custom) | `src/` (nested inside project) |
-| .NET API / service (dotnet profile) | Org .NET template repo if declared, else the dotnet profile layout in `sdlc-stack-profiles` | Project root (`Program.cs`, `.csproj`) |
+| .NET API / service (dotnet profile) | Org .NET template repo if declared, else the bundled dotnet template (`assets/templates/dotnet/api`) | Project root (`Program.cs`, `.csproj`) |
 
 **IMPORTANT: "Code Root" refers to the folder INSIDE the project folder, NOT the
 repo-level `src/` directory.** For example, an API project has its code at
@@ -335,11 +348,20 @@ For each project, also create these files using the template as reference:
 
 ## Step 6: CI/CD pipeline stub
 
-Create `azure_cicd.yaml` per project. The stub below is the **python
-profile**; take the build/test commands from the project's stack profile
-(dotnet: `DotNetCoreCLI@2` restore/build/test; typescript: `pnpm install
---frozen-lockfile`, `pnpm test`, `pnpm build`). The stage structure
-(Build → Deploy, main-branch gated) is the same for every stack:
+Create the CI stub for the CI system the profile resolves to. **Default:
+GitHub Actions** — one `.github/workflows/ci.yml` at the repository root,
+path-filtered to the project, with a Build job (install → test → build →
+docker build, commands from the project's stack profile) and a Deploy job
+that needs Build and runs only on pushes to `main`. The bundled templates
+ship this file; instantiate it with the template.
+
+**Variant — Azure DevOps** (the organization declares ADO in its profile
+override): create `azure_cicd.yaml` per project instead. The stub below is
+the **python profile** under ADO; take the build/test commands from the
+project's stack profile (dotnet: `DotNetCoreCLI@2` restore/build/test;
+typescript: `pnpm install --frozen-lockfile`, `pnpm test`, `pnpm build`).
+The stage structure (Build → Deploy, main-branch gated) is the same for
+every stack and both CI systems:
 
 ```yaml
 trigger:
@@ -367,8 +389,10 @@ stages:
 
 - **ALL projects MUST be under `src/`** — even single-project repos. NEVER place
   `app/`, `pyproject.toml`, or `Dockerfile` directly at the repository root.
-- **NEVER generate generic FastAPI code.** Always read the actual template files from
-  GitHub MCP and replicate their patterns (`Application_Base`, `libs/`, DI container).
+- **NEVER generate generic FastAPI code.** Always scaffold from the resolved
+  template — the org template repo read via GitHub MCP, or the bundled
+  default template in the `sdlc-stack-profiles` assets — and replicate its
+  patterns (`Application_Base`, `libs/`, DI container).
 - **API template uses `app/` as code root** — the code root inside an API project
   is `app/` (path: `src/<Name>API/app/`), NOT `src/`.
 - **The `libs/` directory is MANDATORY** for API projects — copy it from the template.

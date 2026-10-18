@@ -22,6 +22,13 @@ Enforces the pack contracts on every PR:
    file, so the flat-layout copies must be byte-identical:
      - ``packs/<name>/agents/<file>`` == ``com.github.copilot/agents/<file>``
      - ``packs/<name>/skills/<name>/`` tree == ``skills/<name>/`` tree
+5. Bundled template integrity (ADR-0002): every template under
+   ``packs/core/skills/sdlc-stack-profiles/assets/templates/<profile>/<kind>/``
+   must declare a well-formed ``template.yaml`` (id matching its path,
+   project_dirs present in the tree, declared tokens only), and each stack
+   profile section in the stack-profiles skill must have a matching template
+   directory. Full behavioral verification lives in
+   ``tools/verify_templates.py``.
 
 Exit code is 0 when all contracts hold, 1 otherwise.
 """
@@ -30,10 +37,12 @@ from __future__ import annotations
 
 import filecmp
 import json
+import re
 import sys
 from pathlib import Path
 
 import jsonschema
+import yaml
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 CANONICAL_AGENTS = REPO_ROOT / "com.github.copilot" / "agents"
@@ -195,9 +204,73 @@ def check_pack_manifests() -> None:
             fail(f"{rel(manifest_path)}: mcpServers -> {mcp} not found in {pack_dir.name}/")
 
 
+TEMPLATES_ROOT = (
+    PACKS_DIR / "core" / "skills" / "sdlc-stack-profiles" / "assets" / "templates"
+)
+STACK_PROFILES_SKILL = (
+    PACKS_DIR / "core" / "skills" / "sdlc-stack-profiles" / "SKILL.md"
+)
+TOKEN_RE = re.compile(r"\{\{([A-Za-z0-9_-]+)\}\}")
+
+
+def check_bundled_templates() -> None:
+    """Template directories and template.yaml integrity (ADR-0002)."""
+    print("\n-- Bundled template contracts --")
+    if not TEMPLATES_ROOT.is_dir():
+        fail(f"{rel(TEMPLATES_ROOT)}: bundled templates root not found")
+        return
+    template_yamls = sorted(TEMPLATES_ROOT.glob("*/*/template.yaml"))
+    if not template_yamls:
+        fail(f"{rel(TEMPLATES_ROOT)}: no bundled templates found")
+        return
+    for template_yaml in template_yamls:
+        template_dir = template_yaml.parent
+        profile, kind = template_dir.parent.name, template_dir.name
+        try:
+            data = yaml.safe_load(template_yaml.read_text(encoding="utf-8"))
+        except Exception as exc:  # noqa: BLE001 - report and continue
+            fail(f"{rel(template_yaml)}: unreadable YAML: {exc}")
+            continue
+        if not isinstance(data, dict):
+            fail(f"{rel(template_yaml)}: top level is not a mapping")
+            continue
+        if data.get("id") != f"{profile}/{kind}":
+            fail(f"{rel(template_yaml)}: id '{data.get('id')}' != '{profile}/{kind}'")
+        declared = {
+            t.get("name")
+            for t in data.get("tokens") or []
+            if isinstance(t, dict)
+        }
+        if not declared:
+            fail(f"{rel(template_yaml)}: no tokens declared")
+        used: set[str] = set()
+        for path in template_dir.rglob("*"):
+            if path.is_file():
+                used.update(TOKEN_RE.findall(str(path.relative_to(template_dir))))
+                try:
+                    used.update(TOKEN_RE.findall(path.read_text(encoding="utf-8")))
+                except (UnicodeDecodeError, OSError):
+                    pass
+        undeclared = used - declared
+        if undeclared:
+            fail(f"{rel(template_dir)}: tokens used but not declared: {sorted(undeclared)}")
+        for project_dir in data.get("project_dirs") or []:
+            if not (template_dir / project_dir).is_dir():
+                fail(f"{rel(template_yaml)}: project_dirs entry '{project_dir}' missing")
+
+    # Every profile section in the skill needs a bundled template directory.
+    skill_text = STACK_PROFILES_SKILL.read_text(encoding="utf-8")
+    profiles = re.findall(r"^## Profile: (\w+)", skill_text, flags=re.MULTILINE)
+    for profile in profiles:
+        if not (TEMPLATES_ROOT / profile).is_dir():
+            fail(f"sdlc-stack-profiles declares profile '{profile}' but "
+                 f"{rel(TEMPLATES_ROOT / profile)} does not exist")
+
+
 def main() -> int:
     check_agent_drift()
     check_pack_manifests()
+    check_bundled_templates()
     if failures:
         print(f"\n{len(failures)} contract violation(s) found.")
         return 1
