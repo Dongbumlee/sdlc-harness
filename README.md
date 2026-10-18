@@ -14,7 +14,7 @@ adversarial QA evaluation, live MCP-powered context, and iterative feedback loop
 deliver production-quality code with enforced development standards.
 
 Distributed as an [Agent Plugin](#quick-start) for VS Code and GitHub Copilot CLI.
-Install once — get all 21 agents, 22 skills, and the full SDLC workflow instantly.
+Install once — get all 21 agents, 24 skills, and the full SDLC workflow instantly.
 
 ---
 
