@@ -44,6 +44,15 @@ List directory: docs/adr/
 
 Convention: `ADR-XXX-<topic-slug>.md` (e.g., `ADR-001-cosmos-db-for-order-data.md`)
 
+**Granularity — default to ONE ADR per Phase 2 design proposal.** An ADR
+records a decision with alternatives and consequences, not a document per
+design detail. Split into multiple ADRs only when a decision is independently
+reversible, affects a different subsystem, or has a different stakeholder.
+Routine implementation choices (field normalization, storage pragmas, naming)
+belong in the design proposal, not in standalone ADRs. For a single-feature
+change, expect exactly one ADR — if you are about to create a third ADR for
+the same feature, stop and consolidate.
+
 ## Step 3: Write the ADR
 
 Follow the SDLC ADR template structure (from `.design/ADR-TEMPLATE.md`):

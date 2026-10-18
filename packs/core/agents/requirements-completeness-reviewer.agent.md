@@ -25,6 +25,13 @@ they reach the design and implementation phases — where they become 10x more e
 
 ## Before reviewing
 
+0. **Existence check (gate — run this first).** Verify on disk that a
+   requirements file for THIS feature exists in `docs/requirements/`. If the
+   spec exists only as inline text in a worker's response, if no REQ file
+   covers this feature, or if the newest REQ predates the task, the
+   requirements artifact is MISSING: score **4 or below**, flag it as a
+   **CRITICAL** finding ("requirements artifact missing on disk"), and do not
+   evaluate content quality — there is nothing of record to evaluate.
 1. **Read the requirements spec** being reviewed (the file passed by QA Coordinator).
 2. **Read the requirements template** at `.design/REQ-TEMPLATE.md` to verify structural compliance.
 3. **Cross-reference goals vs. requirements** — every stated goal should map to at least one FR or NFR.

@@ -169,8 +169,8 @@ az resource list -g <rg> --query "[].{name:name, type:type, state:provisioningSt
 
 ### 3.2 Model Availability & Quota
 
-- [ ] **GPT model not available in region** (multiple bugs)
-  - **How to verify**: `az cognitiveservices model list -l <region> --query "[?model.name=='gpt-4o']" -o table`
+- [ ] **Chat model not available in region** (multiple bugs)
+  - **How to verify**: `az cognitiveservices model list -l <region> --query "[?model.name=='<chat-model>']" -o table` (substitute the project's configured chat model — never assume a specific model name)
   - **Fix**: Parameterize model name/version; add pre-flight check
 
 - [ ] **Jailbreak / prompt injection** (Bug: QA CWYD-Cosmos)

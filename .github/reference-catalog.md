@@ -322,7 +322,7 @@ project = AIProjectClient(
     endpoint="https://my-project.services.ai.azure.com",
 )
 agent = project.agents.create_agent(
-    model="gpt-4o",
+    model="<chat-model-deployment>",  # the project's configured chat model — never hardcode a model name
     name="my-assistant",
     instructions="You are a helpful assistant.",
 )
@@ -338,7 +338,7 @@ from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 token_provider = get_bearer_token_provider(DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default")
 client = AzureOpenAI(azure_endpoint="https://my-resource.openai.azure.com",
     azure_ad_token_provider=token_provider, api_version="2024-06-01")
-response = client.chat.completions.create(model="gpt-4o",
+response = client.chat.completions.create(model="<chat-model-deployment>",  # the project's configured chat model — never hardcode a model name
     messages=[{"role": "user", "content": "Hello!"}])
 ```
 </details>
@@ -352,7 +352,7 @@ using Azure.Identity;
 var client = new AIProjectClient(
     new Uri("https://my-project.services.ai.azure.com"),
     new DefaultAzureCredential());
-var agent = await client.Agents.CreateAgentAsync("gpt-4o",
+var agent = await client.Agents.CreateAgentAsync("<chat-model-deployment>",  // project-configured chat model
     name: "my-assistant", instructions: "You are a helpful assistant.");
 ```
 </details>

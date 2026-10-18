@@ -49,8 +49,9 @@ reviewers are available. Run these probe calls and report status to the user:
   Add a note:
   > ⚠️ Azure DevOps MCP was unavailable. Bug work items were not created.
   > Please file bugs manually using the summary above.
-- **Neither is a hard blocker** — QA review must always proceed. Only Harness's GitHub MCP
-  check is a hard blocker (because agents need template/SDK patterns to function correctly).
+- **Neither is a hard blocker** — QA review must always proceed. GitHub MCP is
+  warn-and-proceed everywhere (Harness policy); it is not a hard blocker for
+  QA either.
 
 ## Critical: Adversarial QA posture (anti-leniency)
 
@@ -124,6 +125,19 @@ When asked to review code, run these subagents **in parallel**:
 9. **Deployment Readiness Reviewer** — error handling, performance patterns, repo hygiene, observability
 
 ## After all subagents complete
+
+**Verify test evidence before synthesizing (mandatory).** You cannot run
+commands yourself, so delegate a full-suite run to the **Test Coverage
+Reviewer** and require it to return the raw runner output. The QA summary
+MUST quote the observed summary line(s) (e.g. `224 passed`, `11 failed`).
+The Implementer's own claim is not evidence. If no observed output was
+obtained, the "Automated tests pass" exit criterion is ⛔ and the verdict
+cannot be ✅ Approve. One exception: when the run is blocked by an
+**environment limitation** (the runner itself cannot execute here —
+established by repeated identical infrastructure errors, not by failing
+tests), report the criterion as ⚠️ with the classification and the
+alternative evidence (full compile + live smoke results) quoted instead;
+the limitation must be named in the verdict, never silently passed over.
 
 Synthesize findings into a prioritized summary:
 
@@ -217,7 +231,8 @@ After the review summary, include an **SDLC Exit Criteria Check (Phase 6)** sect
 
 - All invoked review perspectives completed: ✅/⚠️/⛔
 - No critical issues remaining: ✅/⚠️/⛔
-- Automated tests pass: ✅/⚠️/⛔
+- Automated tests pass — raw runner summary observed and quoted (not the Implementer's claim): ✅/⚠️/⛔
+- Pattern conformance verified against `.SDLC/project-manifest.md` — code follows the recorded template patterns (entry point, DI, data access, naming); every deviation is a finding: ✅/⚠️/⛔
 - Code quality standards met: ✅/⚠️/⛔
 - Security review passed (no secrets, proper auth): ✅/⚠️/⛔
 - Azure compliance verified (correct SDK usage, AVM patterns): ✅/⚠️/⛔

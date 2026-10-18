@@ -17,7 +17,7 @@ Invoke the **Harness** agent to orchestrate the full SDLC workflow.
 ## Instructions
 
 1. Delegate to the **Harness** agent with the user's request.
-2. If `.SDLC/project-manifest.md` exists, this is an existing project — the Harness will read it and continue with the appropriate phase.
+2. If `.SDLC/project-manifest.md` exists, this is an existing project — the Harness will read it. A NEW feature on an existing project still runs the full Phase 1–2 flow and produces a NEW requirements spec (`REQ-XXX`) and a NEW ADR; it never jumps straight to implementation. The Harness resumes mid-pipeline only when the manifest's Phase-State Ledger records an in-progress run of the SAME task.
 3. If no manifest exists, this is a greenfield project — the Harness will start from Phase 1.
 
 Do NOT try to handle SDLC tasks directly. Always delegate to the Harness agent.
