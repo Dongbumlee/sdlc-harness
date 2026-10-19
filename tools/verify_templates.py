@@ -23,11 +23,18 @@ packs/core/skills/sdlc-stack-profiles/assets/templates/<profile>/<kind>/:
 
 --run mode instantiates into a temp directory (never the repo), substitutes
 the token defaults, removes template.yaml, and executes the verify steps.
-A test step that fails with the VSTest testhost connection error is
-reported as ENV-BLOCKED (environment limitation per the harness's
-environment-failure rule), not as a template failure.
+A test step that fails with the VSTest testhost connection error is retried
+once with DOTNET_SYSTEM_NET_DISABLEIPV6=1: some sandbox egress proxies
+hijack .NET's dual-mode IPv6 loopback sockets and break the
+vstest<->testhost handshake, and forcing AF_INET loopback restores it. If
+the retry passes, the step counts as passed (the workaround is local to
+this verifier; it is never written into a template or its CI). A test step
+that still fails with the testhost error after the retry is reported as
+ENV-BLOCKED (environment limitation per the harness's environment-failure
+rule), not as a template failure.
 """
 
+import os
 import re
 import shutil
 import subprocess
@@ -175,6 +182,18 @@ def instantiate(template_dir: Path, data: dict, dest: Path) -> None:
                 target.write_text(substitute(text, defaults), encoding="utf-8")
 
 
+def run_step(command: str, cwd: Path, env: dict | None = None):
+    """Run one verify step; return the CompletedProcess, or None if the
+    step could not start at all."""
+    try:
+        return subprocess.run(
+            command, shell=True, cwd=cwd, env=env,
+            capture_output=True, text=True, timeout=1200,
+        )
+    except (OSError, subprocess.SubprocessError):
+        return None
+
+
 def run_template(template_dir: Path, data: dict) -> None:
     rel = template_dir.relative_to(REPO_ROOT)
     defaults = {t["name"]: str(t["default"]) for t in data["tokens"]}
@@ -188,21 +207,39 @@ def run_template(template_dir: Path, data: dict) -> None:
             if not cwd.is_dir():
                 fail(f"{rel}: verify step '{step['step']}' cwd missing: {cwd}")
                 continue
-            try:
-                proc = subprocess.run(
-                    command, shell=True, cwd=cwd,
-                    capture_output=True, text=True, timeout=1200,
-                )
-            except (OSError, subprocess.SubprocessError) as exc:
-                fail(f"{rel}: verify step '{step['step']}' could not start: {exc}")
+            proc = run_step(command, cwd)
+            if proc is None:
+                fail(f"{rel}: verify step '{step['step']}' could not start")
                 continue
             tail = (proc.stdout + proc.stderr).strip().splitlines()
             last = tail[-1] if tail else ""
             if proc.returncode == 0:
                 print(f"  [{step['step']}] exit 0 — {last[:120]}")
             elif step["step"] == "test" and "testhost" in (proc.stdout + proc.stderr):
-                warn(f"{rel}: test step ENV-BLOCKED (testhost connection) — "
-                     "environment limitation, not a template failure")
+                # Sandbox egress proxies can break the vstest<->testhost
+                # handshake on .NET's dual-mode IPv6 loopback. Retry once
+                # forcing AF_INET; the variable is set only on this
+                # verifier's retry, never in the template or its CI.
+                retry_env = dict(os.environ, DOTNET_SYSTEM_NET_DISABLEIPV6="1")
+                retry = run_step(command, cwd, env=retry_env)
+                if retry is not None and retry.returncode == 0:
+                    rtail = (retry.stdout + retry.stderr).strip().splitlines()
+                    rlast = rtail[-1] if rtail else ""
+                    print(f"  [{step['step']}] exit 0 on retry with "
+                          f"DOTNET_SYSTEM_NET_DISABLEIPV6=1 (IPv6 loopback "
+                          f"workaround) — {rlast[:120]}")
+                elif retry is not None and "testhost" in (retry.stdout + retry.stderr):
+                    warn(f"{rel}: test step ENV-BLOCKED (testhost connection) — "
+                         "environment limitation, not a template failure")
+                elif retry is not None:
+                    rtail = (retry.stdout + retry.stderr).strip().splitlines()
+                    rlast = rtail[-1] if rtail else ""
+                    fail(f"{rel}: verify step '{step['step']}' exit "
+                         f"{retry.returncode} on IPv6-workaround retry — "
+                         f"{rlast[:200]}")
+                else:
+                    fail(f"{rel}: verify step '{step['step']}' retry could "
+                         "not start")
             else:
                 fail(f"{rel}: verify step '{step['step']}' exit "
                      f"{proc.returncode} — {last[:200]}")
