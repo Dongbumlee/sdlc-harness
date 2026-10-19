@@ -187,7 +187,7 @@
  - **Code-quality and test-quality standards**
    - Language-specific quality rules are defined in `.github/*-quality*.instructions.md` files.
    - These auto-apply when you edit matching files and enforce:
-     - Copyright headers and docstrings.
+     - Docstrings and documentation comments. No copyright or license headers unless the org standard recorded in the project manifest mandates one.
      - Naming conventions and import organization.
      - Comment cleanup (remove redundant, keep "why").
      - Dead code removal and compile/type-checking.

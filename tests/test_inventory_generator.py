@@ -1,5 +1,3 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
 """Regression tests for the inventory generator's date handling.
 
 The generated doc carries a `**Generated:** <date>` line. The --check

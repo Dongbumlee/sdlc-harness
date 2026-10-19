@@ -453,9 +453,6 @@ Copilot should generate these files with tests:
 
 **Data model** (`src/DocumentManagerAPI/app/models/document.py`):
 ```python
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
-
 """Document entity for Cosmos DB storage."""
 
 from <project_cosmosdb_lib>.sql import RootEntityBase
@@ -477,9 +474,6 @@ class Document(RootEntityBase["Document", str]):
 
 **Repository** (`src/DocumentManagerAPI/app/repositories/document_repository.py`):
 ```python
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
-
 """Repository for document metadata in Cosmos DB."""
 
 from <project_cosmosdb_lib>.sql import RepositoryBase
@@ -498,9 +492,6 @@ class DocumentRepository(RepositoryBase[Document, str]):
 
 **Service** (`src/DocumentManagerAPI/app/services/document_service.py`):
 ```python
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
-
 """Document service orchestrating Cosmos DB and Blob Storage operations."""
 
 from <project_storage_lib>.blob import AsyncStorageBlobHelper
@@ -550,9 +541,6 @@ class DocumentService:
 | -------------------------------------------------------------------------------------------------- |
 | *Copilot generating the Document model, repository, and service with the approved Cosmos DB library and the approved Storage library* |
 ```python
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
-
 """Tests for app.services.document_service."""
 
 from __future__ import annotations
@@ -641,9 +629,6 @@ Copilot should generate:
 
 **Agent entry point** (`src/DocumentManagerAgent/src/main.py`):
 ```python
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
-
 """Document Manager AI Agent service entry point."""
 
 from libs.agent_framework.mcp_context import MCPContext
@@ -653,9 +638,6 @@ from agents.document_qa import DocumentQAAgent
 
 **Document Analyzer Agent** (`src/DocumentManagerAgent/src/agents/document_analyzer.py`):
 ```python
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
-
 """Agent that analyzes uploaded documents — summarization and tag extraction."""
 
 from azure.ai.projects import AIProjectClient
@@ -694,9 +676,6 @@ class DocumentAnalyzerAgent:
 
 **MCP Tool — Blob Reader** (`src/DocumentManagerAgent/src/tools/blob_tool.py`):
 ```python
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
-
 """MCP tool for reading document content from Azure Blob Storage."""
 
 from <project_storage_lib>.blob import AsyncStorageBlobHelper
@@ -718,9 +697,6 @@ async def read_document(document_id: str, blob_path: str) -> str:
 
 **Unit test** (`src/DocumentManagerAgent/tests/unit/test_document_analyzer.py`):
 ```python
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
-
 """Tests for agent.agents.document_analyzer."""
 
 from __future__ import annotations

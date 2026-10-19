@@ -82,7 +82,7 @@ argument-hint: "Describe the feature or change to review and release"
     |---|---|
     | **Architecture** | Layering (API → Application → Domain), dependency direction, pattern reuse, template alignment |
     | **{Cloud} Compliance** | Cloud-specific: Azure → `the approved Cosmos DB library`/`the approved Storage library` (not raw SDK), Repository Pattern, `async with`, Managed Identity, AVM modules, tags, diagnostics; AWS → CDK L2 constructs, IAM grant methods; GCP → Terraform standards, least-privilege IAM |
-    | **Code Quality** | Naming, docstrings, dead code, comment quality, import organization, copyright headers |
+    | **Code Quality** | Naming, docstrings, dead code, comment quality, import organization, no third-party copyright headers |
     | **Security** | OWASP Top 10 mapped review, no secrets in code, parameterized queries, CORS config, security headers |
     | **Test Coverage** | Tests exist for new code, Arrange–Act–Assert structure, proper mocking, coverage thresholds |
     | **UX & Accessibility** | ARIA labels, alt text, keyboard navigation, focus indicators, error boundaries, responsive layout |

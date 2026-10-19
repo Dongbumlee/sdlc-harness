@@ -1,5 +1,5 @@
 ---
-description: "Use when writing, reviewing, or refactoring TypeScript code. Enforces copyright headers, JSDoc comments, naming conventions, import organization, strict typing, and dead code removal."
+description: "Use when writing, reviewing, or refactoring TypeScript code. Enforces JSDoc comments, naming conventions, import organization, strict typing, and dead code removal."
 applyTo: '**/*.ts'
 ---
 # Systematic Code-Quality Pass Instructions for TypeScript Codebase
@@ -9,14 +9,10 @@ applyTo: '**/*.ts'
 
 You are performing a systematic code-quality pass on a TypeScript codebase. Work through every folder one at a time. For each TypeScript file, apply ALL of the following rules, then type-check every edited file before moving to the next folder.
 
-## 1. Copyright & Module Header
+## 1. Module Header
 
-- Every `.ts` file must start with:
-  ```
-  // Copyright (c) Microsoft Corporation.
-  // Licensed under the MIT License.
-  ```
-- Immediately after, add or verify a JSDoc module description:
+- Do NOT add copyright or license headers to source files. If the adopting organization requires a file header, its exact text comes from the org standard recorded in the project manifest — never invent one, and never use another company's name in a header.
+- At the top of the file, add or verify a JSDoc module description:
   ```ts
   /**
    * Brief description of what this module does.
@@ -28,7 +24,7 @@ You are performing a systematic code-quality pass on a TypeScript codebase. Work
 
 ## 2. Barrel Files (`index.ts`)
 
-- If the barrel file only re-exports, add the copyright header and a module-level JSDoc listing exported members with one-line descriptions.
+- If the barrel file only re-exports, add a module-level JSDoc listing exported members with one-line descriptions.
 - Prefer named exports over `export default`.
 - Keep barrel files thin — re-exports only, no logic.
 

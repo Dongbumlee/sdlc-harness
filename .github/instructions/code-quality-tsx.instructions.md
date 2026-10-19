@@ -1,5 +1,5 @@
 ---
-description: "Use when writing, reviewing, or refactoring React TSX components. Enforces copyright headers, JSDoc, component naming, accessibility patterns, hook conventions, and state management."
+description: "Use when writing, reviewing, or refactoring React TSX components. Enforces JSDoc, component naming, accessibility patterns, hook conventions, and state management."
 applyTo: '**/*.tsx'
 ---
 # Systematic Code-Quality Pass Instructions for React (TSX) Codebase
@@ -9,18 +9,14 @@ applyTo: '**/*.tsx'
 
 You are performing a systematic code-quality pass on a React TypeScript codebase. Work through every folder one at a time. For each `.tsx` file, apply ALL of the following rules, then type-check every edited file before moving to the next folder.
 
-> **Note**: General TypeScript rules (copyright headers, import organization, strict typing,
+> **Note**: General TypeScript rules (import organization, strict typing,
 > comment cleanup, naming for non-component code) are defined in `code-quality-ts.instructions.md`.
 > This file extends those rules with React-specific patterns.
 
-## 1. Copyright & Component Header
+## 1. Component Header
 
-- Every `.tsx` file must start with:
-  ```
-  // Copyright (c) Microsoft Corporation.
-  // Licensed under the MIT License.
-  ```
-- Immediately after, add or verify a JSDoc module description:
+- Do NOT add copyright or license headers to source files. If the adopting organization requires a file header, its exact text comes from the org standard recorded in the project manifest — never invent one, and never use another company's name in a header.
+- At the top of the file, add or verify a JSDoc module description:
   ```tsx
   /**
    * Brief description of what this component/page/layout does.

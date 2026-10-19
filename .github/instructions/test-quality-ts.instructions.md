@@ -57,7 +57,7 @@ c) TYPE-CHECK every remaining test file:
        npx tsc --noEmit
    Fix any type errors or import failures.
 
-d) ADD MISSING COPYRIGHT HEADERS to any file that lacks one.
+d) REMOVE third-party copyright/license headers from any file that carries one (a header is allowed only when the org standard recorded in the project manifest mandates it).
 
 ═══════════════════════════════════════════════════════════════════════════════
 3. FILE FORMAT CONVENTIONS
@@ -65,8 +65,6 @@ d) ADD MISSING COPYRIGHT HEADERS to any file that lacks one.
 
 Every test file must follow this exact structure:
 
-    // Copyright (c) Microsoft Corporation.
-    // Licensed under the MIT License.
 
     /**
      * Tests for {@link ./module-name} — brief description.
@@ -90,7 +88,7 @@ Every test file must follow this exact structure:
     });
 
 Rules:
-- ALWAYS include the 2-line copyright header.
+- NEVER include a copyright/license header, unless the org standard recorded in the project manifest mandates one with its exact text.
 - ALWAYS include a module-level JSDoc comment: `/** Tests for ... */`
 - Use ASCII banner comments to separate logical sections.
 - Import test utilities (`describe`, `it`, `expect`, `vi`) from `vitest`.
@@ -309,7 +307,7 @@ Follow this order:
   2. For each: verify imports resolve to existing source modules
   3. Delete orphaned test files (imports reference deleted modules)
   4. Fix stale tests (wrong field names, changed signatures, renamed params)
-  5. Add missing copyright headers
+  5. Remove third-party copyright headers
   6. Type-check all remaining tests: npx tsc --noEmit
 
 □ Phase 2 — Identify gaps

@@ -47,7 +47,7 @@ the template patterns recorded in the manifest (DI pattern, service interfaces, 
 
 ## Review checklist
 
-- [ ] **Copyright headers** — Present on all new files?
+- [ ] **Copyright headers** — No copyright or license header on new files, unless the org standard recorded in the project manifest mandates one with its exact text? A header naming a third party (e.g. another company) is always a finding.
 - [ ] **Logic correctness** — Boundary conditions right (off-by-one, empty input,
   first/last element)? No mutable default arguments (Python) or shared-state
   traps? Error paths actually reachable and tested?
@@ -75,8 +75,8 @@ the template patterns recorded in the manifest (DI pattern, service interfaces, 
 ## Output format
 
 Return findings as:
-- **Critical**: Missing copyright headers, no docstrings on public API
-- **Important**: Dead code, poor naming, missing type annotations
+- **Critical**: No docstrings on public API
+- **Important**: Third-party copyright/license headers present, dead code, poor naming, missing type annotations
 - **Suggestion**: Minor readability improvements, comment cleanup
 - **Positive**: Well-written, clean code aspects (cite specific evidence, not generic praise)
 

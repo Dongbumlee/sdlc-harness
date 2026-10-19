@@ -176,8 +176,8 @@ Before starting, load these resources for accurate implementation:
    - Unit tests cover key logic including edge cases.
    - Integration tests exist for high-risk flows.
    - No new TODOs left in critical paths without tracking issues.
-   - Code-quality and test-quality standards are met (copyright headers, docstrings,
-     naming conventions, comment cleanup, import order).
+   - Code-quality and test-quality standards are met (docstrings, naming
+     conventions, comment cleanup, import order; no third-party copyright headers).
    - Self-evaluation completed with acceptance criteria coverage table.
    - All acceptance criteria have corresponding passing tests.
    - For each criterion, mark it as:

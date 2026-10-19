@@ -63,7 +63,7 @@ c) COMPILE-CHECK every remaining test file:
        python -m py_compile <test_file>
    Fix any syntax errors or import failures.
 
-d) ADD MISSING COPYRIGHT HEADERS to any file that lacks one.
+d) REMOVE third-party copyright/license headers from any file that carries one (a header is allowed only when the org standard recorded in the project manifest mandates it).
 
 ═══════════════════════════════════════════════════════════════════════════════
 3. FILE FORMAT CONVENTIONS
@@ -71,8 +71,6 @@ d) ADD MISSING COPYRIGHT HEADERS to any file that lacks one.
 
 Every test file must follow this exact structure:
 
-    # Copyright (c) Microsoft Corporation.
-    # Licensed under the MIT License.
 
     """Tests for <module_path> (<brief description>)."""
 
@@ -93,7 +91,7 @@ Every test file must follow this exact structure:
             ...
 
 Rules:
-- ALWAYS include the 2-line copyright header.
+- NEVER include a copyright/license header, unless the org standard recorded in the project manifest mandates one with its exact text.
 - ALWAYS include `from __future__ import annotations`.
 - ALWAYS include a module-level docstring: """Tests for <path>."""
 - Use ASCII banner comments to separate logical sections.
@@ -265,7 +263,7 @@ Follow this order:
   2. For each: verify imports resolve to existing source modules
   3. Delete orphaned test files (imports reference deleted modules)
   4. Fix stale tests (wrong field names, changed signatures, renamed kwargs)
-  5. Add missing copyright headers
+  5. Remove third-party copyright headers
   6. Compile-check all remaining tests: python -m py_compile <file>
 
 □ Phase 2 — Identify gaps

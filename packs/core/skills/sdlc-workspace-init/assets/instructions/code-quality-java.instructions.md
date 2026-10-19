@@ -1,5 +1,5 @@
 ---
-description: "Use when writing, reviewing, or refactoring Java code. Enforces copyright headers, Javadoc, naming conventions, import organization, dead code removal, and type safety."
+description: "Use when writing, reviewing, or refactoring Java code. Enforces Javadoc, naming conventions, import organization, dead code removal, and type safety."
 applyTo: '**/*.java'
 ---
 # Systematic Code-Quality Pass Instructions for Java Codebase
@@ -9,15 +9,9 @@ applyTo: '**/*.java'
 
 You are performing a systematic code-quality pass on a Java codebase. Work through every package one at a time. For each Java file, apply ALL of the following rules, then compile-check every edited file before moving to the next package.
 
-## 1. Copyright & Class Header
+## 1. Class Header
 
-- Every `.java` file must start with a copyright block comment:
-  ```
-  /*
-   * Copyright (c) Microsoft Corporation.
-   * Licensed under the MIT License.
-   */
-  ```
+- Do NOT add copyright or license headers to source files. If the adopting organization requires a file header, its exact text comes from the org standard recorded in the project manifest — never invent one, and never use another company's name in a header.
 - Immediately after the package declaration and imports, add or replace the class-level Javadoc (`/** */`). It must:
   - Describe what the class does in 1–2 sentences.
   - Mention its role in the broader system (e.g., which service layer, what it depends on).
@@ -27,11 +21,6 @@ You are performing a systematic code-quality pass on a Java codebase. Work throu
 
 - Every non-trivial package should have a `package-info.java` file containing:
   ```java
-  /*
-   * Copyright (c) Microsoft Corporation.
-   * Licensed under the MIT License.
-   */
-
   /**
    * Brief description of what this package contains and its role in the system.
    *

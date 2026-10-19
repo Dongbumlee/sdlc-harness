@@ -1,5 +1,5 @@
 ---
-description: "Use when writing, reviewing, or refactoring C# code. Enforces copyright headers, XML documentation, naming conventions, using organization, dead code removal, and nullable reference types."
+description: "Use when writing, reviewing, or refactoring C# code. Enforces XML documentation, naming conventions, using organization, dead code removal, and nullable reference types."
 applyTo: '**/*.cs'
 ---
 # Systematic Code-Quality Pass Instructions for C# Codebase
@@ -9,13 +9,9 @@ applyTo: '**/*.cs'
 
 You are performing a systematic code-quality pass on a C# codebase. Work through every folder one at a time. For each C# file, apply ALL of the following rules, then compile-check every edited file before moving to the next folder.
 
-## 1. Copyright & File-Level Documentation
-- Every `.cs` file must start with:
-  ```csharp
-  // Copyright (c) Microsoft Corporation.
-  // Licensed under the MIT License.
-  ```
-- Immediately after, include the namespace and any file-level XML documentation on the primary type.
+## 1. File-Level Documentation
+- Do NOT add copyright or license headers to source files. If the adopting organization requires a file header, its exact text comes from the org standard recorded in the project manifest — never invent one, and never use another company's name in a header.
+- Begin the file with the namespace and any file-level XML documentation on the primary type.
 - The primary type's `<summary>` must:
   - Describe what the type does in 1-2 sentences.
   - Mention its role in the broader system (e.g., which service layer, what it depends on).

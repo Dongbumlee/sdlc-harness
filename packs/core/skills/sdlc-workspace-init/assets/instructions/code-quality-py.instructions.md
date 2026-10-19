@@ -1,5 +1,5 @@
 ---
-description: "Use when writing, reviewing, or refactoring Python code. Enforces copyright headers, docstrings, naming conventions, import organization, dead code removal, and type annotations."
+description: "Use when writing, reviewing, or refactoring Python code. Enforces docstrings, naming conventions, import organization, dead code removal, and type annotations."
 applyTo: '**/*.py'
 ---
 # Systematic Code-Quality Pass Instructions for Python Codebase
@@ -9,19 +9,15 @@ applyTo: '**/*.py'
 
 You are performing a systematic code-quality pass on a Python codebase. Work through every folder one at a time. For each Python file, apply ALL of the following rules, then compile-check every edited file before moving to the next folder.
 
-## 1. Copyright & Module Docstring
-- Every `.py` file (except empty `__init__.py`) must start with:
-  ```
-  # Copyright (c) Microsoft Corporation.
-  # Licensed under the MIT License.
-  ```
-- Immediately after, add or replace the module-level docstring. It must:
+## 1. Module Docstring
+- Do NOT add copyright or license headers to source files. If the adopting organization requires a file header, its exact text comes from the org standard recorded in the project manifest — never invent one, and never use another company's name in a header.
+- At the top of the file, add or replace the module-level docstring. It must:
   - Describe what the module does in 1-2 sentences.
   - Mention its role in the broader system (e.g., which pipeline stage, what it depends on).
   - NOT contain generic filler like "This module provides utilities for…"
 
 ## 2. Package `__init__.py`
-- If empty, add the copyright header and a package docstring listing sub-modules with one-line descriptions.
+- If empty, add a package docstring listing sub-modules with one-line descriptions.
 
 ## 3. Class Docstrings
 - Replace generic class docstrings with structured ones:

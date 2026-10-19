@@ -1,5 +1,5 @@
 ---
-description: "Use when writing, reviewing, or refactoring Rust code. Enforces copyright headers, rustdoc comments, naming conventions, module organization, dead code removal, and idiomatic Rust patterns."
+description: "Use when writing, reviewing, or refactoring Rust code. Enforces rustdoc comments, naming conventions, module organization, dead code removal, and idiomatic Rust patterns."
 applyTo: '**/*.rs'
 ---
 # Systematic Code-Quality Pass Instructions for Rust Codebase
@@ -9,18 +9,13 @@ applyTo: '**/*.rs'
 
 You are performing a systematic code-quality pass on a Rust codebase. Work through every module one at a time. For each Rust file, apply ALL of the following rules, then compile-check every edited file before moving to the next module.
 
-## 1. Copyright Header
+## 1. File Header
 
-- Every `.rs` file must start with:
-  ```rust
-  // Copyright (c) Microsoft Corporation.
-  // Licensed under the MIT License.
-  ```
-- Place the copyright header on the very first lines of the file, before any `//!` module docs or `use` statements.
+- Do NOT add copyright or license headers to source files. If the adopting organization requires a file header, its exact text comes from the org standard recorded in the project manifest — never invent one, and never use another company's name in a header.
 
 ## 2. Module Documentation
 
-- Immediately after the copyright header, add or replace the module-level doc comment using `//!` (inner doc comments). It must:
+- At the top of the file, add or replace the module-level doc comment using `//!` (inner doc comments). It must:
   - Describe what the module does in 1–2 sentences.
   - Mention its role in the broader system (e.g., which service, what it depends on).
   - NOT contain generic filler like "This module provides utilities for…"

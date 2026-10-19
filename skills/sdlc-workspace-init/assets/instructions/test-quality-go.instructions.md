@@ -72,7 +72,7 @@ d) RUN TARGETED TESTS to verify they pass:
        go test -run TestName ./pkg/...
    Fix any failures before proceeding.
 
-e) ADD MISSING COPYRIGHT HEADERS to any file that lacks one.
+e) REMOVE third-party copyright/license headers from any file that carries one (a header is allowed only when the org standard recorded in the project manifest mandates it).
 
 ═══════════════════════════════════════════════════════════════════════════════
 3. FILE FORMAT CONVENTIONS
@@ -80,8 +80,6 @@ e) ADD MISSING COPYRIGHT HEADERS to any file that lacks one.
 
 Every test file must follow this exact structure:
 
-    // Copyright (c) Microsoft Corporation.
-    // Licensed under the MIT License.
 
     package <name>  // or <name>_test for black-box tests
 
@@ -105,7 +103,7 @@ Every test file must follow this exact structure:
     }
 
 Rules:
-- ALWAYS include the 2-line copyright header.
+- NEVER include a copyright/license header, unless the org standard recorded in the project manifest mandates one with its exact text.
 - ALWAYS group imports: stdlib, external, internal — separated by blank lines.
 - Use ASCII banner comments to separate logical test sections.
 - Import `testing` in every test file (required by the test framework).
@@ -305,7 +303,7 @@ Follow this order:
   2. For each: verify that all referenced types and functions exist in the source
   3. Delete orphaned test files (references to deleted types/packages)
   4. Fix stale tests (wrong field names, changed signatures, removed methods)
-  5. Add missing copyright headers
+  5. Remove third-party copyright headers
   6. Compile-check all remaining tests: `go build ./...` and `go vet ./...`
 
 □ Phase 2 — Identify gaps

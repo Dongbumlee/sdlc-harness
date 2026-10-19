@@ -119,8 +119,8 @@ Include `Source: Implementer (Phase 5)` on your entries.
 0a. **Read the scaffolder's quality instruction files** — the scaffolder places
    language-specific quality rules in `.github/instructions/` (e.g.
    `code-quality-py.instructions.md`). Read the applicable file BEFORE writing
-   any code and follow it (copyright headers, docstring conventions, etc.).
-   The code-quality reviewer will check these mechanically — a missing header
+   any code and follow it (docstring conventions, naming, etc.).
+   The code-quality reviewer will check these mechanically — a missing docstring
    is a Critical finding even when the logic is correct.
 
 1. **Verify GitHub MCP authentication (required):**

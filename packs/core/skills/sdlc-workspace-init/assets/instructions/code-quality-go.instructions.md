@@ -1,5 +1,5 @@
 ---
-description: "Use when writing, reviewing, or refactoring Go code. Enforces copyright headers, GoDoc comments, naming conventions, package organization, dead code removal, and idiomatic Go patterns."
+description: "Use when writing, reviewing, or refactoring Go code. Enforces GoDoc comments, naming conventions, package organization, dead code removal, and idiomatic Go patterns."
 applyTo: '**/*.go'
 ---
 # Systematic Code-Quality Pass Instructions for Go Codebase
@@ -9,22 +9,14 @@ applyTo: '**/*.go'
 
 You are performing a systematic code-quality pass on a Go codebase. Work through every package one at a time. For each Go file, apply ALL of the following rules, then compile-check every edited file before moving to the next package.
 
-## 1. Copyright Header
+## 1. File Header
 
-- Every `.go` file must start with:
-  ```go
-  // Copyright (c) Microsoft Corporation.
-  // Licensed under the MIT License.
-  ```
-- The copyright header must appear before the `package` declaration.
+- Do NOT add copyright or license headers to source files. If the adopting organization requires a file header, its exact text comes from the org standard recorded in the project manifest — never invent one, and never use another company's name in a header.
 
 ## 2. Package Documentation
 
 - Every package must have a `doc.go` file containing:
   ```go
-  // Copyright (c) Microsoft Corporation.
-  // Licensed under the MIT License.
-
   // Package <name> provides <one-line summary>.
   //
   // <Additional paragraph describing the package's role in the broader system,

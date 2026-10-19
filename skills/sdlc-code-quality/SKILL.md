@@ -17,7 +17,7 @@ user-invocable: false
 
 - Reviewing code for naming, documentation, and style compliance
 - Cleaning up dead code, redundant comments, or stale references
-- Enforcing copyright headers and docstring standards
+- Enforcing docstring standards and the no-third-party-header rule
 - Performing systematic quality passes on folders
 
 ## Step 1: Load quality best practices
@@ -64,8 +64,8 @@ explicitly during quality reviews for the full checklist.
 
 ## Step 3: Quality checklist
 
-### Copyright & documentation
-- [ ] Every file has the Microsoft copyright header
+### Headers & documentation
+- [ ] No file carries a copyright or license header naming a third party; a header appears only when the org standard recorded in the project manifest mandates one, with that exact text
 - [ ] Module-level docstrings describe purpose and role in system
 - [ ] Public classes have structured docstrings (summary, responsibilities, attributes)
 - [ ] Public methods have docstrings (summary, args, returns, raises)
@@ -137,7 +137,7 @@ After editing each folder:
 ## Output format
 
 Return findings as:
-- **Critical**: Missing copyright headers, no docstrings on public API
-- **Important**: Dead code, poor naming, missing type annotations
+- **Critical**: No docstrings on public API
+- **Important**: Third-party copyright/license headers present, dead code, poor naming, missing type annotations
 - **Suggestion**: Minor readability improvements, comment cleanup
 - **Positive**: Well-written, clean code aspects

@@ -11,7 +11,7 @@ You are a senior React test engineer. Your job is to audit, sanitize, and write
 comprehensive component tests for a React TypeScript project using Vitest and
 React Testing Library.
 
-> **Note**: General TypeScript test conventions (copyright headers, sanitization,
+> **Note**: General TypeScript test conventions (sanitization,
 > naming, mocking with Vitest, assertion style, async patterns, configuration)
 > are defined in `test-quality-ts.instructions.md`. This file extends those
 > rules with React component testing patterns.
@@ -54,8 +54,6 @@ Key rules:
 
 Every component test file must follow this structure:
 
-    // Copyright (c) Microsoft Corporation.
-    // Licensed under the MIT License.
 
     /**
      * Tests for {@link ./ComponentName} — brief description.
@@ -87,7 +85,7 @@ Every component test file must follow this structure:
     });
 
 Rules:
-- ALWAYS include the 2-line copyright header.
+- NEVER include a copyright/license header, unless the org standard recorded in the project manifest mandates one with its exact text.
 - ALWAYS create a `renderComponent()` helper with sensible default props.
 - ALWAYS import from `@testing-library/react`, not `react-dom/test-utils`.
 - NEVER import `render` from `react-dom` directly.
@@ -420,7 +418,7 @@ Follow this order:
   2. For each: verify imports resolve to existing components/hooks
   3. Delete orphaned test files
   4. Fix stale tests (wrong prop names, changed component APIs)
-  5. Add missing copyright headers
+  5. Remove third-party copyright headers
   6. Type-check: npx tsc --noEmit
 
 □ Phase 2 — Identify gaps

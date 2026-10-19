@@ -67,7 +67,7 @@ c) COMPILE-CHECK all tests without running them:
        cargo test --no-run
    Fix any compilation errors, type mismatches, or lint warnings.
 
-d) ADD MISSING COPYRIGHT HEADERS to any file that lacks one.
+d) REMOVE third-party copyright/license headers from any file that carries one (a header is allowed only when the org standard recorded in the project manifest mandates it).
 
 ═══════════════════════════════════════════════════════════════════════════════
 3. FILE FORMAT CONVENTIONS
@@ -78,8 +78,6 @@ d) ADD MISSING COPYRIGHT HEADERS to any file that lacks one.
 Every source file with testable logic must include a test module at the bottom:
 
 ```rust
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 
 //! Module-level documentation.
 
@@ -108,8 +106,6 @@ mod tests {
 ### Integration Tests (in `tests/` directory)
 
 ```rust
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
 
 //! Integration tests for <feature description>.
 
@@ -124,7 +120,7 @@ fn test_end_to_end_workflow() {
 ```
 
 Rules:
-- ALWAYS include the 2-line copyright header.
+- NEVER include a copyright/license header, unless the org standard recorded in the project manifest mandates one with its exact text.
 - ALWAYS gate unit test modules with `#[cfg(test)]`.
 - ALWAYS use `use super::*` in unit test modules to access parent items.
 - Use `// Arrange`, `// Act`, `// Assert` comments in complex tests.
@@ -445,7 +441,7 @@ Follow this order:
   2. For each: verify imports resolve to existing types and functions
   3. Delete orphaned test functions (references to deleted/renamed items)
   4. Fix stale tests (wrong field names, changed signatures, removed variants)
-  5. Add missing copyright headers
+  5. Remove third-party copyright headers
   6. Compile-check all tests: `cargo check --tests && cargo clippy --tests`
 
 □ Phase 2 — Identify gaps

@@ -66,7 +66,7 @@ c) COMPILE-CHECK every remaining test file:
    - **Gradle:** `./gradlew compileTestJava --quiet`
    Fix any compilation errors or import failures.
 
-d) ADD MISSING COPYRIGHT HEADERS to any file that lacks one.
+d) REMOVE third-party copyright/license headers from any file that carries one (a header is allowed only when the org standard recorded in the project manifest mandates it).
 
 ═══════════════════════════════════════════════════════════════════════════════
 3. FILE FORMAT CONVENTIONS
@@ -74,10 +74,6 @@ d) ADD MISSING COPYRIGHT HEADERS to any file that lacks one.
 
 Every test file must follow this exact structure:
 
-    /*
-     * Copyright (c) Microsoft Corporation.
-     * Licensed under the MIT License.
-     */
 
     package com.example.service;
 
@@ -121,7 +117,7 @@ Every test file must follow this exact structure:
     }
 
 Rules:
-- ALWAYS include the copyright block comment header.
+- NEVER include a copyright/license header, unless the org standard recorded in the project manifest mandates one with its exact text.
 - ALWAYS include the package declaration matching the class under test.
 - Organize imports in sections: JUnit 5, Mockito, AssertJ, application.
 - Use `@ExtendWith(MockitoExtension.class)` instead of the deprecated `@RunWith`.
@@ -391,7 +387,7 @@ Follow this order:
   2. For each: verify imports resolve to existing source classes
   3. Delete orphaned test files (imports reference deleted/renamed classes)
   4. Fix stale tests (wrong field names, changed signatures, removed methods)
-  5. Add missing copyright headers
+  5. Remove third-party copyright headers
   6. Compile-check all remaining tests:
      - Maven: `mvn test-compile -q`
      - Gradle: `./gradlew compileTestJava --quiet`
