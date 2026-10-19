@@ -201,6 +201,15 @@ recommend a targeted re-run of that domain alone. A domain returned with
 `status: partial` is synthesized normally; its `not_checked` areas are listed
 in the summary and the domain is marked ⚠️ in the exit criteria.
 
+**The budget caps a session, never a domain's total coverage.** When a
+partial domain's `not_checked` list contains material areas (security
+surface, requirements traceability, error handling), dispatch a
+continuation review for the SAME domain scoped to exactly those areas —
+with a fresh budget — before issuing the final verdict. Repeat until the
+domain is complete or the remaining areas are recorded as accepted gaps in
+the summary. Coverage is therefore unbounded across continuations, while
+every individual session stays bounded and always returns a deliverable.
+
 **Verify test evidence before synthesizing (mandatory).** The evidence pack
 contains a full-suite run executed by the Harness before the panel, with the
 raw output saved verbatim; quote its observed summary line(s) (e.g.
