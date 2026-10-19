@@ -425,6 +425,30 @@ After the Documenter produces artifacts:
 2. Verify code references match actual codebase.
 3. If gaps found, ask the Documenter to revise.
 
+#### Phase 6 entry: assemble the QA evidence pack (before delegating to QA Coordinator)
+
+Reviewers in the Copilot CLI surface work file-by-file with no shared context;
+measured on a real run, 9 reviewers independently re-read the same manifest,
+requirements, and source files (700+ file views, the panel's largest time
+cost), guessed at paths that did not exist, and could not execute anything.
+Assemble the shared evidence ONCE, before the panel, so reviewers start from
+facts instead of re-deriving them:
+
+1. Run the bundled collector (deterministic, no model calls):
+   `python <plugin-root>/skills/sdlc-project-qa/assets/collect-qa-evidence.py --root . --out .SDLC`
+   It writes `.SDLC/qa-evidence-pack.md`: file inventory, the manifest,
+   requirements and ADRs, dependency summary, CI step list, and a
+   requirements↔test traceability cross-reference.
+2. Run the stack profile's full test command and save the raw output
+   verbatim to `.SDLC/qa-evidence/test-run.txt`; append its summary line to
+   the pack. If the runner itself cannot execute in this environment, apply
+   the environment-failure exit condition and record the classification in
+   the pack instead — never a silent pass.
+3. Delegate Phase 6 to the QA Coordinator naming the pack path. The
+   Coordinator selects the active panel from the manifest/requirements
+   signals (Step 0.5 applicability) and launches every reviewer with the
+   pack as shared starting evidence.
+
 #### Phase 6: QA feedback loop (QA Coordinator → Implementer)
 
 When the QA Coordinator returns a verdict of ⛔ (Request changes), apply the 3-tier escalation

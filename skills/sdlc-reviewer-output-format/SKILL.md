@@ -26,6 +26,8 @@ reviewer: "<agent display name>"
 phase: "<sdlc-phase being reviewed>"
 score: <1-10>
 verdict: PASS | FAIL | CRITICAL_FAIL
+status: complete | partial
+not_checked: ["<area not examined — required when status is partial, otherwise []>"]
 findings:
   - severity: critical | high | medium | low
     category: <domain-specific category — see list below>
@@ -71,6 +73,8 @@ false-positive QA loops.
 | `phase` | SDLC phase being reviewed (e.g., `"Phase 4 - Implementation"`) |
 | `score` | Integer 1–10. Must be consistent with the Markdown `Quality Score: X/10` |
 | `verdict` | `PASS` if score meets threshold and no critical findings; `FAIL` if score below threshold; `CRITICAL_FAIL` if any finding has severity `critical` |
+| `status` | `complete` when the whole assigned scope was examined; `partial` when the review budget ran out first |
+| `not_checked` | Areas of the assigned scope that were NOT examined. Required (non-empty) when `status` is `partial`; `[]` when complete |
 | `findings` | List of all **in-scope** findings. May be empty (`[]`) for a clean review. Include ALL in-scope findings from the Markdown report |
 | `hardening_suggestions` | Out-of-scope hardening ideas (see Finding Scoping). Never affect score or verdict |
 | `severity` | `critical` = must fix before merge; `high` = important; `medium` = suggestion; `low` = minor |
@@ -92,6 +96,19 @@ false-positive QA loops.
 - Score below threshold → verdict MUST be `FAIL`
 - Score at or above threshold AND no critical in-scope findings → verdict is `PASS`
 - `hardening_suggestions` never change the verdict
+
+## Partial results (budget exhausted)
+
+Reviewers work under a tool-call budget (see the QA Coordinator's launch
+directive). A reviewer that approaches its budget MUST stop exploring and emit
+its report with `status: partial`:
+
+- Score and verdict are computed from the examined scope only.
+- `not_checked` lists every assigned area that was not examined — the QA
+  Coordinator marks the domain ⚠️ in the exit criteria and may schedule a
+  targeted re-review of exactly those areas.
+- A partial report with real findings is a valid deliverable. Returning
+  nothing because the budget ran out is a reviewer failure.
 
 ## Domain-Specific Category Values
 
