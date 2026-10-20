@@ -374,6 +374,19 @@ or explicitly waived by the user:
      the authenticated account), visibility (default: **private**).
    - If existing: the repository URL; clone it into the project directory
      or attach it as the remote.
+
+   **The questions must actually be asked.** Wording inside the task prompt
+   is never an answer: a phrase like "build in this empty repository", a
+   folder path, or the word "locally" in a task description does NOT choose
+   a repository mode, and must never be recorded as a user decision.
+   `repository_mode` may be recorded only from (a) the user's answer to the
+   intake questions, or (b) an explicit local-only / use-this-repo
+   instruction the user gave as an instruction (not as task prose). If the
+   user cannot be asked (unattended run), STOP at intake and record
+   `repository_mode: undecided` — never infer a default silently.
+   (Origin: 2026-10-19 simulation — the harness read "this empty
+   repository" in the feature prompt as a local-only decision and recorded
+   it as if the user had requested it.)
 3. **Create the repository now** (when "new" was chosen): GitHub MCP
    `create_repository` (fallback: `gh repo create --private`). The Scaffolder
    pushes the scaffold as the first commit (see its exit criteria).
@@ -381,7 +394,10 @@ or explicitly waived by the user:
    with its header and Phase-State Ledger skeleton if it does not exist yet
    (the Scaffolder completes the remaining sections in Phase 3):
    `github_account`, `repository_mode` (new | existing | local-only),
-   `repository_url`, `repository_visibility`, `default_branch`.
+   `repository_url`, `repository_visibility`, `default_branch`, and
+   `repository_decision_source` (asked at intake | explicit user
+   instruction) — a mode recorded without a decision source is an intake
+   violation; treat the intake as not done.
 
 Local-only mode is a legitimate user decision, not a failure: record it,
 proceed without GitHub sync, and let the Release Manager offer repository
