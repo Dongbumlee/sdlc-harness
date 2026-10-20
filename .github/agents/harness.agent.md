@@ -236,6 +236,13 @@ For `implement` and `qa` phases, invoke all 9 reviewers (full review).
   update the row for the completed phase in the `## Phase-State Ledger` section
   of `.SDLC/project-manifest.md` — status, artifact paths produced, date. The
   ledger is the resume source (Step 0.5) and the exit gates' cross-check.
+- **Mirror phase state to GitHub (ADR-0003 D4).** When the manifest's
+  `repository_mode` is not local-only: at each phase start, open (or reuse)
+  the phase's Issue labeled `sdlc:phase-<n>` via GitHub MCP; when the ledger
+  marks the phase Complete, close it. Sync is one-directional —
+  ledger → GitHub — so the ledger never waits on GitHub. If a GitHub call
+  fails, note the pending sync in the ledger row and retry at the next
+  transition; never block a phase on it.
 - **Always check the reference catalog** before allowing new dependencies. Use GitHub MCP to fetch
   `.github/reference-catalog.md` if needed.
 - **Always verify quality instruction compliance** after implementation — delegate to QA Coordinator.
@@ -349,6 +356,37 @@ For greenfield projects the same checks apply once the Scaffolder has run
 (the manifest is created in Phase 3); verify the REQ and ADR files before
 Phase 4 in that case.
 
+#### GitHub intake (initialization — MANDATORY before Phase 3)
+
+GitHub is the working medium for the whole run (ADR-0003), so the run does
+not start until the GitHub facts are established **with the user** and
+recorded. Do NOT delegate to the Scaffolder until every item below is done
+or explicitly waived by the user:
+
+1. **Verify authentication.** Call GitHub MCP `get_me()` (fallback:
+   `gh auth status`) and record the authenticated account login. If GitHub
+   is not authenticated, STOP and ask the user to authenticate — or to
+   explicitly choose **local-only mode**. Never silently proceed on an
+   unauthenticated assumption.
+2. **Ask the repository questions (once, at intake):**
+   - Create a new repository, use an existing one, or local-only?
+   - If new: repository name (default: the project name), owner (default:
+     the authenticated account), visibility (default: **private**).
+   - If existing: the repository URL; clone it into the project directory
+     or attach it as the remote.
+3. **Create the repository now** (when "new" was chosen): GitHub MCP
+   `create_repository` (fallback: `gh repo create --private`). The Scaffolder
+   pushes the scaffold as the first commit (see its exit criteria).
+4. **Record the intake** in `.SDLC/project-manifest.md` — create the file
+   with its header and Phase-State Ledger skeleton if it does not exist yet
+   (the Scaffolder completes the remaining sections in Phase 3):
+   `github_account`, `repository_mode` (new | existing | local-only),
+   `repository_url`, `repository_visibility`, `default_branch`.
+
+Local-only mode is a legitimate user decision, not a failure: record it,
+proceed without GitHub sync, and let the Release Manager offer repository
+creation again as a catch-up step before release.
+
 #### Project workspace isolation (before Phase 3)
 
 Before the Scaffolder creates any files, establish a dedicated project
@@ -444,7 +482,13 @@ facts instead of re-deriving them:
    the pack. If the runner itself cannot execute in this environment, apply
    the environment-failure exit condition and record the classification in
    the pack instead — never a silent pass.
-3. Delegate Phase 6 to the QA Coordinator naming the pack path. The
+3. **Record the CI result for the commit under review (ADR-0003 D5).** When
+   the manifest's `repository_mode` is not local-only, query the check runs
+   for the current HEAD commit via GitHub MCP and append a **CI Evidence**
+   section to the pack: workflow name, conclusion, and run URL. This CI
+   citation is the gate's primary test evidence; the local run in step 2 is
+   supporting evidence and the fallback when no CI run exists.
+4. Delegate Phase 6 to the QA Coordinator naming the pack path. The
    Coordinator selects the active panel from the manifest/requirements
    signals (Step 0.5 applicability) and launches every reviewer with the
    pack as shared starting evidence.

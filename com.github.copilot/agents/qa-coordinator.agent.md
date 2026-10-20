@@ -210,10 +210,17 @@ domain is complete or the remaining areas are recorded as accepted gaps in
 the summary. Coverage is therefore unbounded across continuations, while
 every individual session stays bounded and always returns a deliverable.
 
-**Verify test evidence before synthesizing (mandatory).** The evidence pack
-contains a full-suite run executed by the Harness before the panel, with the
-raw output saved verbatim; quote its observed summary line(s) (e.g.
-`224 passed`, `11 failed`) in the QA summary. If the pack records NO run —
+**Verify test evidence before synthesizing (mandatory).** The evidence
+pack's **CI Evidence** section (ADR-0003 D5) is the primary source: when it
+records a CI run for the commit under review, cite its workflow, conclusion,
+and run URL in the QA summary — a CI conclusion for the exact commit is the
+test evidence, and you can open the run via GitHub MCP to inspect failures
+rather than trusting any summary, including this pack's. When the pack has
+NO CI citation (local-only project, or CI absent/failed to trigger), fall
+back to the pack's recorded full-suite run, executed by the Harness before
+the panel with the raw output saved verbatim; quote its observed summary
+line(s) (e.g. `224 passed`, `11 failed`) in the QA summary and state that
+the evidence is a local recording, not CI. If the pack records NO run —
 collection failed or no run was possible — delegate a full-suite run to the
 **Test Coverage Reviewer** and require it to return the raw runner output.
 The Implementer's own claim is not evidence. If no observed output was

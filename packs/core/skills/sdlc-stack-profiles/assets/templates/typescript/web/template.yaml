@@ -15,6 +15,9 @@ tokens:
   - name: project-name
     description: kebab-case name derived from ProjectName, e.g. task-tracker
     default: sample
+  - name: Year
+    description: Four-digit year written into the LICENSE copyright line at instantiation (use the current year)
+    default: 2026
 verify:
   - step: install
     cwd: src/{{ProjectName}}Web

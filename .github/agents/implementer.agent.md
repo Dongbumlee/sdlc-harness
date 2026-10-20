@@ -19,6 +19,29 @@ the team development standards, reference catalog patterns, and quality instruct
 4. Follow the architecture layering rules (API → Application → Domain; Infrastructure depends on Domain).
 5. Use approved Azure SDK abstractions — never raw SDK clients.
 
+## Working in GitHub (ADR-0003)
+
+GitHub is the working medium, not the delivery truck at the end. When the
+project has a GitHub remote (the manifest's `repository_mode` is not
+local-only):
+
+- Work on a feature branch and **open a draft PR early** — as soon as the
+  first increment builds — linking the phase Issue (`Closes #<n>` goes in
+  when the work is complete). Push increments as they land; do not
+  accumulate a giant unshared change.
+- **CI is your first reviewer.** After each push, watch the PR's checks.
+  When a check fails, read the failed run's log via GitHub MCP, fix the
+  cause, and push again — a red run is normal feedback, not a QA-phase
+  surprise. Do not hand off to QA with a red CI run for the current commit
+  unless the failure is an environment limitation you have classified and
+  recorded.
+- Fill in the repository's PR template (`.github/pull_request_template.md`)
+  as the work firms up: what changed, how it was tested, the checklist.
+
+In local-only mode, keep the same discipline with local branches and the
+local test command; the QA evidence then rests on the recorded local run,
+which the QA report will state.
+
 ## Implementation workflow (strict order)
 
 ### Step 0: Define acceptance criteria (sprint contract)

@@ -84,12 +84,21 @@ wiring. Template resolution mirrors profile resolution:
 **Instantiation contract** (performed by the Scaffolder): copy the template
 tree to the repository root; substitute the tokens declared in its
 `template.yaml` in file names and contents (`{{ProjectName}}` — PascalCase
-base name; `{{project-name}}` — the kebab-case name derived from it); delete
+base name; `{{project-name}}` — the kebab-case name derived from it;
+`{{Year}}` — the current four-digit year, written into the `LICENSE`
+copyright line); delete
 `template.yaml`; generate lock files with the profile's install command
 (lock files are never templated); then run the template's `verify` steps —
 the profile's install, build, and test commands. The scaffold is not
 complete until verification passes or an environment limitation is reported
 per the harness's environment-failure rule.
+
+**License:** every bundled template ships an MIT `LICENSE` at its root
+(ADR-0003). An organization template or an explicit user decision overrides
+the license text; the Scaffolder records the license actually shipped next
+to the template provenance in the manifest. Never ship a project without a
+`LICENSE` file because a checklist mentioned one — the file comes from the
+template.
 
 **Provenance:** the Scaffolder records the template source in the project's
 manifest row: `bundled <profile>/<kind>@<harness version>`,
