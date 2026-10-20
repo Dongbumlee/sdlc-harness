@@ -365,6 +365,8 @@ At the end of your scaffolding output, include an **SDLC Exit Criteria Check** s
 - Dockerfile per project with multi-stage build: ✅/⚠️/⛔
 - Per-project devcontainer configured: ✅/⚠️/⛔
 - Root-level compliance files present: ✅/⚠️/⛔
+- `LICENSE` present at root from the resolved template (MIT by default per ADR-0003, or the recorded override), with the license recorded in the manifest next to the provenance: ✅/⚠️/⛔
+- Initial commit pushed to the repository created at GitHub intake (or `repository_mode: local-only` recorded in the manifest): ✅/⚠️/⛔
 
 ## IMPORTANT: Scope boundary
 
