@@ -54,7 +54,11 @@ reach scaffolding until it is complete or explicitly waived by the user:
 2. **Ask the repository questions once, at intake:** create new / use
    existing / local-only; for a new repository — name (default: the project
    name), owner (default: the authenticated account), visibility **private**
-   (default).
+   (default). The questions must actually be asked — wording inside the
+   task prompt (e.g. "build in this empty repository") is never an answer
+   and must never be recorded as a user decision; the manifest records the
+   decision source alongside the mode. (Clarified 2026-10-19 after the
+   first simulation inferred local-only from the feature prompt's prose.)
 3. **Create the repository at intake** (GitHub MCP `create_repository` where
    available, otherwise `gh repo create`), and record the intake in the
    manifest (`github_account`, `repository_mode`, URL, visibility, default
