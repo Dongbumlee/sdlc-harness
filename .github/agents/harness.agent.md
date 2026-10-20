@@ -236,6 +236,32 @@ For `implement` and `qa` phases, invoke all 9 reviewers (full review).
   update the row for the completed phase in the `## Phase-State Ledger` section
   of `.SDLC/project-manifest.md` — status, artifact paths produced, date. The
   ledger is the resume source (Step 0.5) and the exit gates' cross-check.
+- **Ledger write discipline.** Ledger statuses describe observed state only:
+  - Set a row to **Complete only in the same step that runs that phase's exit
+    check**, and cite in the row the artifacts the check verified on disk.
+    Never record a phase Complete in advance, in expectation, or from a
+    worker's claim alone.
+  - When the manifest skeleton is created (intake), every row starts
+    `Not started`. Never pre-fill the expected end state of a run.
+  - **Re-verify the ledger against disk at every transition:** before
+    delegating the next phase, check that the artifacts cited by every
+    Complete row still exist. If any cited artifact is missing, downgrade
+    that row to `In progress`, record the correction with its date, and
+    route the phase back to its owner — never proceed on a ledger that
+    disagrees with disk.
+  (Origin: 2026-10-19 simulation — the ledger claimed Phases 1–2 Complete
+  hours before their QA and design work actually finished, and every later
+  decision trusted the false record.)
+- **No-progress rule.** While a phase is `In progress`, progress means the
+  phase's artifacts on disk changing. If roughly 30 minutes of active work
+  pass with no artifact change in the active phase, you must either delegate
+  the phase's owner agent (or re-delegate, naming the specific blocker) or
+  record the blocker in the phase's ledger row. Never keep working silently.
+  Probe, placeholder, or write-test files are not artifacts and never count
+  as progress; if you create one to diagnose a problem, delete it in the
+  same step and record the diagnosis in the ledger instead.
+  (Origin: 2026-10-19 simulation — Phase 3 produced nothing for ~2 hours
+  except write-test probe files, with no blocker recorded anywhere.)
 - **Mirror phase state to GitHub (ADR-0003 D4).** When the manifest's
   `repository_mode` is not local-only: at each phase start, open (or reuse)
   the phase's Issue labeled `sdlc:phase-<n>` via GitHub MCP; when the ledger
@@ -424,6 +450,18 @@ repo for ADR templates instead of the new project directory.)
 
 #### Phase 3: Scaffolding (Scaffolder)
 
+**HARD RULE — Phase 3 is the Scaffolder's work, never yours.** You must not
+create, copy, or repair scaffold files yourself. The first-run configuration
+exception (manifest skeleton, copilot-instructions) never covers the project
+tree. Phase 3 output counts only when a Scaffolder subagent produced it. If
+scaffold files already exist that were created outside a Scaffolder run,
+Phase 3 is NOT complete: delegate the Scaffolder in verify-and-repair mode
+(it checks the existing tree against the template contract, repairs what is
+missing or malformed, and reports what it found) and cite its result. This
+rule has **no override and no waiver path** — it exists because a measured
+run (2026-10-19 simulation) skipped the Scaffolder entirely, imitated the
+scaffold, and left a broken tree behind a ledger that claimed progress.
+
 1. **Delegate to Scaffolder:** Create the full project scaffold before any
    implementation begins:
    > "Phase 3: Scaffolding. Create the project structure following the harness
@@ -444,6 +482,10 @@ Do NOT proceed to Phase 4 until ALL items pass:
       — for multi-project: each project under `src/<ProjectName>/` has its own
 - [ ] `.gitignore` exists
 - [ ] `README.md` exists (can be minimal stub)
+- [ ] `LICENSE` exists at the root (template default or recorded override, ADR-0003)
+- [ ] `.github/pull_request_template.md` exists
+- [ ] CI workflow exists (`.github/workflows/` for GitHub Actions, or the
+      resolved CI system's stub)
 
 **If any item is missing:**
 1. Tell the Scaffolder exactly which items are missing.
@@ -452,6 +494,33 @@ Do NOT proceed to Phase 4 until ALL items pass:
 
 **Rationale:** Downstream phases (Implementer, QA, Documenter) depend on this
 structure. Skipping validation causes cascading failures.
+
+#### Phase 3 exit gate — MANDATORY before Phase 4
+
+Do NOT delegate to the Implementer until the checks below pass. Run them in
+the project directory and quote the output in your phase report:
+
+```bash
+test -d src && ls src/     # src is a DIRECTORY holding the project(s) — a file named src FAILS this gate
+ls LICENSE .github/pull_request_template.md
+ls .github/workflows/      # or the resolved CI system's stub location
+ls src/*/*.csproj src/*/pyproject.toml src/*/package.json 2>/dev/null   # a project file exists for the stack
+```
+
+**Pass conditions (all must hold):**
+- [ ] **A Scaffolder subagent result exists for this Phase 3** and the
+      ledger's Phase 3 row cites it as evidence. **HARD BLOCK — no
+      Scaffolder result, no Phase 4. No exceptions, no override, no
+      recorded waiver.** Files you created yourself never satisfy this.
+- [ ] The structural checks above pass: expected directories are
+      directories (not files), and every required file exists.
+- [ ] The ledger's Phase 3 row is set to Complete only now, citing the
+      Scaffolder result and the verified artifact paths (ledger write
+      discipline).
+
+**If any check fails:** route back to the Scaffolder with the specific gaps
+(fresh scaffold, or verify-and-repair mode when a partial tree exists) and
+re-verify.
 
 #### Phase 3B: Infrastructure validation (Deployer)
 
@@ -595,6 +664,9 @@ Use the `sdlc-canary-runner` skill when the user triggers canary mode.
 ## What you must NOT do
 
 - Never edit files directly — always delegate to a worker agent.
+- Never create, copy, or repair project scaffold files yourself, and never
+  mark Phase 3 complete without a Scaffolder subagent result (Phase 3 exit
+  gate — hard block, no override).
 - Never skip the QA phase for non-trivial changes.
 - Never introduce new libraries without checking the reference catalog first.
 - Never bypass the PR form requirement for changes going to `main`.
