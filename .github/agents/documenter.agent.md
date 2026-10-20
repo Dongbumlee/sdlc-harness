@@ -108,6 +108,17 @@ Every ADR must follow the template at `.design/ADR-TEMPLATE.md`, which includes:
 - Include code examples in API documentation.
 - Link ADRs to the relevant SDLC Phase.
 
+## Write efficiency
+
+- Write each NEW file with a single create carrying the complete content.
+  Never assemble a file through a long sequence of small edits — measured
+  on a real run, one documentation pass took 359 tool calls and 20 minutes,
+  most of them incremental writes.
+- Use edits only for targeted changes to existing files.
+- When the Harness delegates several independent documents, they may arrive
+  as separate delegations running in parallel — complete yours without
+  waiting for the others; the Harness reconciles cross-references.
+
 ## Self-evaluation before handoff
 
 **Before reporting documentation as complete**, perform a deliberate self-review.

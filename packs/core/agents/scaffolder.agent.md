@@ -349,8 +349,10 @@ scaffold), do NOT start over and do NOT trust what is there:
 
 ### Scaffolding quality checklist
 
-1. **Template fidelity** — Compare your output against the actual template files fetched
-   from GitHub MCP. Does every directory and key file match?
+1. **Template fidelity** — Compare your output against the actual template files from
+   the resolved template source (the bundled template assets in this plugin for
+   bundled provenance; the org template repo via GitHub MCP only when an org
+   template was resolved). Does every directory and key file match?
 2. **File existence** — Verify these files exist for each project:
    - The stack profile's project file (`pyproject.toml`, `package.json`,
      `.csproj`, …) with correct dependencies
