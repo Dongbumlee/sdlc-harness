@@ -69,14 +69,38 @@ Harness-opened PRs are expected to fill it in; the checklist includes the
 harness-specific items (tests run, manifest ledger updated, ADR if a decision
 changed).
 
-### D4. Agent activities are tracked in GitHub Issues and PRs
+### D4. Agents actively work in GitHub Issues and PRs — it is the working medium, not a log
+
+The orchestrator and every subagent use GitHub as the place work happens,
+not as an after-the-fact record. This matters mechanically: in the Copilot
+CLI surface, subagents reliably receive MCP tools even when their shell and
+file access are limited (measured in the baseline run: MCP servers were the
+one channel that reached every reviewer). GitHub MCP therefore gives agents
+capabilities the local surface denied them — PR diffs instead of guessed
+file paths, code search instead of file-by-file browsing, Actions logs
+instead of recorded summaries.
+
+Per-role expectations:
+
+- **Harness (orchestrator):** opens the phase Issue when a phase starts,
+  links the work, watches the relevant Actions runs for gate evidence, and
+  closes the Issue when the Phase-State Ledger marks the phase Complete.
+- **Implementer:** opens a draft PR early and pushes incrementally; a red
+  CI run is its own feedback — read the failed check's log via GitHub MCP,
+  fix, push again — not a surprise discovered at QA time.
+- **Reviewers:** read the PR diff and search the code via GitHub MCP
+  instead of guessing local paths; findings that need follow-up become PR
+  review comments or Issues, attached to the code they describe.
+- **QA Coordinator:** the gate decision cites check-run conclusions read
+  from GitHub, never a subagent's self-declared summary.
+- **Release Manager:** creates the tag and release on GitHub; release notes
+  are drawn from the merged PRs.
+
+Structure underneath the activity:
 
 - One Issue per phase (or per work package within a phase), labeled
-  `sdlc:phase-<n>`, opened by the Harness when the phase starts and closed
-  when the Phase-State Ledger marks it Complete.
-- All changes land through PRs that reference their Issue (`Closes #<n>`).
-  Reviews, QA findings, and fix rounds are PR review activity, not
-  transcript-only events.
+  `sdlc:phase-<n>`. All changes land through PRs that reference their Issue
+  (`Closes #<n>`).
 - **The manifest Phase-State Ledger remains the local source of truth** for
   resume-after-interruption. Synchronization is one-directional,
   ledger → GitHub, so the two never conflict. If GitHub is unavailable, work
