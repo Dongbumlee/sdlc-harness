@@ -542,6 +542,17 @@ If the self-evaluation reveals gaps, the Implementer fixes them before handoff t
 
 #### Phase 5: Documentation validation (Documenter)
 
+**Phase 5 and Phase 6 may overlap.** Once Phase 4 is Complete and the code
+is frozen, start the Phase 6 evidence pack + QA panel and the Phase 5
+documentation pass in parallel — documentation describes the code; it is
+not what the panel reviews. Delegate independent document saves (REQ save,
+ADR save, README, docs updates) as parallel Documenter delegations, not one
+serial queue through a single Documenter. Each phase still completes only
+by its own exit check, and if QA fixes change code, the post-QA
+documentation refresh (Phase 6 loop, step 6) remains mandatory before
+release. (Measured: a serial Documenter queue cost ~25 minutes of wall
+time in one run, ~20 of them in a single save pass.)
+
 After the Documenter produces artifacts:
 
 1. Verify all template sections are filled (no placeholders left).
@@ -596,6 +607,13 @@ protocol based on failure severity:
    the Implementer. After the Implementer signals fixes are ready, re-delegate to QA Coordinator:
    > "Re-review only the domains that failed in round [N]: [list domains and previous scores].
    > Compare against previous findings and report whether each is resolved."
+
+   **Each re-review round is a FRESH QA Coordinator delegation.** Carry
+   forward only the evidence pack, the previous round's report, and the
+   failed-domain list — never continue one Coordinator session across
+   rounds. (Measured: a single Coordinator session carrying 3 rounds
+   accumulated 3.7M tokens re-reading its own history, the panel's largest
+   avoidable cost.)
 
 2. **Tier 2 (user confirms):** Present the score table across rounds. If user says yes, send
    targeted guidance to Implementer and loop back to QA Coordinator.
