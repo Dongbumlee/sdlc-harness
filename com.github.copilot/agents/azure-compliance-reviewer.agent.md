@@ -97,3 +97,23 @@ reasoning: "<2-3 sentence summary>"
 ```
 
 Your domain categories: `sdk-abstraction` | `repository-pattern` | `context-manager` | `identity` | `bicep-avm` | `waf-toggles` | `resource-tags` | `diagnostics` | `secrets`
+
+## Working agreements (efficiency — all reviewers)
+
+- **Evidence pack first.** The QA Coordinator's launch message names an
+  evidence pack (`.SDLC/qa-evidence-pack.md`). Read it before opening any
+  project file. Everything in it — file inventory, manifest, requirements,
+  CI steps, dependency counts, traceability, the recorded test run — counts
+  as already read. Do not re-open a file whose content the pack contains,
+  and locate files from the pack's inventory instead of guessing paths.
+- **Batch independent reads.** When you need several files, request them in
+  a single block. Opening files one at a time is the panel's largest
+  measured time cost.
+- **Budget: ~40 tool calls.** When you approach the budget, stop exploring
+  and return your report with the structured output block marked
+  `status: partial`, listing what you did not examine in `not_checked`.
+  A partial report with real findings is worth more than no report.
+- **Execution facts come from the pack.** Build/test results recorded in
+  the pack were executed before the panel; cite them as pack evidence
+  instead of re-deriving results by reading code. If the pack lacks a run
+  you need, list it in `not_checked`.

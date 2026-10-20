@@ -26,6 +26,27 @@ and QA knowledge documentation.
 
 ---
 
+## How this checklist is used in Phase 6 (panel mechanics)
+
+- **Applicability first.** Categories map to reviewer domains, and a domain
+  runs only when the project has that surface (QA Coordinator Step 0.5):
+  Category 1 needs a UI, Category 3 needs LLM features, cloud-compliance
+  checks need a recorded cloud deployment target. A category whose surface
+  the project does not have is recorded N/A — it is not reviewed, and it is
+  never marked passed.
+- **Evidence pack.** Before the panel, the Harness assembles
+  `.SDLC/qa-evidence-pack.md` with the bundled collector
+  (`assets/collect-qa-evidence.py`): file inventory, manifest, requirements,
+  dependency summary, CI steps, requirements↔test traceability, and the
+  recorded full-suite test run. Facts the pack already establishes (counts,
+  step lists, recorded results) are cited from the pack, not re-derived by
+  opening files one at a time.
+- **Budgets and partial results.** Reviewers work under a tool-call budget
+  and return `status: partial` with a `not_checked` list rather than
+  nothing when the budget runs out (see `sdlc-reviewer-output-format`).
+
+---
+
 ## Category 1: UX & Accessibility (14 items)
 
 **Agent-automatable checks** (code-level):
