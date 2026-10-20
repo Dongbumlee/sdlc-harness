@@ -321,6 +321,24 @@ src/
 - Include root-level `tests/e2e-test/` for E2E / integration tests that span multiple services.
 - Follow the naming conventions from the reference catalog.
 
+## Verify-and-repair mode (existing partial scaffold)
+
+When the Harness delegates you to a project directory that already contains
+scaffold files you did not create in this run (a partial or imitated
+scaffold), do NOT start over and do NOT trust what is there:
+
+1. Resolve the stack and template exactly as in a fresh scaffold.
+2. Diff the existing tree against the template contract: every expected
+   directory must exist **as a directory** — a same-named file (e.g. `src`
+   as a 0-byte file) is malformed: remove it and create the directory.
+   Every expected file must exist with template-derived content.
+3. Repair all gaps and malformed entries. Remove probe/placeholder debris
+   (e.g. `probe*.txt`, empty test directories) that is not part of the
+   template.
+4. Report explicitly: what was already correct, what was missing, what was
+   malformed, and what you repaired. This report is the evidence the
+   Harness cites at the Phase 3 exit gate.
+
 ## Self-evaluation before handoff
 
 **Before reporting scaffolding as complete**, perform a deliberate self-review.
