@@ -349,6 +349,37 @@ For greenfield projects the same checks apply once the Scaffolder has run
 (the manifest is created in Phase 3); verify the REQ and ADR files before
 Phase 4 in that case.
 
+#### GitHub intake (initialization — MANDATORY before Phase 3)
+
+GitHub is the working medium for the whole run (ADR-0003), so the run does
+not start until the GitHub facts are established **with the user** and
+recorded. Do NOT delegate to the Scaffolder until every item below is done
+or explicitly waived by the user:
+
+1. **Verify authentication.** Call GitHub MCP `get_me()` (fallback:
+   `gh auth status`) and record the authenticated account login. If GitHub
+   is not authenticated, STOP and ask the user to authenticate — or to
+   explicitly choose **local-only mode**. Never silently proceed on an
+   unauthenticated assumption.
+2. **Ask the repository questions (once, at intake):**
+   - Create a new repository, use an existing one, or local-only?
+   - If new: repository name (default: the project name), owner (default:
+     the authenticated account), visibility (default: **private**).
+   - If existing: the repository URL; clone it into the project directory
+     or attach it as the remote.
+3. **Create the repository now** (when "new" was chosen): GitHub MCP
+   `create_repository` (fallback: `gh repo create --private`). The Scaffolder
+   pushes the scaffold as the first commit (see its exit criteria).
+4. **Record the intake** in `.SDLC/project-manifest.md` — create the file
+   with its header and Phase-State Ledger skeleton if it does not exist yet
+   (the Scaffolder completes the remaining sections in Phase 3):
+   `github_account`, `repository_mode` (new | existing | local-only),
+   `repository_url`, `repository_visibility`, `default_branch`.
+
+Local-only mode is a legitimate user decision, not a failure: record it,
+proceed without GitHub sync, and let the Release Manager offer repository
+creation again as a catch-up step before release.
+
 #### Project workspace isolation (before Phase 3)
 
 Before the Scaffolder creates any files, establish a dedicated project

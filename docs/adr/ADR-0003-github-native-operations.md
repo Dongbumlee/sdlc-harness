@@ -41,18 +41,25 @@ manifest next to the template provenance. The same treatment (a real file in
 the template, not a checklist line) is the pattern for any future compliance
 file.
 
-### D2. The repository is created first, private by default
+### D2. The repository is created first, private by default — behind a mandatory intake gate
 
-At project start (end of Phase 2 / entry to Phase 3, before scaffolding), the
-Harness establishes the repository:
+Initialization includes a **mandatory GitHub intake**; the run does not
+reach scaffolding until it is complete or explicitly waived by the user:
 
-1. Confirm once with the user, as part of project intake: repository name
-   (default: the `project-name` token), owner (default: the authenticated
-   GitHub account), visibility **private** (default).
-2. Create the remote repository (GitHub MCP `create_repository` where
-   available, otherwise `gh repo create`), initialize locally, and push the
-   scaffold as the first commit.
-3. Record `repository` (URL, visibility, default branch) in the manifest.
+1. **Verify authentication.** The Harness checks who is signed in to GitHub
+   (GitHub MCP `get_me`, fallback `gh auth status`) and records the account
+   login. If GitHub is not authenticated, the run stops and asks the user to
+   authenticate — or to explicitly choose local-only mode. No silent
+   assumption.
+2. **Ask the repository questions once, at intake:** create new / use
+   existing / local-only; for a new repository — name (default: the project
+   name), owner (default: the authenticated account), visibility **private**
+   (default).
+3. **Create the repository at intake** (GitHub MCP `create_repository` where
+   available, otherwise `gh repo create`), and record the intake in the
+   manifest (`github_account`, `repository_mode`, URL, visibility, default
+   branch; the manifest skeleton is created at intake if needed). The
+   scaffold is pushed as the first commit.
 
 If GitHub is unavailable or the user declines, the run proceeds local-only,
 records that in the manifest, and the Release Manager performs the repository
