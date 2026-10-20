@@ -236,6 +236,13 @@ For `implement` and `qa` phases, invoke all 9 reviewers (full review).
   update the row for the completed phase in the `## Phase-State Ledger` section
   of `.SDLC/project-manifest.md` — status, artifact paths produced, date. The
   ledger is the resume source (Step 0.5) and the exit gates' cross-check.
+- **Mirror phase state to GitHub (ADR-0003 D4).** When the manifest's
+  `repository_mode` is not local-only: at each phase start, open (or reuse)
+  the phase's Issue labeled `sdlc:phase-<n>` via GitHub MCP; when the ledger
+  marks the phase Complete, close it. Sync is one-directional —
+  ledger → GitHub — so the ledger never waits on GitHub. If a GitHub call
+  fails, note the pending sync in the ledger row and retry at the next
+  transition; never block a phase on it.
 - **Always check the reference catalog** before allowing new dependencies. Use GitHub MCP to fetch
   `.github/reference-catalog.md` if needed.
 - **Always verify quality instruction compliance** after implementation — delegate to QA Coordinator.
@@ -475,7 +482,13 @@ facts instead of re-deriving them:
    the pack. If the runner itself cannot execute in this environment, apply
    the environment-failure exit condition and record the classification in
    the pack instead — never a silent pass.
-3. Delegate Phase 6 to the QA Coordinator naming the pack path. The
+3. **Record the CI result for the commit under review (ADR-0003 D5).** When
+   the manifest's `repository_mode` is not local-only, query the check runs
+   for the current HEAD commit via GitHub MCP and append a **CI Evidence**
+   section to the pack: workflow name, conclusion, and run URL. This CI
+   citation is the gate's primary test evidence; the local run in step 2 is
+   supporting evidence and the fallback when no CI run exists.
+4. Delegate Phase 6 to the QA Coordinator naming the pack path. The
    Coordinator selects the active panel from the manifest/requirements
    signals (Step 0.5 applicability) and launches every reviewer with the
    pack as shared starting evidence.

@@ -140,18 +140,18 @@ Structure underneath the activity:
 
 ## Implementation checklist
 
-- [ ] `LICENSE` (MIT) in all three bundled templates; `{{Year}}` token added
+- [x] `LICENSE` (MIT) in all three bundled templates; `{{Year}}` token added
       to each `template.yaml`; `tools/verify_templates.py` passes.
-- [ ] `.github/pull_request_template.md` in all three bundled templates.
-- [ ] Scaffolder: instantiation notes cover `{{Year}}` substitution and the
+- [x] `.github/pull_request_template.md` in all three bundled templates.
+- [x] Scaffolder: instantiation notes cover `{{Year}}` substitution and the
       license-override rule; compliance checklist cites the template files.
-- [ ] Harness: repository bootstrap step at Phase 3 entry (intake questions,
+- [x] Harness: repository bootstrap step at Phase 3 entry (intake questions,
       create + first push, manifest `repository` record); one-directional
       ledger → Issue sync rule in the phase-transition steps.
-- [ ] QA evidence collector + QA Coordinator: cite the CI check-run for the
+- [x] QA evidence collector + QA Coordinator: cite the CI check-run for the
       reviewed commit; local fallback labeling.
-- [ ] Release Manager: repository catch-up path for local-only runs; publish
+- [x] Release Manager: repository catch-up path for local-only runs; publish
       gate assumes the remote exists.
-- [ ] Repo self-checks green: `pytest`, `assemble_flat_layout.py --check`,
+- [x] Repo self-checks green: `pytest`, `assemble_flat_layout.py --check`,
       pack contracts, template verification.
 - [ ] Exercised by a fresh greenfield E2E run on the test box before merge.

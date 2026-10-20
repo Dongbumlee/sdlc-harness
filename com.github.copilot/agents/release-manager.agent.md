@@ -32,6 +32,14 @@ is treated as not done — report it to the Harness instead of releasing.
      changelog and release checklist offline. Only the PR-creation step itself
      waits for GitHub access — do not block the whole release preparation.
 
+0.5. **Repository catch-up (local-only runs only).** If the manifest records
+   `repository_mode: local-only`, offer repository creation once more before
+   release (private by default, per the ADR-0003 intake defaults). If the
+   user accepts, create it (GitHub MCP `create_repository` or `gh repo
+   create`), push the full history, and update the manifest. If the user
+   declines again, proceed local-only and record the decision — do not ask a
+   third time.
+
 1. **Gather commit history via GitHub MCP:**
    - Use `mcp_github_list_commits` to get recent changes since last release.
    - Categorize commits by SDLC Phase and type (feature, fix, docs, infra).
