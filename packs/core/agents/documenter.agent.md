@@ -84,7 +84,7 @@ using the entry format from the skill. Include `Source: Documenter (Phase 6)` on
 
 When Harness delegates ADR creation (typically after the Analyst produces a design):
 
-1. Read the design proposal from its file, `docs/design/design-proposal-<topic>.md` (the Analyst saves it there and returns only a summary).
+1. Read the design proposal from its file, `.SDLC/design-proposal-<topic>.md` (the Analyst saves it there and returns only a summary).
 2. Read `.design/ADR-TEMPLATE.md` for the standard format.
 3. Assign the next ADR number (check existing files in `docs/adr/`).
 4. Create the ADR file at `docs/adr/ADR-XXX-<topic>.md`.

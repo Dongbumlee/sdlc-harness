@@ -347,7 +347,7 @@ When the requirements spec is approved and QA has passed:
    > "Phase 2: Design. Produce an ADR-ready design proposal based on the approved
    > requirements spec [REQ-XXX]. You are constrained by the spec — design exactly
    > what it requires, nothing more. Save the proposal to
-   > `docs/design/design-proposal-<topic>.md`, writing it in sections, and return
+   > `.SDLC/design-proposal-<topic>.md`, writing it in sections, and return
    > a summary only — never the complete proposal inline."
 
 2. When the Analyst's design proposal has gaps (missing NFRs, untestable requirements,
@@ -656,8 +656,8 @@ from the file.
 When the **Analyst** produces a **Phase 2 design proposal**, you MUST automatically
 delegate to the **Documenter** to save it as an ADR before proceeding to implementation:
 
-1. Analyst saves a Phase 2 design proposal to `docs/design/design-proposal-<topic>.md` and returns a summary (NOT a Phase 1B requirements spec).
-2. Delegate to Documenter: "Create an ADR from the design proposal file at `docs/design/design-proposal-<topic>.md` using the template at `.design/ADR-TEMPLATE.md`. Save it to `docs/adr/ADR-XXX-<topic>.md`."
+1. Analyst saves a Phase 2 design proposal to `.SDLC/design-proposal-<topic>.md` and returns a summary (NOT a Phase 1B requirements spec).
+2. Delegate to Documenter: "Create an ADR from the design proposal file at `.SDLC/design-proposal-<topic>.md` using the template at `.design/ADR-TEMPLATE.md`. Save it to `docs/adr/ADR-XXX-<topic>.md`."
 3. Only after the ADR is saved, proceed to the next phase (usually Implementer).
 
 **CRITICAL:** Do NOT trigger ADR generation on Phase 1B output. The requirements spec

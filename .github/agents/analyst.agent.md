@@ -215,7 +215,9 @@ After completing your design proposal, populate the living reference catalog:
 Structure the design proposal following the ADR template at `.design/ADR-TEMPLATE.md`.
 It should be **ADR-ready** — the Documenter turns it into `docs/adr/ADR-XXX-<topic>.md`.
 
-**Save the proposal to its file yourself**: `docs/design/design-proposal-<topic>.md`,
+**Save the proposal to its file yourself**: `.SDLC/design-proposal-<topic>.md`
+(the harness working area — the proposal is working material for the ADR,
+not a project document, so it does not live under `docs/`),
 written in sections — create the file with the first sections, then append the
 remaining sections in a few edits. Never return the complete proposal inline in
 your response: a full document returned as one message is slow to produce,
