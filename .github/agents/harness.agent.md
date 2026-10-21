@@ -319,19 +319,20 @@ You MUST still run the full Phase 1-2 flow:
    > "Phase 1B: Requirements Specification. Produce a formal requirements spec using
    > the template at .design/REQ-TEMPLATE.md. Base it on the approved discovery summary.
    > Every FR must have a testable acceptance criterion. Every NFR must have a measurable target.
-   > This spec is REQ-XXX. Return the complete spec inline in your response.
-   > Do NOT try to save it to a file — the Analyst cannot write files;
-   > the Documenter saves it in the next step."
+   > This spec is REQ-XXX. Save it to `docs/requirements/REQ-XXX-<topic>.md`
+   > yourself, writing it in sections. Return a summary only (file path,
+   > FR/NFR counts, open questions) — never the complete spec inline."
 
 4. **Wait for Analyst to report Phase 1B completion.**
    The Analyst will report: "Phase 1B complete. User has approved the requirements specification."
 
-5. **Delegate to Documenter to SAVE the spec (mandatory — do not skip):**
-   > "Save the approved requirements specification below to
-   > `docs/requirements/REQ-XXX-<topic>.md` exactly as written. This file is the
-   > requirements artifact of record for this feature."
-   The Analyst produces the spec but cannot create files; if this step is
-   skipped, the REQ document does not exist and the Phase 1–2 exit gate fails.
+5. **Verify the spec exists on disk (mandatory — do not skip):**
+   The Analyst saves the spec itself (step 3). Confirm
+   `docs/requirements/REQ-XXX-<topic>.md` exists with the expected sections
+   before proceeding — this file is the requirements artifact of record for
+   this feature, and the Phase 1–2 exit gate fails without it. If the
+   Analyst reports it could not save the file, delegate the save to the
+   Documenter as a fallback and record the deviation in the ledger.
 
 6. **Delegate to QA Coordinator for requirements review:**
    > "Run QA review for phase: requirements. Invoke only: Requirements Completeness, Architecture."
@@ -345,7 +346,9 @@ When the requirements spec is approved and QA has passed:
 1. **Delegate to Analyst with Phase 2 context:**
    > "Phase 2: Design. Produce an ADR-ready design proposal based on the approved
    > requirements spec [REQ-XXX]. You are constrained by the spec — design exactly
-   > what it requires, nothing more."
+   > what it requires, nothing more. Save the proposal to
+   > `docs/design/design-proposal-<topic>.md`, writing it in sections, and return
+   > a summary only — never the complete proposal inline."
 
 2. When the Analyst's design proposal has gaps (missing NFRs, untestable requirements,
    over-specified implementation details):
@@ -632,13 +635,29 @@ protocol based on failure severity:
 **Do NOT skip validation steps.** Every phase transition is an evaluation point.
 Fixes applied without verification may introduce new issues.
 
+## Deliverable transport rule
+
+Documents travel as files, never as inline message text. Every delegation
+that produces a document names its target file; the producing agent writes
+it in sections and returns a summary plus the file path. This is a hard
+transport constraint, not a style preference: measured on a real run, one
+design proposal returned as a single inline message took ~57 minutes of
+uninterrupted generation (43K output tokens, zero tool calls —
+indistinguishable from a hang from outside) and then had to be re-read in
+slices before work could continue.
+
+If a subagent nevertheless returns a large document inline and the result
+spills to a tool-output file, do NOT page through the spill in slices.
+Save the content verbatim to the target file in one step and continue
+from the file.
+
 ## ADR generation rule
 
 When the **Analyst** produces a **Phase 2 design proposal**, you MUST automatically
 delegate to the **Documenter** to save it as an ADR before proceeding to implementation:
 
-1. Analyst returns a Phase 2 design proposal (NOT a Phase 1B requirements spec).
-2. Delegate to Documenter: "Create an ADR from this design using the template at `.design/ADR-TEMPLATE.md`. Save it to `docs/adr/ADR-XXX-<topic>.md`."
+1. Analyst saves a Phase 2 design proposal to `docs/design/design-proposal-<topic>.md` and returns a summary (NOT a Phase 1B requirements spec).
+2. Delegate to Documenter: "Create an ADR from the design proposal file at `docs/design/design-proposal-<topic>.md` using the template at `.design/ADR-TEMPLATE.md`. Save it to `docs/adr/ADR-XXX-<topic>.md`."
 3. Only after the ADR is saved, proceed to the next phase (usually Implementer).
 
 **CRITICAL:** Do NOT trigger ADR generation on Phase 1B output. The requirements spec
