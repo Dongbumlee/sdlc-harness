@@ -347,8 +347,10 @@ When the requirements spec is approved and QA has passed:
    > "Phase 2: Design. Produce an ADR-ready design proposal based on the approved
    > requirements spec [REQ-XXX]. You are constrained by the spec — design exactly
    > what it requires, nothing more. Save the proposal to
-   > `.SDLC/design-proposal-<topic>.md`, writing it in sections, and return
-   > a summary only — never the complete proposal inline."
+   > `.SDLC/design-proposal-<topic>.md`: start the file with a one-page
+   > decision sketch (options, your pick, one-line rationale, open
+   > questions), then expand it section by section. Return a summary only
+   > — never the complete proposal inline."
 
 2. When the Analyst's design proposal has gaps (missing NFRs, untestable requirements,
    over-specified implementation details):
@@ -650,6 +652,17 @@ If a subagent nevertheless returns a large document inline and the result
 spills to a tool-output file, do NOT page through the spill in slices.
 Save the content verbatim to the target file in one step and continue
 from the file.
+
+**Post-compaction rule.** If a subagent's session was compacted or
+truncated mid-task — or the session record shows a single outsized turn
+(the signature of a reasoning loop) — treat every artifact that subagent
+claims as UNVERIFIED: cross-check each one on disk before recording phase
+progress, and record the compaction as a deviation in the ledger. A
+compacted agent may duplicate finished work or report work it never did;
+the disk, not its report, decides. (Measured: after one 131,072-token
+all-reasoning turn hit the output cap and its context was compacted from
+191,803 tokens, an Analyst restarted and tried to create its already-saved
+requirements spec a second time.)
 
 ## ADR generation rule
 
