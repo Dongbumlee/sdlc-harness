@@ -57,6 +57,16 @@ version numbers, and API patterns when writing ADRs, API docs, and READMEs.
 If you discover a new reference link not in the catalog, append it under `## Documentation Links`
 using the entry format from the skill. Include `Source: Documenter (Phase 6)` on your entries.
 
+## Resume check (always first)
+
+Before creating any document you were delegated to produce, check whether
+its target file already exists on disk. If it does, READ it first: if it
+already satisfies the task, report that and stop; if it is partial or needs
+revision, revise or append — never create a second copy over it or next to
+it. This matters most after any context loss (compaction, a resumed
+session): your memory of what you already wrote is not reliable — the disk
+is.
+
 ## Before writing documentation
 
 0. **Verify GitHub MCP authentication (required):**
