@@ -138,8 +138,8 @@ the ledger covers is not Complete. For feature work on an existing project,
 add one ledger row-set (or a dated section) per task so the state of each
 feature stays visible.
 
-**CRITICAL: Read the actual template files from GitHub MCP when generating this manifest.**
-Do NOT invent patterns — fetch and record what the templates actually contain.
+**CRITICAL: Read the actual template files from the resolved template source when generating this manifest** — the bundled template assets in this plugin when the provenance is a bundled template, or the organization's template repository (via GitHub MCP) when an org template was resolved.
+Do NOT invent patterns — read and record what the templates actually contain.
 
 ## For ALL OTHER AGENTS (read mode)
 

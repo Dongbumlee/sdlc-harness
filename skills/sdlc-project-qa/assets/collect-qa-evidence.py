@@ -189,6 +189,34 @@ def section_ci(root: Path) -> str:
     return "\n".join(lines)
 
 
+def section_deployment(files: list[tuple[Path, Path]]) -> str:
+    lines = ["## 8. Deployment artifacts", ""]
+    found = []
+    for path, rel in files:
+        name = path.name
+        parts = set(rel.parts)
+        if (
+            name.startswith("Dockerfile")
+            or name.startswith("docker-compose")
+            or name == "azure.yaml"
+            or path.suffix == ".bicep"
+            or "infra" in parts
+            or ".devcontainer" in parts
+        ):
+            found.append((rel, path.stat().st_size))
+    if not found:
+        lines.append("No deployment artifacts found (no Dockerfile, compose file, "
+                     "devcontainer, azure.yaml, or Bicep/infra files).")
+    else:
+        lines.append("Deployment-related files present in the tree, so the "
+                     "Deployment Readiness reviewer does not need to re-derive them:")
+        lines.append("")
+        for rel, size in sorted(found):
+            lines.append(f"- `{rel}` ({size} bytes)")
+    lines.append("")
+    return "\n".join(lines)
+
+
 def is_test_file(rel: Path) -> bool:
     parts = [p.lower() for p in rel.parts]
     name = rel.name.lower()
@@ -285,6 +313,8 @@ def main() -> int:
         section_traceability(root, reqs, files),
         "",
         section_test_run(out_dir),
+        "",
+        section_deployment(files),
         "",
     ]
     pack_path = out_dir / "qa-evidence-pack.md"
