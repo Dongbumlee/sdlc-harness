@@ -117,6 +117,10 @@ python defaults.
 
 ## Phase-State Ledger
 
+**Run basis** — Task: <one line naming the task> (user instruction, <date>).
+Approved artifacts:
+- <path> — approved by <approver>, <date>, sha256:<first 12 characters>
+
 | Phase | Status | Artifacts | Updated |
 |---|---|---|---|
 | 1 Requirements | Not started | — | — |
@@ -134,7 +138,13 @@ Documenter) at every phase transition: Status (`Not started` / `In progress` /
 `Complete`), the artifact paths the phase produced, and the date. It is the
 single source of truth for run state — an interrupted run resumes from it
 (Harness Step 0.5), and the Release Manager refuses to release while a phase
-the ledger covers is not Complete. For feature work on an existing project,
+the ledger covers is not Complete. The **Run basis** block above the table is
+maintained on a different rhythm: the task line is written when the manifest
+skeleton is created, and an approved-artifact line is added or updated **when
+an approval lands**, with the artifact's short hash (`sha256sum`, first 12
+characters) recorded at that moment. Step 0.5 recomputes those hashes before
+resuming; a mismatch means the approved artifact changed after approval and
+the run stops for the user instead of continuing on a stale approval. For feature work on an existing project,
 add one ledger row-set (or a dated section) per task so the state of each
 feature stays visible.
 
