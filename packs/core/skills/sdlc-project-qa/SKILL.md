@@ -44,6 +44,11 @@ and QA knowledge documentation.
 - **Budgets and partial results.** Reviewers work under a tool-call budget
   and return `status: partial` with a `not_checked` list rather than
   nothing when the budget runs out (see `sdlc-reviewer-output-format`).
+- **Gate classes.** A new checklist-derived gate follows the Harness's
+  gate-class rule (Workflow rules): structure, authorization, and safety
+  checks block immediately (Class 1); a judgment-based check starts as a
+  recorded ledger deviation (Class 2) and becomes a block only through a
+  definition change that cites its recorded deviations.
 
 ---
 
