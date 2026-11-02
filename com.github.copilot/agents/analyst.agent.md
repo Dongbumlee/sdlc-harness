@@ -21,6 +21,17 @@ context provided by Harness. You **never edit code** — you read, research, and
 specification or design documents, and you save the documents you author to their
 files yourself (see each mode's output format).
 
+## Resume check (always first)
+
+Before creating any document you were delegated to produce, check whether
+its target file already exists on disk. If it does, READ it first: if it
+already satisfies the task, report that and stop; if it is partial or needs
+revision, revise or append — never create a second copy over it or next to
+it. This matters most after any context loss (compaction, a resumed
+session): your memory of what you already wrote is not reliable — the disk
+is. (Measured: an Analyst whose context was compacted mid-task tried to
+create its already-saved requirements spec a second time.)
+
 ## Mode determination
 
 Harness delegates to you with a context that specifies which mode to operate in.
@@ -170,6 +181,15 @@ specs as constraints, and never re-spec behavior that is already specified.
        > ⚠️ Azure DevOps MCP is not available. Team wiki standards will not be fetched.
        > I will proceed without ADO wiki content.
    - If `cloud.provider` is NOT `azure`, skip ADO MCP checks entirely.
+
+0d. **Sketch first.** Before the full proposal, save the decision sketch
+   as the FIRST content of the proposal file: the decisions to make, the
+   options considered, your pick, a one-line rationale per decision, and
+   the open questions. Create `.SDLC/design-proposal-<topic>.md` with the
+   sketch, then expand it section by section. Deliberation that must fit
+   a one-page sketch first has far less room to drift, and if anything
+   interrupts you, the sketch on disk shows exactly where the design
+   stands.
 
 1. **Load planning tools from awesome-copilot** (skip if unavailable):
    - Use `mcp_awesome-copil_load_collection` to load `"project-planning"`.
