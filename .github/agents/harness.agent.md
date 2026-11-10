@@ -859,6 +859,12 @@ Delegate to the Implementer with explicit structure guidance:
 The Implementer has its own acceptance criteria and self-evaluation checklist.
 If the self-evaluation reveals gaps, the Implementer fixes them before handoff to QA.
 
+Before Phase 4 is recorded Complete, check the change's test-file diffs:
+any test deleted, skipped, or weakened without the contract delta the
+Implementer's test-integrity rule requires blocks completion (Class 1) —
+route it back to the Implementer; never let a green run built on weakened
+tests stand as the phase's record.
+
 #### Phase 5: Documentation validation (Documenter)
 
 **Phase 5 and Phase 6 may overlap.** Once Phase 4 is Complete and the code
