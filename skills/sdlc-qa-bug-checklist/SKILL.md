@@ -28,7 +28,7 @@ so the agent or reviewer can detect the exact conditions that caused real bugs.
 | 6 | Identity & Authentication | 21 |
 | 7 | Smoke Testing Matrix | 60 |
 
-Counts are per checklist, as compiled. The same bug can anchor more than
+Counts are per checklist, as originally compiled; sections retire as the deployment shapes they covered disappear. The same bug can anchor more than
 one checklist — Bug 36697, for example, appears in Checklists 1 and 3 and
 in the smoke matrix — so the counts sum to more than the 338-bug corpus.
 Corpus facts are in the Data Source section at the end of this file.
@@ -70,9 +70,8 @@ Corpus facts are in the Data Source section at the end of this file.
   - **Fix**: Assign RBAC for BOTH chat and embeddings model deployments in Bicep
   - **Validation matrix** — must pass ALL configs:
     ```
-    ✅ WAF + EXP:         process_sample_data.sh → no PermissionDenied
-    ✅ Non-WAF + EXP:     process_sample_data.sh → no PermissionDenied
-    ✅ Non-WAF + Non-EXP: process_sample_data.sh → no PermissionDenied
+    ✅ EXP:     process_sample_data.sh → no PermissionDenied
+    ✅ Non-EXP: process_sample_data.sh → no PermissionDenied
     ```
 
 - [ ] **Scripts exit 0 but contain errors** (38+ bugs)
@@ -86,15 +85,10 @@ Corpus facts are in the Data Source section at the end of this file.
     grep -iE "error|failed|denied|forbidden" /tmp/deploy.log && exit 1
     ```
 
-### 1.3 AVM WAF vs Non-WAF Divergence
-
-- [ ] **Network-related WAF failure** (Bug: 31226)
-  - **Error**: Code Modernization AVM WAF fails with network AND cosmos error — Non-WAF works
-  - **Root cause**: WAF enables private networking → DNS resolution changes, NSG rules differ, VNet integration breaks public endpoint code
-  - **Fix**: All service-to-service communication must use private endpoints consistently; add VNet-integrated DNS zones
+### 1.3 Optional Configuration Must Degrade Gracefully
 
 - [ ] **Application Insights removal causes blank page** (Bug: 35309)
-  - **Repro**: Deploy WAF without EXP → Remove App Insights env var → Restart → Click "Start Translating" → **blank page, no error**
+  - **Repro**: Remove App Insights env var → Restart → Click "Start Translating" → **blank page, no error**
   - **Root cause**: Backend crashes on missing env var; frontend has no error boundary
   - **How to verify**: Search for optional env vars handled unsafely:
     ```python
@@ -114,7 +108,7 @@ az cognitiveservices usage list -l <region> -o table
 az vm list-skus -l <region> --size <sku> -o table
 
 # 3. Verify parameter files exist
-ls infra/main.parameters.json infra/main.waf.parameters.json
+ls infra/main.parameters.json
 
 # 4. Validate Bicep syntax
 az bicep build --file infra/main.bicep --stdout > /dev/null
@@ -298,32 +292,27 @@ Every project must pass ALL cells before release:
 
 | Config | Upload | Chat | Process | Admin | Post-Deploy Scripts |
 |---|---|---|---|---|---|
-| AVM Non-WAF + Non-EXP | ☐ | ☐ | ☐ | ☐ | ☐ |
-| AVM Non-WAF + EXP | ☐ | ☐ | ☐ | ☐ | ☐ |
-| AVM WAF + Non-EXP | ☐ | ☐ | ☐ | ☐ | ☐ |
-| AVM WAF + EXP | ☐ | ☐ | ☐ | ☐ | ☐ |
+| AVM + Non-EXP | ☐ | ☐ | ☐ | ☐ | ☐ |
+| AVM + EXP | ☐ | ☐ | ☐ | ☐ | ☐ |
 | Dev Container / Codespace | ☐ | ☐ | ☐ | ☐ | N/A |
 
 **Key rule**: A bug fixed in one config must be validated across ALL configs (Bug 36697 lesson).
 
 ---
 
-## Top 5 Cross-Cutting Lessons from 338 Bugs
+## Top Cross-Cutting Lessons from 338 Bugs
 
 ### 1. "Deployment Succeeded" ≠ "Application Works" (38+ bugs)
 ARM/Bicep completing does NOT mean the app functions. Always verify:
 (1) post-deploy scripts have no errors in logs, (2) `/health` checks pass with dependency verification, (3) core user flows work.
 
-### 2. WAF Breaks What Non-WAF Doesn't (20+ bugs)
-Private networking changes DNS, NSG rules, and VNet integration. Bug 31226: works Non-WAF, fails WAF. Bug 35309: removing App Insights var → blank page only in WAF.
-
-### 3. Cosmos DB Native RBAC ≠ Azure Portal RBAC (Bug: 21980)
+### 2. Cosmos DB Native RBAC ≠ Azure Portal RBAC (Bug: 21980)
 Azure portal role assignment does NOT grant data plane access. Use `sqlRoleAssignments` in Bicep or `az cosmosdb sql role assignment create` CLI.
 
-### 4. Embeddings ≠ Chat Completion Permissions (Bug: 36697)
+### 3. Embeddings ≠ Chat Completion Permissions (Bug: 36697)
 Embeddings model needs its own RBAC assignment. Most commonly missed permission — post-deploy scripts fail with `PermissionDenied` even though chat works.
 
-### 5. Intermittent Failures Are Real Bugs (8+ bugs)
+### 4. Intermittent Failures Are Real Bugs (8+ bugs)
 Upload failing on 1st attempt but working on 3rd (Bug 39055), "Project not found" in AI Foundry — these are race conditions, not flaky tests. Add retry logic.
 
 ---

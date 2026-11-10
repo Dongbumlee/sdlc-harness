@@ -268,7 +268,7 @@ If the project needs Azure resource provisioning (Bicep/AVM templates, `azd` con
 Codespaces/Dev Containers), this is handled by a separate SDLC Phase:
 
 > **Use `.github/prompts/deployment.prompt.md`** for all infrastructure-as-code work.
-> It covers Bicep templates with AVM modules, `azure.yaml` for `azd`, WAF toggle parameters,
+> It covers Bicep templates with AVM modules, `azure.yaml` for `azd`,
 > Landing Zone alignment, Dockerfiles, and Dev Container configurations.
 
 **This prompt (Phase 3) should NOT generate Bicep templates or infrastructure code.**

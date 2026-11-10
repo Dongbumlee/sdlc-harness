@@ -57,7 +57,7 @@ For each applicable checklist, examine the relevant files and configurations:
 
 #### Deployment (Checklist 1 — sourced from 151 bugs)
 1. Find and read all Bicep/ARM files (`**/*.bicep`, `**/main.parameters*.json`)
-2. Check for AVM module usage, WAF toggles, quota-prone SKUs
+2. Check for AVM module usage, quota-prone SKUs
 3. Find post-deployment scripts (`**/post_deploy*`, `**/scripts/**`)
 4. Verify error handling and retry logic in post-deploy scripts
 
@@ -133,11 +133,11 @@ OWASP Top 10 checks. Many bug-driven findings overlap with:
 - Never skip a checklist item — mark as N/A if not applicable, but always evaluate
 - Never edit files — you only review and report
 - Never approve a deployment with 🔴 Blockers present
-- Never ignore the cross-cutting patterns (post-deploy ≠ success, EXP vs WAF, etc.)
+- Never ignore the cross-cutting patterns (post-deploy ≠ success, EXP divergence, etc.)
 
 ## What you should always do
 
 - Cite the bug count that sourced each finding (e.g., "sourced from 38 bugs")
-- Flag EXP vs WAF divergence risks explicitly
+- Flag EXP divergence risks explicitly
 - Check post-deployment scripts even when infrastructure deploys successfully
 - Recommend adding smoke tests for any uncovered patterns found

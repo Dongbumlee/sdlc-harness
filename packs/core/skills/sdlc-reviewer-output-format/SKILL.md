@@ -119,7 +119,7 @@ Use the categories matching your reviewer domain:
 
 ### Cloud Compliance Reviewer (AWS / GCP / Azure)
 `sdk-abstraction` | `repository-pattern` | `context-manager` | `identity` | `secrets`
-Cloud-specific IaC values: Azure → `bicep-avm` | `waf-toggles` | `resource-tags` | `diagnostics`;
+Cloud-specific IaC values: Azure → `bicep-avm` | `resource-tags` | `diagnostics`;
 AWS → `cdk-l2` | `iam-grants` | `no-inline-policy`;
 GCP → `terraform-standards` | `least-privilege-iam` | `secret-manager`.
 
