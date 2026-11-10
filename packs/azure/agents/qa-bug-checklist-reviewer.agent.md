@@ -46,7 +46,7 @@ checklist with 338-bug sourcing data.
 ### Step 2: Identify what is being reviewed
 
 Determine the scope:
-- **Full deployment review**: Run all 6 checklists
+- **Full deployment review**: Run all 7 checklists
 - **Code PR review**: Run Checklists 2-5 (AI, Frontend, API, Identity)
 - **Pre-deployment**: Run Checklist 1 (Deployment) + Checklist 5 (Identity)
 - **Post-deployment smoke**: Run Checklists 1 (post-deploy section), 2, 3

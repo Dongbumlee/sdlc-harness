@@ -117,6 +117,13 @@ scripts/
 └── quota_check_params.sh         # Quota check parameter definitions
 ```
 
+> ⚠️ **`enablePrivateNetworking` must stay `false`.** As documented in the
+> `sdlc-azure-deployment` skill, the toggle as built is firewall-deny only —
+> it creates no VNet and no private endpoints, and enabling it breaks the
+> app. `main.waf.parameters.json` carries the parameter; it is not
+> production-ready private networking until the private-endpoint path is
+> built.
+
 **AVM module rules:**
 
 - ALWAYS use AVM modules from `br/public:avm/res/...` when available.

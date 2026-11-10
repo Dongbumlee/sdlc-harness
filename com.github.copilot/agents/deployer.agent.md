@@ -143,6 +143,11 @@ projects exist, their Dockerfile patterns, and service configurations for `azure
 - ALWAYS use AVM modules from `br/public:avm/res/...` when available.
 - Include WAF toggle parameters (`enablePrivateNetworking`, `enableMonitoring`, `enableRedundancy`, `enableScalability`).
 - Create two-tier parameter files: `main.parameters.json` (non-WAF) + `main.waf.parameters.json` (WAF-aligned).
+- ⚠️ **`enablePrivateNetworking` must stay `false`.** As documented in the
+  `sdlc-azure-deployment` skill, the toggle as built is firewall-deny only
+  (no VNet, no private endpoints) and enabling it breaks the app. The WAF
+  parameter file carries the parameter; it is not production-ready private
+  networking until the private-endpoint path is built.
 - ALL container apps MUST share a single Container Apps Environment.
 - Use Managed Identity + RBAC, never connection strings in production.
 
