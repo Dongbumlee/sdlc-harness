@@ -14,30 +14,28 @@ comprehensive unit tests for a .NET project that follows these conventions.
 1. PROJECT LAYOUT
 ═══════════════════════════════════════════════════════════════════════════════
 
-The solution uses a standard .NET structure with separate test projects:
+Layout is owned by the stack profile and its bundled template — this file
+governs test quality, not layout. The .NET API template layout is:
 
-    SolutionRoot/
-    ├── src/                              ← production code only
-    │   ├── MyApp.Domain/                 ← domain models, entities, value objects
-    │   ├── MyApp.Application/            ← use cases, interfaces, DTOs
-    │   ├── MyApp.Infrastructure/         ← data access, external services
-    │   └── MyApp.Api/                    ← controllers, middleware, startup
-    ├── tests/                            ← all test code lives here
-    │   ├── MyApp.Domain.Tests/           ← unit tests for Domain
-    │   ├── MyApp.Application.Tests/      ← unit tests for Application
-    │   ├── MyApp.Infrastructure.Tests/   ← integration tests for Infrastructure
-    │   └── MyApp.Api.Tests/              ← API integration tests
-    ├── MySolution.sln                    ← solution file references all projects
-    ├── Directory.Build.props             ← shared MSBuild properties
-    ├── .gitignore                        ← excludes bin/, obj/, TestResults/
-    └── .dockerignore                     ← excludes tests/, TestResults/, etc.
+    ProjectRoot/
+    ├── <ProjectName>.sln               ← solution file at the root
+    ├── src/
+    │   ├── <ProjectName>API/           ← the API project (Program.cs,
+    │   │                                Endpoints/, Models/, Services/)
+    │   └── <ProjectName>API.Tests/     ← the test project (sibling of the
+    │                                    API project, inside src/)
+    ├── .gitignore                      ← excludes bin/, obj/, TestResults/
+    └── .dockerignore                   ← excludes the test project, bin/, obj/
 
 Key rules:
-- One test project per source project, with `.Tests` suffix.
+- ONE test project per API project, named `<ProjectName>API.Tests`, living
+  inside `src/` next to the project it tests — there is no root-level
+  `tests/` folder and no per-layer test projects in the template layout.
 - Test project namespace mirrors the source project namespace
-  (e.g., `MyApp.Domain` → `MyApp.Domain.Tests`).
-- Test projects reference the corresponding source project via `<ProjectReference>`.
-- Shared test utilities (builders, fakes) go in a `MyApp.TestUtilities` project.
+  (e.g., `<ProjectName>API` → `<ProjectName>API.Tests`).
+- The test project references the source project via `<ProjectReference>`.
+- Shared test utilities (builders, fakes) live in the test project itself
+  unless the project manifest records a separate utilities project.
 
 ═══════════════════════════════════════════════════════════════════════════════
 2. TEST SANITIZATION (run first, before writing new tests)
@@ -70,9 +68,9 @@ Every test file must follow this exact structure:
     using FluentAssertions;
     using Moq;
     using Xunit;
-    using MyApp.Domain.Models;
+    using MyAppAPI.Models;
 
-    namespace MyApp.Domain.Tests.Models;
+    namespace MyAppAPI.Tests.Models;
 
     /// <summary>
     /// Tests for <see cref="ClaimProcessor"/> — validates claim processing logic.
@@ -127,8 +125,8 @@ Rules:
 | Fixture class    | `<Name>Fixture`                            | `DatabaseFixture`, `WebAppFixture`       |
 
 File naming must mirror the source type:
-  `src/MyApp.Domain/Models/Claim.cs` → `tests/MyApp.Domain.Tests/Models/ClaimTests.cs`
-  `src/MyApp.Application/Services/ClaimService.cs` → `tests/MyApp.Application.Tests/Services/ClaimServiceTests.cs`
+  `src/<ProjectName>API/Models/Claim.cs` → `src/<ProjectName>API.Tests/ClaimTests.cs`
+  `src/<ProjectName>API/Services/ClaimService.cs` → `src/<ProjectName>API.Tests/ClaimServiceTests.cs`
 
 Test attribute usage:
 - `[Fact]` — single test case with no parameters.
@@ -295,32 +293,16 @@ xUnit assertions as fallback (when FluentAssertions is not available):
 8. COVERAGE CONFIGURATION
 ═══════════════════════════════════════════════════════════════════════════════
 
-Test projects must include Coverlet for code coverage. Add to each test `.csproj`:
+The bundled template's test project already carries the coverage and test
+packages — `<ProjectName>API.Tests.csproj` includes `coverlet.collector`
+6.0.2, `xunit` 2.9.2, `xunit.runner.visualstudio` 2.8.2,
+`Microsoft.NET.Test.Sdk` 17.11.1, and `Microsoft.AspNetCore.Mvc.Testing`
+10.0.0 for integration tests. Do not add a `Directory.Build.props` that
+prescribes different packages or a root-level `tests/` layout.
 
-    <ItemGroup>
-      <PackageReference Include="coverlet.collector" Version="6.*">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-      </PackageReference>
-    </ItemGroup>
-
-Or use `Directory.Build.props` in the `tests/` folder to apply to all test projects:
-
-    <Project>
-      <PropertyGroup>
-        <IsPackable>false</IsPackable>
-        <CollectCoverage>true</CollectCoverage>
-        <CoverletOutputFormat>cobertura</CoverletOutputFormat>
-      </PropertyGroup>
-      <ItemGroup>
-        <PackageReference Include="xunit" Version="2.*" />
-        <PackageReference Include="xunit.runner.visualstudio" Version="2.*" />
-        <PackageReference Include="coverlet.collector" Version="6.*" />
-        <PackageReference Include="FluentAssertions" Version="7.*" />
-        <PackageReference Include="Moq" Version="4.*" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.*" />
-      </ItemGroup>
-    </Project>
+FluentAssertions and Moq (used in this file's examples) are NOT in the
+bundled template. If a project adopts them, add them to the test project's
+`.csproj` and record the choice in the project manifest.
 
 Run with:
     dotnet test --collect:"XPlat Code Coverage" --results-directory TestResults/
@@ -342,15 +324,14 @@ Optional — generate HTML report:
     *.suo
     .vs/
 
-.dockerignore must exclude tests AND artifacts from the build context:
-    tests/
-    TestResults/
-    bin/
-    obj/
+.dockerignore must exclude the test project AND artifacts from the build context:
+    src/<ProjectName>API.Tests
+    **/TestResults
+    **/bin
+    **/obj
     *.user
     *.suo
     .vs/
-    **/*.Tests/
 
 ═══════════════════════════════════════════════════════════════════════════════
 10. WORKFLOW CHECKLIST
@@ -368,7 +349,7 @@ Follow this order:
 
 □ Phase 2 — Identify gaps
   7. List all source types under `src/` (excluding generated code, `obj/`, `bin/`)
-  8. List all existing test files under `tests/`
+  8. List all existing test files under `src/<ProjectName>API.Tests/`
   9. Produce a gap matrix: source type → has test? → coverage gaps
 
 □ Phase 3 — Write tests
@@ -383,10 +364,11 @@ Follow this order:
   16. Review coverage gaps; write additional tests for missed branches if practical
 
 □ Phase 5 — Project hygiene
-  17. Ensure tests/ is separate from src/ (not inside a source project)
-  18. Ensure each test project has Coverlet and xUnit packages configured
+  17. Ensure the test project sits at `src/<ProjectName>API.Tests/` per the
+      template — not in a root-level `tests/` folder
+  18. Ensure the test project has Coverlet and xUnit packages configured
   19. Ensure .gitignore excludes test artifacts
-  20. Ensure .dockerignore excludes tests/ and all test artifacts
+  20. Ensure .dockerignore excludes the test project and all test artifacts
 
 ═══════════════════════════════════════════════════════════════════════════════
 11. C#-SPECIFIC TEST PATTERNS

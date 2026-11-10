@@ -122,7 +122,8 @@ Before starting, load these resources for accurate implementation:
    - Use these Python libraries (do NOT use raw Azure SDKs):
      - `the approved Cosmos DB library` via `RepositoryBase[Entity, KeyType]` pattern.
      - `the approved Storage library` via `AsyncStorageBlobHelper` / `AsyncStorageQueueHelper` with `async with`.
-   - Unit tests go in `tests/` at the project root (match existing folder structure).
+   - Unit tests go in the project's own tests folder from the Step 1 layout
+     (`src/<Name>API/tests/` for Python, `src/<Name>API.Tests/` for .NET).
    - Follow the language-specific quality standards:
      - **Python**: `.github/instructions/code-quality-py.instructions.md` and `.github/instructions/test-quality.instructions.md`
      - **TypeScript**: `.github/instructions/code-quality-ts.instructions.md` and `.github/instructions/test-quality-ts.instructions.md`
@@ -136,7 +137,8 @@ Before starting, load these resources for accurate implementation:
    - After all implementation steps are complete with unit tests:
      - Write **API-level integration tests** for new endpoints (HTTP tests using test client).
      - Write **data access integration tests** that exercise Cosmos DB/Blob via the library abstractions.
-   - Integration tests go in `tests/integration/` or `tests/` alongside unit tests.
+   - Integration tests go in the project's `tests/integration/` or alongside
+     unit tests in the project's tests folder.
 
 5. **Run all tests and verify**
    - Run `uv run pytest --cov` (Python) or `npx vitest run` (TypeScript/React).

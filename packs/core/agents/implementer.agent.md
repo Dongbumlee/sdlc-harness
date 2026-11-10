@@ -123,10 +123,13 @@ assume a test runner from the file extensions alone: python →
   compiling, execution blocked by the environment. Never loop diagnostics,
   and never convert an environment failure into a pass claim.
 - Never move to the next step without writing the unit test for the current step.
-- Unit tests go in `tests/` at the project root (NOT inside `app/` or `src/`) —
-  except where the stack profile says otherwise (dotnet: the sibling
-  `<Name>.Tests` project).
-- Integration tests also go in `tests/` (e.g., `tests/integration/`).
+- Unit tests go in the project's own test location from the stack profile
+  template: Python — the project's `tests/` folder (sibling of `app/`,
+  inside `src/<ProjectName>API/`); dotnet — the sibling
+  `<ProjectName>API.Tests` project inside `src/`. Never a `tests/` tree at
+  the repository root.
+- Integration tests also go in the project's tests folder
+  (e.g., `tests/integration/` within the project).
 - Run the stack profile's Test command after all steps to verify everything passes.
 
 ## Reference catalog
