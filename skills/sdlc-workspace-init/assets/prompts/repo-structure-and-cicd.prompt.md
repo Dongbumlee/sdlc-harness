@@ -81,7 +81,6 @@ This prompt is for **scaffolding only** — folder structure, configuration file
 - Stub `main.py` or `App.tsx` with minimal boilerplate (imports + app initialization only)
 - Empty test directories with `conftest.py` or test config
 - Root-level compliance files (`TRANSPARENCY_FAQ.md`, `CODE_OF_CONDUCT.md`, etc.)
-- Empty test directories with `conftest.py` or test config
 
 **DO NOT generate:**
 - Business logic, service classes, or domain models
@@ -258,7 +257,7 @@ Every pipeline MUST include these quality gates:
 | **Lint / format** | `ruff check` / `npx eslint` | Same commands in script tasks |
 | **Type check** | `mypy` / `npx tsc --noEmit` | Same commands in script tasks |
 | **Unit tests** | `pytest --cov` / `npx vitest run --coverage` | Same with test result publishing |
-| **Coverage threshold** | Fail if below threshold (e.g., 80%) | Same with coverage gates |
+| **Coverage target** | Report coverage against the stack profile's target (e.g., 80%) — a shortfall is recorded as a deviation, never a pipeline failure (Class 2) | Same — report and record, do not gate |
 | **Security scan** | CodeQL + dependency review | Built-in security tasks or third-party |
 | **Docker build** | Build + scan image | Build + scan image |
 

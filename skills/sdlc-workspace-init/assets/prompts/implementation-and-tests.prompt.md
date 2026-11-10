@@ -144,7 +144,9 @@ Before starting, load these resources for accurate implementation:
 
 5. **Run all tests and verify**
    - Run `uv run pytest --cov` (Python) or `npx vitest run` (TypeScript/React).
-   - Verify all tests pass and coverage meets thresholds.
+   - Verify all tests pass. Report coverage against the stack profile's
+     target — the target is a Class 2 quality target: a shortfall is a
+     recorded deviation, not a failure.
 
 6. **Check for cross-cutting concerns**
    - Logging:
@@ -185,12 +187,14 @@ Before starting, load these resources for accurate implementation:
      conventions, comment cleanup, import order; no third-party copyright headers).
    - Self-evaluation completed with acceptance criteria coverage table.
    - All acceptance criteria have corresponding passing tests.
+   - No test was weakened or deleted to reach green — any test change cites
+     the sprint-contract delta that authorizes it (test integrity).
    - For each criterion, mark it as:
      - ✅ satisfied
      - ⚠️ partially satisfied (explain what remains)
      - ⛔ not satisfied (explain what is missing)
 
-9. **Output format**
+10. **Output format**
 
 Return your answer in this structure:
 
