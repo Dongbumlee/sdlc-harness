@@ -65,6 +65,11 @@ they reach the design and implementation phases — where they become 10x more e
 
 ## Severity guide
 
+Finding levels are the canonical scale (reviewer-output-format skill:
+`critical|high|medium|low`). The criteria below are this domain's examples
+for each level, not a redefinition of the scale. In prose, use the synthesis
+translations: Critical / Important / Suggestion / minor.
+
 | Severity | Criteria | Examples |
 |----------|----------|---------|
 | Critical | Requirement is untestable or contradictory | FR with no acceptance criterion; two FRs that contradict each other |

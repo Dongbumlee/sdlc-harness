@@ -47,9 +47,9 @@ checklist with 338-bug sourcing data.
 
 Determine the scope:
 - **Full deployment review**: Run all 7 checklists
-- **Code PR review**: Run Checklists 2-5 (AI, Frontend, API, Identity)
-- **Pre-deployment**: Run Checklist 1 (Deployment) + Checklist 5 (Identity)
-- **Post-deployment smoke**: Run Checklists 1 (post-deploy section), 2, 3
+- **Code PR review**: Run Checklists 3-6 (AI/ML, Frontend, API, Identity)
+- **Pre-deployment**: Run Checklist 1 (Deployment) + Checklist 6 (Identity)
+- **Post-deployment smoke**: Run Checklist 1 (post-deploy section) + Checklist 7 (Smoke matrix)
 
 ### Step 3: Execute checklists
 
@@ -61,29 +61,38 @@ For each applicable checklist, examine the relevant files and configurations:
 3. Find post-deployment scripts (`**/post_deploy*`, `**/scripts/**`)
 4. Verify error handling and retry logic in post-deploy scripts
 
-#### AI/ML (Checklist 2 — sourced from 57 bugs)
+#### CosmosDB & Data Layer (Checklist 2 — sourced from 8 bugs)
+1. Check Cosmos native RBAC (SQL role assignments), not just Azure portal RBAC
+2. Verify containers are created by a post-deployment step, not lazily on first request
+
+#### AI/ML (Checklist 3 — sourced from 57 bugs)
 1. Find AI client initialization code (OpenAI, Azure AI, embeddings)
 2. Check for retry logic on 429s and model availability validation
 3. Verify prompt injection guards in system prompts
 4. Check agent creation code for retry/delay logic
 
-#### Frontend (Checklist 3 — sourced from 40 bugs)
+#### Frontend (Checklist 4 — sourced from 40 bugs)
 1. Find environment variable usage in frontend code
 2. Check error boundary / error handling components
 3. Verify state management doesn't leak between views
 4. Check for duplicate message rendering logic
 
-#### API/Backend (Checklist 4 — sourced from 23 bugs)
+#### API/Backend (Checklist 5 — sourced from 23 bugs)
 1. Find CORS configuration — must not be wildcard in production
 2. Check health endpoint exists
 3. Verify error handling returns proper HTTP codes
 4. Check timeout configuration on external calls
 
-#### Identity (Checklist 5 — sourced from 21 bugs)
+#### Identity (Checklist 6 — sourced from 21 bugs)
 1. Search for connection strings, API keys, hardcoded credentials
 2. Verify Managed Identity usage (DefaultAzureCredential or ManagedIdentityCredential)
 3. Check RBAC role assignments in Bicep/deployment scripts
 4. Search for hardcoded workspace names, subscription IDs
+
+#### Smoke Testing Matrix (Checklist 7 — sourced from 60 bugs)
+1. Verify the smoke matrix exists for every configuration the project ships
+2. Check every cell (upload, chat, process, admin, post-deploy scripts) is
+   exercised — a bug fixed in one configuration must be validated in all
 
 ### Step 4: Cross-reference with security review
 
@@ -115,11 +124,11 @@ OWASP Top 10 checks. Many bug-driven findings overlap with:
 
 ### ✅ Passed Checks
 - [Checklist 1] Quota check: SKUs verified
-- [Checklist 5] No hardcoded credentials found
+- [Checklist 6] No hardcoded credentials found
 - ...
 
 ### Summary
-- Checklists run: X/6
+- Checklists run: X/7
 - Blockers: N
 - Warnings: N
 - Info: N

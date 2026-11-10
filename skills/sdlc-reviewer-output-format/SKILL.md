@@ -77,7 +77,7 @@ false-positive QA loops.
 | `not_checked` | Areas of the assigned scope that were NOT examined. Required (non-empty) when `status` is `partial`; `[]` when complete |
 | `findings` | List of all **in-scope** findings. May be empty (`[]`) for a clean review. Include ALL in-scope findings from the Markdown report |
 | `hardening_suggestions` | Out-of-scope hardening ideas (see Finding Scoping). Never affect score or verdict |
-| `severity` | `critical` = must fix before merge; `high` = important; `medium` = suggestion; `low` = minor |
+| `severity` | `critical` = must fix before merge; `high` = important; `medium` = suggestion; `low` = minor. Synthesis terms are the fixed translation of these levels (Critical / Important / Suggestion / minor) — base definitions §4.2 |
 | `category` | Domain-specific value from the list below. Use the most specific applicable category |
 | `description` | Concise description of the finding |
 | `location` | File and line number preferred (e.g., `src/api/routes.py:45`); component name acceptable when line not applicable |
@@ -118,10 +118,13 @@ Use the categories matching your reviewer domain:
 `layering` | `dependency-direction` | `pattern-reuse` | `god-service` | `cross-layer-shortcut` | `template-alignment` | `documentation-structure`
 
 ### Cloud Compliance Reviewer (AWS / GCP / Azure)
-`sdk-abstraction` | `repository-pattern` | `context-manager` | `identity` | `secrets`
+Shared cross-cloud values: `sdk-abstraction` | `repository-pattern` | `context-manager` | `identity` | `secrets`
 Cloud-specific IaC values: Azure → `bicep-avm` | `resource-tags` | `diagnostics`;
 AWS → `cdk-l2` | `iam-grants` | `no-inline-policy`;
 GCP → `terraform-standards` | `least-privilege-iam` | `secret-manager`.
+This skill defines the *mechanism* (the YAML block and its field rules). Each
+cloud pack's compliance agent defines that cloud's full category list, and
+the agent's own list governs for its cloud.
 
 ### Code Quality Reviewer
 `copyright` | `docstrings` | `naming` | `dead-code` | `comments` | `error-handling` | `type-safety` | `imports` | `function-size` | `dry` | `terminology` | `placeholder-text` | `debug-code`
@@ -152,6 +155,8 @@ reviewer: "Architecture Reviewer"
 phase: "Phase 4 - Implementation"
 score: 8
 verdict: PASS
+status: complete
+not_checked: []
 findings: []
 reasoning: "Code correctly follows API → Application → Domain layering with no cross-layer shortcuts detected. Repository pattern is consistently applied across all new services. Minor template alignment gap in folder naming does not affect production behavior."
 ---end-sdlc-review-output---
@@ -165,19 +170,27 @@ reviewer: "Security Reviewer"
 phase: "Phase 4 - Implementation"
 score: 5
 verdict: CRITICAL_FAIL
+status: complete
+not_checked: []
 findings:
   - severity: critical
     category: secrets
+    scope: in-scope
+    requirement: "NFR-2 (no secrets in source)"
     description: "Azure storage connection string hardcoded in config.py"
     location: "src/config/config.py:42"
     recommendation: "Remove hardcoded string. Load from Azure Key Vault or environment variable."
   - severity: high
     category: injection
+    scope: in-scope
+    requirement: "FR-7 (order lookup)"
     description: "User input concatenated into Cosmos DB query without sanitization"
     location: "src/repositories/claim_repository.py:87"
     recommendation: "Use parameterized queries via the approved SDK wrapper."
   - severity: medium
     category: cors
+    scope: in-scope
+    requirement: "NFR-2 (secure defaults)"
     description: "CORS configured with wildcard origin in production config"
     location: "src/api/middleware.py:23"
     recommendation: "Restrict CORS origins to known domains."

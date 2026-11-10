@@ -82,7 +82,7 @@ Example acceptance criteria:
 
 ### Steps 1-6: Implementation with inline testing
 
-**Step 0 (existing projects — mandatory baseline):** Before changing any code,
+**Step 0B (existing projects — mandatory baseline):** Before changing any code,
 run the project's FULL existing test suite and record the raw summary line
 (e.g. `199 passed`). If the baseline is already red, report the failing tests
 to the Harness before you touch anything — your change is judged against this
@@ -368,7 +368,7 @@ before the formal review, reducing QA round-trips.
 
 2. **Run all tests.** Do they actually pass? Check the output — don't assume.
    Your handoff MUST quote the raw summary line(s) from the test runner(s)
-   (e.g. `224 passed in 31.2s`), including the baseline numbers from Step 0
+   (e.g. `224 passed in 31.2s`), including the baseline numbers from Step 0B
    for existing projects. A pass/fail claim without the quoted runner output
    is an incomplete handoff.
 

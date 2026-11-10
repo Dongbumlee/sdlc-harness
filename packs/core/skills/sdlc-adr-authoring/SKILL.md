@@ -11,9 +11,13 @@ author: sdlc-harness
 user-invocable: false
 ---
 
-# ADR Authoring — SDLC Phase 5
+# ADR Authoring — SDLC Phase 2 records
 
-Create Architecture Decision Records that satisfy SDLC Phase 5 exit criteria.
+Create Architecture Decision Records that satisfy the Phase 1–2 exit gate.
+An ADR is a Phase 2 decision record: the Documenter authors it from the
+Analyst's design proposal, on the Harness's delegation, before Phase 3 —
+artifact timing is governed by the gate that checks it, not by the
+authoring agent's own phase (base definitions §2.4).
 
 ## Step 1: Load ADR best practices
 
@@ -83,7 +87,7 @@ What prompted this decision? Business need, technical constraint, or opportunity
 ### Architecture
 High-level description of the chosen approach.
 
-### Azure Services
+### Platform Services
 | Service | Library | Purpose |
 |---|---|---|
 | Cosmos DB | the approved Cosmos DB library | Order data storage |
@@ -135,9 +139,9 @@ High-level description of the chosen approach.
 Before saving, verify:
 
 - [ ] Status is set to "Proposed" for new decisions
-- [ ] Azure services use approved libraries from reference catalog
+- [ ] Platform services use approved libraries from reference catalog
 - [ ] No placeholder text remains
-- [ ] Entity definitions use `RootEntityBase` (not raw Pydantic)
+- [ ] Entity definitions use the base class the project's recorded pattern specifies (e.g. `RootEntityBase` where that pattern applies)
 - [ ] At least one alternative is documented with rejection rationale
 - [ ] Testing strategy specifies frameworks (pytest, Vitest, Playwright)
 - [ ] SDLC Impact table maps to specific phases
@@ -154,9 +158,10 @@ Before saving, verify:
 - **Always use the SDLC template from `.design/ADR-TEMPLATE.md`** — the awesome-copilot
   ADR format is a useful reference but our template has SDLC-specific sections
   (SDLC Impact, RAI Considerations) that are mandatory.
-- **Azure services table must specify the library** (the approved Cosmos DB library, the approved Storage library) —
+- **The services table must specify the library** (e.g., on Azure, the approved Cosmos DB library, the approved Storage library) —
   not just the service name.
-- **Data model entities must specify `RootEntityBase` base class** — this ensures
+- **Data model entities must specify the base class from the project's recorded
+  pattern** (e.g. `RootEntityBase` in the Azure application pattern) — this ensures
   the Implementer knows the exact pattern to follow.
 - **Status "Proposed"** means it needs team review; "Accepted" means approved to implement.
 

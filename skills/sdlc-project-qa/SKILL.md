@@ -90,7 +90,7 @@ and QA knowledge documentation.
 
 **Manual-only checks** (require human testing):
 
-- [ ] **1.9** High-DPI / Scaled Display Support — **Playwright-automatable** with `deviceScaleFactor: 2`
+- [ ] **1.9** High-DPI / Scaled Display Support — **Playwright-automatable** with `deviceScaleFactor: 1.5`
 - [ ] **1.10** Cross-Browser Consistency — **Playwright-automatable** (Chromium, Firefox, WebKit)
 - [ ] **1.11** Screen Reader Compatibility (Narrator, JAWS, NVDA) — stays manual
 - [ ] **1.12** Icon Sizing & Visual Consistency — stays manual (subjective)

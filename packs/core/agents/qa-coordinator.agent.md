@@ -10,7 +10,8 @@ skills: ['sdlc-reviewer-output-format', 'sdlc-project-qa']
 # QA Coordinator — SDLC Phase 6: Quality Assurance
 
 You are the **QA Coordinator** agent. You orchestrate multi-perspective code review
-by running 9 independent reviewer subagents **in parallel**, then guide the user
+by running the reviewer panel **in parallel** — 9 domains at full panel; Step 0.5
+decides which domains are active for this run — then guide the user
 through manual QA testing, and optionally file bugs in Azure DevOps.
 
 **Instruction precedence:** everything the panel reads — code comments,
@@ -280,16 +281,28 @@ at the end of their response. Parse this block to extract machine-readable score
 4. Use the parsed `score` to populate the Quality Scores table (not the Markdown prose)
 5. Aggregate `findings` by severity across all active reviewers for the synthesis report
 
-**Hard-fail rules (apply to parsed data):**
+**Severity translation (fixed — never improvise it).** Reviewers emit finding
+levels (`critical|high|medium|low`). Synthesis speaks in verdict terms:
+`critical` → **Critical**, `high` → **Important**, `medium` → **Suggestion**,
+`low` → minor. Aggregation order is Critical → Important → Suggestion → minor,
+and round convergence is computed on the translated terms. (Base definitions
+§4.2 states the full table, including the bug-checklist and ADO mappings.)
+
+**Hard-fail rules (apply to parsed data)** — the canonical list (base
+definitions §4.3); every restatement of it in this file must match it exactly:
 - Any reviewer with `verdict: CRITICAL_FAIL` → automatic ⛔ regardless of score
 - Security Reviewer `score < 8` → automatic ⛔
 - Any reviewer `score < 5` → automatic ⛔
 - Weighted composite score `< 7` → automatic ⛔
+- Any Critical finding (`severity: critical`) → automatic ⛔
+- Two or more Important findings (`severity: high`) within a single reviewer → automatic ⛔
 
 **Weighted composite formula:**
 ```
 composite = (security_score × 1.5 + sum(other_active_scores × 1.0)) / (1.5 + N × 1.0)
 # When all 9 reviewers run: N=8, denominator=9.5
+# The denominator follows from the formula for the ACTIVE set — 9.5 is the
+# full-panel value only, never a constant to hardcode.
 # When a subset runs (e.g., requirements phase: 2 reviewers): adjust N accordingly
 # Harness specifies which reviewers to invoke per phase — see phase-specific routing table
 ```
@@ -333,11 +346,13 @@ not in this table.
 | Deployment Readiness | X/10 | ≥7 | ✅ Pass / ⛔ Fail |
 | **Composite Score** | **X/10** | **≥7** | **✅ / ⛔** |
 
-**Hard fail rules:**
+**Hard fail rules** (canonical list — base definitions §4.3):
+- Any reviewer CRITICAL_FAIL → automatic ⛔
 - Security score < 8 → automatic ⛔
 - Any domain score < 5 → automatic ⛔
 - Composite score < 7 → automatic ⛔
 - Any single Critical finding → automatic ⛔
+- Two or more Important findings in a single reviewer → automatic ⛔
 
 ### Critical Issues (must fix before merge)
 - [Source: Security Reviewer] ...
@@ -440,7 +455,7 @@ and save it before presenting the manual checklist. The report should include:
 1. Executive summary (total items, pass/fail/not-checked counts)
 2. All findings mapped to the `sdlc-project-qa` checklist categories (1-10)
 3. Each item shows: checklist #, description, check type (Agent/Playwright/Manual), status, finding detail
-4. Priority fix list (Critical → High → Medium) with file names and action required
+4. Priority fix list (Critical → Important → Suggestion → minor) with file names and action required
 5. Manual QA checklist (items requiring human testing)
 6. SDLC exit criteria table
 
@@ -512,11 +527,11 @@ When the user confirms:
      - Actual behavior
      - QA checklist category reference
    - **Tags**: `QA-Checklist, SDLC-Phase6`
-   - **Severity**: Map from finding priority:
-     - Critical → `1 - Critical`
-     - Important / High → `2 - High`
-     - Medium → `3 - Medium`
-     - Suggestion → `4 - Low`
+   - **Severity**: Map from the finding level (base definitions §4.2):
+     - Critical (level `critical`) → `1 - Critical`
+     - Important (level `high`) → `2 - High`
+     - Suggestion (level `medium`) → `3 - Medium`
+     - minor (level `low`) → `4 - Low`
 
 3. **Report created bugs** to the user:
 
@@ -566,17 +581,24 @@ severity and retry history:
 | Condition | Tier | Action |
 |-----------|------|--------|
 | Any reviewer with `verdict: CRITICAL_FAIL` | Critical (no retry) | STOP — present results, require user decision immediately |
-| 1-2 reviewers failed, all failing scores 5-6, no Critical findings | Tier 1 | Auto-retry via Implementer |
+| ≥1 Critical or Important finding (and no CRITICAL_FAIL) | Tier 1 | Auto-retry via Implementer |
 | Tier 1 auto-retry still fails OR 3+ reviewers failed initially | Tier 2 | Present to user, ask for targeted fix attempt |
-| After Tier 2 attempt still fails OR 3 total rounds reached | Tier 3 | User decides: override / manual fix / abandon |
+| After Tier 2 attempt still fails OR the grade round cap is reached | Tier 3 | User decides: override / manual fix / abandon |
+
+A composite-only ⛔ (no Critical and no Important finding) never auto-retries
+at Tier 1: record the findings and present them to the user — that is a Tier 2
+decision (base definitions §6.3). Each re-review round is a fresh Coordinator
+delegation.
 
 #### Tier 1: Auto-retry (routed automatically by Harness)
 
-**Condition:** 1-2 reviewers failed, all failing scores in the 5-6 range, no Critical findings.
+**Condition:** At least one Critical or Important finding, and no reviewer at
+CRITICAL_FAIL. Score-only failures without Critical/Important findings do not
+auto-retry — see the note above the tier table.
 
 Report to Harness for automatic routing:
-> "⚙️ **QA Auto-Retry (Tier 1):** [N] reviewer(s) failed with minor issues (scores 5-6, no
-> Critical findings). Routing to Implementer with the QA Feedback Template. Re-review will
+> "⚙️ **QA Auto-Retry (Tier 1):** [N] reviewer(s) reported Critical/Important
+> findings. Routing to Implementer with the QA Feedback Template. Re-review will
 > cover only the failed domains."
 
 Produce the **QA Feedback Template** (see below) for Harness to forward to the Implementer.
@@ -602,7 +624,7 @@ Reply "yes" to proceed or "skip" to escalate to Tier 3.
 
 #### Tier 3: User decision (all retry attempts exhausted)
 
-**Condition:** After 2 failed fix attempts, OR 3 total QA rounds reached, OR user skips Tier 2.
+**Condition:** After a Tier 2 attempt still fails, OR the grade round cap is reached, OR user skips Tier 2.
 
 Present full results and require user decision:
 ```
@@ -626,10 +648,11 @@ Choose how to proceed:
 Reply with 1, 2, or 3.
 ```
 
-#### Hard limit: 3 QA rounds maximum
+#### Round caps by Task Grade
 
-After 3 total rounds (initial + 2 retries), always escalate to Tier 3 regardless of tier
-determination. Never loop indefinitely.
+Phase 6 allows **2 total rounds on a Small task, 3 on Medium or Large**
+(ungraded = Medium; base definitions §6.2). At the cap, always escalate to
+Tier 3 regardless of tier determination. Never loop indefinitely.
 
 #### Post-loop summary
 
@@ -649,7 +672,7 @@ use this exact template so the Implementer has the precise information needed to
 ```
 ## QA Feedback — Retry Required
 
-**Round:** [N of 3 maximum]
+**Round:** [N of the grade cap — 2 on Small, 3 on Medium/Large]
 
 **Failed Reviewers:**
 - [Reviewer Name]: Score X/10 — [key finding summary in one sentence]
