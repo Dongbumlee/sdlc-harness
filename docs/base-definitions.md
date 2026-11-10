@@ -201,9 +201,13 @@ Reviewers record findings in the YAML block defined by
 
 Every finding MUST carry `severity`, `scope`, and `requirement` (the
 acceptance criterion or recorded standard it is measured against), and
-every review block MUST carry `status` and `not_checked`. (The format
-skill's own examples currently omit these fields — the examples are the
-defect, the rule stands.)
+every review block MUST carry `status` and `not_checked`.
+
+One finding is `critical` by definition: a test deleted, skipped, or
+weakened in a change without the contract delta the Implementer's
+test-integrity rule requires. Test integrity is a Class 1 rule (§5):
+tests change when the contract they encode changes in the same change,
+with the delta cited — never to make a failing run go green.
 
 ### 4.2 The synthesis vocabulary and the translation table
 

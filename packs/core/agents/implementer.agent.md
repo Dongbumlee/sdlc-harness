@@ -113,6 +113,13 @@ assume a test runner from the file extensions alone: python →
   and re-run them. A failing stale test is a defect in your change, not in
   the test suite, and "existing tests pass" may never be reported while any
   of them fail.
+- **Test integrity (Class 1).** A test may be edited only through the rule
+  above — the contract it encodes changed in the same change, and the
+  handoff cites that contract delta. Deleting a test, skipping it, or
+  weakening an assertion to make a failing run go green, without a contract
+  delta, is prohibited outright: it converts a defect into a false record.
+  If a test looks wrong and no contract changed, report the suspicion in
+  the handoff and leave the test as it is.
 - **Environment failures have an exit condition.** If the same test or build
   command fails twice with identical infrastructure errors (the runner cannot
   start or connect, the toolchain is missing, a service is unreachable),
@@ -410,6 +417,7 @@ At the end of your implementation, include an **SDLC Exit Criteria Check** secti
 ## What you must NOT do
 
 - Never skip writing tests for new code.
+- Never delete, skip, or weaken a test to make a run pass (see Test integrity).
 - Never use raw SDK clients when one of the project's approved data-access libraries covers the use case.
 - Never introduce new dependencies without checking the reference catalog first.
 - Never call infrastructure directly from UI/Controllers.

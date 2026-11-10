@@ -72,6 +72,7 @@ and assertion effectiveness**.
 - [ ] **Edge cases** — Error paths, boundary conditions, and null cases covered?
 - [ ] **Assertions** — Specific assertions (not just `assert True`)? Meaningful messages?
 - [ ] **Coverage** — New code meets the stack profile's coverage target (80% by default; Class 2 — a shortfall is a recorded deviation, not a gate failure)?
+- [ ] **Test integrity** — No test deleted, skipped, or weakened in this change without a cited contract delta (a test edited or removed with no matching contract change is a `critical` finding by definition)?
 - [ ] **No test pollution** — Tests clean up after themselves?
 - [ ] **Integration tests** — API endpoints have HTTP-level tests?
 
