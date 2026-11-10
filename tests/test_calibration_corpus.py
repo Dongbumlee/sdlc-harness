@@ -23,7 +23,7 @@ REQUIRED_CASES = {
 
 
 def _cases() -> list[Path]:
-    return sorted(p for p in CORPUS.iterdir() if p.is_dir())
+    return sorted(p for p in CORPUS.iterdir() if p.is_dir() and p.name.startswith("case-"))
 
 
 def test_all_required_cases_present():
