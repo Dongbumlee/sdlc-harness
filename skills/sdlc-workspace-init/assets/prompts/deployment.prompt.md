@@ -14,7 +14,7 @@ How to use (VS Code):
     Blob Storage, and Container Apps."
 -->
 
-# Deployment & Infrastructure Prompt (SDLC Phase 3 + Phase 8)
+# Deployment & Infrastructure Prompt (SDLC Phase 3 + Phases 8–9)
 
 > **Scope:** this is the **Azure** variant of the deployment prompt
 > (Bicep/AVM/azd). For AWS or GCP targets, use the installed cloud pack's
@@ -24,7 +24,7 @@ You are creating or updating the Azure deployment infrastructure for a project.
 
 This prompt covers two SDLC phases:
 - **Phase 3** — Infrastructure as Code (Bicep/AVM) and `azd` configuration
-- **Phase 8** — Release script preparation and deployment automation
+- **Phases 8–9** — Release preparation: release scripts and deployment automation
 
 Follow the Azure Verified Modules (AVM) patterns for Landing Zone alignment,
 and use Azure Developer CLI (`azd`) for deployment orchestration.
@@ -175,7 +175,7 @@ var allTags = union({
 // full private path (VNet + private DNS + private endpoints); no partial toggle
 module virtualNetwork './modules/virtualNetwork.bicep' = { ... }
 
-// Conditional monitoring
+// Monitoring — always provisioned (see the Parameters note above)
 module logAnalytics 'br/public:avm/res/operational-insights/workspace:<VERSION>' = { ... }
 module appInsights 'br/public:avm/res/insights/component:<VERSION>' = { ... }
 
@@ -618,7 +618,7 @@ azd env get-values > .env
 echo "✅ Post-provisioning complete."
 ```
 
-### 8. SDLC Exit Criteria check (Phase 3 + Phase 8)
+### 8. SDLC Exit Criteria check (Phase 3 + Phases 8–9)
 
 Verify the following exit criteria:
 
@@ -628,7 +628,7 @@ Verify the following exit criteria:
 - `.devcontainer/devcontainer.json` is configured for Codespaces.
 - Pipeline definitions include `azd` deployment stages.
 
-**Phase 8 — Release Preparation:**
+**Phases 8–9 — Release:**
 - Deployment is repeatable via `azd up` (idempotent).
 - Environment promotion strategy is defined.
 - Post-provisioning hooks exist and are tested.
@@ -651,7 +651,7 @@ Return a single markdown response with these sections:
 - **Environment Strategy** — promotion flow and env-specific configs
 - **Post-Provisioning Scripts** — hook scripts
 - **Follow-up Tasks** — manual steps (secrets, DNS, custom domains)
-- **SDLC Exit Criteria Check (Phase 3 + Phase 8)** with ✅/⚠️/⛔
+- **SDLC Exit Criteria Check (Phase 3 + Phases 8–9)** with ✅/⚠️/⛔
 
 <!--
 Example invocation for engineers:

@@ -125,21 +125,35 @@ results = await repo.query_raw_dynamic_cursor_async(
 
 ## Step 5: Write unit tests
 
-```python
-from unittest.mock import AsyncMock, patch
+**Mock the boundary beneath the unit under test — never the unit itself.**
+A test that mocks the repository in order to test the repository verifies
+nothing (it asserts that a mock was called). Test entities directly, test
+services against a mocked repository, and verify repository behavior
+itself with integration tests against a real container (emulator or a
+test database) in the integration suite.
 
-class TestCustomerRepository:
+```python
+from unittest.mock import AsyncMock
+
+class TestCustomer:
     def test_entity_creation(self):
         customer = Customer(id="c-1", name="Test", email="t@test.com")
         assert customer.name == "Test"
         assert customer.is_active is True
 
+
+class TestCustomerService:
     @pytest.mark.asyncio
-    async def test_add_customer(self):
-        mock_repo = AsyncMock(spec=CustomerRepository)
-        customer = Customer(id="c-1", name="Test", email="t@test.com")
-        await mock_repo.add_async(customer)
-        mock_repo.add_async.assert_called_once_with(customer)
+    async def test_register_normalizes_email_before_saving(self):
+        # The repository is the dependency here — the service is the unit
+        # under test, so mocking the repository boundary is correct.
+        repo = AsyncMock(spec=CustomerRepository)
+        service = CustomerService(repo)
+
+        saved = await service.register_async("c-1", "Test", "  T@Test.com ")
+
+        repo.add_async.assert_called_once()
+        assert saved.email == "t@test.com"
 ```
 
 ## Gotchas

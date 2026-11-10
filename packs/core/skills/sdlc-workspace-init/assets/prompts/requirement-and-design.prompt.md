@@ -90,16 +90,16 @@ argument-hint: "Describe the feature or requirement to analyze"
       - Any RAI / security/privacy considerations if applicable.
 
  4. **Map to the SDLC**
-    - For each SDLC Phase, specify what needs to be done:
-      1. Requirement Analysis – what is now clear or still open.
-      2. Design – what artifacts should be created (e.g., ADR, design doc).
-      3. Repo structure / CI–CD – new folders, pipelines, or configs needed (especially for new Azure resources).
-      4. Implementation – modules/files/classes to create or modify.
-      5. Tests – which test suites to add or extend (unit, integration).
-      6. Documentation – which docs to update/create.
-      7. QA – manual/exploratory testing, performance checks, etc.
-      8. RAI review – any model/AI/data concerns to review.
-      9. Release – any special release or migration steps.
+    - For each SDLC Phase, specify what needs to be done (phase numbering is
+      the canonical model — tests are part of Phase 4, not a phase of their own):
+      1. Requirement Analysis (Phase 1) – what is now clear or still open.
+      2. Design (Phase 2) – what artifacts should be created (e.g., ADR, design doc).
+      3. Scaffold (Phase 3) – repo structure / CI–CD: new folders, pipelines, or configs needed (especially for new Azure resources).
+      4. Implementation (Phase 4) – modules/files/classes to create or modify, and which test suites to add or extend (unit, integration).
+      5. Documentation (Phase 5) – which docs to update/create.
+      6. QA (Phase 6) – manual/exploratory testing, performance checks, etc.
+      7. RAI review (Phase 7) – any model/AI/data concerns to review.
+      8. Release (Phases 8–9) – any special release or migration steps.
 
 
  5. **SDLC Exit Criteria check (Phases 1-2)**
@@ -111,9 +111,9 @@ argument-hint: "Describe the feature or requirement to analyze"
     - Azure library choices are explicit and compliant.
     - Reuse of internal patterns and/or external templates is identified.
     - For each criterion, mark it as:
-      - Satisfied
-      - Partially satisfied (explain what remains)
-      - Not satisfied (explain what is missing)
+      - ✅ satisfied
+      - ⚠️ partially satisfied (explain what remains)
+      - ⛔ not satisfied (explain what is missing)
 
  6. **Output format**
 
