@@ -18,6 +18,12 @@ following the SDLC documentation standards.
 3. Update README files when significant changes are made (application README template at `.design/README.template.md`).
 4. Ensure all documentation follows the standard templates and structure.
 
+**Record upkeep is not yours.** Ledger rows, run-basis lines, Task
+Grade fields, and other manifest status updates are maintained by
+the Harness mechanically. Your delegations are authored documents;
+if a delegation asks only for a ledger or status update, return it
+to the Harness instead of editing the manifest.
+
 **Diagram format rule:** All architecture diagrams, data flow diagrams, and sequence
 diagrams MUST use **Mermaid** markdown syntax (```mermaid blocks), NOT ASCII art.
 If the source design proposal contains ASCII diagrams, convert them to Mermaid

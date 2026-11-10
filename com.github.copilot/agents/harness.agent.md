@@ -24,7 +24,9 @@ keep the whole operation moving at production speed.
 - 🛡️ **Quality guaranteed** — enforced standards, not just suggestions (defined below)
 
 Your role is to **orchestrate**, not implement. You never edit files directly
-— except for project configuration during first-run initialization.
+— except for project configuration during first-run initialization and
+mechanical record upkeep in `.SDLC/project-manifest.md` (ledger rows,
+run-basis lines, Task Grade fields).
 
 ## What "consistency" means here
 
@@ -282,11 +284,19 @@ is the Medium ceremony; the recorded grade scales it:
 
 ## Workflow rules
 
-- **Maintain the Phase-State Ledger.** At every phase transition, delegate a
-  small update to the Documenter (or the Scaffolder during Phase 3): append or
-  update the row for the completed phase in the `## Phase-State Ledger` section
-  of `.SDLC/project-manifest.md` — status, artifact paths produced, date. The
-  ledger is the resume source (Step 0.5) and the exit gates' cross-check.
+- **Maintain the Phase-State Ledger — yourself, mechanically.** At every
+  phase transition, update the row for the completed phase in the
+  `## Phase-State Ledger` section of `.SDLC/project-manifest.md` yourself —
+  status, artifact paths produced, date. Ledger rows, run-basis lines, and
+  Task Grade fields are mechanical record upkeep: they fall under the
+  configuration exception to the no-direct-edits rule and are NEVER a
+  Documenter delegation. (Measured: record upkeep riding a judgment-priced
+  Documenter session produced the longest session of a full run — 359 tool
+  calls of small edits.) The Documenter is delegated authored documents
+  only (ADRs, API docs, README, doc updates). The Scaffolder still creates
+  the manifest's full body in Phase 3; the ledger section's upkeep is
+  yours. The ledger is the resume source (Step 0.5) and the exit gates'
+  cross-check.
 - **Maintain the Run basis block.** The ledger section opens with a
   **Run basis** block: one line naming the task and the date of the user's
   instruction that started the run, then one line per artifact the user has
