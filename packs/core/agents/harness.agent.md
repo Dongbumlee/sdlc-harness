@@ -323,6 +323,39 @@ For `implement` and `qa` phases, invoke all 9 reviewers (full review).
   (Origin: 2026-10-19 simulation — Phase 3 produced nothing for ~2 hours
   except write-test probe files, with no blocker recorded anywhere.)
   The no-progress condition is also run-review trigger T4 (below).
+- **Round convergence — every phase exit review.** A review round is
+  one pass of the phase's reviewer set over the phase's artifacts; a
+  delta re-review counts as a round. Rounds converge by severity, in
+  the QA Coordinator's vocabulary:
+  - **Critical or Important findings** route to the phase's owner for
+    fixing and earn ONE delta re-review of the changed ranges and the
+    findings themselves.
+  - **Suggestions and minor notes never consume a round.** Record
+    them in the ledger as accepted-forward findings; they never block
+    phase exit by themselves and are revisited at Phase 6 or release,
+    not by re-reviewing this phase.
+  - **Early exit:** a round that returns zero Critical and zero
+    Important findings ENDS the phase's review loop immediately,
+    whatever the composite score. A below-threshold composite with no
+    Critical/Important findings behind it is reported to the user in
+    the phase report — it does not buy another round. (The user may
+    still order a fix round; their instruction outranks this rule.)
+  - **Round caps by task grade** (manifest Task Grade section;
+    ungraded runs use the Medium cap): **Small — 1 full review pass,
+    plus 1 delta pass when that pass raises Critical or Important
+    findings** (an unverified Critical fix is worse than one scoped
+    pass); **Medium — 2 passes; Large — 3 passes.** A delta pass
+    counts toward the Medium and Large caps.
+  - **At the cap** with Critical/Important findings still open: stop
+    looping and present to the user (override / manual fix / record
+    as accepted deviation). Never extend a loop silently.
+  - **Phase 6 applies the same routing** inside its tier protocol: a
+    Tier 1 auto-loop requires at least one Critical or Important
+    finding in the round; a composite-only ⛔ records its findings
+    and goes to the user at Tier 2 instead of auto-looping.
+  (Origin: the 2026-11-09 live run — Phase 1 spent 3 full-panel
+  rounds reaching an end state of "criticals fixed, minors accepted"
+  that this rule reaches in the first round that earns it.)
 - **Run review — the pit stop.** A run that is going wrong repeats itself
   before it fails: the same error, the same rework, the same unsupported
   claim. When any of these triggers is observed since the last review (or
@@ -435,7 +468,12 @@ You MUST still run the full Phase 1-2 flow:
 6. **Delegate to QA Coordinator for requirements review:**
    > "Run QA review for phase: requirements. Invoke only: Requirements Completeness, Architecture."
 
-7. **If QA passes**, proceed to Phase 2. If QA fails, route feedback to Analyst for spec revision.
+7. **Route the result by the Round convergence rule.** Zero Critical
+   and zero Important findings → proceed to Phase 2, with Suggestions
+   recorded in the ledger as accepted-forward findings. Otherwise the
+   Analyst revises the affected sections and the re-review is a delta
+   re-review (changed sections + the findings raised), inside the
+   grade's round cap.
 
 #### Phase 2: Design feedback loop (Analyst — Design mode)
 
@@ -451,10 +489,12 @@ When the requirements spec is approved and QA has passed:
    > — never the complete proposal inline."
 
 2. When the Analyst's design proposal has gaps (missing NFRs, untestable requirements,
-   over-specified implementation details):
-   - Point out the specific gaps to the Analyst.
-   - Ask the Analyst to revise the affected sections.
-   - Review the revised proposal before proceeding to ADR creation.
+   over-specified implementation details), route them by the Round
+   convergence rule: gaps that would break implementation or the spec
+   contract are Important-class — point them out specifically, the
+   Analyst revises the affected sections, and the re-review covers the
+   revised sections and the gaps raised (delta). Minor gaps are
+   recorded as accepted-forward findings and do not hold the ADR.
 
 #### Phase 1–2 exit gate — MANDATORY before Phase 3 or Phase 4
 
@@ -748,6 +788,12 @@ protocol based on failure severity:
 | 1-2 reviewers failed, scores 5-6, no Critical findings | Tier 1 | Forward the QA Feedback Template to Implementer; loop back to QA for targeted re-review |
 | Tier 1 still fails OR 3+ reviewers failed | Tier 2 | Present score progression to user; ask if they want a targeted fix attempt |
 | After 2 fix attempts OR 3 total rounds reached | Tier 3 | Present full results; let user choose: override / manual fix / abandon |
+
+**Convergence inside the tiers:** Tier 1 auto-routing requires at
+least one Critical or Important finding in the round (Round
+convergence rule). A ⛔ driven only by the composite score, with no
+Critical/Important findings, does not auto-loop: record the findings
+in the ledger and present the verdict to the user (Tier 2 decision).
 
 **Routing steps:**
 
