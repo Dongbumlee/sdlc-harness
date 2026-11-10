@@ -124,11 +124,11 @@ Include `Source: Deployer (Phase 8)` on your entries.
      - `az-cost-optimize` — analyze and optimize Azure resource costs.
      - `azure-resource-health-diagnose` — diagnose Azure resource health issues.
 
-6. **Validate Azure resources via Azure MCP:**
+5. **Validate Azure resources via Azure MCP:**
    - Use Azure MCP tools to verify resource naming, check quota availability,
      and validate configurations against the target subscription.
 
-7. **Load Microsoft Learn docs for AVM modules:**
+6. **Load Microsoft Learn docs for AVM modules:**
    - Use Microsoft Learn MCP to get authoritative documentation for Bicep modules and `azd` configuration.
 
 ## Skills
