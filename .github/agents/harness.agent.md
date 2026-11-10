@@ -329,7 +329,9 @@ For `implement` and `qa` phases, invoke all 9 reviewers (full review).
   the QA Coordinator's vocabulary:
   - **Critical or Important findings** route to the phase's owner for
     fixing and earn ONE delta re-review of the changed ranges and the
-    findings themselves.
+    findings themselves (mechanics: QA Coordinator, "Re-review
+    rounds (delta scope)" — the same delta discipline applies to
+    every phase's re-review, not only Phase 6).
   - **Suggestions and minor notes never consume a round.** Record
     them in the ledger as accepted-forward findings; they never block
     phase exit by themselves and are revisited at Phase 6 or release,
@@ -776,6 +778,13 @@ facts instead of re-deriving them:
    Coordinator selects the active panel from the manifest/requirements
    signals (Step 0.5 applicability) and launches every reviewer with the
    pack as shared starting evidence.
+5. **For a re-review round**, append a **Changes since round N−1**
+   section to the pack before delegating: the files changed since
+   the previous round (repository mode: `git diff --name-only
+   <previous round's commit>..HEAD`; otherwise the artifacts whose
+   contents changed) and the previous round's Critical/Important
+   findings verbatim. The delta pass confines itself to those
+   ranges and findings (QA Coordinator, "Re-review rounds").
 
 #### Phase 6: QA feedback loop (QA Coordinator → Implementer)
 
