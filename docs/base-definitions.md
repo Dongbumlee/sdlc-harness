@@ -275,7 +275,14 @@ smoke) quoted.
 - **RAI Reviewer** reports Risk Level (the finding scale, title case) and
   an Approval Status of ✅ / ⚠️ / ⛔. The RAI Reviewer is not a panel
   member and does not emit the panel YAML block. Approval ⛔ has the
-  Phase 8 effect defined in §2.3.
+  Phase 8 effect defined in §2.3. Its checklist has two branches keyed
+  to the §2.3 trigger: Branch A (AI features or model calls — the seven
+  AI items) and Branch B (sensitive-data processing without AI —
+  classification & minimization, access control & attribution, exposure
+  surface, retention & durability, human oversight of high-stakes
+  operations, transparency of data handling). When both triggers apply,
+  both branches run. (Branch B added 2026-11-10, from the grade
+  exercise's Large retrospective candidate.)
 - **Bug-checklist reviewer** (Azure pack) reports in its own terms
   (🔴/🟠/🟡/✅), translated by the table in §4.2 wherever its findings
   enter synthesis. It is a supplementary Phase 6 input for Azure
