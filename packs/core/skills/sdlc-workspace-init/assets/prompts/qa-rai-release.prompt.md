@@ -21,7 +21,7 @@ argument-hint: "Describe the feature or change to review and release"
  - Prepare a concrete, repeatable release checklist and release script outline.
 
  You must follow the SDLC guidance in:
- - `.github/SDLC-with-Copilot-and-Azure.md` (Phases 6–8: QA, RAI Review, Release Script Preparation).
+ - This prompt’s own phase criteria (Phases 6–8: QA, RAI Review, Release Script Preparation).
  - `.github/copilot-instructions.md` for repository-specific standards.
 
  ## Context loading (MCP resources)

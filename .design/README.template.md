@@ -24,12 +24,12 @@
 
 <br/>
 
-> **Note:** This project follows the [SDLC with GitHub Copilot and Azure](/.github/SDLC-with-Copilot-and-Azure.md)
-> lifecycle. See the [README](/README.md) for AI-assisted development guidance.
+> **Note:** This project follows the SDLC lifecycle defined by the harness packs
+> (agents and skills). See the [README](/README.md) for AI-assisted development guidance.
 
 > **Responsible AI:** With any AI solutions you create, you are responsible for assessing all
 > associated risks and for complying with all applicable laws and safety standards.
-> Learn more in the [Transparency FAQ](./docs/TRANSPARENCY_FAQ.md).
+> Learn more in the [Transparency FAQ](./TRANSPARENCY_FAQ.md).
 
 <br/>
 
@@ -257,7 +257,6 @@ See the [README](/README.md) for complete development guidance.
 
 | Resource                                                | Description                      |
 | ------------------------------------------------------- | -------------------------------- |
-| [SDLC Lifecycle](/.github/SDLC-with-Copilot-and-Azure.md) | 9-phase development lifecycle    |
 | [Reference Catalog](/.github/reference-catalog.md)      | Reusable libraries and templates |
 
 **Prompt files** for Copilot-assisted development:
@@ -301,7 +300,7 @@ Have questions, find a bug, or want to request a feature?
 
 ## Responsible AI Transparency FAQ
 
-Please refer to [Transparency FAQ](./docs/TRANSPARENCY_FAQ.md) for responsible AI transparency details.
+Please refer to [Transparency FAQ](./TRANSPARENCY_FAQ.md) for responsible AI transparency details.
 
 ## Disclaimers
 

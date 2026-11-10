@@ -4,6 +4,12 @@
 
 # Software Development Lifecycle (SDLC) with GitHub Copilot, Azure Standards, and Reference Repos
 
+> **Status: historical reference.** This document records the lifecycle as
+> originally standardized for Azure projects. The living specification is
+> the harness packs — the agent files, skills, and the generated project’s
+> own instruction files. Generated projects do not receive this document;
+> do not cite it as an authority in shipped files.
+
 ## 0. Scope and Preconditions
 
 This SDLC applies to all engineering work in this project, from initial requirements through release to GitHub.

@@ -4,8 +4,7 @@ applyTo: '**/*.ts'
 ---
 # Systematic Code-Quality Pass Instructions for TypeScript Codebase
 
-> **SDLC alignment:** This quality pass supports **Phase 4 (Implementation)** and **Phase 6 (QA Activities)**
-> as defined in `.github/SDLC-with-Copilot-and-Azure.md`. It auto-applies when Copilot edits TypeScript files.
+> **SDLC alignment:** This quality pass supports **Phase 4 (Implementation)** and **Phase 6 (QA Activities)**. It auto-applies when Copilot edits TypeScript files.
 
 You are performing a systematic code-quality pass on a TypeScript codebase. Work through every folder one at a time. For each TypeScript file, apply ALL of the following rules, then type-check every edited file before moving to the next folder.
 
