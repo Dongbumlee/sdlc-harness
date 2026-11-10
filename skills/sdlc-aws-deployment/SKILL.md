@@ -28,7 +28,12 @@ user-invocable: false
 
 ## Paved-road architecture
 
-One CDK app, two compute targets — this is the pack's core opinion:
+One CDK app, two compute targets — this is the pack's core opinion **for
+products with long-running background jobs**. A request-only API uses just
+the API half — skip the queue and worker resources; never scaffold a worker
+nothing calls. The worked example throughout this skill is a research
+product whose jobs run ~25 minutes; your job shapes and budgets come from
+your own design.
 
 ```
              ┌──────────────────────┐
@@ -42,8 +47,8 @@ One CDK app, two compute targets — this is the pack's core opinion:
              └──────────┬───────────┘
                         │ long-poll
           ┌─────────────▼──────────────┐
-          │ ECS Fargate service        │  background worker (long-running,
-          │ (Spot)                     │  up to 25 min per deep-research job —
+          │ ECS Fargate service        │  background worker (long-running
+          │ (Spot)                     │  jobs — e.g., ~25 min/job, which
           └─────────────┬──────────────┘  exceeds Lambda's 15-min limit)
                         │
         ┌───────────────┼───────────────┐
@@ -55,10 +60,10 @@ One CDK app, two compute targets — this is the pack's core opinion:
 **Why this split:** the API is request-driven and short-lived — a container
 image on Lambda with a Function URL keeps the Docker story (same ECR repo as the
 worker, two tagged images) at $0 idle via the always-free tier (1M requests + 400k GB-seconds/mo),
-with HTTPS and no ALB/API Gateway bill. The worker (planner → researchers →
-critic → writer pipeline, up to 25 min/job) exceeds Lambda's 15-minute limit,
-so it runs on Fargate — where the SQS + DLQ retry contract also unlocks
-Fargate Spot pricing (~70% cheaper, interruption-safe).
+with HTTPS and no ALB/API Gateway bill. The worker's jobs (in the example
+product, a multi-stage pipeline running up to ~25 min/job) exceed Lambda's
+15-minute limit, so it runs on Fargate — where the SQS + DLQ retry contract
+also unlocks Fargate Spot pricing (~70% cheaper, interruption-safe).
 
 **Single-table key design.** DynamoDB uses one table per the pack's reference
 key design: list access patterns first, then model them as `PK`/`SK` with a
@@ -81,7 +86,7 @@ An organization Service Control Policy can deny **every** AWS API call
 outside an allow-listed region. The scenario-2 "different region" variant
 died on this: the org SCP explicitly denied ECR, Lambda, EC2, and DynamoDB
 calls in every probed region except `us-east-2` — discovered only at
-deploy time (2026-10-03).
+deploy-verified.
 
 **Probe effective permissions before synth, not after deploy:**
 
@@ -201,7 +206,7 @@ The examples above import existing secrets. To create them in the stack:
 
 ```typescript
 const apiKeys = new secretsmanager.Secret(this, 'ApiKeys', {
-  secretName: 'deep-research/api-keys',
+  secretName: '<app>/api-keys',
   generateSecretString: {
     secretStringTemplate: JSON.stringify({ keys: [] }),
     generateStringKey: 'placeholder', // replaced post-deploy, see below
@@ -213,7 +218,7 @@ Post-deploy, set the real values out of band — never commit them:
 
 ```bash
 aws secretsmanager put-secret-value \
-  --secret-id deep-research/api-keys \
+  --secret-id <app>/api-keys \
   --secret-string '{"keys":["<key>"]}'
 ```
 
@@ -279,11 +284,12 @@ def _valid_key(provided: str) -> bool:
   cannot resolve `Fn::GetAtt` VPC CIDR references — it reports a validation
   *error* (not a finding) on SG rules allowing 443 from the VPC CIDR via
   intrinsic. Verify the synthesized template manually for this pattern; do
-  not treat nag output as a pure pass/fail gate here (found 2026-10-03).
+  not treat nag output as a pure pass/fail gate here (deploy-verified).
 - **The "no NAT" rule has a sharp edge for synchronous endpoints.** A Lambda
   in isolated subnets has **no internet access**. If a synchronous endpoint
-  must reach a public dependency (Pulse `/admin/collect` → public feed,
-  2026-10-03), it fails outright — the scheduled path (EventBridge →
+  must reach a public dependency (deploy-verified example: an
+  `/admin/collect` endpoint that had to fetch a public feed), it fails
+  outright — the scheduled path (EventBridge →
   Fargate) worked, the sync admin path did not. Default to (a): the endpoint
   only *triggers* async work and never calls the public dependency itself.
   If the endpoint itself needs egress, justify a NAT gateway for the API
@@ -373,7 +379,7 @@ Order of operations:
 Lambda Web Adapter); `worker-<tag>` does not need it. Both live in the same
 ECR repository.
 
-## Container image contracts (deploy-verified 2026-10-03)
+## Container image contracts (deploy-verified)
 
 - **Region comes from the stack, never from code.** `AWS_REGION` (and
   `AWS_DEFAULT_REGION`) are required container env vars, sourced from the
@@ -402,7 +408,7 @@ ECR repository.
 - **Reusing a Lambda base image on Fargate: override the entrypoint.**
   Lambda base images set `ENTRYPOINT` to the Lambda runtime interface
   client, which demands a handler argument — on Fargate the task exits
-  immediately (exit 142, Pulse deploy 2026-10-03). Override it:
+  immediately (exit 142, deploy-verified). Override it:
 
   ```typescript
   entryPoint: ['/var/lang/bin/python3'],
@@ -412,11 +418,11 @@ ECR repository.
 - **Image tag prefixes must match between build and deploy.** If the CDK
   app prefixes tags (e.g. `pulse-<tag>`), CI must push with the same
   prefix — otherwise the deploy references an image that was never pushed
-  (Pulse deploy 2026-10-03: build pushed `<tag>`, CDK expected
+  (deploy-verified: build pushed `<tag>`, CDK expected
   `pulse-<tag>`, recovered with an ECR retag). One convention, enforced in
   CI.
 
-## ElastiCache Serverless notes (deploy-verified 2026-10-03)
+## ElastiCache Serverless notes (deploy-verified)
 
 No L2 construct exists — use the L1 escape hatch (`CfnServerlessCache`)
 with the comment from Step 2.
@@ -466,16 +472,15 @@ with the comment from Step 2.
   the timeout shorter and extend it with `ChangeMessageVisibility` heartbeats
   while the job runs.
 - **CDK CLI behind an egress proxy** — set `no_proxy` to bypass the proxy
-  for AWS endpoints, or synth/deploy calls hang or fail (agent-VM finding
-  2026-10-03).
+  for AWS endpoints, or synth/deploy calls hang or fail (deploy-verified).
 - **SQS cannot directly trigger Fargate — poller Lambda + `RunTask`.**
   There is no SQS→Fargate event source. The paved road is a small poller
   Lambda (long-poll SQS) that calls ECS `RunTask` per message; the Fargate
-  task then deletes the message on terminal outcome. (AI Brief 2026-10-04)
+  task then deletes the message on terminal outcome. (deploy-verified)
 - **Google "API key not valid" surfaces as HTTP 400, not 401/403** — same
   lesson as Azure/GCP: error mapping must inspect the response body, not
   just the status code, when classifying auth failures.
-  (AI Brief 2026-10-04)
+  (deploy-verified)
 
 ## Troubleshooting
 

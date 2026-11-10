@@ -146,7 +146,7 @@ class TestArtifactStorage:
 - **Presigned URLs: pin the regional endpoint** — configure the S3 client with
   the explicit regional endpoint (e.g. `s3.us-east-2.amazonaws.com`). URLs
   signed against the global `s3.amazonaws.com` endpoint are rejected with
-  HTTP 400 in some regions. Found during the real AWS deploy (2026-10-01).
+  HTTP 400 in some regions (deploy-verified).
 
 ## Where files go
 

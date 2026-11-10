@@ -27,7 +27,12 @@ user-invocable: false
 
 ## Paved-road architecture
 
-One Terraform root, two compute targets — this is the pack's core opinion:
+One Terraform root, two compute targets — this is the pack's core opinion
+**for products with long-running background jobs**. A request-only API uses
+just the API half — skip the topic and Job resources; never scaffold a
+worker nothing calls. The worked example throughout this skill is a
+research product whose jobs run ~25 minutes; your job shapes and budgets
+come from your own design.
 
 ```
              ┌──────────────────────┐
@@ -41,8 +46,8 @@ One Terraform root, two compute targets — this is the pack's core opinion:
              └──────────┬───────────┘      └──────────────┘
                         │ API triggers one Job execution per message
           ┌─────────────▼──────────────┐
-          │ Cloud Run Job              │  background worker (run-to-completion,
-          │ (worker)                   │  up to 25 min per deep-research job)
+          │ Cloud Run Job              │  background worker (run-to-completion;
+          │ (worker)                   │  jobs can run ~25 min in the example)
           └─────────────┬──────────────┘
                         │
         ┌───────────────┼───────────────┐
@@ -53,8 +58,9 @@ One Terraform root, two compute targets — this is the pack's core opinion:
 
 **Why this split:** Cloud Run services are request-driven (max 60 min per
 request, but billed per request) — the API scales to zero and costs $0 idle.
-The worker (planner → researchers → critic → writer pipeline, up to 25 min/job)
-is run-to-completion batch work, which is exactly what Cloud Run Jobs is for.
+The worker's jobs (in the example product, a multi-stage pipeline running
+up to ~25 min/job) are run-to-completion batch work, which is exactly what
+Cloud Run Jobs is for.
 Pub/Sub sits between them as the durable work queue: the API publishes one
 message per job and triggers a Job execution; the Job pulls the message,
 processes it, and acks. Poison messages exhaust `max_delivery_attempts` and
@@ -117,7 +123,7 @@ locals {
 ```
 
 The private-networking variant needs `compute` + `vpcaccess` on top of the
-base set (scenario 2+3 finding 2026-10-03: `apply` failed on
+base set (deploy-verified: `apply` failed on
 `google_compute_network` without them). Do not enable them for v1 — the
 "No VPC needed for v1" rule still holds.
 
@@ -147,8 +153,8 @@ The order is fixed:
 - **One `image_tag` variable means TWO images.** The paved road tags images
   as `api-<tag>` / `worker-<tag>` off a single `var.image_tag` — both images
   must be built and pushed with that tag before `terraform apply`, or one
-  target deploys a revision that never starts (real-deploy finding
-  2026-10-03). CI should check both tags exist in Artifact Registry
+  target deploys a revision that never starts (deploy-verified).
+  CI should check both tags exist in Artifact Registry
   before apply.
 
 ### Dockerfile rules (non-root + gunicorn)
@@ -159,13 +165,13 @@ FROM --platform=linux/amd64 python:3.12-slim
 # World-readable source: container runtimes run as non-root and must be able
 # to read the code. Capital X = +x on directories ONLY (traversal), so a
 # non-root user can stat/read files inside. Plain `a+r` is NOT enough —
-# directories need +x for traversal (real-deploy bug 2026-10-03:
+# directories need +x for traversal (deploy-verified:
 # ModuleNotFoundError despite correct PYTHONPATH).
 COPY src/ /app/src/
 RUN chmod -R a+rX /app && useradd -m appuser
 WORKDIR /app/src
 # gunicorn does not reliably add cwd to sys.path — set PYTHONPATH explicitly
-# (real-deploy bug 2026-10-03: ModuleNotFoundError: No module named 'api.app').
+# (deploy-verified: ModuleNotFoundError: No module named 'api.app').
 ENV PYTHONPATH=/app/src
 RUN pip install --no-cache-dir -r /app/src/api/requirements.txt
 
@@ -175,13 +181,19 @@ EXPOSE 8080
 CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--workers", "2", "api.app:create_app()"]
 ```
 
+> This example image is the **requirements.txt variant** (the example
+> product's Flask/gunicorn stack). A project on the harness's python stack
+> profile uses the profile's uv-based Dockerfile instead (`uv sync
+> --frozen`, uvicorn) — the rules below (non-root, `a+rX`, PYTHONPATH,
+> smoke-test) apply to both.
+
 Rules:
 - **Always `chmod -R a+rX`, never `a+r`** when the image runs as non-root.
 - **Always `ENV PYTHONPATH`** for gunicorn/WSGI entrypoints — never assume
   the working directory is on `sys.path`.
 - **Smoke-test the image before wiring traffic.** Boot one container (or
   import the app module) and hit `/health` — pytest with injected fakes is
-  blind to missing dependencies (Pulse deploy 2026-10-04:
+  blind to missing dependencies (deploy-verified:
   `google-cloud-secret-manager` absent from requirements → gunicorn workers
   failed to boot → 503 on every endpoint, invisible to the 22/22 unit
   tests).
@@ -193,8 +205,8 @@ hand-write IAM policy JSON when a purpose-built binding exists.**
 
 ```hcl
 # ✅ CORRECT: one service account per compute target, least-privilege roles
-resource "google_service_account" "api" { account_id = "deep-research-api" }
-resource "google_service_account" "worker" { account_id = "deep-research-worker" }
+resource "google_service_account" "api" { account_id = "<app>-api" }
+resource "google_service_account" "worker" { account_id = "<app>-worker" }
 
 resource "google_project_iam_member" "worker_firestore" {
   project = var.project_id
@@ -211,7 +223,7 @@ Rules:
   critical finding.
 - Secret access: `roles/secretmanager.secretAccessor` on each secret,
   per-service-account — never project-wide.
-- **API → Cloud Run Jobs trigger (verified 2026-10-03):** the API SA gets
+- **API → Cloud Run Jobs trigger (deploy-verified):** the API SA gets
   `roles/run.developer` scoped to the worker job to call the Run API
   (`run.projects.locations.jobs.run`). No extra `iam.serviceAccount.actAs`
   binding was needed in the slice.
@@ -227,10 +239,10 @@ resource "google_cloud_run_v2_job_iam_member" "api_triggers_worker" {
 }
 ```
 
-**Cloud Scheduler → Cloud Run Job (verified 2026-10-04):** the scheduler
+**Cloud Scheduler → Cloud Run Job (deploy-verified):** the scheduler
 calls the Run Admin API directly. The token must be an **OAuth access
 token — not OIDC**. `jobs:run` rejects OIDC with `401 UNAUTHENTICATED`
-(Pulse deploy 2026-10-04: two scheduled executions failed on OIDC before
+(deploy-verified: two scheduled executions failed on OIDC before
 the fix).
 
 ```hcl
@@ -281,7 +293,7 @@ Secret *values* are added post-deploy (`gcloud secrets versions add`) or via
 CI — Terraform creates the secret containers only. Values in `.tfvars` or
 `terraform.tfstate` are a critical finding.
 
-**Name vs value — pick the right one (real-deploy bug 2026-10-03):**
+**Name vs value — pick the right one (deploy-verified):**
 `value_source.secret_key_ref` injects the secret **value** into the env var.
 If the app constructs the secret resource path from the **name** itself
 (e.g. builds `projects/<p>/secrets/<name>/versions/latest` in code), pass the
@@ -310,7 +322,7 @@ with the secret ID. App reads the env var as the secret itself →
 `value_source.secret_key_ref`.
 
 **Placeholder secret versions must exist before Job creation**
-(scenario 2+3 finding 2026-10-03): `value_source.secret_key_ref` with
+(deploy-verified): `value_source.secret_key_ref` with
 `version = "latest"` fails at `google_cloud_run_v2_job` creation —
 "Secret .../versions/latest was not found". Terraform-created secrets have
 no versions until values are added post-deploy. Prescribe: create secrets
@@ -353,7 +365,7 @@ Rules:
   not new work — do not let it redeliver as if it were.
 
 **Worker pull pattern — `timeout` is a method argument, not a request field**
-(real-deploy bug 2026-10-03: `ValueError: Unknown field for PullRequest:
+(deploy-verified: `ValueError: Unknown field for PullRequest:
 timeout` crashed the worker):
 
 ```python
@@ -409,7 +421,7 @@ must stand on its own; MCP servers are accelerators, not prerequisites.
   via `google_service_account_iam_member` where the member is the SA's own
   email (self-impersonation). Do NOT grant `roles/iam.serviceAccountTokenCreator`
   on the bucket via `google_storage_bucket_iam_member` — that fails with
-  Error 400 (real-deploy finding 2026-10-03). Test signed-URL generation in
+  Error 400 (deploy-verified). Test signed-URL generation in
   the deployed environment, not just locally.
 - **Cloud Run Jobs block destroy by default.** The provider defaults
   `deletion_protection = true`, which blocks `terraform destroy` and job
@@ -434,16 +446,16 @@ must stand on its own; MCP servers are accelerators, not prerequisites.
 - **`google_compute_network` rejects `labels`** (provider 6.x) — unlike
   most other resources it has no `labels` argument; `terraform validate`
   fails with 'An argument named "labels" is not expected here'. Drop it
-  from VPC network resources (scenario 2+3 finding 2026-10-03).
+  from VPC network resources (deploy-verified).
 - **First Job execution in a new region is slow — don't rush to
   re-trigger.** The first API-triggered execution can sit in "Waiting for
   execution to start" for minutes (cold provisioning); it started on its
   own and completed (~2 min POST→done). Allow a 5+ min grace before
-  intervening (scenario 2+3 finding 2026-10-03).
+  intervening (deploy-verified).
 - **External dependency URLs must be env-overridable.** A hardcoded feed
   URL makes the source-failure drill impossible — the deployed collector
   cannot be pointed at a failing feed. Expose `FEED_URL`-style env vars
-  (Pulse finding 2026-10-04).
+  (deploy-verified).
 - **Artifact Registry repo must exist before `docker push`** — same
   chicken-and-egg as ECR (AWS lesson). Terraform creates the repo; the
   pipeline pushes; then the full apply runs.
@@ -455,23 +467,23 @@ must stand on its own; MCP servers are accelerators, not prerequisites.
 - **Model IDs retire — env-inject, never hardcode.** `gemini-2.0-flash`
   404'd in 2026-10 ("no longer available", use `gemini-3.8-flash`). Slices
   must take the model ID from an env var (`GEMINI_MODEL`) so a redeploy,
-  not a rebuild, fixes the next retirement. (AI Brief 2026-10-04)
+  not a rebuild, fixes the next retirement. (deploy-verified)
 - **"API key not valid" is 400 `InvalidArgument`, not 401/403.** The worker
   mapped only `Unauthenticated`/`PermissionDenied` to auth failures; a bad
   key bypassed the catches and crashed the worker. Map the 400 body text
-  too. (AI Brief 2026-10-04)
+  too. (deploy-verified)
 - **Unmapped model errors must not crash the worker.** `ResourceExhausted`
   (429, free-tier quota) also bypassed the catches — add a dedicated quota
   error plus a catch-all so every provider failure lands on a terminal
-  brief status. (AI Brief 2026-10-04)
+  brief status. (deploy-verified)
 - **`google_project_service` defaults `disable_on_destroy=true`.** The
   first destroy disabled run/artifactregistry/secretmanager mid-teardown.
   Test slices should set `disable_on_destroy=false` on project services.
-  (AI Brief 2026-10-04)
+  (deploy-verified)
 - **Cloud Run Job cold start ~4 min in a fresh region.** First execution
   sat in "Waiting for execution to start" for ~4 min. E2E polling must
   allow for this; not a bug, but budget it in test timeouts.
-  (AI Brief 2026-10-04)
+  (deploy-verified)
 
 ## Where files go
 

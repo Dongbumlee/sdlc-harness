@@ -90,16 +90,16 @@ resource "google_firestore_index" "jobs_by_status" {
 **`location_id` is immutable.** Changing regions later cannot update the
 database in place — the procedure is `gcloud firestore databases delete`,
 wait for full deletion, then `terraform apply` recreates it in the new
-region (scenario 2+3 finding 2026-10-03).
+region (deploy-verified).
 
 **The pack owns the database.** Never assume a `(default)` database
 exists — declare `google_firestore_database` in Terraform (or list it as
-an explicit runbook prerequisite). The Pulse slice assumed it and the real
-deploy needed a manual `gcloud firestore databases create` (2026-10-04).
+an explicit runbook prerequisite). One real deploy assumed it existed and
+needed a manual `gcloud firestore databases create` to recover.
 
 **`terraform destroy` does not delete the database.** The provider reports
-"Destruction complete" while the database still exists (scenario 2+3
-finding 2026-10-03). Delete explicitly —
+"Destruction complete" while the database still exists (deploy-verified).
+Delete explicitly —
 `gcloud firestore databases delete --quiet` — and verify with
 `gcloud firestore databases list`. Never trust destroy output for this
 resource.
@@ -155,7 +155,7 @@ transaction.** `firestore_v1.transactional` takes the function to wrap, not a
 transaction object. `transactional(transaction)` wraps the *transaction
 itself* as the callable and fails at runtime with
 `AttributeError: 'function' object has no attribute '_read_only'`
-(real-deploy bug 2026-10-03). The pattern is always: decorate the function
+(deploy-verified). The pattern is always: decorate the function
 with `@transactional`, then call the wrapped function passing the
 transaction as its first argument.
 

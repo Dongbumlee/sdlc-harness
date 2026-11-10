@@ -63,8 +63,8 @@ additionally requires `iam.serviceAccounts.signBlob` on the runtime service
 account. Grant `roles/iam.serviceAccountTokenCreator` via
 `google_service_account_iam_member` with the SA as its own member
 (self-impersonation) — granting it on the bucket via
-`google_storage_bucket_iam_member` fails with Error 400 (real-deploy finding
-2026-10-03). Test signed-URL generation in the deployed environment — local
+`google_storage_bucket_iam_member` fails with Error 400 (deploy-verified).
+Test signed-URL generation in the deployed environment — local
 ADC signing behaves differently from the runtime SA.
 
 ```hcl
