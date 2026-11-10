@@ -32,11 +32,10 @@ data-service security, and cost guardrails**.
 0. **Verify GitHub MCP authentication (required):**
    - Perform a probe call: use `mcp_github_get_file_contents` to fetch `README.md`
      from a repo named in `.github/copilot-instructions.md`.
-   - If the call **fails or returns an auth error**, STOP and inform the user:
-     > GitHub MCP authentication is required to verify live APIs from the project's repos.
-     > Please sign in with an account that has org access, then retry.
-   - If the user cannot authenticate, fall back to patterns in `.github/reference-catalog.md`
-     and note in your review that live API verification was not possible.
+   - If the call **fails or returns an auth error**, WARN and proceed (Harness
+     policy — GitHub MCP is an enhancement, never a gate): fall back to patterns
+     in `.github/reference-catalog.md` and note in your review that live API
+     verification was not possible. Do NOT stop the workflow.
 
 1. **Load AWS documentation** (skip if unavailable):
    - Use the AWS documentation MCP server (`uvx awslabs.aws-documentation-mcp-server@latest`)
