@@ -49,8 +49,8 @@ You are performing a systematic code-quality pass on a TypeScript codebase. Work
 - Every exported `enum` must have a JSDoc comment describing its purpose.
 - Each member should have an inline comment if the name is not self-explanatory:
   ```ts
-  /** Status codes for claim processing pipeline. */
-  export enum ClaimStatus {
+  /** Status codes for order processing pipeline. */
+  export enum OrderStatus {
     /** Initial state before validation. */
     Pending = "PENDING",
     /** Successfully processed and stored. */
@@ -98,15 +98,15 @@ You are performing a systematic code-quality pass on a TypeScript codebase. Work
 
 | Element              | Convention             | Example                         |
 |----------------------|------------------------|---------------------------------|
-| File (module)        | kebab-case             | `claim-processor.ts`            |
-| File (class)         | kebab-case             | `claim-service.ts`              |
-| Interface            | PascalCase             | `ClaimRequest`                  |
+| File (module)        | kebab-case             | `order-processor.ts`            |
+| File (class)         | kebab-case             | `order-service.ts`              |
+| Interface            | PascalCase             | `OrderRequest`                  |
 | Type alias           | PascalCase             | `ProcessingResult`              |
-| Enum                 | PascalCase             | `ClaimStatus`                   |
+| Enum                 | PascalCase             | `OrderStatus`                   |
 | Enum member          | PascalCase             | `Pending`, `Completed`          |
-| Class                | PascalCase             | `ClaimService`                  |
-| Function / method    | camelCase              | `processClaimAsync`             |
-| Variable / parameter | camelCase              | `claimId`                       |
+| Class                | PascalCase             | `OrderService`                  |
+| Function / method    | camelCase              | `processOrderAsync`             |
+| Variable / parameter | camelCase              | `orderId`                       |
 | Constant             | UPPER_SNAKE_CASE       | `MAX_RETRY_COUNT`               |
 | Private member       | prefixed with `_`      | `_internalState`                |
 | Generic type param   | Single uppercase letter | `T`, `K`, `V`                   |
@@ -117,7 +117,7 @@ You are performing a systematic code-quality pass on a TypeScript codebase. Work
 ## 8. Comment Cleanup — REMOVE These
 
 - **Redundant inline comments** that restate the code:
-  `// Create a new claim object` above `const claim = new Claim(...)`.
+  `// Create a new order object` above `const order = new Order(...)`.
 - **Banner comments** / section dividers using ASCII art or repeated characters.
 - **Commented-out code** (dead imports, old logic, console.log statements).
 - **Heritage/provenance comments** referencing deleted files or old implementations.

@@ -23,10 +23,10 @@ Component tests are co-located with the components they test:
 
     src/
     ├── components/
-    │   ├── ClaimSummary/
-    │   │   ├── ClaimSummary.tsx
-    │   │   ├── ClaimSummary.test.tsx          ← component test
-    │   │   ├── ClaimSummary.module.css
+    │   ├── OrderSummary/
+    │   │   ├── OrderSummary.tsx
+    │   │   ├── OrderSummary.test.tsx          ← component test
+    │   │   ├── OrderSummary.module.css
     │   │   └── index.ts
     │   └── shared/
     │       ├── Button.tsx
@@ -35,8 +35,8 @@ Component tests are co-located with the components they test:
     │   ├── DashboardPage.tsx
     │   └── DashboardPage.test.tsx
     ├── hooks/
-    │   ├── useClaimData.ts
-    │   └── useClaimData.test.ts               ← hook test (in .test.ts)
+    │   ├── useOrderData.ts
+    │   └── useOrderData.test.ts               ← hook test (in .test.ts)
     └── __test-utils__/
         ├── render-with-providers.tsx           ← shared test utility
         └── mock-data.ts                       ← shared fixtures
@@ -115,7 +115,7 @@ Prefer queries in this order (most accessible → least):
 5. `screen.getByDisplayValue('current-value')`            ← filled inputs
 6. `screen.getByAltText('Company logo')`                  ← images
 7. `screen.getByTitle('Close dialog')`                    ← tooltips
-8. `screen.getByTestId('claim-card-CLM-001')`            ← last resort
+8. `screen.getByTestId('order-card-ORD-001')`            ← last resort
 
 Rules:
 - NEVER use `container.querySelector()` or DOM traversal.
@@ -123,7 +123,7 @@ Rules:
 - Use `getByTestId` ONLY when no accessible query is possible (complex visualizations, canvas).
 - Use `within()` to scope queries to a specific container:
       const card = screen.getByRole('article');
-      expect(within(card).getByText('CLM-001')).toBeInTheDocument();
+      expect(within(card).getByText('ORD-001')).toBeInTheDocument();
 
 ═══════════════════════════════════════════════════════════════════════════════
 5. USER INTERACTION PATTERNS
@@ -138,11 +138,11 @@ ALWAYS use `@testing-library/user-event` (not `fireEvent`):
       const mockOnSubmit = vi.fn();
       renderComponent({ onSubmit: mockOnSubmit });
 
-      await user.type(screen.getByLabelText('Claim ID'), 'CLM-001');
+      await user.type(screen.getByLabelText('Order ID'), 'ORD-001');
       await user.click(screen.getByRole('button', { name: 'Submit' }));
 
       expect(mockOnSubmit).toHaveBeenCalledWith(
-        expect.objectContaining({ claimId: 'CLM-001' }),
+        expect.objectContaining({ orderId: 'ORD-001' }),
       );
     });
 
@@ -167,7 +167,7 @@ Rules:
 For components that load data or update asynchronously:
 
 a) `findBy*` queries — waits for element to appear (returns Promise):
-       const heading = await screen.findByRole('heading', { name: 'Claims' });
+       const heading = await screen.findByRole('heading', { name: 'Orders' });
        expect(heading).toBeInTheDocument();
 
 b) `waitFor` — waits for assertion to pass:
@@ -213,11 +213,11 @@ DO NOT TEST THESE (implementation details):
 Use `renderHook` from `@testing-library/react`:
 
     import { renderHook, act, waitFor } from '@testing-library/react';
-    import { useClaimData } from './useClaimData';
+    import { useOrderData } from './useOrderData';
 
-    describe('useClaimData', () => {
-      it('should fetch and return claim data', async () => {
-        const { result } = renderHook(() => useClaimData('CLM-001'));
+    describe('useOrderData', () => {
+      it('should fetch and return order data', async () => {
+        const { result } = renderHook(() => useOrderData('ORD-001'));
 
         // Initially loading
         expect(result.current.isLoading).toBe(true);
@@ -227,12 +227,12 @@ Use `renderHook` from `@testing-library/react`:
           expect(result.current.isLoading).toBe(false);
         });
 
-        expect(result.current.data).toEqual(expectedClaim);
+        expect(result.current.data).toEqual(expectedOrder);
         expect(result.current.error).toBeNull();
       });
 
       it('should handle errors', async () => {
-        const { result } = renderHook(() => useClaimData('invalid'));
+        const { result } = renderHook(() => useOrderData('invalid'));
 
         await waitFor(() => {
           expect(result.current.error).toBeInstanceOf(Error);
@@ -315,9 +315,9 @@ a) Mock child components to isolate the component under test:
        }));
 
 b) Mock hooks:
-       vi.mock('./useClaimData', () => ({
-         useClaimData: vi.fn().mockReturnValue({
-           data: mockClaim,
+       vi.mock('./useOrderData', () => ({
+         useOrderData: vi.fn().mockReturnValue({
+           data: mockOrder,
            isLoading: false,
            error: null,
          }),
@@ -349,7 +349,7 @@ Every component test should include basic accessibility checks:
 
 a) Verify semantic roles:
        expect(screen.getByRole('navigation')).toBeInTheDocument();
-       expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Claims');
+       expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Orders');
 
 b) Verify form labels:
        expect(screen.getByLabelText('Email address')).toBeRequired();
