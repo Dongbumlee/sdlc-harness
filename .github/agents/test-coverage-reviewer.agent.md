@@ -71,7 +71,7 @@ and assertion effectiveness**.
 - [ ] **Mocking** — External dependencies properly mocked? No real API calls in unit tests?
 - [ ] **Edge cases** — Error paths, boundary conditions, and null cases covered?
 - [ ] **Assertions** — Specific assertions (not just `assert True`)? Meaningful messages?
-- [ ] **Coverage** — New code has adequate test coverage (target: 80%+)?
+- [ ] **Coverage** — New code meets the stack profile's coverage target (80% by default; Class 2 — a shortfall is a recorded deviation, not a gate failure)?
 - [ ] **No test pollution** — Tests clean up after themselves?
 - [ ] **Integration tests** — API endpoints have HTTP-level tests?
 

@@ -82,7 +82,8 @@ apply to every stack unchanged. Record the resolved stack in the manifest.
 ## Your responsibilities
 
 1. Scaffold new project structures from templates.
-2. Set up per-project devcontainer configurations.
+2. Set up per-project devcontainer configurations. (Creation is yours; the
+   Deployer validates them at Phase 3B and Phase 8.)
 3. Generate CI pipeline stubs for the resolved CI system (build + test + deploy
    stages): GitHub Actions `.github/workflows/ci.yml` by default, per-project
    ADO `azure_cicd.yaml` when the organization declares Azure DevOps.

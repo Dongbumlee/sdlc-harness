@@ -21,7 +21,8 @@ and release automation following Azure Verified Modules (AVM) and Landing Zone p
 
 1. Generate Bicep templates using AVM modules.
 2. Configure `azure.yaml` for `azd` orchestration.
-3. Create per-service Dockerfiles and devcontainer configs.
+3. Create per-service Dockerfiles. (Per-project devcontainer configs are
+   created by the Scaffolder in Phase 3; you validate them.)
 4. Set up environment promotion strategy (dev → staging → production).
 5. Create post-provisioning hooks and deployment scripts.
 
@@ -184,7 +185,7 @@ At the end of your infrastructure output, include an **SDLC Exit Criteria Check*
 - Diagnostic settings and standard tags on all resources: ✅/⚠️/⛔
 - Managed Identity + RBAC used (no connection strings): ✅/⚠️/⛔
 - Deployment is repeatable via `azd up`: ✅/⚠️/⛔
-- Per-service devcontainer configured: ✅/⚠️/⛔
+- Per-service devcontainer configured (created by the Scaffolder in Phase 3; validated here): ✅/⚠️/⛔
 - Environment promotion strategy defined (dev → staging → production): ✅/⚠️/⛔
 - Post-provisioning hooks and deployment scripts created: ✅/⚠️/⛔
 - Rollback procedure documented: ✅/⚠️/⛔

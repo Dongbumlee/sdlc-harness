@@ -183,7 +183,7 @@
      - TypeScript: Vitest (see `.github/instructions/test-quality-ts.instructions.md`)
      - React components: Vitest + React Testing Library (see `.github/instructions/test-quality-tsx.instructions.md`)
      - Java: JUnit 5 with Mockito + AssertJ (see `.github/instructions/test-quality-java.instructions.md`)
-     - C#: xUnit with Moq + FluentAssertions (see `.github/instructions/test-quality-csharp.instructions.md`)
+     - C#: xUnit with the bundled template's test stack (see `.github/instructions/test-quality-csharp.instructions.md`); assertion/mocking libraries only as recorded in the reference catalog
      - Go: go test with testify (see `.github/instructions/test-quality-go.instructions.md`)
      - Rust: cargo test with mockall (see `.github/instructions/test-quality-rust.instructions.md`)
    - Follow existing naming and folder structure (e.g., `tests/unit/`,

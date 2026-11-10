@@ -38,6 +38,11 @@ In order:
 The Scaffolder records the resolved stack in the manifest's Projects table.
 Every later phase reads it from there.
 
+If the declared stack has an instruction pair but no profile (today: java,
+go, rust), it is not a supported stack (see "Adding a stack"): stop and
+surface the gap to the user — never fall through to the python/typescript
+defaults for it.
+
 ## Adopting an organization's standard
 
 A profile's pinned values (runtime version, base images, approved libraries,
@@ -59,6 +64,7 @@ Every profile declares the same fields:
 | Build | Exact build command |
 | Test | Exact test command (+ coverage variant) |
 | Lint / format | Exact check commands |
+| Coverage target | The profile's coverage quality target — a Class 2 target: a shortfall is a recorded deviation, never a gate failure |
 | Dockerfile | Base images and multi-stage outline |
 | CI steps | Build-stage commands for the CI stub — GitHub Actions (`.github/workflows/ci.yml`) by default; ADO `azure_cicd.yaml` where the organization declares Azure DevOps |
 | Devcontainer | Image |
@@ -125,6 +131,7 @@ defect: follow the profile (the declared standard) and report the mismatch.
   or poetry unless the user explicitly requests it.
 - **Build:** `uv sync --frozen` (no separate compile step)
 - **Test:** `uv run pytest --cov`
+- **Coverage target:** 80% (Class 2 — a shortfall is a recorded deviation, never a gate failure)
 - **Lint / format:** per the repo's `code-quality-py` instructions and root
   linter config (e.g. `.flake8`)
 - **Dockerfile:** multi-stage per `sdlc-project-scaffolding` — Azure Linux
@@ -132,8 +139,8 @@ defect: follow the profile (the declared standard) and report the mismatch.
 - **CI steps:** `uv sync --frozen` → `uv run pytest --cov --junitxml=results.xml` → `docker build`
 - **Template source:** the org's base / API / agent template repos from
   copilot-instructions; otherwise the bundled default template
-  (`assets/templates/python/api`); `.github/reference-catalog.md` patterns
-  are the last-resort fallback.
+  (`assets/templates/python/api`); the profile layout above is the
+  last-resort fallback.
 
 Defaults that belong to this profile: FastAPI is the default API framework;
 Python 3.12 is the default runtime version.
@@ -148,6 +155,7 @@ Python 3.12 is the default runtime version.
   Never npm or yarn unless the user explicitly requests it.
 - **Build:** `pnpm build`
 - **Test:** `pnpm test` (Vitest); direct equivalent: `npx vitest run`
+- **Coverage target:** 80% (Class 2 — a shortfall is a recorded deviation, never a gate failure)
 - **Lint / format:** `npx eslint .` and `npx prettier --check src`
 - **Dockerfile:** multi-stage — Node build stage → nginx serve stage
 - **CI steps:** `pnpm install --frozen-lockfile` → `pnpm test` → `pnpm build` → `docker build`
@@ -194,6 +202,7 @@ compiler API (measured 2026-10-18 building the bundled template).
 - **Test:** `dotnet test <Name>.sln -c Release`; coverage:
   `dotnet test <Name>.sln -c Release --collect "XPlat Code Coverage"`
   (coverlet). Test framework: xUnit with `Microsoft.NET.Test.Sdk`.
+- **Coverage target:** 80% (Class 2 — a shortfall is a recorded deviation, never a gate failure)
 - **Lint / format:** `dotnet format --verify-no-changes`; analyzers run as
   part of `dotnet build` (the org may set `TreatWarningsAsErrors` in CI).
 - **Dockerfile:** multi-stage — build stage

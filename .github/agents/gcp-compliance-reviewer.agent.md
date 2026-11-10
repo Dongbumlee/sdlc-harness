@@ -110,7 +110,8 @@ Return findings as:
 ## Structured Output Block
 
 After your Markdown review report, you MUST emit a structured YAML block for machine parsing.
-Use the `sdlc-reviewer-output-format` skill for the complete specification.
+Use the `sdlc-reviewer-output-format` skill for the output format
+specification; the category list in this file is the governing set for GCP.
 
 Place this block at the very end of your response:
 

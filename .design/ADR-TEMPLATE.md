@@ -1,7 +1,7 @@
 # ADR-XXXX: [Title of Decision]
 
 > **Status:** Proposed | Accepted | Deprecated | Superseded
-> **SDLC Phase:** 1-2 (Requirements & Design)
+> **SDLC Phase:** 2 (Design)
 > **Date:** YYYY-MM-DD
 > **Author:** [Name or @Harness]
 

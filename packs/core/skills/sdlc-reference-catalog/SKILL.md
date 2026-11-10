@@ -16,7 +16,7 @@ user-invocable: false
 
 ## Catalog file location
 
-`.github/reference-catalog.md` — created by `sdlc-workspace-init` during Step 0 as an empty template.
+`.github/reference-catalog.md` — created by `sdlc-workspace-init` at its Step 6 as an empty template.
 
 ## Catalog template structure
 

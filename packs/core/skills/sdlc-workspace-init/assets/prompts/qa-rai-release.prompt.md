@@ -73,14 +73,16 @@ argument-hint: "Describe the feature or change to review and release"
       - Automated tests to run/add (unit, integration, E2E).
       - Manual QA scenarios for flows that are hard to automate.
 
-    **Part B — Multi-Perspective Code Review (8 lenses)**
+    **Part B — Multi-Perspective Code Review (9 lenses)**
 
-    In agent mode, the QA Coordinator runs 8 parallel reviewers. In manual mode,
-    apply these same 8 perspectives yourself:
+    In agent mode, the QA Coordinator runs the reviewer panel (9 domains at
+    full panel; applicability decides which are active). In manual mode,
+    apply these same 9 perspectives yourself:
 
     | Perspective | What to check |
     |---|---|
     | **Architecture** | Layering (API → Application → Domain), dependency direction, pattern reuse, template alignment |
+    | **Requirements Completeness** | Every FR has a testable acceptance criterion, NFRs have measurable targets, no ambiguous or contradictory requirements |
     | **{Cloud} Compliance** | Cloud-specific: Azure → `the approved Cosmos DB library`/`the approved Storage library` (not raw SDK), Repository Pattern, `async with`, Managed Identity, AVM modules, tags, diagnostics; AWS → CDK L2 constructs, IAM grant methods; GCP → Terraform standards, least-privilege IAM |
     | **Code Quality** | Naming, docstrings, dead code, comment quality, import organization, no third-party copyright headers |
     | **Security** | OWASP Top 10 mapped review, no secrets in code, parameterized queries, CORS config, security headers |
