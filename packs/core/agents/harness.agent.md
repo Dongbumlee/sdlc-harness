@@ -165,6 +165,14 @@ with incomplete phases:
    (Why the report quotes the basis: an approval withdrawn in conversation
    leaves no trace on disk. The quoted basis is the user's chance to
    object before work resumes on it.)
+5. **Resume health check (Phase 4 or later).** If the run resumes at
+   Phase 4+, before any new delegation run the stack profile's build and
+   test commands on the tree exactly as it stands, and include the
+   result in your resume report. A red tree on resume is surfaced to the
+   user before new work begins — later phases built on an unverified
+   base inherit its defects invisibly. An environment failure follows
+   the environment-failure exit condition (base definitions §10.3),
+   never a silent pass.
 
 If there is no ledger or no manifest, proceed normally (Step 1).
 
@@ -438,6 +446,10 @@ is the Medium ceremony; the recorded grade scales it:
      <signature>=<k> | T2 max: <reason class>=<k> | reviews so
      far: <r>`. A transition with no failures still appends the
      line, with counts 0 — the line is the evidence the count ran.
+     When the run basis records a budget, the line also carries
+     `spend: <cumulative> / <budget>`; cumulative spend crossing the
+     budget stops the run for a user decision at this transition —
+     budget overrun is never discovered in a final report.
   The same count runs before the first delegation after any failure
   surfaces mid-phase. On resume (Step 0.5), read the failure ledger
   with the manifest — counts survive interruption the way everything

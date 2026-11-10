@@ -139,6 +139,10 @@ python defaults.
 **Run basis** — Task: <one line naming the task> (user instruction, <date>).
 Approved artifacts:
 - <path> — approved by <approver>, <date>, sha256:<first 12 characters>
+Budget (optional): <amount> — set by <the user>, <date>. When a budget is
+recorded, the Harness reports cumulative spend against it in every
+transition count line; spend crossing the budget stops the run for a user
+decision, never a silent overrun.
 
 | Phase | Status | Artifacts | Updated | Notes |
 |---|---|---|---|---|
@@ -167,7 +171,13 @@ Notes; base definitions §2.2), the artifact paths the phase produced, and
 the date. It is the
 single source of truth for run state — an interrupted run resumes from it
 (Harness Step 0.5), and the Release Manager refuses to release while a phase
-the ledger covers is not Complete or N/A-with-reason. The **Run basis** block above the table is
+the ledger covers is not Complete or N/A-with-reason. Alongside the table,
+the Harness maintains `.SDLC/ledger-state.json` in the same upkeep
+action — a mechanical projection of the ledger (one entry per phase:
+status, artifacts, updated) that gates and tools may read instead of
+parsing the markdown. The markdown table stays canonical: on any
+disagreement the JSON is regenerated from it, never the reverse.
+The **Run basis** block above the table is
 maintained on a different rhythm: the task line is written when the manifest
 skeleton is created, and an approved-artifact line is added or updated **when
 an approval lands**, with the artifact's short hash (`sha256sum`, first 12
