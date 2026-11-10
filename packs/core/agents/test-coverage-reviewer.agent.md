@@ -60,7 +60,10 @@ and assertion effectiveness**.
      - Take an accessibility snapshot to verify page structure.
      - Check for console errors during core user flows.
    - This supplements static test review with runtime verification.
-   - If the app is NOT running, skip this step.
+   - In a panel run, the evidence pack's Runtime Probes section is the
+     baseline runtime evidence — review it even when no live session is
+     available. Skip the live step only when neither a running app nor
+     probe evidence exists.
 
 ## Review checklist
 
