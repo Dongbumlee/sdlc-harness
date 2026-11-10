@@ -79,7 +79,12 @@ Every profile ships a **bundled default template** in this skill's assets:
 typescript/web). A template is the profile expressed as files: project
 files, layout, Dockerfile, CI stub, devcontainer, a health endpoint, one
 sample vertical slice (an `items` resource), and tests that prove the
-wiring. Template resolution mirrors profile resolution:
+wiring. Every bundled template's test suite also includes **architecture
+conformance tests** that enforce the profile's dependency direction
+mechanically (layers may only depend in the declared direction) — they
+run as part of the profile's Test command, so a layering violation fails
+the build instead of waiting for a reviewer to notice it. Template
+resolution mirrors profile resolution:
 
 1. An explicit instruction from the user or the organization.
 2. The organization template repo named in `.github/copilot-instructions.md`

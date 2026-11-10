@@ -906,17 +906,28 @@ facts instead of re-deriving them:
    identical infrastructure errors → classify as an environment limitation,
    verify by full compile + live smoke) and record the classification in
    the pack instead — never a silent pass.
-3. **Record the CI result for the commit under review (ADR-0003 D5).** When
+3. **Boot smoke + runtime probes (mechanical).** Start the application the
+   way its start command (profile / Dockerfile) runs it, wait for its health
+   endpoint (`/health`) to answer 200, then exercise one read path per
+   resource the approved design defines (list/get). Save the transcript to
+   `.SDLC/qa-evidence/boot-probes.txt` and append a **Runtime Probes**
+   section (boot result, health status, per-path status codes) to the pack.
+   If the app does not boot or the health endpoint does not answer, that is
+   a Phase 4 defect: route it back to the Implementer — the panel does not
+   convene on an app that cannot start. (Origin: 2026-11-10 quality review
+   — a generated app missing its `app.Run()` call reached QA on static
+   evidence alone; nothing had ever booted it.)
+4. **Record the CI result for the commit under review (ADR-0003 D5).** When
    the manifest's `repository_mode` is not local-only, query the check runs
    for the current HEAD commit via GitHub MCP and append a **CI Evidence**
    section to the pack: workflow name, conclusion, and run URL. This CI
    citation is the gate's primary test evidence; the local run in step 2 is
    supporting evidence and the fallback when no CI run exists.
-4. Delegate Phase 6 to the QA Coordinator naming the pack path. The
+5. Delegate Phase 6 to the QA Coordinator naming the pack path. The
    Coordinator selects the active panel from the manifest/requirements
    signals (Step 0.5 applicability) and launches every reviewer with the
    pack as shared starting evidence.
-5. **For a re-review round**, append a **Changes since round N−1**
+6. **For a re-review round**, append a **Changes since round N−1**
    section to the pack before delegating: the files changed since
    the previous round (repository mode: `git diff --name-only
    <previous round's commit>..HEAD`; otherwise the artifacts whose
