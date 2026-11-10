@@ -35,7 +35,7 @@ a different word.
 | **Failure signature** | A normalized description of a tool failure or rework cause (e.g. `edit file — old_str required`) such that repeated occurrences of the same underlying failure produce the same signature string. Signatures are counted from the failure ledger, nowhere else. |
 | **Pit-stop review** | The run review fired by the triggers in §7. Its output is guidance appended to `.SDLC/run-guidance.md`; it never edits shipped rules and never overrides a gate. |
 | **Evidence pack** | The Phase 6 input bundle assembled by the Harness before delegating to the QA Coordinator: changed artifacts, the full test-run output on disk, the Runtime Probes section (boot smoke + health + one read path per resource — an app that cannot boot never reaches the panel), CI evidence, and (from round 2 on) the "Changes since round N−1" section. A verdict rendered without an evidence pack is not a Phase 6 verdict. |
-| **Record** | A file whose content is workflow state: the manifest, the failure ledger, run guidance, the reference catalog, the run basis. Records have exactly one creator, named writers, and a verifying gate (§8). |
+| **Record** | A file whose content is workflow state: the manifest, the failure ledger, run guidance, the reference catalog, the run basis, the run retrospective. Records have exactly one creator, named writers, and a verifying gate (§8). |
 | **Run basis** | The block at the top of the manifest ledger recording the task the run serves and the artifacts the user approved, with short hashes. Work starts, changes scope, or stops only on the basis recorded here or a newer user instruction (§9). |
 | **Consistency** | Conformance to recorded standards, per PR #34: an artifact is consistent when it follows the precedence chain in §9.2. Consistency is measured within one project against its own records, never by comparison with another project's code. |
 | **Deviation** | A recorded departure from a standard. Class 2 deviations (§5) are written into the ledger with the record they break; an unrecorded departure is a defect, not a deviation. |
@@ -421,6 +421,7 @@ domain pulls that domain into the round.
 | Design proposal (`.SDLC/design-proposal-<topic>.md`) | Analyst — sketch first, expanded section by section; saved as a file by the Analyst, or verbatim by the Documenter if the Analyst cannot save | Analyst | Phase 2 gate input |
 | Evidence pack (`.SDLC/qa-evidence/`) | Harness (collector script + full test run to `test-run.txt` + CI Evidence section) | Harness | QA Coordinator consumes; a verdict without it is not a Phase 6 verdict |
 | QA findings (GitHub) | QA Coordinator | Coordinator | The ledger is the local source of truth; GitHub sync is one-way, ledger → GitHub (ADR-0003) |
+| Run retrospective (`.SDLC/run-retrospective.md`) | Harness, at Phase 9, from the run's records | Harness only | The maintainer; candidate rule changes take effect only via a reviewed change to the shipped definitions |
 
 ### 8.3 Document transport
 
