@@ -131,6 +131,18 @@ with incomplete phases:
    do NOT re-create artifacts the ledger lists as produced.
 3. If artifacts the ledger claims are missing on disk, treat that phase as
    incomplete and say so.
+4. **Verify the run basis.** Read the **Run basis** block at the top of the
+   ledger section and quote it in your resume report — the task this run
+   serves and the artifacts the user approved. For each approved artifact
+   named there, recompute its short hash (`sha256sum <file>`, first 12
+   characters) and compare it with the recorded one. If a hash differs,
+   the approved artifact was replaced or edited after approval: **stop
+   and ask the user** — never resume work against an approval that no
+   longer matches what is on disk. If the ledger predates run-basis
+   blocks, say so in the report and proceed on the state above.
+   (Why the report quotes the basis: an approval withdrawn in conversation
+   leaves no trace on disk. The quoted basis is the user's chance to
+   object before work resumes on it.)
 
 If there is no ledger or no manifest, proceed normally (Step 1).
 
@@ -236,6 +248,17 @@ For `implement` and `qa` phases, invoke all 9 reviewers (full review).
   update the row for the completed phase in the `## Phase-State Ledger` section
   of `.SDLC/project-manifest.md` — status, artifact paths produced, date. The
   ledger is the resume source (Step 0.5) and the exit gates' cross-check.
+- **Maintain the Run basis block.** The ledger section opens with a
+  **Run basis** block: one line naming the task and the date of the user's
+  instruction that started the run, then one line per artifact the user has
+  approved — path, approver, approval date, and the artifact's short hash
+  (`sha256sum`, first 12 characters; a change detector, not a security
+  control). Create the block with the task line when the manifest skeleton
+  is created at intake; add or update an artifact line **when an approval
+  lands** (a spec approved, an ADR approved), in the same step that records
+  the approval — not at phase transitions. Approvals happen in conversation
+  and otherwise leave no trace on disk; this block is that trace, and
+  Step 0.5 verifies it before any resume.
 - **Ledger write discipline.** Ledger statuses describe observed state only:
   - Set a row to **Complete only in the same step that runs that phase's exit
     check**, and cite in the row the artifacts the check verified on disk.
@@ -252,6 +275,23 @@ For `implement` and `qa` phases, invoke all 9 reviewers (full review).
   (Origin: 2026-10-19 simulation — the ledger claimed Phases 1–2 Complete
   hours before their QA and design work actually finished, and every later
   decision trusted the false record.)
+- **Gate classes — what may block, and when.** Every harness gate belongs to
+  one of two classes:
+  - **Class 1 — non-negotiables block immediately.** Gates that protect
+    structure correctness (the scaffold is the specified tree), authorization
+    (work starts and changes only on the user's instruction — see
+    Instruction precedence), or the safety of the user's assets. These are
+    hard blocks from the day they are defined; the Phase 3 Scaffolder
+    delegation gate is the standing example (measured: without it, Phase 3
+    failed silently for ~2 hours).
+  - **Class 2 — judgment gates record first.** A gate whose verdict needs
+    judgment starts in record-only mode: when it would have fired, record a
+    deviation in the ledger (what fired, the phase, the artifacts) and
+    continue. It becomes a block only through a definition change whose
+    justification cites the recorded deviations, including a
+    false-positive review — never by habit, and never silently.
+  When you define or propose a new gate, name its class in the same text.
+  A gate that cannot say which class it is, is not ready to be either.
 - **No-progress rule.** While a phase is `In progress`, progress means the
   phase's artifacts on disk changing. If roughly 30 minutes of active work
   pass with no artifact change in the active phase, you must either delegate
