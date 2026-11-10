@@ -338,7 +338,7 @@ document-manager/
 ```text
 @Harness Create the deployment infrastructure for the Document Manager.
 We need Cosmos DB, Blob Storage, Container Apps (3 services), Container Registry,
-Azure AI Foundry, Key Vault, and monitoring. Use AVM modules with WAF toggles.
+Azure AI Foundry, Key Vault, and monitoring. Use AVM modules.
 Deploy to East US.
 ```
 
@@ -366,7 +366,6 @@ the Document Manager application. We need:
 - Key Vault for secrets
 - Log Analytics + App Insights for monitoring
 
-Include WAF toggle parameters (enableMonitoring, enableRedundancy, enableScalability).
 Use AVM modules from the public Bicep registry.
 Deploy to East US.
 ```
@@ -374,9 +373,8 @@ Deploy to East US.
 ### Expected output
 
 Copilot should generate:
-- ✅ `infra/main.bicep` — with WAF toggles, deployer() tags, all AVM modules
-- ✅ `infra/main.parameters.json` — non-WAF defaults
-- ✅ `infra/main.waf.parameters.json` — WAF-aligned (private networking + monitoring)
+- ✅ `infra/main.bicep` — with deployer() tags, all AVM modules
+- ✅ `infra/main.parameters.json` — defaults
 - ✅ `infra/modules/cosmosDb.bicep` — wrapping AVM with private endpoint support
 - ✅ `infra/modules/storageAccount.bicep` — blob + queue private endpoints
 - ✅ `infra/modules/containerAppsEnvironment.bicep` — ONE shared environment

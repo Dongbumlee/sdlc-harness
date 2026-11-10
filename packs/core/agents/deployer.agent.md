@@ -106,7 +106,7 @@ Include `Source: Deployer (Phase 8)` on your entries.
      Azure resource types being provisioned.
    - Validate Bicep files: use Azure MCP to check Bicep file diagnostics for errors/warnings.
    - Get Azure deployment best practices: use Azure MCP `bestpractices` tool for
-     IaC rules, deployment guidance, and WAF alignment.
+     IaC rules and deployment guidance.
 
 4. **Load additional best practices from awesome-copilot** (skip if unavailable):
    - Use `mcp_awesome-copil_load_instruction` to load `"bicep-code-best-practices"` — Bicep naming conventions,
@@ -141,8 +141,7 @@ projects exist, their Dockerfile patterns, and service configurations for `azure
 ## Infrastructure rules
 
 - ALWAYS use AVM modules from `br/public:avm/res/...` when available.
-- Include WAF toggle parameters (`enableMonitoring`, `enableRedundancy`, `enableScalability`).
-- Create two-tier parameter files: `main.parameters.json` (non-WAF) + `main.waf.parameters.json` (WAF-aligned).
+- Create one parameter file: `main.parameters.json`.
 - ALL container apps MUST share a single Container Apps Environment.
 - Use Managed Identity + RBAC, never connection strings in production.
 
@@ -169,8 +168,7 @@ projects exist, their Dockerfile patterns, and service configurations for `azure
 5. **Tags on every resource** — Do all resources include `azd-env-name`, `TemplateName`,
    `CreatedBy` tags?
 6. **Identity model** — Is Managed Identity + RBAC used everywhere? No connection strings?
-7. **WAF alignment** — Do both parameter files exist (non-WAF + WAF-aligned)?
-   Do WAF toggles (`enableMonitoring`, `enableScalability`) actually change behavior?
+7. **Parameter file** — Does `main.parameters.json` exist, and do its values match the design?
 8. **azd up repeatability** — Would `azd up` succeed on a clean subscription?
    Check for missing role assignments, quota-sensitive SKUs, and region availability.
 
@@ -181,8 +179,7 @@ projects exist, their Dockerfile patterns, and service configurations for `azure
 At the end of your infrastructure output, include an **SDLC Exit Criteria Check** section:
 
 - Bicep templates use AVM modules from `br/public:avm/res/...`: ✅/⚠️/⛔
-- WAF toggle parameters included (`enableMonitoring`, `enableRedundancy`, `enableScalability`): ✅/⚠️/⛔
-- Two-tier parameter files created (non-WAF + WAF-aligned): ✅/⚠️/⛔
+- Parameter file created (`main.parameters.json`): ✅/⚠️/⛔
 - `azure.yaml` configured for `azd` orchestration: ✅/⚠️/⛔
 - Diagnostic settings and standard tags on all resources: ✅/⚠️/⛔
 - Managed Identity + RBAC used (no connection strings): ✅/⚠️/⛔

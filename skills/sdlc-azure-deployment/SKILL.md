@@ -74,7 +74,7 @@ If no wiki is configured or ADO MCP authentication fails, proceed with the publi
 **✅ ALWAYS use AVM modules (`br/public:avm/res/...`) for every resource.**
 
 This is the same rule as "never use raw CosmosClient — always use the approved Cosmos DB library".
-AVM modules handle security defaults, diagnostics, RBAC, and WAF alignment automatically.
+AVM modules handle security defaults, diagnostics, and RBAC automatically.
 
 **WRONG — raw resource declaration:**
 ```bicep
@@ -136,47 +136,19 @@ fetch: https://azure.github.io/Azure-Verified-Modules/indexes/bicep/bicep-resour
 **If an AVM module doesn't exist** for a resource type, only then use a raw resource
 declaration — and add a comment: `// No AVM module available — using raw resource`.
 
-## Step 4: WAF toggle parameters
-
-Every Bicep template MUST include Well-Architected Framework toggles:
-
-```bicep
-@description('Enable monitoring and diagnostics (WAF operational excellence)')
-param enableMonitoring bool = true
-
-@description('Enable redundancy and high availability (WAF reliability)')
-param enableRedundancy bool = false
-
-@description('Enable auto-scaling (WAF performance efficiency)')
-param enableScalability bool = false
-```
-
-Create two parameter files:
-- `main.parameters.json` — defaults (non-WAF, for dev)
-- `main.waf.parameters.json` — WAF-aligned (for production)
-
-**Removed: `enablePrivateNetworking` (deploy-verified lesson — kept so the
-mistake is not repeated).** A toggle by this name shipped for a long time
-with two partial implementations: in one it only set
-`networkAcls.defaultAction: Deny` on the storage account — no VNet, no
-private endpoints, no private DNS — and enabling it **broke the app**
-(Container Apps is not in the storage `AzureServices` bypass list);
-elsewhere it merely gated a VNet module. A parameter whose name promises
-private networking but delivers neither was removed, not warned about.
-Do not add a private-networking parameter until the full path (VNet +
-private DNS + VNet-integrated environment + per-service private
-endpoints) is implemented — add the parameter together with that
-implementation, never before it.
-
-## Step 5: Infrastructure rules
+## Step 4: Infrastructure rules
 
 - **Shared Container Apps Environment** — ALL container apps share ONE environment
 - **Managed Identity + RBAC** — never connection strings in production
 - **Standard tags** on all resources: `azd-env-name`, `TemplateName`, `CreatedBy`
 - **Diagnostic settings** — all resources send logs to Log Analytics
 - **Key Vault** — all secrets stored here, referenced by Container Apps
+- **Private networking is all-or-nothing** — implement the full path (VNet + private DNS
+  + VNet-integrated environment + per-service private endpoints) or none of it. A partial
+  private-networking toggle shipped once and broke a real deploy (firewall-deny only, no
+  endpoints); do not reintroduce one.
 
-## Step 6: azure.yaml structure
+## Step 5: azure.yaml structure
 
 ```yaml
 name: <project-name>
@@ -328,8 +300,7 @@ hooks:
 ```
 infra/
 ├── main.bicep                    # Entry point
-├── main.parameters.json          # Non-WAF parameters
-├── main.waf.parameters.json      # WAF-aligned parameters
+├── main.parameters.json          # Parameters
 ├── abbreviations.json            # Resource name abbreviations
 └── modules/
     ├── cosmos-db.bicep

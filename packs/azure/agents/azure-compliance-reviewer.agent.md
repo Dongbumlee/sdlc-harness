@@ -58,7 +58,6 @@ and identity management**.
 - [ ] **Context manager** — `async with` used for all storage operations?
 - [ ] **Identity** — `DefaultAzureCredential` or `ManagedIdentityCredential`, never connection string auth?
 - [ ] **Bicep/AVM** — Uses AVM modules from `br/public:avm/res/...`?
-- [ ] **WAF toggles** — Bicep includes the WAF toggle parameters (`enableMonitoring`, `enableRedundancy`, `enableScalability`)?
 - [ ] **Tags** — All Azure resources include standard tags (`azd-env-name`, `TemplateName`, `CreatedBy`)?
 - [ ] **Diagnostics** — All resources configured to send logs to Log Analytics?
 - [ ] **No secrets** — No connection strings, keys, or passwords in code or config files?
@@ -100,7 +99,7 @@ reasoning: "<2-3 sentence summary>"
 ---end-sdlc-review-output---
 ```
 
-Your domain categories: `sdk-abstraction` | `repository-pattern` | `context-manager` | `identity` | `bicep-avm` | `waf-toggles` | `resource-tags` | `diagnostics` | `secrets`
+Your domain categories: `sdk-abstraction` | `repository-pattern` | `context-manager` | `identity` | `bicep-avm` | `resource-tags` | `diagnostics` | `secrets`
 
 ## Working agreements (efficiency — all reviewers)
 

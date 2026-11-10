@@ -182,7 +182,7 @@ from the Tech Stack table above.
 - Store secrets in the cloud's secret manager, referenced by the services
   that need them.
 - Enable [GitHub secret scanning](https://docs.github.com/code-security/secret-scanning/about-secret-scanning).
-- <PROJECT_SPECIFIC_MEASURES — network isolation, firewall/WAF, scanning,
+- <PROJECT_SPECIFIC_MEASURES — network isolation, firewall, scanning,
   or compliance controls this project's design requires.>
 
 ### Cross References

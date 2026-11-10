@@ -59,7 +59,7 @@ Before starting, load these resources in **priority order** (team standards firs
      (includes the `update-avm-modules-in-bicep` prompt for updating AVM module versions)
    - **Microsoft Learn MCP** — authoritative AVM module documentation
    - **Azure MCP Bicep tools** — AVM module discovery, resource type schemas, Bicep file validation,
-     deployment best practices (IaC rules, WAF alignment)
+     deployment best practices (IaC rules)
    - **AVM module registry** — look up module availability and latest versions from the official registry:
      `#fetch https://azure.github.io/Azure-Verified-Modules/indexes/bicep/bicep-resource-modules/`
      Cross-reference all `br/public:avm/res/...` references against this authoritative source.
@@ -99,8 +99,7 @@ Create `infra/` folder structure:
 ```
 infra/
 ├── main.bicep                    # Main orchestration (all resources)
-├── main.parameters.json          # Default parameters (non-WAF)
-├── main.waf.parameters.json      # WAF-aligned parameters (private networking + monitoring)
+├── main.parameters.json          # Default parameters
 ├── abbreviations.json            # Azure resource abbreviations (azd convention)
 ├── modules/
 │   ├── containerAppsEnvironment.bicep # Shared Container Apps Environment (ONE per solution)
@@ -146,27 +145,10 @@ scripts/
   - **Private endpoints** — when the design implements private networking as a full path (VNet + private DNS + endpoints); there is no toggle for it
   - **Import AVM common types** — `import { roleAssignmentType } from 'br/public:avm/utl/types/avm-common-types:0.5.1'`
 
-**Well-Architected Framework (WAF) toggle parameters:**
-
-Every `main.bicep` MUST include these boolean parameters for Landing Zone alignment:
-
-```bicep
-@description('Optional. Enable monitoring (App Insights + Log Analytics).')
-param enableMonitoring bool = false
-
-@description('Optional. Enable redundancy (zone redundancy, geo-replication).')
-param enableRedundancy bool = false
-
-@description('Optional. Enable scalability (autoscaling, higher SKUs).')
-param enableScalability bool = false
-
-@description('Optional. Enable/Disable usage telemetry for module.')
-param enableTelemetry bool = true
-```
-
-**Two-tier parameter files:**
-- `main.parameters.json` — default (non-WAF): all toggles `false`
-- `main.waf.parameters.json` — WAF-aligned: `enableMonitoring`, `enableScalability` all `true`
+**Parameters:** Environment-specific values live in `main.parameters.json`.
+Monitoring (Log Analytics + App Insights) is always provisioned — diagnostic
+settings are not optional. Redundancy and scaling are set per resource from
+the design’s availability and performance requirements, not via global toggles.
 
 **Landing Zone alignment:**
 
@@ -194,8 +176,8 @@ var allTags = union({
 module virtualNetwork './modules/virtualNetwork.bicep' = { ... }
 
 // Conditional monitoring
-module logAnalytics 'br/public:avm/res/operational-insights/workspace:<VERSION>' = if (enableMonitoring) { ... }
-module appInsights 'br/public:avm/res/insights/component:<VERSION>' = if (enableMonitoring) { ... }
+module logAnalytics 'br/public:avm/res/operational-insights/workspace:<VERSION>' = { ... }
+module appInsights 'br/public:avm/res/insights/component:<VERSION>' = { ... }
 
 // Outputs for azd
 output AZURE_COSMOS_ENDPOINT string = cosmosDb.outputs.endpoint
@@ -245,8 +227,8 @@ module containerAppsEnv 'br/public:avm/res/app/managed-environment:<VERSION>' = 
   params: {
     name: 'cae-${solutionSuffix}'
     location: location
-    logAnalyticsWorkspaceResourceId: enableMonitoring ? logAnalyticsWorkspaceResourceId : ''
-    zoneRedundant: enableRedundancy
+    logAnalyticsWorkspaceResourceId: logAnalyticsWorkspaceResourceId
+    zoneRedundant: false // Set true when the design requires zone redundancy
     tags: allTags
   }
 }
