@@ -108,7 +108,7 @@ infra/
 │   ├── cosmosDb.bicep              # Cosmos DB with AVM + private endpoints
 │   ├── storageAccount.bicep        # Storage with AVM + blob/queue private endpoints
 │   ├── ai-services-deployments.bicep # AI Foundry / OpenAI model deployments
-│   ├── virtualNetwork.bicep        # VNet + subnets (when enablePrivateNetworking)
+│   ├── virtualNetwork.bicep        # VNet + subnets (when the design calls for a VNet)
 │   └── role.bicep                  # Reusable RBAC role assignment
 └── vscode_web/                   # VS Code Web launch config (optional)
     └── index.json
@@ -116,13 +116,6 @@ scripts/
 ├── checkquota.sh                 # Pre-deployment quota validation
 └── quota_check_params.sh         # Quota check parameter definitions
 ```
-
-> ⚠️ **`enablePrivateNetworking` must stay `false`.** As documented in the
-> `sdlc-azure-deployment` skill, the toggle as built is firewall-deny only —
-> it creates no VNet and no private endpoints, and enabling it breaks the
-> app. `main.waf.parameters.json` carries the parameter; it is not
-> production-ready private networking until the private-endpoint path is
-> built.
 
 **AVM module rules:**
 
@@ -150,7 +143,7 @@ scripts/
   - **Managed Identity** — prefer user-assigned identity shared across services
   - **RBAC role assignments** — use AVM's `roleAssignments` param with least-privilege
   - **Tags** — standard tags (azd-env-name, TemplateName, CreatedBy)
-  - **Private endpoints** — conditional on `enablePrivateNetworking` toggle
+  - **Private endpoints** — when the design implements private networking as a full path (VNet + private DNS + endpoints); there is no toggle for it
   - **Import AVM common types** — `import { roleAssignmentType } from 'br/public:avm/utl/types/avm-common-types:0.5.1'`
 
 **Well-Architected Framework (WAF) toggle parameters:**
@@ -158,9 +151,6 @@ scripts/
 Every `main.bicep` MUST include these boolean parameters for Landing Zone alignment:
 
 ```bicep
-@description('Optional. Enable private networking for applicable resources.')
-param enablePrivateNetworking bool = false
-
 @description('Optional. Enable monitoring (App Insights + Log Analytics).')
 param enableMonitoring bool = false
 
@@ -176,7 +166,7 @@ param enableTelemetry bool = true
 
 **Two-tier parameter files:**
 - `main.parameters.json` — default (non-WAF): all toggles `false`
-- `main.waf.parameters.json` — WAF-aligned: `enablePrivateNetworking`, `enableMonitoring`, `enableScalability` all `true`
+- `main.waf.parameters.json` — WAF-aligned: `enableMonitoring`, `enableScalability` all `true`
 
 **Landing Zone alignment:**
 
@@ -199,8 +189,9 @@ var allTags = union({
   'CreatedBy': deployerIdentityName
 }, tags)
 
-// Conditional private networking
-module virtualNetwork './modules/virtualNetwork.bicep' = if (enablePrivateNetworking) { ... }
+// Private networking module — include only when the design implements the
+// full private path (VNet + private DNS + private endpoints); no partial toggle
+module virtualNetwork './modules/virtualNetwork.bicep' = { ... }
 
 // Conditional monitoring
 module logAnalytics 'br/public:avm/res/operational-insights/workspace:<VERSION>' = if (enableMonitoring) { ... }

@@ -141,9 +141,6 @@ declaration — and add a comment: `// No AVM module available — using raw res
 Every Bicep template MUST include Well-Architected Framework toggles:
 
 ```bicep
-@description('Enable private networking (WAF reliability + security)')
-param enablePrivateNetworking bool = false
-
 @description('Enable monitoring and diagnostics (WAF operational excellence)')
 param enableMonitoring bool = true
 
@@ -158,14 +155,18 @@ Create two parameter files:
 - `main.parameters.json` — defaults (non-WAF, for dev)
 - `main.waf.parameters.json` — WAF-aligned (for production)
 
-**⚠️ `enablePrivateNetworking` is firewall-deny only (deploy-verified).** The toggle sets `networkAcls.defaultAction: Deny` on the
-storage account — there is no VNet, no private endpoints, no private DNS,
-no VNet integration on the Container Apps Environment. Enabling it as
-documented **breaks the app** (Container Apps is not in the storage
-`AzureServices` bypass list). True private networking (VNet + private DNS
-+ VNet-integrated environment + per-service private endpoints) is
-unimplemented. Do not enable this toggle until the private-endpoint path
-is built.
+**Removed: `enablePrivateNetworking` (deploy-verified lesson — kept so the
+mistake is not repeated).** A toggle by this name shipped for a long time
+with two partial implementations: in one it only set
+`networkAcls.defaultAction: Deny` on the storage account — no VNet, no
+private endpoints, no private DNS — and enabling it **broke the app**
+(Container Apps is not in the storage `AzureServices` bypass list);
+elsewhere it merely gated a VNet module. A parameter whose name promises
+private networking but delivers neither was removed, not warned about.
+Do not add a private-networking parameter until the full path (VNet +
+private DNS + VNet-integrated environment + per-service private
+endpoints) is implemented — add the parameter together with that
+implementation, never before it.
 
 ## Step 5: Infrastructure rules
 

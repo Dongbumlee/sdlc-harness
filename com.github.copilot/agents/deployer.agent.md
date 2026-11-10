@@ -141,13 +141,8 @@ projects exist, their Dockerfile patterns, and service configurations for `azure
 ## Infrastructure rules
 
 - ALWAYS use AVM modules from `br/public:avm/res/...` when available.
-- Include WAF toggle parameters (`enablePrivateNetworking`, `enableMonitoring`, `enableRedundancy`, `enableScalability`).
+- Include WAF toggle parameters (`enableMonitoring`, `enableRedundancy`, `enableScalability`).
 - Create two-tier parameter files: `main.parameters.json` (non-WAF) + `main.waf.parameters.json` (WAF-aligned).
-- ⚠️ **`enablePrivateNetworking` must stay `false`.** As documented in the
-  `sdlc-azure-deployment` skill, the toggle as built is firewall-deny only
-  (no VNet, no private endpoints) and enabling it breaks the app. The WAF
-  parameter file carries the parameter; it is not production-ready private
-  networking until the private-endpoint path is built.
 - ALL container apps MUST share a single Container Apps Environment.
 - Use Managed Identity + RBAC, never connection strings in production.
 
@@ -175,7 +170,7 @@ projects exist, their Dockerfile patterns, and service configurations for `azure
    `CreatedBy` tags?
 6. **Identity model** — Is Managed Identity + RBAC used everywhere? No connection strings?
 7. **WAF alignment** — Do both parameter files exist (non-WAF + WAF-aligned)?
-   Do WAF toggles (`enablePrivateNetworking`, `enableMonitoring`) actually change behavior?
+   Do WAF toggles (`enableMonitoring`, `enableScalability`) actually change behavior?
 8. **azd up repeatability** — Would `azd up` succeed on a clean subscription?
    Check for missing role assignments, quota-sensitive SKUs, and region availability.
 
@@ -186,7 +181,7 @@ projects exist, their Dockerfile patterns, and service configurations for `azure
 At the end of your infrastructure output, include an **SDLC Exit Criteria Check** section:
 
 - Bicep templates use AVM modules from `br/public:avm/res/...`: ✅/⚠️/⛔
-- WAF toggle parameters included (`enablePrivateNetworking`, `enableMonitoring`, etc.): ✅/⚠️/⛔
+- WAF toggle parameters included (`enableMonitoring`, `enableRedundancy`, `enableScalability`): ✅/⚠️/⛔
 - Two-tier parameter files created (non-WAF + WAF-aligned): ✅/⚠️/⛔
 - `azure.yaml` configured for `azd` orchestration: ✅/⚠️/⛔
 - Diagnostic settings and standard tags on all resources: ✅/⚠️/⛔

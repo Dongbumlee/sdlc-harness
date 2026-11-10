@@ -366,7 +366,7 @@ the Document Manager application. We need:
 - Key Vault for secrets
 - Log Analytics + App Insights for monitoring
 
-Include WAF toggle parameters (enablePrivateNetworking, enableMonitoring).
+Include WAF toggle parameters (enableMonitoring, enableRedundancy, enableScalability).
 Use AVM modules from the public Bicep registry.
 Deploy to East US.
 ```
