@@ -179,14 +179,17 @@ specs as constraints, and never re-spec behavior that is already specified.
      > I will proceed using local knowledge only.
 
 0c. **Check cloud-specific MCP (conditional):**
-   - Read `harness-config.yml` at the workspace root. Check the `cloud.provider` field.
-   - If `cloud.provider` is `azure` OR if the file doesn't exist (default to azure for
-     backward compatibility):
+   - Determine the project's cloud. Read the `cloud.provider` field in
+     `harness-config.yml` at the workspace root. If the key is absent, read
+     the Cloud field in `.github/copilot-instructions.md` (§1) and write the
+     value back to `harness-config.yml` as `cloud.provider`. If neither
+     records a cloud, ask the user — never assume a cloud.
+   - If the provider is `azure`:
      - Probe: `mcp_azure-devops_core_list_projects()`
      - If it **fails**, WARN the user and proceed:
        > ⚠️ Azure DevOps MCP is not available. Team wiki standards will not be fetched.
        > I will proceed without ADO wiki content.
-   - If `cloud.provider` is NOT `azure`, skip ADO MCP checks entirely.
+   - If the provider is NOT `azure`, skip ADO MCP checks entirely.
 
 0d. **Sketch first.** Before the full proposal, save the decision sketch
    as the FIRST content of the proposal file: the decisions to make, the

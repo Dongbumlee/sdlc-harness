@@ -58,7 +58,7 @@ and identity management**.
 - [ ] **Context manager** — `async with` used for all storage operations?
 - [ ] **Identity** — `DefaultAzureCredential` or `ManagedIdentityCredential`, never connection string auth?
 - [ ] **Bicep/AVM** — Uses AVM modules from `br/public:avm/res/...`?
-- [ ] **WAF toggles** — Bicep includes `enablePrivateNetworking`, `enableMonitoring` parameters?
+- [ ] **WAF toggles** — Bicep includes `enablePrivateNetworking`, `enableMonitoring` parameters, AND `enablePrivateNetworking` is `false` unless the design records a working private-endpoint implementation? (The toggle as built is firewall-deny only and breaks the app when enabled — see the `sdlc-azure-deployment` skill. Its presence alone is NOT compliance.)
 - [ ] **Tags** — All Azure resources include standard tags (`azd-env-name`, `TemplateName`, `CreatedBy`)?
 - [ ] **Diagnostics** — All resources configured to send logs to Log Analytics?
 - [ ] **No secrets** — No connection strings, keys, or passwords in code or config files?

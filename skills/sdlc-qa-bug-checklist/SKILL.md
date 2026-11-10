@@ -16,16 +16,22 @@ Actionable QA checklist derived from **338 production bugs** across 9 production
 Each item includes the **real error pattern**, **Azure error codes**, and **how to verify** —
 so the agent or reviewer can detect the exact conditions that caused real bugs.
 
-## Bug Distribution Summary
+## What This Skill Ships — 7 Checklists
 
-| SDLC Phase | Bugs | % | Priority |
-|---|---|---|---|
-| Deployment | 151 | 45% | 🔴 Critical |
-| Implementation | 82 | 24% | 🟠 High |
-| QA/Testing | 60 | 18% | 🟡 Medium |
-| Release | 23 | 7% | 🟡 Medium |
-| Security | 13 | 4% | 🔴 Critical |
-| Documentation | 9 | 3% | 🟢 Low |
+| # | Checklist | Bugs anchored |
+|---|---|---|
+| 1 | Deployment & Provisioning | 151 |
+| 2 | CosmosDB & Data Layer | 8 |
+| 3 | AI/ML & Agent Components | 57 |
+| 4 | Frontend/UI | 40 |
+| 5 | API/Backend | 23 |
+| 6 | Identity & Authentication | 21 |
+| 7 | Smoke Testing Matrix | 60 |
+
+Counts are per checklist, as compiled. The same bug can anchor more than
+one checklist — Bug 36697, for example, appears in Checklists 1 and 3 and
+in the smoke matrix — so the counts sum to more than the 338-bug corpus.
+Corpus facts are in the Data Source section at the end of this file.
 
 ---
 
