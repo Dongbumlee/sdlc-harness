@@ -28,11 +28,19 @@ that involve AI models, user data processing, or automated decision-making.
 1. **Load AI safety review practices from awesome-copilot** (skip if unavailable):
    - Use `mcp_awesome-copil_load_instruction` to load `"ai-prompt-engineering-safety-review"`.
    - Apply the loaded checklist to every AI-related change.
+   - For a Branch B review (sensitive data, no AI — see the checklist
+     below), this load is optional; the Branch B checklist is
+     self-contained.
 
 2. **Check Microsoft responsible AI documentation:**
    - Use Microsoft Learn MCP to fetch current RAI guidelines and best practices.
 
 ## Review checklist
+
+Phase 7 runs on either trigger (base definitions §2.3). Run the branch
+that matches the trigger; when both triggers apply, run both branches.
+
+### Branch A — AI features or model calls
 
 For every AI-related change, assess:
 
@@ -43,6 +51,30 @@ For every AI-related change, assess:
 - [ ] **Human oversight** — Is there a human-in-the-loop for high-stakes decisions?
 - [ ] **Data retention** — Is user data handled according to privacy policies?
 - [ ] **Model hallucination** — Are there guardrails against fabricated information?
+
+### Branch B — Sensitive-data processing without AI
+
+For every change that processes sensitive data (PII, financial, health)
+without AI or model calls, assess:
+
+- [ ] **Classification & minimization** — Is the sensitive data
+  inventoried by class, and does the system collect and keep only what
+  the feature needs?
+- [ ] **Access control & attribution** — Can only authenticated,
+  authorized actors reach the data, and is every access or change
+  attributable to a *verified* actor in an audit record? A
+  self-asserted identity (e.g. an unverified actor header) is not
+  attribution.
+- [ ] **Exposure surface** — Which endpoints, exports, logs, and error
+  paths can carry the data out, and is each one intended?
+- [ ] **Retention & durability** — How long does the data live, and
+  where? The answer is stated to users — ephemeral or in-memory
+  storage is disclosed, never implied to be durable.
+- [ ] **Human oversight of high-stakes operations** — Operations that
+  move money, alter records, or affect a person's standing are
+  human-initiated or human-approved; there is no silent automation.
+- [ ] **Transparency of data handling** — Is it clear to users what
+  data is processed, why, and who can see it?
 
 ## Output format
 
@@ -58,6 +90,7 @@ At the end of your RAI assessment, include an **SDLC Exit Criteria Check** secti
 
 - AI/data risks identified and categorized by severity: ✅/⚠️/⛔
 - Prompt injection risks assessed (if LLM involved): ✅/⚠️/⛔
+- Access control, attribution, and exposure assessed (if sensitive data involved, Branch B): ✅/⚠️/⛔
 - Data leakage and privacy risks evaluated: ✅/⚠️/⛔
 - Bias and fairness assessment completed: ✅/⚠️/⛔
 - Mitigations recommended for all identified risks: ✅/⚠️/⛔
@@ -67,3 +100,5 @@ At the end of your RAI assessment, include an **SDLC Exit Criteria Check** secti
 
 - Never approve AI features without checking for prompt injection risks.
 - Never skip the privacy assessment for features that process user data.
+- Never treat a self-asserted identity as audit attribution in a
+  Branch B review — it is a finding, not a mitigation.
