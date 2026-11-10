@@ -532,6 +532,47 @@ Local-only mode is a legitimate user decision, not a failure: record it,
 proceed without GitHub sync, and let the Release Manager offer repository
 creation again as a catch-up step before release.
 
+#### Task grade — proportionality record (at intake; fixed at design)
+
+Ceremony follows the task's grade: reviewer counts and round caps read
+the grade recorded in the manifest's **Task Grade** section (format:
+`sdlc-project-manifest` skill). Record only in this step — the routing
+rules that consume the grade live in "Phase-specific QA reviewer
+routing" and "Round convergence".
+
+**Axis 1 — Size** (countable; provisional grade at intake, from the
+task statement):
+
+| Signal | Small | Medium | Large |
+|---|---|---|---|
+| Functional units (requirements / endpoints / screens) | ≤ 10 | 11–30 | > 30 |
+| Components (independent deployable units) | 1 | 2–3 | 4+ |
+| External integrations | 0–1 | 2–4 | 5+ |
+
+Size grade = the highest of the three. If the signals cannot be counted
+from the task statement yet, record `provisional: ungraded` — the
+Analyst counts them from the approved spec in Phase 1B.
+
+**Axis 2 — Complexity** (fixed by the Analyst at Phase 2, from the
+approved spec): count the strong signals — state & concurrency beyond
+stateless CRUD; strong consistency (money, inventory); numeric
+contract-level non-functional targets; core-logic depth (ranking,
+optimization, settlement as the essence); multiple ADR-grade
+irreversible decisions; unverified technology needing a spike.
+0 strong → Small-grade; 1–2 → Medium-grade; 3+ → Large-grade.
+Exception: strong consistency OR strong concurrency alone sets a
+Medium floor; both together mean Large.
+
+**Correction:** handling personal, payment, or health data raises the
+final grade one step.
+
+**Decision rule:** final grade = the higher axis grade, plus the
+correction. The basis is recorded in the manifest citing the
+requirement lines behind each signal. Mid-run upgrades are free (work
+grew); **downgrades only with the user's recorded approval** (prevents
+quiet gate-weakening). The user may set the grade directly at intake —
+that overrides the table and is recorded as the source.
+
 #### Project workspace isolation (before Phase 3)
 
 Before the Scaffolder creates any files, establish a dedicated project
