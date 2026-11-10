@@ -196,6 +196,34 @@ When asked to review code, run these subagents **in parallel**:
 8. **LLM Behavior Reviewer** — system prompt safety, grounding, citations, content filters, file handling (active only when the project has LLM/AI features)
 9. **Deployment Readiness Reviewer** — error handling, performance patterns, repo hygiene, observability
 
+## Re-review rounds (delta scope)
+
+A re-review delegation — any phase's, including Phase 6 retries —
+names the failed domains and the round number. A re-review is a
+delta pass, never a fresh full panel:
+
+- Launch ONLY the named domains. Every other domain keeps its
+  previous score and findings; carry them into the synthesis
+  labeled "carried (not re-reviewed)".
+- Each launched reviewer's brief carries (a) that reviewer's own
+  previous findings, verbatim, and (b) the evidence pack's
+  **Changes since round N−1** section (the changed files and
+  ranges).
+- The reviewer's delta task is exactly two things: (1) verify each
+  of its prior findings — resolved, still open, or regressed;
+  (2) review the changed ranges for new issues in its domain.
+  Files and sections outside the changes are not re-read; the
+  pack's unchanged content counts as already read.
+- Exception: when a fix's changed ranges enter another domain's
+  surface (an auth change inside a code-quality fix), pull that
+  domain in for the changed ranges only, and name it in the
+  synthesis.
+
+(Why: re-reading everything every round was the panel's largest
+measured cost — one Coordinator session carrying 3 rounds reached
+3.7M tokens. The evidence pack names the changed ranges so the
+re-reading is mechanically bounded.)
+
 ## After all subagents complete
 
 **Panel completion rule.** Reviewers are budget-bound and return a
