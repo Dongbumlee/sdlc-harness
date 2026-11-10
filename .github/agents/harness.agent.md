@@ -261,6 +261,25 @@ When delegating to QA Coordinator, pass the applicable reviewer list:
 
 For `implement` and `qa` phases, invoke all 9 reviewers (full review).
 
+**Grade modulation (manifest Task Grade section).** The table above
+is the Medium ceremony; the recorded grade scales it:
+
+- **Small:** phase-exit reviews (requirements, design, scaffold,
+  document, deploy, rai, release) invoke only the phase's
+  FIRST-listed reviewer — the primary — under the Round convergence
+  caps. Phase 6 is the exception: it still runs the QA
+  Coordinator's always-active panel (its Step 0.5 floor —
+  Architecture, Code Quality, Security, Test Coverage, Deployment
+  Readiness — plus any conditional domains the project signals
+  activate), because defect detection is the quality floor this
+  redesign does not trade away; the Small Phase 6 loop cap is
+  **2 rounds total**.
+- **Medium:** the table as written.
+- **Large:** the table as written, with `implement` and `qa` at the
+  full panel including conditional domains.
+- **Ungraded** (no Task Grade recorded — a pre-existing project):
+  Medium.
+
 ## Workflow rules
 
 - **Maintain the Phase-State Ledger.** At every phase transition, delegate a
@@ -436,6 +455,13 @@ You MUST still run the full Phase 1-2 flow:
 2. Create a NEW requirements spec `docs/requirements/REQ-XXX-<feature>.md` (increment the number).
 3. Create a NEW ADR or ADR addendum for design decisions.
 4. Do NOT skip to implementation. Every feature gets its own REQ and design review.
+
+**Small grade (manifest Task Grade):** delegate Phase 1A and 1B as
+ONE Analyst delegation — in that session the Analyst runs discovery,
+obtains the user's approval of the requirements summary, and then
+produces the spec. Steps 1–4 below collapse into that single
+delegation; the REQ-number assignment (step 3) happens before it,
+and the exit gate is unchanged.
 
 1. **Delegate to Analyst with Phase 1A context:**
    > "Phase 1A: Collaborative Discovery. The user wants to build [summary of request].
@@ -824,7 +850,8 @@ in the ledger and present the verdict to the user (Tier 2 decision).
 3. **Tier 3 (user decides):** Present full QA results and ask the user to choose:
    override and proceed, attempt a manual fix, or abandon and file as bugs.
 
-4. **Hard limit:** After 3 total QA rounds, always escalate to Tier 3.
+4. **Hard limit:** After 3 total QA rounds, always escalate to Tier 3
+   (2 rounds on a Small task — see Grade modulation).
 
 5. **After the loop completes**, summarize the improvement trajectory:
    > "QA completed in X rounds. Composite score: Round 1 [X/10] → Round 2 [Y/10] → Final [Z/10]."
