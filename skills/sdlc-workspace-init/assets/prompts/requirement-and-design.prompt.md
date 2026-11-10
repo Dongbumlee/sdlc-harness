@@ -22,8 +22,8 @@ argument-hint: "Describe the feature or requirement to analyze"
  This repo’s cloud, data stores, and services are recorded in `.github/copilot-instructions.md` (§1) — design against those, together with the architecture and technology rules defined in the repository custom
  instructions.
 
- This prompt supports **SDLC Phases 1–2 (Requirement Analysis and Design)** as defined in
- `.github/SDLC-with-Copilot-and-Azure.md`. Follow their exit criteria.
+ This prompt supports **SDLC Phases 1–2 (Requirement Analysis and Design)**. The exit criteria
+ for these phases are the ones listed in this prompt.
 
  ## Inputs from the user
 

@@ -17,11 +17,11 @@ How to use (VS Code):
 
 You are implementing a feature or change that already has an approved design.
 
-This repository uses Azure services and standard patterns for Cosmos DB and Blob Storage. Prefer existing abstractions and
+This repository’s cloud and data services are recorded in `.github/copilot-instructions.md` (§1). Prefer existing abstractions and
 repositories over new ad-hoc code.
 
-This prompt supports **SDLC Phase 4 – Implementation with Test Strategy** as defined in
-`.github/SDLC-with-Copilot-and-Azure.md`. Follow its exit criteria.
+This prompt supports **SDLC Phase 4 – Implementation with Test Strategy**. The exit criteria
+for this phase are the ones listed in this prompt.
 
 ## Inputs from the user
 

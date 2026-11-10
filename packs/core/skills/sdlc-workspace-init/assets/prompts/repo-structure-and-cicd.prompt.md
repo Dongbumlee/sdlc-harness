@@ -21,8 +21,8 @@ This repository uses Azure services, standard scaffolding templates, and the arc
 in the repository custom instructions. Follow the reference catalog at `.github/reference-catalog.md`
 for template selection.
 
-This prompt supports **SDLC Phase 3 – Repo Structure Configuration** as defined in
-`.github/SDLC-with-Copilot-and-Azure.md`. Follow its exit criteria.
+This prompt supports **SDLC Phase 3 – Repo Structure Configuration**. The exit criteria
+for this phase are the ones listed in this prompt.
 
 ## Inputs from the user
 
@@ -279,7 +279,7 @@ running the deployment prompt as a follow-up step.
 
 ### 6. SDLC Exit Criteria check (Phase 3)
 
-Verify the following exit criteria from `.github/SDLC-with-Copilot-and-Azure.md`:
+Verify the following exit criteria:
 
 - Repository folders and projects are created or updated to match architecture and templates.
 - Pipeline definitions are updated or confirmed to:
