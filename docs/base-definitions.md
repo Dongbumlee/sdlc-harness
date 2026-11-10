@@ -535,6 +535,21 @@ block's text is defined once, in the reviewer-output-format skill;
 copies in agent files must remain byte-identical to it, and drift
 between copies is a defect the verification battery can check by hash.
 
+### 10.6 Load-bearing audit (assumption cadence)
+
+Rules in this standard were written against a particular generation of
+seat behavior, and several carry their justification as a measurement
+("Measured …" lines). When a new model generation takes a judgment seat,
+those justifications expire silently. The audit cadence: on a seat-model
+generation change, each rule whose cited justification is a behavioral
+measurement is re-checked by a desk ablation — suspend the rule, run the
+calibration corpus (§4) and one fixture exercise, compare outcomes — one
+rule at a time, never a batch. A rule that no longer changes any outcome
+is a removal candidate; removal is a definition change like any other
+(§5 promotion path in reverse), recorded with the ablation evidence.
+Rules justified by a defect record (a gate that caught a real failure)
+are not ablation candidates on that evidence alone.
+
 ## 11. Decisions (2026-11-10 — all adopted as recommended)
 
 Five items were genuine choices rather than evidenced readings. Dongbum
