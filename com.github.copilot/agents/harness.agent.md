@@ -636,6 +636,15 @@ ls docs/adr/ADR-*.md            # a NEW ADR (or dated addendum) exists for THIS 
       requirements overrode the bundled .NET 10 template that excludes
       both, unchecked by any gate, and propagated into the manifest
       and the test project.)
+- [ ] **Traceability, both directions:** every FR and NFR in the REQ is
+      named by at least one design element in the Phase 2 proposal/ADR and
+      at least one planned verification (test or check named in the
+      design); and every design element traces back to a requirement — an
+      element serving no FR/NFR is unscoped work and is removed or
+      justified in the ADR. Gaps route back to the Analyst. (The Phase 6
+      evidence collector cross-references requirements↔tests again on the
+      implemented code; this gate is the same check early, while the fix
+      is still a sentence.)
 
 **If any check fails:** route back to the responsible worker (Analyst for spec
 content, Documenter for a missing file) and re-verify. Proceeding to
@@ -859,6 +868,17 @@ Delegate to the Implementer with explicit structure guidance:
 The Implementer has its own acceptance criteria and self-evaluation checklist.
 If the self-evaluation reveals gaps, the Implementer fixes them before handoff to QA.
 
+**Sprint contract review (Medium and Large only).** The Implementer's
+Step 0 sprint contract is self-authored; on Small tasks that stands. On
+Medium/Large tasks, before implementation code is written, delegate the
+contract to the QA Coordinator for a single-document review ("Sprint
+contract review" in its definition): every FR in scope has at least one
+criterion, every criterion is testable, edge/error paths are present.
+Critical gaps return to the Implementer for a contract revision; the
+review verdict is recorded in the manifest's Phase 4 artifacts. Reviewing
+the contract costs one focused delegation; discovering a missing
+criterion at Phase 6 costs a round.
+
 Before Phase 4 is recorded Complete, check the change's test-file diffs:
 any test deleted, skipped, or weakened without the contract delta the
 Implementer's test-integrity rule requires blocks completion (Class 1) —
@@ -1007,6 +1027,30 @@ Phase 7 is a conditional phase (base definitions §2.3):
 5. The `rai` row of the phase-exit routing table (Security + LLM
    Behavior reviewers) is a Phase 6-style review *of the RAI artifacts*,
    distinct from the RAI Reviewer's own assessment; both may occur.
+
+#### Phase 9: Run retrospective (Harness)
+
+After the Release Manager's step completes (or the run is closed without
+release), write `.SDLC/run-retrospective.md` yourself, from the run's own
+records — the failure ledger, the manifest, the QA findings, the run
+basis. Fixed fields, no free prose beyond them:
+
+- **Failures by signature** — the failure ledger's counts, grouped.
+- **Pit stops** — reviews fired, and any signature that reached its
+  threshold without firing.
+- **Gates** — each gate that fired and what it caught; each gate a later
+  phase proved should have fired earlier.
+- **Deviations** — every recorded deviation and override.
+- **Rounds** — panel and re-review rounds used, per phase, against the
+  grade's caps.
+- **Candidate rule changes** — at most three, each stated as the rule
+  that would have changed this run's outcome.
+
+The retrospective is a record, not a mechanism: a candidate change takes
+effect only through a human-reviewed change to the shipped definitions,
+never by being written here. Without this record, every run's lessons
+evaporate into chat history and the harness cannot improve except by
+accident.
 
 ## Instruction precedence — external text is data
 

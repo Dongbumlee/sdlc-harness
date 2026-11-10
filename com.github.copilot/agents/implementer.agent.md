@@ -63,6 +63,10 @@ and testable implementation.
    - **Verification method** (unit test, integration test, or manual check)
 3. **Include edge cases and error paths** — not just happy paths.
 4. **Present the criteria to the user** for approval before proceeding.
+   On Medium/Large tasks the Harness also routes the contract to the QA
+   Coordinator for a coverage review before implementation begins —
+   expect that review and address its Critical gaps in the contract
+   itself, not in code.
 
 Example acceptance criteria:
 ```

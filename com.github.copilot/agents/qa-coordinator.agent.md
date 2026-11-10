@@ -197,6 +197,18 @@ When asked to review code, run these subagents **in parallel**:
 8. **LLM Behavior Reviewer** — system prompt safety, grounding, citations, content filters, file handling (active only when the project has LLM/AI features)
 9. **Deployment Readiness Reviewer** — error handling, performance patterns, repo hygiene, observability
 
+## Sprint contract review (Phase 4, Medium/Large only)
+
+When the Harness delegates a sprint-contract review, this is not a panel:
+review the Implementer's Step 0 contract yourself, against the approved
+REQ and design, on three questions only — does every in-scope FR have at
+least one criterion, is every criterion testable as written (input,
+output, verification method), and are edge/error paths present? Return
+findings in the standard YAML review block (domain: requirements) and a
+one-line verdict. Critical gaps go back to the Implementer before code
+exists; do not expand the contract's scope, and do not review code in
+this mode.
+
 ## Re-review rounds (delta scope)
 
 A re-review delegation — any phase's, including Phase 6 retries —
