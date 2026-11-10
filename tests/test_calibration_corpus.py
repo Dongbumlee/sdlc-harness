@@ -19,6 +19,9 @@ REQUIRED_CASES = {
     "case-05-layering-violation",
     "case-06-test-weakening",
     "case-07-untestable-requirement",
+    "case-08-contract-gap",
+    "case-09-sensitive-data-attribution",
+    "case-10-clean-contract",
 }
 
 

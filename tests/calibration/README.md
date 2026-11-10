@@ -15,6 +15,9 @@ a reviewer definition can be scored instead of argued about.
 | case-05-layering-violation | architecture | `high`+ (service imports the routers layer) |
 | case-06-test-weakening | test-coverage | `critical` by definition (assertion weakened, test deleted, no contract delta) |
 | case-07-untestable-requirement | requirements-completeness | `high`+ (no acceptance criteria; unmeasurable NFR language) |
+| case-08-contract-gap | qa-coordinator (contract review) | `critical` (an in-scope FR — skip-and-report on serialization failure — has no criterion) |
+| case-09-sensitive-data-attribution | rai-reviewer (Branch B) | `high` (unauthenticated exposure of financial data; audit actor is a self-asserted header, not attribution) — Approval ⚠️/⛔, never a clean ✅ |
+| case-10-clean-contract | qa-coordinator (contract review) | Pass — any `critical`/`high` finding is a false positive |
 
 ## How to run
 
