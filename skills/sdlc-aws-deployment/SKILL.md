@@ -320,22 +320,6 @@ for the full set). Choose this when compliance requires no public IPs.
 **Rule:** the network design must be written down (which option and why).
 "No NAT" without one of these two designs is an incomplete design, not a
 cost saving — the compliance reviewer checks for it.
-=======
-- **cdk-nag `AwsSolutions-EC23` false positive on VPC CIDR intrinsics.**
-  The rule ("security groups should not allow ingress from 0.0.0.0/0")
-  cannot resolve `Fn::GetAtt` VPC CIDR references — it reports a validation
-  *error* (not a finding) on SG rules allowing 443 from the VPC CIDR via
-  intrinsic. Verify the synthesized template manually for this pattern; do
-  not treat nag output as a pure pass/fail gate here (found 2026-10-03).
-- **The "no NAT" rule has a sharp edge for synchronous endpoints.** A Lambda
-  in isolated subnets has **no internet access**. If a synchronous endpoint
-  must reach a public dependency (Pulse `/admin/collect` → public feed,
-  2026-10-03), it fails outright — the scheduled path (EventBridge →
-  Fargate) worked, the sync admin path did not. Default to (a): the endpoint
-  only *triggers* async work and never calls the public dependency itself.
-  If the endpoint itself needs egress, justify a NAT gateway for the API
-  subnets or move the endpoint to a target with egress — and document it.
->>>>>>> feat/pack-gaps-scenarios-234
 
 ## Step 6: CDK app layout
 

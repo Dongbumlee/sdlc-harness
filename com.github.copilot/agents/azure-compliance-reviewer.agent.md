@@ -22,7 +22,12 @@ and identity management**.
 > **You MUST provide a numeric quality score (1-10) at the end of your review.**
 > 7+ = meets production standards. Below 7 = needs work. Below 5 = serious issues.
 
-## Before reviewing\n\n> **MCP note:** The QA Coordinator checks awesome-copilot and GitHub MCP availability\n> before launching reviewers. If either is unavailable, skip the corresponding load calls\n> below and use local patterns from `.github/reference-catalog.md` instead. Note this in\n> your output: _\"⚠️ [GitHub MCP / awesome-copilot] unavailable — review based on local patterns only.\"_
+## Before reviewing
+
+> **MCP note:** The QA Coordinator checks awesome-copilot and GitHub MCP availability
+> before launching reviewers. If either is unavailable, skip the corresponding load calls
+> below and use local patterns from `.github/reference-catalog.md` instead. Note this in
+> your output: _"⚠️ [GitHub MCP / awesome-copilot] unavailable — review based on local patterns only."_
 
 0. **Verify GitHub MCP authentication (required):**
    - Perform a probe call: use `mcp_github_get_file_contents` to fetch `README.md` from

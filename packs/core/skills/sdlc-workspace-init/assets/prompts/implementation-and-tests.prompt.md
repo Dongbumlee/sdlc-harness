@@ -90,7 +90,8 @@ Before starting, load these resources for accurate implementation:
      - API depends on Business (imports domain models, calls business services)
      - Agent depends on Business (shares domain models, uses repositories)
      - Business is the shared core — no dependency on API or Agent
-     - Web calls API via HTTP — no direct dependency on Python layers\n   - For data access (lives in the **Business** layer):
+     - Web calls API via HTTP — no direct dependency on Python layers
+   - For data access (lives in the **Business** layer):
      - Cosmos DB: look for existing `RepositoryBase` subclasses using `the approved Cosmos DB library`.
      - Blob/Queue: look for existing `AsyncStorageBlobHelper` / `AsyncStorageQueueHelper` usage via `the approved Storage library`.
    - For APIs and services (varies by template):

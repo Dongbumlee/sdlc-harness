@@ -315,11 +315,7 @@ src/
 - `pyproject.toml` must use `[project]` format (not `[tool.poetry]`). Include `uv.lock` when present.
 - API template uses `app/` as code root; base app and agent templates use `src/` as code root.
 - Tests go in `tests/` at the **project root** (not inside `app/` or `src/`).
-- Follow the naming convention: `<ProjectName><Layer>` (e.g., `CustomerFeedbackAPI`, `CustomerFeedbackBusiness`).", "oldString": "**Rules:**\n- Each project under `src/` gets its **own** `.devcontainer/`, `.github/`, `Dockerfile`, `pyproject.toml` (or `package.json`).\n- A **root-level** `.devcontainer/` is also valid — it's used for azd deployment and Codespaces quickstart. Per-project devcontainers are for isolated development.\n- Use `uv` as the Python package manager, not `pip` or `poetry`.\n- Follow the naming convention: `<ProjectName><Layer>` (e.g., `CustomerFeedbackAPI`, `CustomerFeedbackBusiness`).
-- The Business layer contains shared domain models, entities, repositories, and services reused by API and Agent.
-- Include `TRANSPARENCY_FAQ.md`, `CODE_OF_CONDUCT.md`, `CONTRIBUTING.md`, `SECURITY.md`, `SUPPORT.md`, `LICENSE` at root.
-- Include root-level `tests/e2e-test/` for E2E / integration tests that span multiple services.
-- Follow the naming conventions from the reference catalog.
+- Follow the naming convention: `<ProjectName><Layer>` (e.g., `CustomerFeedbackAPI`, `CustomerFeedbackBusiness`).
 
 ## Verify-and-repair mode (existing partial scaffold)
 
