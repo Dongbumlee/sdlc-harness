@@ -284,22 +284,21 @@
  1. **Verify access before relying on fetched content.** Before any workflow that depends on
     reference repo content, perform a lightweight probe call (e.g., fetch `README.md` from one
     of the repos above). If the call fails or returns an auth error:
-    - **Stop** the current workflow step.
-    - **Inform the user** that GitHub MCP authentication is required to access `{{ORG_NAME}}` repos.
-    - **Provide remediation steps:**
-      1. Ensure the GitHub Copilot extension is signed in with an account that has access to the `{{ORG_NAME}}` organization.
-      2. If using GitHub Copilot Chat, confirm the GitHub MCP server is listed and enabled in `.vscode/mcp.json`.
-      3. Try running a manual GitHub MCP call (e.g., ask Copilot to "fetch README.md from {{ORG_NAME}}/{{COSMOSDB_LIB_REPO}}") to verify access.
-    - **Do NOT proceed with stale or invented patterns** — the reference repos are the source of truth.
+    - **Warn the user** that GitHub MCP authentication failed and live reference
+      content from `{{ORG_NAME}}` repos is unavailable.
+    - **Fall back to local patterns** in `.github/reference-catalog.md` and note in
+      your output that live verification was not possible.
+    - **Do NOT invent patterns** — where no local pattern covers the case, say so in
+      your output rather than fabricating one.
 
- 2. **No degraded mode — `{{ORG_NAME}}` access is mandatory.** Every engineer using this
-    template MUST have access to the `{{ORG_NAME}}` GitHub organization. If authentication
-    fails, STOP the workflow and require the user to sign in with a valid account.
-    Do NOT fall back to local patterns — the reference repos are the authoritative source
-    for project structure, SDK patterns, and template layouts.
+ 2. **Degraded mode is the defined fallback.** If `{{ORG_NAME}}` access is unavailable,
+    work continues on local patterns (`.github/reference-catalog.md`). Only steps that
+    themselves create or modify a GitHub repository (repo creation, PR creation) wait
+    for access — no other workflow stops.
 
  3. **No fabricated API surfaces.** If you cannot fetch the latest API from a reference repo,
-    do NOT guess or invent method signatures. STOP and ask the user to authenticate.
+    use the local catalog. If neither live nor local patterns cover the API, flag it as
+    unverified in your output — do NOT guess or invent method signatures.
 
  ---
 

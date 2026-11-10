@@ -829,6 +829,10 @@ when they need to read files, issues, or search code in the project repo.
 **No pre-flight authentication gate is required.** If a GitHub MCP call fails during a workflow,
 the worker agent should gracefully degrade — use local file reads, cached patterns, or inline
 instructions as fallback. Never block the entire pipeline on a single MCP call failure.
+The one exception is repository establishment at intake (see "GitHub intake"
+above): choosing and creating the project repository is a hard gate under
+ADR-0003. Every other GitHub use in every agent follows the degrade rule —
+no agent may STOP a phase over a GitHub MCP authentication failure.
 
 ## Canary mode (E2E harness self-test)
 

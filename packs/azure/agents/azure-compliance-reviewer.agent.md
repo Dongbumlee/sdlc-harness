@@ -32,11 +32,10 @@ and identity management**.
 0. **Verify GitHub MCP authentication (required):**
    - Perform a probe call: use `mcp_github_get_file_contents` to fetch `README.md` from
      `the project's Cosmos DB library repo (from copilot-instructions.md)`.
-   - If the call **fails or returns an auth error**, STOP and inform the user:
-     > GitHub MCP authentication is required to verify live SDK APIs from `the project's GitHub org` repos.
-     > Please sign in with an account that has org access, then retry.
-   - If the user cannot authenticate, fall back to patterns in `.github/reference-catalog.md`
-     and note in your review that live API verification was not possible.
+   - If the call **fails or returns an auth error**, WARN and proceed (Harness
+     policy — GitHub MCP is an enhancement, never a gate): fall back to patterns
+     in `.github/reference-catalog.md` and note in your review that live API
+     verification was not possible. Do NOT stop the workflow.
 
 1. **Fetch latest SDK APIs from GitHub MCP** (skip if GitHub MCP auth failed):
    - Use `mcp_github_get_file_contents` to fetch `README.md` from

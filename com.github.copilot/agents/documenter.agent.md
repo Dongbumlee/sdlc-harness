@@ -73,11 +73,10 @@ is.
 0. **Verify GitHub MCP authentication (required):**
    - Perform a probe call: use `mcp_github_get_file_contents` to fetch `README.md` from
      `the project's Cosmos DB library repo (from copilot-instructions.md)`.
-   - If the call **fails or returns an auth error**, STOP and inform the user:
-     > GitHub MCP authentication is required to access reference repos in `the project's GitHub org`.
-     > Please sign in with an account that has org access, then retry.
-   - If the user cannot authenticate, fall back to local templates in `.design/` only
-     and warn that live ADR examples from other application repos were not available.
+   - If the call **fails or returns an auth error**, WARN and proceed (Harness
+     policy — GitHub MCP is an enhancement, never a gate): fall back to local
+     templates in `.design/` only and warn that live ADR examples from other
+     application repos were not available. Do NOT stop the workflow.
 
 1. **Read the appropriate template from `.design/`:**
    - For ADRs: read `.design/ADR-TEMPLATE.md` and follow its structure exactly.
