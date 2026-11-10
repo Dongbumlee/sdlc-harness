@@ -313,6 +313,17 @@ is the Medium ceremony; the recorded grade scales it:
     check**, and cite in the row the artifacts the check verified on disk.
     Never record a phase Complete in advance, in expectation, or from a
     worker's claim alone.
+  - **A row is not Complete without its transition failure count.** The
+    phase's exit check includes the failure count defined in "Run review —
+    the pit stop" (Counting rule): the count is performed and its
+    `TRANSITION COUNT` line appended to `.SDLC/failure-ledger.md` in the
+    same step, and the phase's exit gate verifies that line exists for
+    the phase being closed. A phase that closes without a recorded count
+    is a ledger violation of the same standing as a phase recorded
+    Complete in advance. (Measured 2026-11-10: counting defined as a
+    prose duty was performed zero times in 37 delegations; the count is
+    therefore part of what "Complete" means, not an extra task beside
+    it.)
   - When the manifest skeleton is created (intake), every row starts
     `Not started`. Never pre-fill the expected end state of a run.
   - **Re-verify the ledger against disk at every transition:** before
@@ -393,7 +404,8 @@ is the Medium ceremony; the recorded grade scales it:
   since run start), stop and run a review before delegating further work:
 
   **The failure and rework record.** Trigger counts come from a file,
-  never from session memory: `.SDLC/failure-ledger.md`, append-only,
+  never from session memory: `.SDLC/failure-ledger.md`, append-only
+  (created by you at intake — GitHub intake, step 4),
   one line per event —
   `<date> | <phase> | <agent> | <kind: tool-failure | rework |
   claim-contradiction | no-progress> | <signature: step + error
@@ -407,19 +419,35 @@ is the Medium ceremony; the recorded grade scales it:
     routing you make (T2), every claim a disk check contradicts
     (T3), every no-progress interval (T4), and every failure a
     worker's result reports that the worker did not record.
-  **Counting rule.** At every phase transition, and before the
-  first delegation after any failure surfaces, count signature
-  lines in the failure ledger since the last review: T1 fires at a
-  signature's 3rd line, T2 at a reason class's 2nd rework line. On
-  resume (Step 0.5), read the failure ledger with the manifest —
-  counts survive interruption the way everything in this harness
-  survives it: as files. Session memory is NOT a counter:
-  delegation boundaries erase it. (Measured 2026-11-09: two failure
-  storms inside worker sessions — the same edit failing 5 times in
-  49 seconds, one error class 39 times — never reached the
-  coordinator's view and no review fired. The triggers were
-  correctly defined and structurally invisible; the record is what
-  makes them visible.)
+  **Counting rule.** The count is a named step of every phase
+  transition, performed by you before the phase's ledger row is set
+  to Complete — and the phase's exit gate verifies it happened (see
+  Ledger write discipline):
+  1. Collect, from every worker result received for the phase,
+     the failures and rework those results report; append any event
+     lines missing from the failure ledger (the workers' own appends
+     are the first record, your collection is the floor — a reported
+     failure that reaches you unrecorded is recorded by you here).
+  2. Count signature lines since the last review (or run start):
+     T1 fires at a signature's 3rd line, T2 at a reason class's 2nd
+     rework line. If a trigger fires, run the review (below) before
+     delegating the next phase.
+  3. Append the count itself as one line:
+     `<date> | TRANSITION COUNT | phase <n> closed | T1 max:
+     <signature>=<k> | T2 max: <reason class>=<k> | reviews so
+     far: <r>`. A transition with no failures still appends the
+     line, with counts 0 — the line is the evidence the count ran.
+  The same count runs before the first delegation after any failure
+  surfaces mid-phase. On resume (Step 0.5), read the failure ledger
+  with the manifest — counts survive interruption the way everything
+  in this harness survives it: as files. Session memory is NOT a
+  counter: delegation boundaries erase it. (Measured 2026-11-09: two
+  failure storms inside worker sessions — the same edit failing 5
+  times in 49 seconds, one error class 39 times — never reached the
+  coordinator's view and no review fired. Measured 2026-11-10: the
+  ledger itself was never created and the count, defined as a prose
+  duty beside the transition, was performed zero times — the count
+  is now part of the transition's definition, verified by its gate.)
   - **T1** — the same failure signature (same step, same error class)
     occurs a 3rd time.
   - **T2** — work is sent back for rework a 2nd time for the same
@@ -584,6 +612,29 @@ ls docs/adr/ADR-*.md            # a NEW ADR (or dated addendum) exists for THIS 
       from the Phase 2 design proposal — see the ADR generation rule below).
 - [ ] The Phase-State Ledger in `.SDLC/project-manifest.md` (if a manifest
       exists) records Phases 1–2 as Complete with these artifact paths.
+- [ ] `.SDLC/failure-ledger.md` holds a `TRANSITION COUNT` line for each
+      of Phases 1 and 2 (Counting rule, "Run review — the pit stop").
+- [ ] The manifest's **Task Grade section records the final grade** with
+      its basis — not the intake placeholder and not `ungraded`. The
+      Analyst fixes the final grade at Phase 2 ("Task grade —
+      proportionality record"); this gate is where that record is
+      verified. (Measured 2026-11-10: the section stayed at its
+      placeholder through Phase 3 while no gate looked at it.)
+- [ ] **Stack conformance:** the stack claims in the REQ and the ADR
+      (framework and runtime versions, test libraries, platform
+      services) match the stack profile for the project's
+      language/framework and its bundled template, where one exists —
+      precedence per "Profile conformance" (manifest patterns → stack
+      profile values and bundled templates → reference catalog →
+      language instruction files). A contradiction is an Important
+      finding at minimum: route it back to the Analyst to correct the
+      spec — **the profile wins** — unless the user approved the
+      deviation, in which case the approved value is recorded in the
+      manifest as the project's standard instead. (Measured
+      2026-11-10: a spec's invented ".NET 8" and Moq/FluentAssertions
+      requirements overrode the bundled .NET 10 template that excludes
+      both, unchecked by any gate, and propagated into the manifest
+      and the test project.)
 
 **If any check fails:** route back to the responsible worker (Analyst for spec
 content, Documenter for a missing file) and re-verify. Proceeding to
@@ -637,6 +688,13 @@ or explicitly waived by the user:
    `repository_decision_source` (asked at intake | explicit user
    instruction) — a mode recorded without a decision source is an intake
    violation; treat the intake as not done.
+   **In the same step, create `.SDLC/failure-ledger.md`** with its title
+   line and the event-line format from "Run review — the pit stop" as a
+   comment. The file exists from intake, created by you — its existence
+   never depends on a worker remembering to start it. (Measured
+   2026-11-10: when creation was left to the run, the ledger was never
+   created at all and a Phase 4 failure storm went uncounted — the
+   second consecutive live run the triggers could not see.)
 
 Local-only mode is a legitimate user decision, not a failure: record it,
 proceed without GitHub sync, and let the Release Manager offer repository
@@ -773,6 +831,8 @@ ls src/*/*.csproj src/*/pyproject.toml src/*/package.json 2>/dev/null   # a proj
 - [ ] The ledger's Phase 3 row is set to Complete only now, citing the
       Scaffolder result and the verified artifact paths (ledger write
       discipline).
+- [ ] `.SDLC/failure-ledger.md` holds a `TRANSITION COUNT` line for
+      Phase 3 (Counting rule, "Run review — the pit stop").
 
 **If any check fails:** route back to the Scaffolder with the specific gaps
 (fresh scaffold, or verify-and-repair mode when a partial tree exists) and
