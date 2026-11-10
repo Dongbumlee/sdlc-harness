@@ -54,6 +54,11 @@ For each item, check the code under review and mark PASS / FAIL / N/A:
 
 ## Step 3: Project-specific Azure security checks
 
+Apply this step ONLY when the project's recorded cloud is Azure. For AWS or
+GCP projects, apply the same principles through that cloud's mechanisms
+(workload identity instead of keys, the project's approved data libraries
+instead of raw SDK clients) using the installed cloud pack's guidance.
+
 These are project-specific patterns that agents wouldn't know without this skill:
 
 ### Identity & Authentication

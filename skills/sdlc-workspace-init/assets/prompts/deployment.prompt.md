@@ -16,6 +16,10 @@ How to use (VS Code):
 
 # Deployment & Infrastructure Prompt (SDLC Phase 3 + Phase 8)
 
+> **Scope:** this is the **Azure** variant of the deployment prompt
+> (Bicep/AVM/azd). For AWS or GCP targets, use the installed cloud pack's
+> deployment skill instead — no manual-mode prompt ships for them yet.
+
 You are creating or updating the Azure deployment infrastructure for a project.
 
 This prompt covers two SDLC phases:

@@ -1,7 +1,7 @@
 # API Documentation: [Service Name]
 
 > **Base URL:** `/api/v1`
-> **Authentication:** Azure AD Bearer Token
+> **Authentication:** Bearer token from the project's identity provider (e.g., Entra ID, Cognito, Google Identity Platform)
 > **Date:** YYYY-MM-DD
 
 ---
@@ -12,7 +12,7 @@
 
 ## Authentication
 
-All endpoints require a valid Azure AD Bearer token in the `Authorization` header:
+All endpoints require a valid Bearer token from the project's identity provider in the `Authorization` header:
 
 ```
 Authorization: Bearer <token>

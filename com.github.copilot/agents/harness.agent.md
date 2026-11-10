@@ -567,11 +567,13 @@ scaffold, and left a broken tree behind a ledger that claimed progress.
 
 1. **Delegate to Scaffolder:** Create the full project scaffold before any
    implementation begins:
-   > "Phase 3: Scaffolding. Create the project structure following the harness
-   > defaults: `src/<ProjectName>API/` (Python/FastAPI) and `src/<ProjectName>UI/`
-   > (TypeScript/React) for multi-project, or `src/` for single-project.
+   > "Phase 3: Scaffolding. Create the project structure from the resolved
+   > stack profile's bundled template (e.g., `src/<ProjectName>API/` for the
+   > API profile, `src/<ProjectName>UI/` for the web profile) — the profile,
+   > not this brief, decides the layout for the project's stack.
    > Include `.SDLC/project-manifest.md`, `.gitignore`, `README.md` stub,
-   > and per-project `pyproject.toml`/`package.json` with test directories.
+   > and per-project config files (`pyproject.toml`/`package.json`/`.csproj`)
+   > with the template's test locations.
    > Do NOT use `backend/`/`frontend/` at the root."
 
 2. After the Scaffolder completes, verify the output against this MANDATORY checklist.

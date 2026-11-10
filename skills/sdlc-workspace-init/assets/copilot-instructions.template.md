@@ -15,11 +15,12 @@
 
  - Domain: `{{BUSINESS_DOMAIN}}`
  - Tech stack: `{{TECH_STACK}}`
- - Cloud: Azure
- - Primary data stores and services:
-   - Azure Cosmos DB
-   - Azure Blob Storage
-   - Azure AI Search, Azure OpenAI, Azure AI Document Intelligence, Azure Key Vault, Azure App Configuration, Azure Container Apps
+ - Cloud: `{{CLOUD_PROVIDER}}`
+ - Primary data stores and services: `{{PRIMARY_SERVICES}}`
+   <!-- Filling agent: replace {{CLOUD_PROVIDER}} and {{PRIMARY_SERVICES}} with
+        THIS project's cloud and its actual services from the approved design
+        (e.g., "Azure — Cosmos DB, Blob Storage, Key Vault" or "AWS — DynamoDB,
+        S3, Secrets Manager"). Do not leave another project's service list here. -->
 
  When you generate code or docs, use examples and terminology consistent with this context.
 
@@ -27,8 +28,12 @@
 
  ## 2. Architecture & layering
 
- **Architecture style**: `Layered architecture (API → Application → Domain ← Infrastructure) with React SPA frontend`
- (e.g., layered / clean architecture, hexagonal, microservices, monolith with modular boundaries)
+ **Architecture style**: `{{ARCH_STYLE}}`
+ <!-- Filling agent: set {{ARCH_STYLE}} from the approved design (Phase 2) —
+      e.g., "Layered architecture (API → Application → Domain ← Infrastructure)
+      with React SPA frontend", hexagonal, microservices, or modular monolith.
+      The Layers list and rules below describe the layered example; adjust
+      them to the recorded style. -->
 
  **Layers (example – adjust to repo):**
 
@@ -70,6 +75,11 @@
    - Use existing authentication/authorization patterns; don’t invent new ones.
 
  ### 3.2 Azure resource usage
+
+ <!-- Filling agent: this section ships with the Azure variant filled in.
+      If the project's cloud (Section 1) is AWS or GCP, replace this whole
+      section with the installed cloud pack's equivalent resource-usage
+      rules — do not leave Azure rules in a non-Azure project. -->
 
  When generating or modifying code that interacts with Azure resources, follow these rules.
  The full details and examples are in `.github/reference-catalog.md`.

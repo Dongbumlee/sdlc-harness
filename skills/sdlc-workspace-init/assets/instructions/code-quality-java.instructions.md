@@ -154,7 +154,7 @@ Start with the package I specify and work through it completely before asking wh
 | Method      | camelCase           | `findActiveUsers()`         |
 | Field       | camelCase           | `retryCount`                |
 | Constant    | UPPER_SNAKE_CASE    | `MAX_RETRY_ATTEMPTS`        |
-| Package     | all lowercase       | `com.microsoft.claims.util` |
+| Package     | all lowercase       | `com.example.billing.util` |
 | Enum value  | UPPER_SNAKE_CASE    | `PENDING_APPROVAL`          |
 
 ### Lombok Usage

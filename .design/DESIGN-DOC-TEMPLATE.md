@@ -55,17 +55,19 @@ flowchart TD
 
 | Entity | Base Class | Key Type | Container |
 |---|---|---|---|
-| | `RootEntityBase["Name", str]` | `str` | |
+| | (base class from the project's data library, if it defines one) | `str` | |
 
 ### Relationships
 
-## Azure Services
+## Platform Services
+
+<!-- The services THIS design uses, on the project's own cloud — example
+     rows below are one Azure project's; replace them. -->
 
 | Service | Library | Configuration |
 |---|---|---|
-| Cosmos DB | `the approved Cosmos DB library` | |
-| Blob Storage | `the approved Storage library` | |
-| Container Apps | AVM module | |
+| (e.g., Cosmos DB) | (e.g., `the approved Cosmos DB library`) | |
+| (e.g., Blob Storage) | (e.g., `the approved Storage library`) | |
 
 ## Error Handling & Logging
 
@@ -76,22 +78,21 @@ flowchart TD
 - [ ] Authentication method defined
 - [ ] Authorization model specified
 - [ ] Data encryption at rest and in transit
-- [ ] Secrets management via Key Vault
+- [ ] Secrets management via the cloud's secret manager
 
 ## Testing Approach
 
 | Test Type | Scope | Framework |
 |---|---|---|
-| Unit | Service logic | pytest |
-| Integration | API endpoints | pytest + httpx |
+| Unit | Service logic | (the stack profile's test framework — e.g., pytest) |
+| Integration | API endpoints | (the stack profile's HTTP test tooling) |
 | E2E | Full flow | Playwright (if applicable) |
 
 ## Dependencies
 
 | Dependency | Version | Source |
 |---|---|---|
-| `the approved Cosmos DB library` | latest | Reference catalog |
-| `the approved Storage library` | latest | Reference catalog |
+| (the project's approved data libraries) | | Reference catalog |
 
 ## Open Questions
 

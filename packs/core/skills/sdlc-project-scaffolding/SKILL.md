@@ -205,10 +205,12 @@ dependencies = [
     "uvicorn>=0.34.3",
     "pydantic>=2.11.5",
     "pydantic-settings>=2.9.1",
-    "azure-identity>=1.23.0",
-    "the approved Cosmos DB library>=1.0.0",          # Add if Cosmos DB needed
-    "the approved Storage library>=1.0.0",           # Add if Blob/Queue needed
 ]
+# Add the project's approved data libraries here when the design needs them —
+# the real package names come from the reference catalog (e.g., the approved
+# document-store library, the approved object-storage library). Never paste
+# placeholder text into the dependency list: an entry like
+# "the approved Cosmos DB library>=1.0.0" is not a package and breaks installs.
 
 [dependency-groups]
 dev = [
