@@ -72,33 +72,33 @@ Every test file must follow this exact structure:
     namespace MyAppAPI.Tests.Models;
 
     /// <summary>
-    /// Tests for <see cref="ClaimProcessor"/> — validates claim processing logic.
+    /// Tests for <see cref="OrderProcessor"/> — validates order processing logic.
     /// </summary>
-    public class ClaimProcessorTests
+    public class OrderProcessorTests
     {
-        private readonly Mock<ILogger<ClaimProcessor>> _mockLogger;
-        private readonly Mock<IClaimRepository> _mockRepository;
-        private readonly ClaimProcessor _sut;
+        private readonly Mock<ILogger<OrderProcessor>> _mockLogger;
+        private readonly Mock<IOrderRepository> _mockRepository;
+        private readonly OrderProcessor _sut;
 
-        public ClaimProcessorTests()
+        public OrderProcessorTests()
         {
-            _mockLogger = new Mock<ILogger<ClaimProcessor>>();
-            _mockRepository = new Mock<IClaimRepository>();
-            _sut = new ClaimProcessor(_mockLogger.Object, _mockRepository.Object);
+            _mockLogger = new Mock<ILogger<OrderProcessor>>();
+            _mockRepository = new Mock<IOrderRepository>();
+            _sut = new OrderProcessor(_mockLogger.Object, _mockRepository.Object);
         }
 
         [Fact]
-        public void ProcessClaim_WithValidInput_ReturnsSuccess()
+        public void ProcessOrder_WithValidInput_ReturnsSuccess()
         {
             // Arrange
-            var claim = new Claim("CLM-001", ClaimType.Medical);
+            var order = new Order("ORD-001", OrderType.Standard);
 
             // Act
-            var result = _sut.ProcessClaim(claim);
+            var result = _sut.ProcessOrder(order);
 
             // Assert
             result.Should().NotBeNull();
-            result.Status.Should().Be(ClaimStatus.Processed);
+            result.Status.Should().Be(OrderStatus.Processed);
         }
     }
 
@@ -116,16 +116,16 @@ Rules:
 
 | Element          | Convention                                 | Example                                  |
 |------------------|--------------------------------------------|------------------------------------------|
-| Test file        | `<ClassName>Tests.cs`                      | `ClaimProcessorTests.cs`                 |
-| Test class       | `<ClassName>Tests`                         | `ClaimProcessorTests`                    |
-| Test method      | `MethodName_Scenario_ExpectedResult`       | `ProcessClaim_WithNullInput_ThrowsArgumentNull` |
-| Alternative      | `Should_ExpectedBehavior_When_Condition`   | `Should_ReturnSuccess_When_ClaimIsValid` |
-| Helper method    | PascalCase with descriptive name           | `CreateValidClaim`, `BuildTestOptions`   |
+| Test file        | `<ClassName>Tests.cs`                      | `OrderProcessorTests.cs`                 |
+| Test class       | `<ClassName>Tests`                         | `OrderProcessorTests`                    |
+| Test method      | `MethodName_Scenario_ExpectedResult`       | `ProcessOrder_WithNullInput_ThrowsArgumentNull` |
+| Alternative      | `Should_ExpectedBehavior_When_Condition`   | `Should_ReturnSuccess_When_OrderIsValid` |
+| Helper method    | PascalCase with descriptive name           | `CreateValidOrder`, `BuildTestOptions`   |
 | Fixture class    | `<Name>Fixture`                            | `DatabaseFixture`, `WebAppFixture`       |
 
 File naming must mirror the source type:
-  `src/<ProjectName>API/Models/Claim.cs` → `src/<ProjectName>API.Tests/ClaimTests.cs`
-  `src/<ProjectName>API/Services/ClaimService.cs` → `src/<ProjectName>API.Tests/ClaimServiceTests.cs`
+  `src/<ProjectName>API/Models/Order.cs` → `src/<ProjectName>API.Tests/OrderTests.cs`
+  `src/<ProjectName>API/Services/OrderService.cs` → `src/<ProjectName>API.Tests/OrderServiceTests.cs`
 
 Test attribute usage:
 - `[Fact]` — single test case with no parameters.
@@ -133,12 +133,12 @@ Test attribute usage:
   ```csharp
   [Theory]
   [InlineData("", false)]
-  [InlineData("CLM-001", true)]
+  [InlineData("ORD-001", true)]
   [InlineData(null, false)]
-  public void IsValid_WithVariousInputs_ReturnsExpected(string? claimId, bool expected)
+  public void IsValid_WithVariousInputs_ReturnsExpected(string? orderId, bool expected)
   {
-      var claim = new Claim(claimId);
-      claim.IsValid.Should().Be(expected);
+      var order = new Order(orderId);
+      order.IsValid.Should().Be(expected);
   }
   ```
 
@@ -174,21 +174,21 @@ LOW PRIORITY (skip or test only the interface):
 Use these patterns in order of preference:
 
 a) Moq (primary mocking framework):
-       var mockRepo = new Mock<IClaimRepository>();
+       var mockRepo = new Mock<IOrderRepository>();
        mockRepo
            .Setup(r => r.GetByIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-           .ReturnsAsync(new Claim("CLM-001"));
+           .ReturnsAsync(new Order("ORD-001"));
 
        // Verify interactions
-       mockRepo.Verify(r => r.SaveAsync(It.IsAny<Claim>(), default), Times.Once);
+       mockRepo.Verify(r => r.SaveAsync(It.IsAny<Order>(), default), Times.Once);
 
 b) NSubstitute (alternative, if project uses it):
-       var repo = Substitute.For<IClaimRepository>();
+       var repo = Substitute.For<IOrderRepository>();
        repo.GetByIdAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
-           .Returns(new Claim("CLM-001"));
+           .Returns(new Order("ORD-001"));
 
        // Verify interactions
-       await repo.Received(1).SaveAsync(Arg.Any<Claim>(), default);
+       await repo.Received(1).SaveAsync(Arg.Any<Order>(), default);
 
 c) Hand-rolled fakes (for complex service stubs):
        private class FakeMessageQueue : IMessageQueue
@@ -212,31 +212,31 @@ d) WebApplicationFactory for ASP.NET Core integration tests:
                {
                    builder.ConfigureTestServices(services =>
                    {
-                       services.AddSingleton<IClaimRepository>(new FakeClaimRepository());
+                       services.AddSingleton<IOrderRepository>(new FakeOrderRepository());
                    });
                }).CreateClient();
            }
 
            [Fact]
-           public async Task GetClaim_WithValidId_ReturnsOk()
+           public async Task GetOrder_WithValidId_ReturnsOk()
            {
-               var response = await _client.GetAsync("/api/claims/CLM-001");
+               var response = await _client.GetAsync("/api/orders/ORD-001");
                response.StatusCode.Should().Be(HttpStatusCode.OK);
            }
        }
 
 e) Async test methods — return `Task` directly:
        [Fact]
-       public async Task ProcessAsync_WithValidClaim_ReturnsProcessed()
+       public async Task ProcessAsync_WithValidOrder_ReturnsProcessed()
        {
            // Arrange
-           var claim = new Claim("CLM-001");
+           var order = new Order("ORD-001");
 
            // Act
-           var result = await _sut.ProcessAsync(claim);
+           var result = await _sut.ProcessAsync(order);
 
            // Assert
-           result.Status.Should().Be(ClaimStatus.Processed);
+           result.Status.Should().Be(OrderStatus.Processed);
        }
 
 Prefer Moq unless the project already standardizes on NSubstitute.
@@ -260,9 +260,9 @@ Prefer FluentAssertions for readable, expressive assertions:
     items.Should().AllSatisfy(x => x.IsValid.Should().BeTrue());
 
     // Strings
-    message.Should().Contain("claim");
+    message.Should().Contain("order");
     message.Should().StartWith("Error:");
-    message.Should().MatchRegex(@"CLM-\d+");
+    message.Should().MatchRegex(@"ORD-\d+");
 
     // Booleans
     result.IsValid.Should().BeTrue();
@@ -273,19 +273,19 @@ Prefer FluentAssertions for readable, expressive assertions:
     result.Should().BeAssignableTo<IResult>();
 
 For expected exceptions (synchronous):
-    var act = () => _sut.ProcessClaim(null!);
+    var act = () => _sut.ProcessOrder(null!);
     act.Should().Throw<ArgumentNullException>()
-       .WithParameterName("claim");
+       .WithParameterName("order");
 
 For expected exceptions (asynchronous):
     var act = async () => await _sut.ProcessAsync(null!);
     await act.Should().ThrowAsync<ArgumentNullException>()
-       .WithParameterName("claim");
+       .WithParameterName("order");
 
 xUnit assertions as fallback (when FluentAssertions is not available):
     Assert.Equal(expected, result);
     Assert.NotNull(result);
-    Assert.Throws<ArgumentNullException>(() => _sut.ProcessClaim(null!));
+    Assert.Throws<ArgumentNullException>(() => _sut.ProcessOrder(null!));
     await Assert.ThrowsAsync<ArgumentNullException>(() => _sut.ProcessAsync(null!));
 
 ═══════════════════════════════════════════════════════════════════════════════
@@ -391,11 +391,11 @@ Use `IClassFixture<T>` for expensive setup shared across tests in one class:
         }
     }
 
-    public class ClaimRepositoryTests : IClassFixture<DatabaseFixture>
+    public class OrderRepositoryTests : IClassFixture<DatabaseFixture>
     {
         private readonly DatabaseFixture _fixture;
 
-        public ClaimRepositoryTests(DatabaseFixture fixture)
+        public OrderRepositoryTests(DatabaseFixture fixture)
         {
             _fixture = fixture;
         }
@@ -406,7 +406,7 @@ Use `ICollectionFixture<T>` for setup shared across multiple test classes:
     public class DatabaseCollection : ICollectionFixture<DatabaseFixture> { }
 
     [Collection("Database")]
-    public class ClaimRepositoryTests { ... }
+    public class OrderRepositoryTests { ... }
 
     [Collection("Database")]
     public class PolicyRepositoryTests { ... }
@@ -421,29 +421,29 @@ Use `ICollectionFixture<T>` for setup shared across multiple test classes:
     public void IsPositive_WithValue_ReturnsExpected(int value, bool expected) { ... }
 
 `[MemberData]` for complex objects or shared test data:
-    public static IEnumerable<object[]> InvalidClaims => new List<object[]>
+    public static IEnumerable<object[]> InvalidOrders => new List<object[]>
     {
-        new object[] { new Claim("", ClaimType.Medical), "ClaimId is required" },
-        new object[] { new Claim("CLM-001", (ClaimType)999), "Invalid ClaimType" },
+        new object[] { new Order("", OrderType.Standard), "OrderId is required" },
+        new object[] { new Order("ORD-001", (OrderType)999), "Invalid OrderType" },
     };
 
     [Theory]
-    [MemberData(nameof(InvalidClaims))]
-    public void Validate_WithInvalidClaim_ReturnsError(Claim claim, string expectedError) { ... }
+    [MemberData(nameof(InvalidOrders))]
+    public void Validate_WithInvalidOrder_ReturnsError(Order order, string expectedError) { ... }
 
 `[ClassData]` for reusable test data generators:
-    public class InvalidClaimData : TheoryData<Claim, string>
+    public class InvalidOrderData : TheoryData<Order, string>
     {
-        public InvalidClaimData()
+        public InvalidOrderData()
         {
-            Add(new Claim("", ClaimType.Medical), "ClaimId is required");
-            Add(new Claim("CLM-001", (ClaimType)999), "Invalid ClaimType");
+            Add(new Order("", OrderType.Standard), "OrderId is required");
+            Add(new Order("ORD-001", (OrderType)999), "Invalid OrderType");
         }
     }
 
     [Theory]
-    [ClassData(typeof(InvalidClaimData))]
-    public void Validate_WithInvalidClaim_ReturnsError(Claim claim, string expectedError) { ... }
+    [ClassData(typeof(InvalidOrderData))]
+    public void Validate_WithInvalidOrder_ReturnsError(Order order, string expectedError) { ... }
 
 ### Async Setup and Teardown
 

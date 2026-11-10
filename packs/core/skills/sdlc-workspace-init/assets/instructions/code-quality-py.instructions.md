@@ -57,7 +57,7 @@ You are performing a systematic code-quality pass on a Python codebase. Work thr
 
 ## 5. Comment Cleanup — REMOVE These
 - **Redundant inline comments** that just restate the code:
-  `# Create Claim_Process entry in Cosmos DB` above `new_claim_process = Claim_Process(...)`
+  `# Create Order_Process entry in Cosmos DB` above `new_order_process = Order_Process(...)`
 - **Banner comments** / section dividers:
   `############################################################`
   `## Initialize AgentFrameworkHelper and add it to the app  ##`
@@ -82,7 +82,7 @@ You are performing a systematic code-quality pass on a Python codebase. Work thr
 ## 8. Remove Dead Code
 - Delete unused imports.
 - Delete `pass` in `else` blocks that only existed to hold a now-deleted comment.
-- Delete redundant assignments like `claim_id = claim_id`.
+- Delete redundant assignments like `order_id = order_id`.
 - Delete duplicate imports (e.g., `import os` at module level AND inside a function).
 
 ## 9. Compile-Check

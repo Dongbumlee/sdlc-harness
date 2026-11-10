@@ -29,7 +29,7 @@ You are performing a systematic code-quality pass on a Go codebase. Work through
 
 - Every exported type must have a GoDoc comment directly above its declaration:
   ```go
-  // Server represents an HTTP server that handles claim processing requests.
+  // Server represents an HTTP server that handles order processing requests.
   //
   // It manages connection pooling, request routing, and graceful shutdown.
   // The zero value is not usable; create instances with NewServer.
@@ -147,8 +147,8 @@ You are performing a systematic code-quality pass on a Go codebase. Work through
 
 ## 12. Naming Conventions
 
-- **Exported** identifiers: `PascalCase` — `ProcessDocument`, `ClaimStatus`
-- **Unexported** identifiers: `camelCase` — `processDocument`, `claimStatus`
+- **Exported** identifiers: `PascalCase` — `ProcessDocument`, `OrderStatus`
+- **Unexported** identifiers: `camelCase` — `processDocument`, `orderStatus`
 - **No underscores** in Go names (except in test function names like `Test_helper`).
 - **Acronyms** are all caps: `HTTP`, `URL`, `ID`, `API`, `JSON`, `SQL`.
   - `httpServer` (unexported), `HTTPServer` (exported), `userID` (unexported), `UserID` (exported).

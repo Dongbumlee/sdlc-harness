@@ -19,8 +19,8 @@ You are performing a systematic code-quality pass on a C# codebase. Work through
 ## 2. Namespace Organization
 - Prefer file-scoped namespaces (`namespace MyApp.Services;`) over block-scoped namespaces.
 - Namespace must match the folder path relative to the project root
-  (e.g., `src/MyApp/Services/ClaimProcessor.cs` → `namespace MyApp.Services;`).
-- One primary type per file. The file name must match the type name (e.g., `ClaimProcessor.cs` → `class ClaimProcessor`).
+  (e.g., `src/MyApp/Services/OrderProcessor.cs` → `namespace MyApp.Services;`).
+- One primary type per file. The file name must match the type name (e.g., `OrderProcessor.cs` → `class OrderProcessor`).
 - Organize `using` directives at the top of the file, outside the namespace:
   ```csharp
   using System;
@@ -45,8 +45,8 @@ You are performing a systematic code-quality pass on a C# codebase. Work through
   /// </remarks>
   /// <example>
   /// <code>
-  /// var processor = new ClaimProcessor(logger, repository);
-  /// await processor.ProcessAsync(claim);
+  /// var processor = new OrderProcessor(logger, repository);
+  /// await processor.ProcessAsync(order);
   /// </code>
   /// </example>
   ```
@@ -59,18 +59,18 @@ You are performing a systematic code-quality pass on a C# codebase. Work through
   /// <summary>
   /// One-line summary of what the method does.
   /// </summary>
-  /// <param name="claimId">The unique identifier for the claim to process.</param>
+  /// <param name="orderId">The unique identifier for the order to process.</param>
   /// <param name="options">Processing options controlling validation behavior.</param>
-  /// <returns>The processed claim result with validation status.</returns>
-  /// <exception cref="ArgumentNullException">When <paramref name="claimId"/> is null.</exception>
-  /// <exception cref="InvalidOperationException">When the claim is already processed.</exception>
+  /// <returns>The processed order result with validation status.</returns>
+  /// <exception cref="ArgumentNullException">When <paramref name="orderId"/> is null.</exception>
+  /// <exception cref="InvalidOperationException">When the order is already processed.</exception>
   ```
 - Simple one-line methods (getters, delegates) get a single `<summary>` tag.
 - Include `<remarks>` with numbered steps only for complex multi-step methods.
 
 ## 5. Comment Cleanup — REMOVE These
 - **Redundant inline comments** that just restate the code:
-  `// Create new claim process entry` above `var claimProcess = new ClaimProcess(...);`
+  `// Create new order process entry` above `var orderProcess = new OrderProcess(...);`
 - **Banner comments** / section dividers:
   `////////////////////////////////////////////////////////////`
   `// Initialize AgentFrameworkHelper and add it to the app  //`
@@ -99,7 +99,7 @@ You are performing a systematic code-quality pass on a C# codebase. Work through
 - Delete unreachable code after `return`, `throw`, or unconditional `break`.
 - Delete empty `catch` blocks that swallow exceptions without logging or rethrowing.
 - Delete members marked with `[Obsolete]` that have no remaining callers.
-- Delete redundant assignments like `claimId = claimId;`.
+- Delete redundant assignments like `orderId = orderId;`.
 - Delete `#region` / `#endregion` wrappers (they hide complexity; remove the markers, keep the code).
 
 ## 9. Compile-Check
@@ -121,7 +121,7 @@ You are performing a systematic code-quality pass on a C# codebase. Work through
 - Prefer `required` properties or primary constructors to enforce initialization.
 
 ### Async/Await
-- Suffix async methods with `Async` (e.g., `ProcessClaimAsync`).
+- Suffix async methods with `Async` (e.g., `ProcessOrderAsync`).
 - Use `ConfigureAwait(false)` in library code (non-UI, non-controller methods).
 - Never use `async void` except for event handlers.
 - Prefer `ValueTask<T>` over `Task<T>` when the result is frequently synchronous.
@@ -136,13 +136,13 @@ You are performing a systematic code-quality pass on a C# codebase. Work through
 ### Naming Conventions
 | Element              | Convention                          | Example                        |
 |----------------------|-------------------------------------|--------------------------------|
-| Public member        | PascalCase                          | `ProcessClaim`, `ClaimId`      |
+| Public member        | PascalCase                          | `ProcessOrder`, `OrderId`      |
 | Private field        | `_camelCase`                        | `_logger`, `_repository`       |
-| Local variable       | camelCase                           | `claimResult`, `isValid`       |
+| Local variable       | camelCase                           | `orderResult`, `isValid`       |
 | Constant             | PascalCase                          | `MaxRetryCount`                |
-| Interface            | `I` prefix + PascalCase             | `IClaimRepository`             |
+| Interface            | `I` prefix + PascalCase             | `IOrderRepository`             |
 | Generic type param   | `T` prefix                          | `TEntity`, `TResult`           |
-| Async method         | Suffix with `Async`                 | `GetClaimsAsync`               |
+| Async method         | Suffix with `Async`                 | `GetOrdersAsync`               |
 | Boolean property     | `Is`, `Has`, `Can`, `Should` prefix | `IsValid`, `HasPermission`     |
 
 ## Working Process

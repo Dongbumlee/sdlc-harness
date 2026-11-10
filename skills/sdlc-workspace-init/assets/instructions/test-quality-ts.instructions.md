@@ -18,16 +18,16 @@ Tests are co-located with the source files they test:
     ProjectRoot/
     ├── src/
     │   ├── services/
-    │   │   ├── claim-service.ts
-    │   │   └── claim-service.test.ts      ← co-located test
+    │   │   ├── order-service.ts
+    │   │   └── order-service.test.ts      ← co-located test
     │   ├── utils/
     │   │   ├── format-date.ts
     │   │   └── format-date.test.ts
     │   ├── types/
-    │   │   └── claim-types.ts             ← pure types — no test needed
+    │   │   └── order-types.ts             ← pure types — no test needed
     │   └── hooks/
-    │       ├── useClaimData.ts
-    │       └── useClaimData.test.ts
+    │       ├── useOrderData.ts
+    │       └── useOrderData.test.ts
     ├── vitest.config.ts                   ← Vitest configuration
     ├── tsconfig.json
     └── package.json
@@ -98,16 +98,16 @@ Rules:
 
 | Element               | Convention                   | Example                              |
 |-----------------------|------------------------------|--------------------------------------|
-| Test file             | `<source>.test.ts`           | `claim-service.test.ts`              |
-| Top `describe`        | Module or class name         | `describe('ClaimService', ...)`      |
+| Test file             | `<source>.test.ts`           | `order-service.test.ts`              |
+| Top `describe`        | Module or class name         | `describe('OrderService', ...)`      |
 | Nested `describe`     | Method or function name      | `describe('processAsync', ...)`      |
 | `it` blocks           | `should` + expected behavior | `it('should throw on invalid ID')`   |
-| Helper function       | `_` prefixed or `create*`    | `_makeClaimData`, `createMockRepo`   |
+| Helper function       | `_` prefixed or `create*`    | `_makeOrderData`, `createMockRepo`   |
 | Mock variable         | `mock` prefixed              | `mockRepository`, `mockLogger`       |
-| Fixture / factory     | `create` prefixed            | `createValidClaim()`                 |
+| Fixture / factory     | `create` prefixed            | `createValidOrder()`                 |
 
 File naming must mirror the source module:
-  src/services/claim-service.ts  →  src/services/claim-service.test.ts
+  src/services/order-service.ts  →  src/services/order-service.test.ts
   src/utils/format-date.ts       →  src/utils/format-date.test.ts
 
 ═══════════════════════════════════════════════════════════════════════════════
@@ -151,9 +151,9 @@ b) vi.spyOn() — for observing real method calls:
        spy.mockResolvedValueOnce(expected);
 
 c) vi.mock() — for module-level mocking:
-       vi.mock('../repositories/claim-repository', () => ({
-         ClaimRepository: vi.fn().mockImplementation(() => ({
-           findById: vi.fn().mockResolvedValue(mockClaim),
+       vi.mock('../repositories/order-repository', () => ({
+         OrderRepository: vi.fn().mockImplementation(() => ({
+           findById: vi.fn().mockResolvedValue(mockOrder),
          })),
        }));
 
@@ -166,10 +166,10 @@ d) vi.stubEnv() — for environment variables:
        });
 
 e) Hand-rolled fakes — for complex service stubs:
-       class FakeClaimRepository implements ClaimRepository {
-         private claims: Map<string, Claim> = new Map();
-         async findById(id: string): Promise<Claim | null> {
-           return this.claims.get(id) ?? null;
+       class FakeOrderRepository implements OrderRepository {
+         private orders: Map<string, Order> = new Map();
+         async findById(id: string): Promise<Order | null> {
+           return this.orders.get(id) ?? null;
          }
        }
 
@@ -194,7 +194,7 @@ Use Vitest's `expect` API. Examples:
     expect(items).toHaveLength(3);
     expect(result).toBeNull();
     expect(result).toBeDefined();
-    expect(result).toBeInstanceOf(ClaimError);
+    expect(result).toBeInstanceOf(OrderError);
     expect(str).toContain('keyword');
     expect(str).toMatch(/pattern/);
 
@@ -216,14 +216,14 @@ For mock verification:
 ═══════════════════════════════════════════════════════════════════════════════
 
 - Use `async/await` directly in `it` blocks (Vitest supports this natively):
-      it('should fetch claim data', async () => {
-        const result = await service.getClaimAsync('CLM-001');
-        expect(result).toEqual(expectedClaim);
+      it('should fetch order data', async () => {
+        const result = await service.getOrderAsync('ORD-001');
+        expect(result).toEqual(expectedOrder);
       });
 
 - For testing rejected promises:
       it('should reject with NotFoundError', async () => {
-        await expect(service.getClaimAsync('invalid'))
+        await expect(service.getOrderAsync('invalid'))
           .rejects.toThrow(NotFoundError);
       });
 

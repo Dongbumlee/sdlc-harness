@@ -188,7 +188,7 @@ c) `httptest.Server` (for HTTP client testing):
        client := NewClient(srv.URL)
 
 d) `httptest.NewRecorder` (for HTTP handler testing):
-       req := httptest.NewRequest(http.MethodGet, "/api/v1/claims", nil)
+       req := httptest.NewRequest(http.MethodGet, "/api/v1/orders", nil)
        rec := httptest.NewRecorder()
        handler.ServeHTTP(rec, req)
        assert.Equal(t, http.StatusOK, rec.Code)

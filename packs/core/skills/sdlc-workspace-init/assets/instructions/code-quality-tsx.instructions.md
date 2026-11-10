@@ -28,16 +28,16 @@ You are performing a systematic code-quality pass on a React TypeScript codebase
 
 | Element                | Convention             | Example                              |
 |------------------------|------------------------|--------------------------------------|
-| Component file         | PascalCase             | `ClaimSummary.tsx`                   |
-| Page / route file      | PascalCase             | `ClaimDetailPage.tsx`                |
+| Component file         | PascalCase             | `OrderSummary.tsx`                   |
+| Page / route file      | PascalCase             | `OrderDetailPage.tsx`                |
 | Layout file            | PascalCase             | `DashboardLayout.tsx`                |
-| Hook file              | camelCase, `use` prefix| `useClaimData.ts`                    |
+| Hook file              | camelCase, `use` prefix| `useOrderData.ts`                    |
 | Context file           | PascalCase + Context   | `AuthContext.tsx`                     |
 | Utility/helper file    | kebab-case `.ts`       | `format-date.ts`                     |
-| Type definition file   | kebab-case `.ts`       | `claim-types.ts`                     |
-| Test file              | PascalCase + `.test`   | `ClaimSummary.test.tsx`              |
-| Story file             | PascalCase + `.stories`| `ClaimSummary.stories.tsx`           |
-| CSS Module             | PascalCase + `.module` | `ClaimSummary.module.css`            |
+| Type definition file   | kebab-case `.ts`       | `order-types.ts`                     |
+| Test file              | PascalCase + `.test`   | `OrderSummary.test.tsx`              |
+| Story file             | PascalCase + `.stories`| `OrderSummary.stories.tsx`           |
+| CSS Module             | PascalCase + `.module` | `OrderSummary.module.css`            |
 | Barrel file            | `index.ts`             | `index.ts` (re-exports only)         |
 
 Rules:
@@ -49,10 +49,10 @@ Rules:
 - Use **function declarations** for components (not arrow function assignments):
   ```tsx
   // ✅ Preferred
-  export function ClaimSummary({ claimId }: ClaimSummaryProps) { ... }
+  export function OrderSummary({ orderId }: OrderSummaryProps) { ... }
 
   // ❌ Avoid
-  export const ClaimSummary: React.FC<ClaimSummaryProps> = ({ claimId }) => { ... };
+  export const OrderSummary: React.FC<OrderSummaryProps> = ({ orderId }) => { ... };
   ```
 - Do NOT use `React.FC` or `React.FunctionComponent` — they add implicit `children` typing and limit generics.
 - No class components unless wrapping a third-party library that requires it.
@@ -61,12 +61,12 @@ Rules:
 
 - Define props as a named `interface` (not inline or `type` alias) co-located above the component:
   ```tsx
-  /** Props for {@link ClaimSummary}. */
-  interface ClaimSummaryProps {
-    /** The unique claim identifier. */
-    claimId: string;
-    /** Optional callback when the claim is selected. */
-    onSelect?: (claimId: string) => void;
+  /** Props for {@link OrderSummary}. */
+  interface OrderSummaryProps {
+    /** The unique order identifier. */
+    orderId: string;
+    /** Optional callback when the order is selected. */
+    onSelect?: (orderId: string) => void;
   }
   ```
 - Use `readonly` for props that should not be mutated.
@@ -86,11 +86,11 @@ Rules:
 - Always provide a JSDoc comment describing what state/behavior the hook encapsulates.
 - Return a typed object (not a tuple) when returning more than two values:
   ```tsx
-  /** Manages claim data fetching and pagination state. */
-  export function useClaimData(claimId: string): UseClaimDataResult { ... }
+  /** Manages order data fetching and pagination state. */
+  export function useOrderData(orderId: string): UseOrderDataResult { ... }
 
-  interface UseClaimDataResult {
-    data: Claim | null;
+  interface UseOrderDataResult {
+    data: Order | null;
     isLoading: boolean;
     error: Error | null;
     refetch: () => Promise<void>;
@@ -100,13 +100,13 @@ Rules:
 ### Built-in Hooks
 - `useState`: Always provide an explicit type when the initial value is `null` or ambiguous:
   ```tsx
-  const [claim, setClaim] = useState<Claim | null>(null);
+  const [order, setOrder] = useState<Order | null>(null);
   ```
 - `useEffect`:
   - Every `useEffect` must have a comment explaining **what** it does and **why**:
     ```tsx
-    // Fetch claim details when claimId changes.
-    useEffect(() => { ... }, [claimId]);
+    // Fetch order details when orderId changes.
+    useEffect(() => { ... }, [orderId]);
     ```
   - Clean up side effects (subscriptions, timers, abort controllers).
   - Avoid missing or unnecessary dependencies — the linter must pass without `eslint-disable` overrides.
@@ -121,31 +121,31 @@ Rules:
 - **Derived state**: Compute from existing state/props during render. Do NOT store in `useState` if it can be derived:
   ```tsx
   // ✅ Derived
-  const isOverdue = claim.dueDate < new Date();
+  const isOverdue = order.dueDate < new Date();
 
   // ❌ Duplicated state
   const [isOverdue, setIsOverdue] = useState(false);
-  useEffect(() => setIsOverdue(claim.dueDate < new Date()), [claim.dueDate]);
+  useEffect(() => setIsOverdue(order.dueDate < new Date()), [order.dueDate]);
   ```
 
 ## 7. Side-Effect Rules
 
-- **Data fetching**: Extract into a custom hook (`useClaimData`, `useUserProfile`).
+- **Data fetching**: Extract into a custom hook (`useOrderData`, `useUserProfile`).
 - **Event listeners**: Add in `useEffect`, remove in cleanup function.
 - **Timers**: Create with `setTimeout`/`setInterval` in `useEffect`, clear in cleanup.
 - **Abort controllers**: Use `AbortController` for fetch requests; abort in cleanup:
   ```tsx
   useEffect(() => {
     const controller = new AbortController();
-    fetchClaim(claimId, { signal: controller.signal }).then(setClaim);
+    fetchOrder(orderId, { signal: controller.signal }).then(setOrder);
     return () => controller.abort();
-  }, [claimId]);
+  }, [orderId]);
   ```
 - Do NOT perform side effects directly in the render body or in event handlers that should be `useEffect`.
 
 ## 8. JSX Patterns
 
-- Self-close tags with no children: `<ClaimBadge status={status} />`.
+- Self-close tags with no children: `<OrderBadge status={status} />`.
 - Use fragments (`<>...</>`) instead of unnecessary wrapper `<div>`.
 - Extract complex conditional rendering into named sub-components or helper functions.
 - Avoid inline object/array literals in JSX props (causes unnecessary re-renders):
@@ -162,7 +162,7 @@ Rules:
 ## 9. Comment Cleanup — React-Specific
 
 ### REMOVE These
-- Comments that describe what JSX renders: `{/* Render the claim list */}`.
+- Comments that describe what JSX renders: `{/* Render the order list */}`.
 - Commented-out JSX blocks.
 - `// eslint-disable-next-line` without an explanation comment.
 - `@ts-ignore` without justification.
@@ -186,18 +186,18 @@ Rules:
 - Every exported component must have a JSDoc comment:
   ```tsx
   /**
-   * Displays a summary card for a single claim.
+   * Displays a summary card for a single order.
    *
    * @remarks
-   * Used on the dashboard and in search results. Receives claim data
+   * Used on the dashboard and in search results. Receives order data
    * from the parent list component.
    *
    * @example
    * ```tsx
-   * <ClaimSummary claimId="CLM-001" onSelect={handleSelect} />
+   * <OrderSummary orderId="ORD-001" onSelect={handleSelect} />
    * ```
    */
-  export function ClaimSummary({ claimId, onSelect }: ClaimSummaryProps) { ... }
+  export function OrderSummary({ orderId, onSelect }: OrderSummaryProps) { ... }
   ```
 
 ## 12. Import Organization (extends TS rules)
@@ -209,7 +209,7 @@ Rules:
   4. Internal hooks
   5. Internal types / constants / utilities
   6. Styles / CSS modules
-- Use `type` imports where possible: `import type { ClaimSummaryProps } from './types';`
+- Use `type` imports where possible: `import type { OrderSummaryProps } from './types';`
 
 ## 13. Remove Dead Code (extends TS rules)
 
