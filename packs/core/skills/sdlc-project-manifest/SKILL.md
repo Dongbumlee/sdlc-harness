@@ -120,6 +120,14 @@ python defaults.
 - Test files: `test_<module_name>.py` mirroring source structure
 - API routes: `/api/v1/<resource>`
 
+## Task Grade
+
+- Provisional grade (intake, size axis only): <Small | Medium | Large | ungraded> — basis: <counts per signal, or "not countable from the task statement">
+- Size signals (verified by the Analyst from the approved spec): functional units <n>, components <n>, external integrations <n>
+- Complexity signals (fixed by the Analyst at design): <the strong signals found, citing requirement lines; or "none">
+- Sensitivity correction: <+1 — personal/payment/health data | none>
+- **Final grade: <Small | Medium | Large>** — basis: <one line>, set by <Harness at intake | Analyst at design | user override>, <date>
+
 ## Phase-State Ledger
 
 **Run basis** — Task: <one line naming the task> (user instruction, <date>).
@@ -137,6 +145,12 @@ Approved artifacts:
 | 7 RAI | Not started | — | — |
 | 8-9 Release | Not started | — | — |
 ```
+
+**The Task Grade section** is created by the Harness in the intake
+skeleton (provisional, size axis only), verified by the Analyst against
+the approved spec (Phase 1B counts; Phase 2 complexity and the final
+grade), and preserved by the Scaffolder when it generates the full
+manifest. Reviewer counts and round caps read the final grade.
 
 **The Phase-State Ledger** is maintained by the **Harness** (via the
 Documenter) at every phase transition: Status (`Not started` / `In progress` /

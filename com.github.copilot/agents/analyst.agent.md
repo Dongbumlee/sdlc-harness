@@ -52,6 +52,23 @@ Check the delegation context for these signals:
 If the context is ambiguous (e.g., "analyze this feature"), default to **Discovery mode**.
 It is always safer to understand first than to design prematurely.
 
+## Task grade duties
+
+The manifest's **Task Grade** section drives how much ceremony this
+task gets; two of its entries are yours:
+
+- **Phase 1B:** from the approved spec, count the size signals
+  (functional units = the requirements / endpoints / screens the spec
+  defines; components; external integrations) and record them,
+  replacing the intake estimate. If the counts move the size grade,
+  update the provisional grade and say so in your report.
+- **Phase 2:** before the design work, fix the grade. Evaluate the
+  complexity signals against the approved spec (the criteria are in
+  the Harness's "Task grade" section), apply the sensitivity
+  correction, and record the **final grade with its basis** — the
+  requirement lines behind each strong signal — in the manifest.
+  Name the final grade in your design summary to the Harness.
+
 ---
 
 ## Phase 1A: Collaborative Discovery
