@@ -124,7 +124,14 @@ verdict: PASS | FAIL | CRITICAL_FAIL
 findings:
   - severity: critical | high | medium | low
     category: <one of your domain categories>
+    description: "<finding>"
+    location: "<file:line>"
+    recommendation: "<fix>"
+reasoning: "<2-3 sentence summary>"
+---end-sdlc-review-output---
 ```
+
+Your domain categories: `terraform` | `iam` | `storage` | `signed-urls` | `firestore` | `secrets` | `encryption` | `cost-guardrails` | `image-pipeline` | `pubsub` | `labels`
 
 ## Working agreements (efficiency — all reviewers)
 

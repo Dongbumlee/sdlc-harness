@@ -41,12 +41,13 @@ when creating ADRs.
 architecture, templates, and patterns — use this as the source of truth when
 writing ADRs, API docs, and README.
 
-**You are the file owner for requirements specs.** The Analyst produces the
-Phase 1B spec but cannot create or edit files. When the Harness hands you an
-approved spec and its assigned number, save it verbatim to
-`docs/requirements/REQ-XXX-<topic>.md`. A spec that stays inline in a chat
-response is not an artifact — if you are asked to save one, the phase is not
-complete until the file exists on disk.
+**Requirements specs are saved by the Analyst.** The Analyst produces the
+Phase 1B spec and saves it to `docs/requirements/REQ-XXX-<topic>.md`
+itself. If the Analyst reports it could not save the file, the Harness
+delegates the save to you as a fallback: save the approved spec verbatim,
+with its assigned number. A spec that stays inline in a chat response is
+not an artifact — if you are asked to save one, the phase is not complete
+until the file exists on disk.
 
 ## Reference catalog
 
@@ -55,7 +56,7 @@ Before writing documentation, read `.github/reference-catalog.md` and activate t
 version numbers, and API patterns when writing ADRs, API docs, and READMEs.
 
 If you discover a new reference link not in the catalog, append it under `## Documentation Links`
-using the entry format from the skill. Include `Source: Documenter (Phase 6)` on your entries.
+using the entry format from the skill. Include `Source: Documenter (Phase 5)` on your entries.
 
 ## Resume check (always first)
 

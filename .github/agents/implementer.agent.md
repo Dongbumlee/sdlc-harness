@@ -137,7 +137,7 @@ Before starting implementation work, read `.github/reference-catalog.md` and act
 
 If you discover a new pattern or library not in the catalog during implementation,
 append it under the appropriate section using the entry format from the skill.
-Include `Source: Implementer (Phase 5)` on your entries.
+Include `Source: Implementer (Phase 4)` on your entries.
 
 ## Before implementing
 
