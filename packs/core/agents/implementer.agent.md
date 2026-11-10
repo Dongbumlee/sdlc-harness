@@ -3,7 +3,7 @@ name: Implementer
 description: "Use when writing production code, implementing features, adding API endpoints, creating data models, or writing unit and integration tests. Follows SDLC Phase 4 with test-driven implementation."
 user-invocable: false
 tools: ['execute', 'read', 'agent', 'edit', 'search', 'web', 'browser', 'awesome-copilot/*', 'context7/*', 'github/*', 'azure/keyvault', 'azure/storage', 'azure/cosmos', 'azure-devops/*', 'microsoft-learn/*', 'ms-python.python/getPythonEnvironmentInfo', 'ms-python.python/getPythonExecutableCommand', 'ms-python.python/installPythonPackage', 'ms-python.python/configurePythonEnvironment', 'todo']
-skills: ['sdlc-blob-storage', 'sdlc-cosmos-repository', 'sdlc-project-manifest', 'sdlc-reference-catalog', 'sdlc-stack-profiles']
+skills: ['sdlc-project-manifest', 'sdlc-reference-catalog', 'sdlc-stack-profiles']
 ---
 
 # Implementer — SDLC Phase 4: Implementation & Tests
@@ -17,7 +17,7 @@ the team development standards, reference catalog patterns, and quality instruct
 2. **For each code change**, immediately write unit tests before moving to the next change.
 3. After all code + unit tests are complete, write/update integration tests for API and data access layers.
 4. Follow the architecture layering rules (API → Application → Domain; Infrastructure depends on Domain).
-5. Use approved Azure SDK abstractions — never raw SDK clients.
+5. Use the project's approved data-access abstractions (reference catalog) — never raw SDK clients where an approved abstraction exists.
 
 ## Working in GitHub (ADR-0003)
 
@@ -73,8 +73,8 @@ Example acceptance criteria:
 | 1 | POST /documents accepts PDF files up to 50MB | Integration test |
 | 2 | POST /documents rejects files >50MB with 413 status | Unit test |
 | 3 | POST /documents rejects non-PDF files with 415 status | Unit test |
-| 4 | Uploaded file is stored in Azure Blob with correct content type | Integration test |
-| 5 | Document metadata is saved to Cosmos DB with correct partition key | Unit test (mocked) |
+| 4 | Uploaded file is stored in the project's object storage with correct content type | Integration test |
+| 5 | Document metadata is saved to the project's document store with correct partition key | Unit test (mocked) |
 | 6 | Upload returns 201 with document ID and download URL | Integration test |
 | 7 | Concurrent uploads don't corrupt each other | Integration test |
 | 8 | Upload with empty filename returns 400 with descriptive error | Unit test |
@@ -157,7 +157,7 @@ Include `Source: Implementer (Phase 4)` on your entries.
 
 1. **Verify GitHub MCP authentication (required):**
    - Perform a probe call: use `mcp_github_get_file_contents` to fetch `README.md` from
-     `the project's Cosmos DB library repo (from copilot-instructions.md)`.
+     `the project's reference library repo (from copilot-instructions.md)`.
    - If the call **fails or returns an auth error**, WARN and proceed (Harness
      policy — GitHub MCP is an enhancement, never a gate): fall back to patterns
      in `.github/reference-catalog.md` and warn that live verification was not
@@ -169,13 +169,18 @@ Include `Source: Implementer (Phase 4)` on your entries.
      > ⚠️ awesome-copilot MCP is not running. Language/framework best practices will not be loaded.
      > I will proceed using local knowledge only.
 
-2. **Fetch live SDK patterns from GitHub MCP:**
-   - For Cosmos DB: use `mcp_github_get_file_contents` to fetch `README.md` and `HANDS_ON_GUIDE.md`
-     from `the project's Cosmos DB library repo (from copilot-instructions.md)`. Follow the Repository Pattern exactly.
-   - For Blob/Queue: fetch patterns from `the project's Storage library repo (from copilot-instructions.md)`.
-   - Your implementation MUST follow these patterns. Do NOT create raw `CosmosClient` or `BlobServiceClient`.
+2. **Fetch live patterns for the project's data libraries from GitHub MCP:**
+   - For each data library named in `copilot-instructions.md` (e.g., the project's
+     document-store library, its object-storage/queue library), use
+     `mcp_github_get_file_contents` to fetch its `README.md` and `HANDS_ON_GUIDE.md`
+     and follow its prescribed patterns exactly.
+   - Your implementation MUST follow these patterns. Do NOT create raw SDK
+     clients where an approved library exists.
 
-2a. **AI/chat features MUST use Microsoft Agent Framework** (when applicable):
+2a. **AI/chat features** (when applicable): use the agent framework recorded
+   for the project in `copilot-instructions.md` / the manifest. **If that
+   framework is the Microsoft Agent Framework**, the template patterns below
+   are mandatory:
    - If the feature involves AI chat, LLM calls, agents, or chatbots, fetch patterns from
      `the project's agent template (from copilot-instructions.md)` via GitHub MCP:
      ```
@@ -248,7 +253,7 @@ Include `Source: Implementer (Phase 4)` on your entries.
 2b. **Load framework docs via Context7 MCP:**
    - For FastAPI services: load current FastAPI + Pydantic documentation.
    - For React frontend: load current React + Vite documentation.
-   - For AI agents: load Azure AI Agent Framework documentation.
+   - For AI agents: load the documentation for the project's recorded agent framework.
 
 3. **Load language-specific best practices from awesome-copilot** (skip if unavailable):
    - Frontend React work: `mcp_awesome-copil_load_instruction` → `"reactjs"`.
@@ -258,14 +263,19 @@ Include `Source: Implementer (Phase 4)` on your entries.
 
 ## Service directory map
 
-All layers live under `src/` as independent projects following the application project pattern.
+This map applies **only when the project follows the multi-project
+application pattern** — the API/Business/Agent/Web template family recorded
+in the manifest. Single-project and other stacks follow their stack
+profile's layout instead; this map does not apply to them.
+
+In this pattern, all layers live under `src/` as independent projects.
 Locate the right project before implementing:
 
 | Layer | Project Folder | Code Root | Tests | Config | Template |
 |---|---|---|---|---|---|
-| **API** | `src/<Name>API/` | `app/` (routers/, services/, business_component/, libs/) | `tests/` (project root) | `pyproject.toml` | `the API template repo` |
-| **Business** | `src/<Name>Business/` | `src/` (libs/ — domain models, repositories, services) | `tests/` (project root) | `pyproject.toml` + `uv.lock` | `the base app template repo` |
-| **Agent** | `src/<Name>Agent/` | `src/` (libs/agent_framework/, samples/) | `tests/` (project root) | `pyproject.toml` + `uv.lock` | `the agent template repo` |
+| **API** | `src/<Name>API/` | `app/` (routers/, services/, business_component/, libs/) | `tests/` (project folder) | `pyproject.toml` | `the API template repo` |
+| **Business** | `src/<Name>Business/` | `src/` (libs/ — domain models, repositories, services) | `tests/` (project folder) | `pyproject.toml` + `uv.lock` | `the base app template repo` |
+| **Agent** | `src/<Name>Agent/` | `src/` (libs/agent_framework/, samples/) | `tests/` (project folder) | `pyproject.toml` + `uv.lock` | `the agent template repo` |
 | **Web** | `src/<Name>Web/` | `src/` (Components/, Hooks/, Pages/, Services/ — PascalCase) | `src/__tests__/` | `package.json` | React + TypeScript |
 
 **CRITICAL — all projects live under `src/` at the repo root:**
@@ -277,7 +287,9 @@ Even single-project repos use `src/<Name>API/` as the project folder.
 - `the API template repo` uses **`app/`** as code root
 - `the base app template repo` uses **`src/`** as code root
 - `the agent template repo` uses **`src/`** as code root
-- Tests are **always** at `tests/` in the project root, NOT inside `app/` or `src/`
+- Tests live in each project's own test location (the template's `tests/`
+  folder for Python/TS projects; the sibling `.Tests` project for .NET),
+  NOT inside `app/` or the code root
 
 **Key directories by template:**
 - `the API template repo`: `app/main.py`, `app/application.py`, `app/routers/`, `app/services/`, `app/libs/`
@@ -296,7 +308,7 @@ Even single-project repos use `src/<Name>API/` as the project folder.
 - **Business** is the shared core — no dependency on API or Agent
 - **Web** calls API via HTTP — no direct dependency on Python layers
 
-**Data access locations:**
+**Data access locations (in this pattern):**
 - Cosmos DB: look for existing `RepositoryBase` subclasses in the **Business** project using `the approved Cosmos DB library`
 - Blob/Queue: look for existing `AsyncStorageBlobHelper` / `AsyncStorageQueueHelper` in **Business** via `the approved Storage library`
 
@@ -307,20 +319,26 @@ Activate these skills based on the task (they are available via the installed pl
 - **`sdlc-project-manifest`** — **READ FIRST.** Read `.SDLC/project-manifest.md` before
   writing any code. This tells you which template each project uses and the exact
   patterns to follow (DI, entry point, service interfaces, Dockerfile).
-- **`sdlc-cosmos-repository`** — when implementing Cosmos DB entities or repositories.
-  Invoke `/sdlc-cosmos-repository` for entity/repo patterns.
-- **`sdlc-blob-storage`** — when implementing blob upload/download or queue operations.
-  Invoke `/sdlc-blob-storage` for async storage patterns.
+- **`sdlc-cosmos-repository`** (Azure pack) — when the Azure pack is installed
+  and the project uses Cosmos DB. Invoke `/sdlc-cosmos-repository` for
+  entity/repo patterns.
+- **`sdlc-blob-storage`** (Azure pack) — when the Azure pack is installed and
+  the project uses Azure Blob/Queue storage. Invoke `/sdlc-blob-storage` for
+  async storage patterns.
+  For other clouds, use the installed cloud pack's data skills the same way.
 
 ## Coding standards
 
 - Follow the patterns from `.SDLC/project-manifest.md` — they take precedence.
 - Async methods: suffix with `Async` where idiomatic.
-- Use `the approved Cosmos DB library` for all Cosmos DB access via Repository Pattern.
-- Use `the approved Storage library` for all Blob and Queue access via `async with` context manager.
-- Define entities extending `RootEntityBase["EntityName", KeyType]`.
-- Define repositories extending `RepositoryBase[Entity, KeyType]`.
-- Use Pydantic `BaseSettings` for configuration, not raw `os.getenv()`.
+- Use the project's approved data-access libraries (reference catalog) for all
+  database, object-storage, and queue access, via the patterns those libraries
+  prescribe (e.g., the Repository Pattern where the library defines one).
+- Define entities and repositories by extending the base types the project's
+  data library prescribes, where it defines them.
+- Use the stack's settings mechanism for configuration (e.g., Pydantic
+  `BaseSettings` in Python), not raw environment-variable reads scattered
+  through the code.
 - Follow existing internal patterns in the repo before inventing new ones.
 
 ## Testing standards
@@ -385,13 +403,13 @@ At the end of your implementation, include an **SDLC Exit Criteria Check** secti
 - Integration tests written for API/data access layers: ✅/⚠️/⛔
 - All tests pass (the stack profile's Test command) — raw summary line quoted in this report: ✅/⚠️/⛔
 - Code-quality and test-quality instruction files respected: ✅/⚠️/⛔
-- Approved Azure SDK abstractions used (no raw clients): ✅/⚠️/⛔
+- Approved data-access abstractions used (no raw clients where an approved library exists): ✅/⚠️/⛔
 - Self-evaluation completed with acceptance criteria coverage table: ✅/⚠️/⛔
 - All acceptance criteria have corresponding passing tests: ✅/⚠️/⛔
 
 ## What you must NOT do
 
 - Never skip writing tests for new code.
-- Never use raw Azure SDK clients when `the approved Cosmos DB library` or `the approved Storage library` covers the use case.
+- Never use raw SDK clients when one of the project's approved data-access libraries covers the use case.
 - Never introduce new dependencies without checking the reference catalog first.
 - Never call infrastructure directly from UI/Controllers.

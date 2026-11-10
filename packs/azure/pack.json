@@ -1,7 +1,8 @@
 {
   "agents": {
     "complianceReviewer": "agents/azure-compliance-reviewer.agent.md",
-    "deployer": "deployer.agent.md"
+    "deployer": "deployer.agent.md",
+    "qaBugChecklistReviewer": "agents/qa-bug-checklist-reviewer.agent.md"
   },
   "cloud": "azure",
   "description": "Azure-specific agents and skills. The generic deployer agent is owned by the core pack and inherited here (ADR-0001, decision A, 2026-09-29).",
@@ -14,7 +15,8 @@
   "skills": [
     "skills/sdlc-azure-deployment",
     "skills/sdlc-cosmos-repository",
-    "skills/sdlc-blob-storage"
+    "skills/sdlc-blob-storage",
+    "skills/sdlc-qa-bug-checklist"
   ],
   "version": "1.1.0"
 }

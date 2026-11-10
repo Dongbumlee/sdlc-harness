@@ -11,6 +11,7 @@ REQUIRED_DIRS = [
     "skills/sdlc-azure-deployment",
     "skills/sdlc-cosmos-repository",
     "skills/sdlc-blob-storage",
+    "skills/sdlc-qa-bug-checklist",
 ]
 
 PLUGIN_PACK_JSON = REPO_ROOT / "packs/azure/pack.json"
@@ -74,7 +75,7 @@ class TestPluginPackJson:
         with open(PLUGIN_PACK_JSON) as f:
             data = json.load(f)
         agents = data["agents"]
-        assert set(agents) == {"deployer", "complianceReviewer"}
+        assert set(agents) == {"deployer", "complianceReviewer", "qaBugChecklistReviewer"}
         # Inherited core agents resolve against the canonical flat agent dirs.
         for agent_dir in ("com.github.copilot/agents", ".github/agents"):
             path = REPO_ROOT / agent_dir / agents["deployer"]
@@ -125,6 +126,7 @@ class TestPluginPackJson:
             "skills/sdlc-azure-deployment",
             "skills/sdlc-cosmos-repository",
             "skills/sdlc-blob-storage",
+            "skills/sdlc-qa-bug-checklist",
         }
         for skill in data["skills"]:
             name = skill.removeprefix("skills/")

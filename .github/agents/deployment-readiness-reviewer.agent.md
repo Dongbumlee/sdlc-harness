@@ -83,7 +83,11 @@ Focus on **Categories 5, 7, 8, and 9** (Error Handling, Performance, Deployment 
 
 ### Automated checks (scan the code + docs)
 
-- [ ] **README completeness** — Read `README.md` and verify these sections exist:
+- [ ] **README completeness** — Read `README.md` and verify the sections
+  required by the project's README template exist (the harness's default
+  template, `.design/README.template.md`, as filled for this project —
+  its default sections are the list below; a project whose template or
+  manifest records a different section set is judged against that set):
   - [ ] Overview / Introduction
   - [ ] Prerequisites
   - [ ] Deployment Steps
@@ -131,7 +135,7 @@ Focus on **Categories 5, 7, 8, and 9** (Error Handling, Performance, Deployment 
 
 Return findings as:
 
-- **Critical**: No global error handler, raw stack traces exposed, no health endpoint, unbounded queries
+- **Critical**: No global error handler, raw stack traces exposed, no health endpoint (when the deployment target probes one), unbounded queries
 - **Important**: Missing README sections, debug code in source, no structured logging, no pagination
 - **Suggestion**: Add correlation IDs, improve error messages, add dependency audit to CI
 - **Positive**: Good operational practices found (cite specific evidence, not generic praise)

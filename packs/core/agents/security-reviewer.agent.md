@@ -71,6 +71,13 @@ fresh OWASP guidance from awesome-copilot MCP on every review.
 
 ## Project-specific checks (from product QA checklist)
 
+These checks come from one product's QA checklist. Apply each one ONLY when
+the project's requirements or manifest establish its precondition — e.g.,
+the auth-enforcement check applies when the spec requires authenticated
+routes, the CDN check when the project ships a web frontend, the licensing
+check when the project ships sample data. A check whose precondition the
+project does not have is not a finding and does not affect the score.
+
 - [ ] **Authentication enforcement** — All routes except `/health` require auth.
   `grep -rn "Depends.*get_current_user\|@require_auth\|isAuthenticated\|authMiddleware" src/`
 - [ ] **Third-party resource audit** — No external CDN references (Google Fonts, cdnjs, unpkg)

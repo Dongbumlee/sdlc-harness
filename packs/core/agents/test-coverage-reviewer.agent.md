@@ -77,7 +77,12 @@ and assertion effectiveness**.
 
 ## Project-specific checks (from product QA checklist)
 
-- [ ] **File upload edge cases** — Tests cover boundary conditions:
+These checks come from one product's QA checklist. Apply each one ONLY when
+the project has the feature it targets — e.g., the file-upload check applies
+only when the project accepts file uploads. A check whose precondition the
+project does not have is not a finding and does not affect the score.
+
+- [ ] **File upload edge cases** (projects that accept uploads) — Tests cover boundary conditions:
   zero-byte files, large files, long filenames, unsupported types, corrupted files.
 - [ ] **International characters** — Tests include non-ASCII input (Unicode filenames,
   CJK characters, RTL text) if the feature handles user-provided content.

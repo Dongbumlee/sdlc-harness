@@ -35,12 +35,16 @@
 
 <!-- High-level architecture description or diagram -->
 
-### Azure Services
+### Platform Services
+
+<!-- List the services THIS decision uses, on the project's own cloud,
+     with the approved library for each (from the reference catalog).
+     Example rows below are one Azure project's — replace them. -->
 
 | Service | Library | Purpose |
 |---|---|---|
-| Cosmos DB | `the approved Cosmos DB library` | |
-| Blob Storage | `the approved Storage library` | |
+| (e.g., Cosmos DB) | (e.g., `the approved Cosmos DB library`) | |
+| (e.g., Blob Storage) | (e.g., `the approved Storage library`) | |
 
 ### Data Model
 

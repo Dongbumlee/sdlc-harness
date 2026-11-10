@@ -119,7 +119,9 @@ Before starting, load these resources for accurate implementation:
      - **First:** implement the production code.
      - **Immediately after:** write the unit test for that code.
      - Do NOT batch all tests at the end — test each step as you go.
-   - Use these Python libraries (do NOT use raw Azure SDKs):
+   - Use the project's approved data libraries (do NOT use raw cloud SDKs
+     where an approved library exists). In the Python/Azure template family
+     those are:
      - `the approved Cosmos DB library` via `RepositoryBase[Entity, KeyType]` pattern.
      - `the approved Storage library` via `AsyncStorageBlobHelper` / `AsyncStorageQueueHelper` with `async with`.
    - Unit tests go in the project's own tests folder from the Step 1 layout

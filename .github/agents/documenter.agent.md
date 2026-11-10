@@ -72,7 +72,7 @@ is.
 
 0. **Verify GitHub MCP authentication (required):**
    - Perform a probe call: use `mcp_github_get_file_contents` to fetch `README.md` from
-     `the project's Cosmos DB library repo (from copilot-instructions.md)`.
+     `the project's reference library repo (from copilot-instructions.md)`.
    - If the call **fails or returns an auth error**, WARN and proceed (Harness
      policy — GitHub MCP is an enhancement, never a gate): fall back to local
      templates in `.design/` only and warn that live ADR examples from other

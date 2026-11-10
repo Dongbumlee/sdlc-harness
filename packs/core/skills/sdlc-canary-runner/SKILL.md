@@ -292,8 +292,8 @@ After all canaries complete, write a JSON result file:
 
 ### Step 4b: Write the work journal
 
-Alongside the JSON, write a human-readable work journal — the primary artifact
-Dongbum reads. One file per run:
+Alongside the JSON, write a human-readable work journal — the primary
+artifact the run's reviewer reads. One file per run:
 
 **Path:** `bench/journal/canary-run-{YYYY-MM-DD}.md`
 

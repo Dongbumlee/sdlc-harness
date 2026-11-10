@@ -22,7 +22,12 @@ with the same patterns the Scaffolder established.
 
 ## For the SCAFFOLDER (write mode)
 
-After scaffolding, create `.SDLC/project-manifest.md` with this exact format:
+After scaffolding, create `.SDLC/project-manifest.md` with this exact format.
+The worked example below is one project's manifest (a Python/Azure
+multi-project build): the **section structure** is the format — the values
+(patterns, libraries, base images, route shapes) are that project's.
+Record your own project's values from its stack profile and templates;
+never copy the example's stack values into a different stack's manifest:
 
 ```markdown
 # Project Manifest — <ProjectName>
