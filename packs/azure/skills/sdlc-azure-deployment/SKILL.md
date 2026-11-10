@@ -158,8 +158,7 @@ Create two parameter files:
 - `main.parameters.json` — defaults (non-WAF, for dev)
 - `main.waf.parameters.json` — WAF-aligned (for production)
 
-**⚠️ `enablePrivateNetworking` is firewall-deny only (verified
-2026-10-03).** The toggle sets `networkAcls.defaultAction: Deny` on the
+**⚠️ `enablePrivateNetworking` is firewall-deny only (deploy-verified).** The toggle sets `networkAcls.defaultAction: Deny` on the
 storage account — there is no VNet, no private endpoints, no private DNS,
 no VNet integration on the Container Apps Environment. Enabling it as
 documented **breaks the app** (Container Apps is not in the storage
@@ -241,35 +240,35 @@ hooks:
 - **Key Vault secret must exist before the deploy references it** — ARM
   validates the `keyVaultUrl` at deployment time; a missing secret fails the
   whole deploy. Set the value (`az keyvault secret set`) before running
-  Bicep. (AI Brief 2026-10-04)
+  Bicep. (deploy-verified)
 - **Key Vault secret names forbid underscores** — allowed charset is
   `[0-9a-zA-Z-]`; `gemini_api_key` is rejected, use `gemini-api-key`.
-  (AI Brief 2026-10-04)
+  (deploy-verified)
 - **Google "API key not valid" surfaces as HTTP 400, not 401/403** — error
   mapping must inspect the response body, not just the status code, when
-  classifying auth failures. (AI Brief 2026-10-04)
+  classifying auth failures. (deploy-verified)
 - **LLM provider 429/5xx → retry with backoff, don't fail fast** — transient
   provider errors deserve at least one retry before the job is marked
-  failed. (AI Brief 2026-10-04)
+  failed. (deploy-verified)
 - **Model IDs retire — env-inject, never hardcode** — `gemini-2.0-flash`
   404'd in 2026-10. Slices must take the model ID from an env var
   (`GEMINI_MODEL`) so a redeploy, not a rebuild, fixes the next
-  retirement. (AI Brief 2026-10-04)
+  retirement. (deploy-verified)
 - **Provider 503 overload spikes can persist ≥90 min on the free tier** —
   the worker's single short retry cannot cover this class; the test
   harness should back off in tens of minutes, and provider error bodies
   should stay greppable in logs so quota-429 vs overload-503 are
-  distinguishable without diagnostics. (AI Brief 2026-10-05)
+  distinguishable without diagnostics. (deploy-verified)
 - **Provider fallback via `LLM_PROVIDER` env switch** — an env-selectable
   LLM client lets a slice run E2E against an alternate provider without
-  code forks (OpenRouter fallback, AI Brief 2026-10-06). New Key Vault
+  code forks (e.g., an OpenRouter fallback). New Key Vault
   secrets follow the no-underscore rule above.
 - **OpenRouter `openrouter/free` router** — OpenAI-compatible, $0,
   ~20 req/min; serves a random free model per request (observed:
   nvidia/nemotron-3.5-lightning:free). Free-tier quality variance makes
   client-side schema validation + repair retry load-bearing, not
-  optional. (AI Brief 2026-10-06)
-- **Two secret patterns, two rotation stories** (verified 2026-10-03).
+  optional. (deploy-verified)
+- **Two secret patterns, two rotation stories** (deploy-verified).
   Secrets read via Key Vault SDK with a 60s in-memory cache rotate
   **without restart** (old key → 401 immediately, new key live within
   ~75s). Secrets injected via Container Apps `secretRef` are resolved at
@@ -278,12 +277,12 @@ hooks:
 - **Bicep `Succeeded` does not mean a healthy app.** ARM never validates
   image pullability — a deploy with a nonexistent image tag reports
   `provisioningState: Succeeded` while replicas sit `NotRunning`
-  (verified 2026-10-03; the previous healthy revision kept serving, zero
+  (deploy-verified; the previous healthy revision kept serving, zero
   downtime). Operators must check revision/replica health, not deployment
   state.
 - **Managed Redis SKU availability varies by subscription × region.**
   eastus2 rejected Balanced_B0 **and** B1 for a Visual Studio Enterprise
-  subscription; centralus accepted B0 (Pulse deploy 2026-10-04). Never
+  subscription; centralus accepted B0 (deploy-verified). Never
   hardcode one SKU/region — parameterize the Redis location (e.g.
   `redisLocation`) separately from the app region, and probe or document
   the fallback. (Note: "Azure Cache for Redis" Basic/Standard/Premium
@@ -293,23 +292,23 @@ hooks:
   (`ContainerAppSecretInvalid`). An optional secret (e.g. admin API key)
   must be declared **conditionally** in Bicep (`concat` + `empty()` —
   declared only when set), and the app fails closed (503) when the env var
-  is absent (Pulse deploy 2026-10-04).
+  is absent (deploy-verified).
 - **External dependency URLs must be env-overridable.** A hardcoded feed
   URL makes the source-failure drill impossible — the deployed collector
   cannot be pointed at a failing feed. Expose `FEED_URL`-style env vars +
-  Bicep params (Pulse finding 2026-10-04).
+  Bicep params (deploy-verified).
 - **Agent-VM egress proxies block non-HTTPS ports.** Direct Redis TLS
   (port 10000) verification from the agent VM fails; the in-cloud app
-  connects fine (Pulse deploy 2026-10-04). Prefer in-cloud checks (job
+  connects fine (deploy-verified). Prefer in-cloud checks (job
   logs, `/health`) for non-HTTPS data-plane verification.
 - **No deployments during the E2E observation window.** A scheduled run
   colliding with a Bicep redeploy of the job template fails with no logs
   retained ("No replicas found for execution") — expected behavior
-  (Pulse 2026-10-04). Collect consecutive scheduled runs without touching
+  (deploy-verified). Collect consecutive scheduled runs without touching
   the deployment.
 - **Manual job starts record `trigger=scheduled`.** `az containerapp job
   start` executions record the job's trigger *type*, not the invocation
-  source — a minor observability wrinkle for audits (Pulse 2026-10-04).
+  source — a minor observability wrinkle for audits (deploy-verified).
 - **NEVER use raw `resource` declarations** when an AVM module exists — this is the #1
   mistake. Always use `module ... 'br/public:avm/res/...'`. The same way you never use
   raw `CosmosClient` when `the approved Cosmos DB library` exists.
