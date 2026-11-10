@@ -152,8 +152,9 @@ the approved spec (Phase 1B counts; Phase 2 complexity and the final
 grade), and preserved by the Scaffolder when it generates the full
 manifest. Reviewer counts and round caps read the final grade.
 
-**The Phase-State Ledger** is maintained by the **Harness** (via the
-Documenter) at every phase transition: Status (`Not started` / `In progress` /
+**The Phase-State Ledger** is maintained by the **Harness** directly
+at every phase transition — mechanical record upkeep is the Harness's
+own work, never a Documenter delegation: Status (`Not started` / `In progress` /
 `Complete`), the artifact paths the phase produced, and the date. It is the
 single source of truth for run state — an interrupted run resumes from it
 (Harness Step 0.5), and the Release Manager refuses to release while a phase
