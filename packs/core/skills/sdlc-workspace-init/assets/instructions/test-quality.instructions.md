@@ -14,36 +14,37 @@ comprehensive unit tests for a Python project that follows these conventions.
 1. PROJECT LAYOUT
 ═══════════════════════════════════════════════════════════════════════════════
 
-The project uses a src-layout with tests outside src/:
+Layout is owned by the stack profile and its bundled template — this file
+governs test quality, not layout. The Python API template layout is:
 
     ProjectRoot/
-    ├── src/                  ← production code only
-    │   ├── libs/
-    │   ├── services/
-    │   ├── steps/
-    │   ├── utils/
-    │   └── repositories/
-    ├── tests/                ← all test code lives here (peer to src/)
-    │   ├── conftest.py       ← sys.path setup for imports
-    │   └── unit/
-    │       ├── libs/
-    │       ├── services/
-    │       ├── steps/
-    │       ├── utils/
-    │       └── repositories/
-    ├── pyproject.toml        ← pytest + coverage config
-    ├── .gitignore            ← excludes htmlcov/, .coverage*, .pytest_cache/
-    └── .dockerignore         ← excludes tests/, htmlcov/, .coverage*, etc.
+    ├── src/
+    │   └── <ProjectName>API/     ← one project per folder under src/
+    │       ├── app/              ← production code (the code root)
+    │       │   ├── routers/
+    │       │   ├── services/
+    │       │   ├── libs/
+    │       │   └── business_component/
+    │       ├── tests/            ← this project's tests (sibling of app/)
+    │       │   ├── conftest.py   ← shared fixtures (e.g. a TestClient)
+    │       │   └── test_<module>.py
+    │       ├── pyproject.toml    ← per-project pytest + coverage config
+    │       ├── .gitignore        ← excludes htmlcov/, .coverage*, .pytest_cache/
+    │       └── .dockerignore     ← excludes tests/, htmlcov/, .coverage*, etc.
+    └── tests/                    ← root-level E2E / integration tests only
+                                    (spanning projects; created by the
+                                    Scaffolder — unit tests do NOT go here)
 
 Key rules:
+- Unit tests live in the project's own `tests/` folder, next to `app/` —
+  never in a repository-root `tests/` tree and never inside `app/`.
 - tests/ should NOT have an __init__.py (tests are not a package).
-- Test directory structure mirrors src/ at the top level
-  (e.g., src/utils/ → tests/unit/utils/, src/services/ → tests/unit/services/).
-  Deep sub-packages may be flattened: e.g., tests for
-  src/steps/gap_analysis/executor/gap_executor.py live in
-  tests/unit/steps/test_gap_executor.py — no need to replicate every
-  nested executor/models/prompt directory.
-- tests/conftest.py adds src/ to sys.path.
+- Test files mirror the `app/` module they test by name
+  (e.g., app/services/items.py → tests/test_items.py). Sub-folders are
+  optional; the template's tests are flat.
+- Imports resolve via the template's pytest config (`pythonpath = ["."]`,
+  `--import-mode=importlib` in the project's pyproject.toml) —
+  conftest.py holds fixtures only, never sys.path edits.
 
 ═══════════════════════════════════════════════════════════════════════════════
 2. TEST SANITIZATION (run first, before writing new tests)
@@ -109,9 +110,9 @@ Rules:
 | Helper method    | _prefixed                   | _make_executor, _reset_class_state   |
 | Fixture (rare)   | snake_case function         | monkeypatch, tmp_path                |
 
-File naming must mirror the source module:
-  src/utils/credential_util.py  →  tests/unit/utils/test_credential_util.py
-  src/steps/claim_processor.py  →  tests/unit/steps/test_claim_processor.py
+File naming must mirror the source module (inside the project's tests/):
+  app/utils/credential_util.py  →  tests/test_credential_util.py
+  app/services/items.py         →  tests/test_items.py
 
 ═══════════════════════════════════════════════════════════════════════════════
 5. WHAT TO TEST (prioritize by testability)
@@ -207,15 +208,14 @@ For Pydantic validation errors:
 8. COVERAGE CONFIGURATION
 ═══════════════════════════════════════════════════════════════════════════════
 
-pyproject.toml must include:
+The project's own pyproject.toml (shipped by the bundled template) includes:
 
     [tool.pytest.ini_options]
-    testpaths = ["tests"]
-    pythonpath = ["src"]
+    pythonpath = ["."]
+    addopts = ["--import-mode=importlib"]
 
     [tool.coverage.run]
-    source = ["src"]
-    omit = ["src/__init__.py"]
+    source = ["app"]
 
     [tool.coverage.report]
     show_missing = true
@@ -229,7 +229,11 @@ pyproject.toml must include:
     [tool.coverage.html]
     directory = "htmlcov"
 
-Run with:  pytest --cov --cov-report=term-missing --cov-report=html
+Run from the project directory:  pytest --cov --cov-report=term-missing --cov-report=html
+
+Do not rewrite this config to a different layout (e.g. `pythonpath = ["src"]`
+with a repository-root tests/ tree) — the layout comes from the stack
+profile template, and this file does not override it.
 
 ═══════════════════════════════════════════════════════════════════════════════
 9. DOCKER / GIT EXCLUSIONS
@@ -267,8 +271,8 @@ Follow this order:
   6. Compile-check all remaining tests: python -m py_compile <file>
 
 □ Phase 2 — Identify gaps
-  7. List all source modules under src/ (excluding __init__.py, __pycache__)
-  8. List all existing test files under tests/
+  7. List all source modules under the project's app/ (excluding __init__.py, __pycache__)
+  8. List all existing test files under the project's tests/
   9. Produce a gap matrix: source module → has test? → coverage gaps
 
 □ Phase 3 — Write tests
@@ -277,13 +281,15 @@ Follow this order:
   12. Compile-check each new test file immediately after creation
 
 □ Phase 4 — Validate
-  13. Run full suite: pytest tests/ -v --tb=short
+  13. Run full suite from the project directory: pytest -v --tb=short
   14. Fix any failures
   15. Run with coverage: pytest --cov --cov-report=term-missing
   16. Review coverage gaps; write additional tests for missed branches if practical
 
 □ Phase 5 — Project hygiene
-  17. Ensure tests/ is outside src/ (not src/tests/)
-  18. Ensure pyproject.toml has [tool.pytest] and [tool.coverage] sections
+  17. Ensure unit tests live in the project's tests/ folder (sibling of app/),
+      per the stack profile template — not at the repository root
+  18. Ensure the project's pyproject.toml has the template's
+      [tool.pytest.ini_options] and [tool.coverage] sections
   19. Ensure .gitignore excludes test artifacts
   20. Ensure .dockerignore excludes tests/ and all test artifacts

@@ -638,7 +638,9 @@ Runs in parallel with Phase 3 scaffolding. After the Deployer generates Bicep/az
 Delegate to the Implementer with explicit structure guidance:
 > "Implement the feature following the approved design. All source code MUST go
 > inside `src/` (e.g., `src/<project-name>/`), never at the project root.
-> Tests go in `tests/` at the project root."
+> Tests go in the project's own test location from the stack profile template
+> (Python: `src/<ProjectName>API/tests/`; .NET: the `src/<ProjectName>API.Tests/`
+> project)."
 
 The Implementer has its own acceptance criteria and self-evaluation checklist.
 If the self-evaluation reveals gaps, the Implementer fixes them before handoff to QA.

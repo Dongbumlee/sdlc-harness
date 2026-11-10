@@ -314,7 +314,10 @@ src/
 - Use `uv` as the Python package manager — **never `pip install`**. Dockerfiles must use `uv sync --frozen`.
 - `pyproject.toml` must use `[project]` format (not `[tool.poetry]`). Include `uv.lock` when present.
 - API template uses `app/` as code root; base app and agent templates use `src/` as code root.
-- Tests go in `tests/` at the **project root** (not inside `app/` or `src/`).
+- Unit tests go in the project's own test location from the stack profile
+  template (Python: `tests/` inside the project folder, sibling of `app/`;
+  .NET: the `<ProjectName>API.Tests` project inside `src/`). The root-level
+  `tests/` in the tree above is for E2E / integration tests spanning projects.
 - Follow the naming convention: `<ProjectName><Layer>` (e.g., `CustomerFeedbackAPI`, `CustomerFeedbackBusiness`).
 
 ## Verify-and-repair mode (existing partial scaffold)
