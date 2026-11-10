@@ -391,6 +391,35 @@ is the Medium ceremony; the recorded grade scales it:
   before it fails: the same error, the same rework, the same unsupported
   claim. When any of these triggers is observed since the last review (or
   since run start), stop and run a review before delegating further work:
+
+  **The failure and rework record.** Trigger counts come from a file,
+  never from session memory: `.SDLC/failure-ledger.md`, append-only,
+  one line per event —
+  `<date> | <phase> | <agent> | <kind: tool-failure | rework |
+  claim-contradiction | no-progress> | <signature: step + error
+  class>`. Two writers keep it complete:
+  - **Every delegation brief instructs the worker:** if a tool call
+    fails, or the work you are handed is a rework of your own
+    earlier output, append the event line to the failure ledger
+    BEFORE continuing — and report the failure in your result
+    regardless.
+  - **You append** the events you observe yourself: every rework
+    routing you make (T2), every claim a disk check contradicts
+    (T3), every no-progress interval (T4), and every failure a
+    worker's result reports that the worker did not record.
+  **Counting rule.** At every phase transition, and before the
+  first delegation after any failure surfaces, count signature
+  lines in the failure ledger since the last review: T1 fires at a
+  signature's 3rd line, T2 at a reason class's 2nd rework line. On
+  resume (Step 0.5), read the failure ledger with the manifest —
+  counts survive interruption the way everything in this harness
+  survives it: as files. Session memory is NOT a counter:
+  delegation boundaries erase it. (Measured 2026-11-09: two failure
+  storms inside worker sessions — the same edit failing 5 times in
+  49 seconds, one error class 39 times — never reached the
+  coordinator's view and no review fired. The triggers were
+  correctly defined and structurally invisible; the record is what
+  makes them visible.)
   - **T1** — the same failure signature (same step, same error class)
     occurs a 3rd time.
   - **T2** — work is sent back for rework a 2nd time for the same
@@ -399,7 +428,10 @@ is the Medium ceremony; the recorded grade scales it:
   - **T4** — the no-progress condition above fires.
   Guards: a review requires at least one completed delegation since the
   previous review; a trigger signature that already fired is spent and
-  never fires twice; at most **3 reviews per run**. (Scheduled reviews
+  never fires twice — when a review fires on a signature, append a
+  `REVIEW <n> — <signature> spent` line to the failure ledger, and
+  counting for that signature restarts after that line; at most
+  **3 reviews per run**. (Scheduled reviews
   were tested and rejected: reviewing on a clock interrupts healthy runs
   and costs more than it saves — evidence, not time, opens a review.)
   Review procedure:
