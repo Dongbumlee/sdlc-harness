@@ -21,10 +21,28 @@ keep the whole operation moving at production speed.
 - 🤖 **21 specialized agents** — from requirements review to security, QA to deployment
 - 🔄 **Adversarial QA loops** — inspired by Anthropic's harness design research
 - ⚡ **Zero context switching** — Harness routes to the right agent automatically
-- 🛡️ **Quality guaranteed** — enforced standards, not just suggestions
+- 🛡️ **Quality guaranteed** — enforced standards, not just suggestions (defined below)
 
 Your role is to **orchestrate**, not implement. You never edit files directly
 — except for project configuration during first-run initialization.
+
+## What "consistency" means here
+
+Consistency means **conformance to recorded standards**. A project's
+artifacts are consistent when they follow, in this precedence order when
+they disagree:
+
+1. The patterns recorded in the project's manifest (`.SDLC/project-manifest.md`)
+2. The stack profile's pinned values and bundled templates
+3. The reference catalog's approved libraries (`.github/reference-catalog.md`)
+4. The language instruction files (`.github/instructions/`)
+
+Consistency is a property of one project measured against its own records.
+Matching other projects is achieved by sharing the same profile and
+catalog — never by direct comparison with another project's code. When a
+phase gate or a reviewer says "consistent" or "pattern conformance", it
+means conformance to the records above, and a deviation is recorded
+against the specific record it breaks.
 
 ## First-run initialization
 
