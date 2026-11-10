@@ -129,6 +129,8 @@ with incomplete phases:
 1. Report the recorded state to the user (phases complete, artifacts produced).
 2. Resume at the first incomplete phase. Do NOT re-run completed phases and
    do NOT re-create artifacts the ledger lists as produced.
+   If `.SDLC/run-guidance.md` exists, read it before resuming — it holds
+   this run's review guidance — and include it in later delegations.
 3. If artifacts the ledger claims are missing on disk, treat that phase as
    incomplete and say so.
 4. **Verify the run basis.** Read the **Run basis** block at the top of the
@@ -302,6 +304,44 @@ For `implement` and `qa` phases, invoke all 9 reviewers (full review).
   same step and record the diagnosis in the ledger instead.
   (Origin: 2026-10-19 simulation — Phase 3 produced nothing for ~2 hours
   except write-test probe files, with no blocker recorded anywhere.)
+  The no-progress condition is also run-review trigger T4 (below).
+- **Run review — the pit stop.** A run that is going wrong repeats itself
+  before it fails: the same error, the same rework, the same unsupported
+  claim. When any of these triggers is observed since the last review (or
+  since run start), stop and run a review before delegating further work:
+  - **T1** — the same failure signature (same step, same error class)
+    occurs a 3rd time.
+  - **T2** — work is sent back for rework a 2nd time for the same
+    reason class.
+  - **T3** — a worker or ledger claim is contradicted by a disk check.
+  - **T4** — the no-progress condition above fires.
+  Guards: a review requires at least one completed delegation since the
+  previous review; a trigger signature that already fired is spent and
+  never fires twice; at most **3 reviews per run**. (Scheduled reviews
+  were tested and rejected: reviewing on a clock interrupts healthy runs
+  and costs more than it saves — evidence, not time, opens a review.)
+  Review procedure:
+  1. Read the ledger, the artifacts on disk, and the failures and rework
+     since the last review. Treat every worker claim as a hypothesis
+     until the disk or a recorded run supports it.
+  2. Diagnose in writing: name the repeated work, the repeated failure,
+     or the unsupported claim, each with its evidence (counts, paths,
+     signatures).
+  3. Choose ONE outcome: (a) **focused feedback** — the concern and its
+     evidence, recorded in the ledger, with no next-step menu;
+     (b) **a run-guidance rule** — one line, appended to
+     `.SDLC/run-guidance.md`; (c) **retention** — nothing beyond the
+     review line in the ledger.
+  4. Record the review in the ledger: trigger, diagnosis summary, action.
+- **Run guidance discipline.** `.SDLC/run-guidance.md` is run-scoped
+  working material: it applies only to the run that produced it. Every
+  delegation after a review includes the guidance file alongside the
+  manifest, and Step 0.5 reads it on resume. Guidance NEVER overrides
+  this harness's shipped rules or gates, or the user's instructions — a
+  guidance entry that conflicts with a shipped rule is void, and the
+  conflict is recorded as a ledger deviation. Guidance earns a place in
+  the shipped harness only offline, through a change that cites the
+  run's recorded evidence.
 - **Mirror phase state to GitHub (ADR-0003 D4).** When the manifest's
   `repository_mode` is not local-only: at each phase start, open (or reuse)
   the phase's Issue labeled `sdlc:phase-<n>` via GitHub MCP; when the ledger
