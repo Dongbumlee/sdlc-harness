@@ -772,9 +772,27 @@ task statement):
 
 | Signal | Small | Medium | Large |
 |---|---|---|---|
-| Functional units (requirements / endpoints / screens) | ≤ 10 | 11–30 | > 30 |
+| Functional units (user-facing operations — counting rule below) | ≤ 10 | 11–30 | > 30 |
 | Components (independent deployable units) | 1 | 2–3 | 4+ |
 | External integrations | 0–1 | 2–4 | 5+ |
+
+**Counting rule — functional units.** A functional unit is one
+user-facing operation: an endpoint that does a distinct job, a
+screen, a command. **Count operations, not requirements.** However
+many requirements describe an operation — its validation rules,
+error cases, persistence, tests, documentation — it is ONE unit.
+Cross-cutting concerns (input validation, error handling,
+persistence, automated tests, API documentation) are never units;
+they ride on the operations they serve. Calibration anchors
+(approved): the Task Tracker API — task CRUD, list filtering and
+pagination, validation, EF Core persistence, tests, Swagger — is
+**~8 units → Small**; a URL shortener (create, redirect, details,
+list, delete, plus the same cross-cutting set) is **5 units →
+Small**. If a count puts either anchor above Small, the counting
+is wrong — recount by operations. (Measured 2026-11-10: the
+earlier definition — "the requirements the spec defines" — let
+the spec author's FR granularity set the count, and two live runs
+graded these anchors Medium at 17 and ~11 units.)
 
 Size grade = the highest of the three. If the signals cannot be counted
 from the task statement yet, record `provisional: ungraded` — the
