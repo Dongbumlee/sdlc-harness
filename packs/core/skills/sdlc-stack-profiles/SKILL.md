@@ -213,6 +213,13 @@ compiler API (measured 2026-10-18 building the bundled template).
   are unchanged.
 - **Runtime:** the current .NET LTS as pinned by the organization
   (this profile's default: .NET 10, target framework `net10.0`).
+- **Stack facts (mechanical):** version facts live in the bundled
+  template's project files (target framework + package pins) — the
+  single source of truth, never restated in prose. The Phase 1–2
+  gate verifies REQ/ADR stack claims against them with
+  `scripts/check_stack_conformance.py` (this skill's scripts
+  folder); a spec claim that contradicts a template pin fails the
+  gate mechanically.
 - **Package manager:** NuGet via the `dotnet` CLI — restore:
   `dotnet restore <Name>.sln` (add `--locked-mode` when lock files are used).
 - **Build:** `dotnet build <Name>.sln -c Release`
