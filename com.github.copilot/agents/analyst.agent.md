@@ -58,8 +58,13 @@ The manifest's **Task Grade** section drives how much ceremony this
 task gets; two of its entries are yours:
 
 - **Phase 1B:** from the approved spec, count the size signals
-  (functional units = the requirements / endpoints / screens the spec
-  defines; components; external integrations) and record them,
+  (functional units = user-facing operations — endpoints, screens,
+  commands — counted by operations, not by requirements: an
+  operation is ONE unit however many FRs describe it, and
+  cross-cutting concerns — validation, error handling, persistence,
+  tests, documentation — are never units; the counting rule and the
+  approved calibration anchors are in the Harness's "Task grade"
+  section; components; external integrations) and record them,
   replacing the intake estimate. If the counts move the size grade,
   update the provisional grade and say so in your report.
 - **Phase 2:** before the design work, fix the grade. Evaluate the
