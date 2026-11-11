@@ -159,26 +159,34 @@ when the report and the built declarations disagree (exports
 carry `@public` release tags); java pins the declared surface
 with a reflection test in the build and CI diffs the compiled jar
 against the last release with japicmp, failing on binary- or
-source-incompatible changes. Tests are black-box against the
-public API only, the README quickstart is executed in CI (a
-runnable example file, plus doctests in python), and CI tests
+source-incompatible changes; go diffs the exported API of its
+packages against the last release with apidiff, failing on
+incompatible changes; rust checks the crate against the last
+release with cargo-semver-checks, failing on breaking changes.
+Tests are black-box against the public API only, the README
+quickstart is executed in CI (a runnable example file; doctests
+in python and rust; Go examples, which `go test` runs and
+verifies), and CI tests
 the declared support range — every supported runtime version,
 and for python also the lowest allowed dependency resolution.
 There is no Dockerfile, no app configuration, and no deploy job.
 Publishing happens only from a release tag, through registry
 trusted publishing (OIDC — no stored registry token), and only
 after the built artefact passes a consumer smoke test in a clean
-project; the tag is the version (python and typescript also
-require the tag to match the manifest version). Maven Central is
+project; the tag is the version (python, typescript, and rust
+also require the tag to match the manifest version). Go is the
+limiting case: the tag is the entire publication — the module
+proxy serves the library from the repository, so there is no
+registry account or credential at all. Maven Central is
 the one documented exception to trusted publishing: it has no
 OIDC exchange, so the java template publishes with a dedicated
 Central Portal token and a dedicated GPG key held as release
 environment secrets. Deprecation is a written policy in the
 template README: mark in one release (a runtime warning,
-`[Obsolete]`, a `@deprecated` tag, or `@Deprecated`), remove no
-earlier than the next major. The library kind ships for python,
-dotnet, typescript, and java today; go and rust follow the same
-standard when their library templates land.
+`[Obsolete]`, a `@deprecated` tag, `@Deprecated`, a
+`// Deprecated:` doc paragraph, or `#[deprecated]`), remove no
+earlier than the next major. The library kind ships for all six
+stacks: python, dotnet, typescript, java, go, and rust.
 
 **License:** every bundled template ships an MIT `LICENSE` at its root
 (ADR-0003). An organization template or an explicit user decision overrides

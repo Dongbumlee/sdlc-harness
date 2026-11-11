@@ -1,0 +1,35 @@
+# Bundled default template — go / library
+# Instantiation: copy this tree to the repository root, substitute the
+# tokens below in file names and contents, delete template.yaml, then run
+# the verify steps. The template uses only the Go standard library, so
+# there is nothing to download and no go.sum until the first external
+# dependency is added. Libraries follow the library standard in the
+# sdlc-stack-profiles skill ("Library type — reversed defaults"): the
+# go.mod `go` directive is the support floor, the public API is diffed
+# against the last release with apidiff, and publishing is the git tag
+# itself — the Go module proxy serves libraries straight from the repo.
+id: go/library
+profile: go
+kind: library
+project_dirs:
+  - src/{{ProjectName}}Lib
+tokens:
+  - name: ProjectName
+    description: PascalCase base name of the product or service, e.g. TaskTracker
+    default: Sample
+  - name: project-name
+    description: kebab-case name derived from ProjectName, e.g. task-tracker — used for the module path
+    default: sample
+  - name: Year
+    description: Four-digit year written into the LICENSE copyright line at instantiation (use the current year)
+    default: 2026
+verify:
+  - step: install
+    cwd: src/{{ProjectName}}Lib
+    command: go mod download
+  - step: build
+    cwd: src/{{ProjectName}}Lib
+    command: go build ./...
+  - step: test
+    cwd: src/{{ProjectName}}Lib
+    command: go test ./...
