@@ -131,7 +131,7 @@ High-level description of the chosen approach.
 - OQ-1: ...
 
 ## References
-- [Reference Catalog](../../.github/reference-catalog.md)
+- [Stack Profiles skill](../sdlc-stack-profiles/SKILL.md) — bundled template and library catalog
 ```
 
 ## Step 4: Validate the ADR

@@ -173,7 +173,7 @@ from the Tech Stack table above.
 
 | Resource                                    | Description                      |
 | ------------------------------------------- | -------------------------------- |
-| [Reference Catalog](/.github/reference-catalog.md) | Reusable libraries and templates |
+| [Stack Profiles](/skills/sdlc-stack-profiles/SKILL.md) | Reusable libraries and templates |
 
 ### Security Guidelines
 
