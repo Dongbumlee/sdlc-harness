@@ -123,6 +123,18 @@ security job as well as the build. Containers run as a non-root
 user on an unprivileged port. A template whose sample fails its own
 scans is a harness defect, like any other template/profile mismatch.
 
+**Release baseline:** every bundled template versions by Semantic
+Versioning and keeps a `CHANGELOG.md` in Keep a Changelog format.
+A `vX.Y.Z` tag runs the template's release workflow: a verify job
+re-runs the stack's full build-stage gate set (the CI build job
+minus the Docker step) on the tagged tree, then the matching
+CHANGELOG section becomes the GitHub Release notes — a tag whose
+version has no CHANGELOG section fails the release rather than
+publishing empty notes. Every template also ships a README stub at
+its root (what it is, how to run it, links to SECURITY.md and the
+changelog); the design phase expands the stub into the full
+project README.
+
 **License:** every bundled template ships an MIT `LICENSE` at its root
 (ADR-0003). An organization template or an explicit user decision overrides
 the license text; the Scaffolder records the license actually shipped next
