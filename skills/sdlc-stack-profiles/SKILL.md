@@ -5,7 +5,7 @@ description: >-
   project files, layout, package manager, build/test/lint commands, Dockerfile
   and CI patterns — so the SDLC process itself stays stack-neutral. Use when
   scaffolding, implementing, testing, or reviewing a project in any supported
-  stack (python, typescript, dotnet, java), or when an organization adopts the
+  stack (python, typescript, dotnet, java, go), or when an organization adopts the
   harness with its own stack standards.
 version: "1.0"
 author: sdlc-harness
@@ -38,7 +38,7 @@ In order:
 The Scaffolder records the resolved stack in the manifest's Projects table.
 Every later phase reads it from there.
 
-If the declared stack has an instruction pair but no profile (today: go,
+If the declared stack has an instruction pair but no profile (today:
 rust), it is not a supported stack (see "Adding a stack"): stop and
 surface the gap to the user — never fall through to the python/typescript
 defaults for it.
@@ -76,7 +76,7 @@ Every profile declares the same fields:
 
 Every profile ships a **bundled default template** in this skill's assets:
 `assets/templates/<profile>/<kind>/` (python/api, dotnet/api,
-typescript/web, java/api). A template is the profile expressed as files: project
+typescript/web, java/api, go/api). A template is the profile expressed as files: project
 files, layout, Dockerfile, CI stub, devcontainer, a health endpoint, one
 sample vertical slice (an `items` resource), and tests that prove the
 wiring. Every bundled template's test suite also includes **architecture
@@ -297,12 +297,83 @@ the default runtime.
 
 ---
 
+## Profile: go
+
+- **Project files:** `go.mod` per project (Go modules) — the `go`
+  directive in `go.mod` pins the language version. `go.sum` appears when
+  the first external dependency is added; the bundled template uses only
+  the standard library, so a fresh scaffold has no dependencies and no
+  `go.sum`.
+- **Layout:**
+  ```
+  src/
+  └── <Name>API/
+      ├── go.mod                     ← module example.com/<project-name>
+      ├── Dockerfile
+      ├── cmd/
+      │   └── <project-name>/
+      │       └── main.go            ← composition root (wiring only)
+      └── internal/
+          ├── web/                   ← handlers (HTTP boundary)
+          ├── service/               ← interfaces + implementations + repositories
+          ├── model/                 ← structs / DTOs
+          └── architecture/          ← the architecture test (test-only package)
+  ```
+  Layers are **packages** under `internal/`, and the dependency
+  direction is web → service → model. `cmd/<project-name>/main.go` is
+  the composition root — the only place implementations are wired.
+  Tests live beside the code they test as `*_test.go` files (Go
+  convention); they are not a separate tree.
+- **Runtime:** Go 1.27 (this profile's default; the organization may
+  pin a newer release — the `go` directive in `go.mod` is the pin).
+- **Package manager / build tool:** **Go modules** — restore:
+  `go mod download`. **Decision rule:** the standard library
+  (`net/http`, with `http.ServeMux` method-and-pattern routing) is the
+  bundled default web stack because it ships with the toolchain, so the
+  profile can pin it exactly and every project builds the same way with
+  zero dependency decisions. A framework (chi, gin, echo) is used only
+  when the organization declares it — a framework is a dependency
+  decision, and dependency decisions belong to the organization.
+- **Build:** `go build ./...`
+- **Test:** `go test ./...`; coverage:
+  `go test -coverprofile=coverage.out ./...`.
+- **Coverage target:** 80% (Class 2 — a shortfall is a recorded deviation, never a gate failure)
+- **Lint / format:** `gofmt -l .` (must print nothing) and
+  `go vet ./...`.
+- **Dockerfile:** multi-stage — build stage `golang:1.27`
+  (`CGO_ENABLED=0 go build`), runtime stage
+  `gcr.io/distroless/static-debian12:nonroot` (static binary running as
+  the distroless non-root user), `EXPOSE 8080`,
+  `ENTRYPOINT ["/server"]`.
+- **CI steps (GitHub Actions, default):** `actions/setup-go` (1.27) →
+  `gofmt` check → `go vet ./...` → `go test ./...` → `docker build`.
+- **Devcontainer:** `mcr.microsoft.com/devcontainers/base:ubuntu` with
+  the `go` feature (version 1.27).
+- **Patterns:** interface-first services, mirroring the other profiles —
+  handlers depend on service interfaces, services on repository
+  interfaces, and `main` wires the implementations (explicit composition
+  root, the counterpart of the python template's app context).
+  Constructor injection only — plain constructors, no DI container.
+  Configuration comes from environment variables (`PORT`, default
+  8080). Every API exposes `/health` and `/health/ready` with the same
+  response shape as the other templates.
+- **Template source:** the org's Go template repo from
+  copilot-instructions when declared; otherwise the bundled default
+  template (`assets/templates/go/api`); this profile's layout is the
+  last-resort fallback.
+
+Defaults that belong to this profile: Go 1.27 is the default runtime;
+the standard library is the default web stack (frameworks are an
+organization declaration, per the decision rule above).
+
+---
+
 ## Adding a stack
 
 A new stack is **data, not code**: add one profile section above (all fields),
 confirm a matching instruction pair exists in `sdlc-workspace-init` assets
-(`code-quality-<stack>` / `test-quality-<stack>` — go and rust already
-have theirs), add a bundled default template under `assets/templates/` whose
+(`code-quality-<stack>` / `test-quality-<stack>` — rust already
+has its), add a bundled default template under `assets/templates/` whose
 `verify` steps pass, and the Scaffolder, Implementer, and QA agents pick the
 stack up through profile resolution. No agent file changes. A stack counts
 as fully supported only when profile, instruction pair, bundled template,
