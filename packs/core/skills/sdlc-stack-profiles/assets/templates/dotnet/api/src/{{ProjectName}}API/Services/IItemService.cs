@@ -6,6 +6,6 @@ namespace {{ProjectName}}API.Services;
 public interface IItemService
 {
     Item Create(CreateItemRequest request);
-    Item? Get(int id);
+    Item? GetById(int id);
     IReadOnlyList<Item> List();
 }

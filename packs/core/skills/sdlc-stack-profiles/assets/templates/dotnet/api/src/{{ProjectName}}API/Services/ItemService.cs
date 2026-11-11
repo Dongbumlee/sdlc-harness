@@ -6,7 +6,7 @@ public class ItemService(IItemRepository repository) : IItemService
 {
     public Item Create(CreateItemRequest request) => repository.Add(request);
 
-    public Item? Get(int id) => repository.Get(id);
+    public Item? GetById(int id) => repository.GetById(id);
 
     public IReadOnlyList<Item> List() => repository.List();
 }

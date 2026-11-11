@@ -104,6 +104,11 @@ the profile's install, build, and test commands. The scaffold is not
 complete until verification passes or an environment limitation is reported
 per the harness's environment-failure rule.
 
+**Editor baseline:** every bundled template ships an `.editorconfig`
+at its root — the editor-level baseline (charset, line endings,
+indentation) that the profile's toolchain formatters enforce in CI,
+so a contributor's editor agrees with the gate before CI ever runs.
+
 **License:** every bundled template ships an MIT `LICENSE` at its root
 (ADR-0003). An organization template or an explicit user decision overrides
 the license text; the Scaffolder records the license actually shipped next
@@ -149,11 +154,13 @@ defect: follow the profile (the declared standard) and report the mismatch.
   (e.g. `tests/rig.py`), imported by name; conftest itself holds only
   fixture definitions.
 - **Coverage target:** 80% (Class 2 — a shortfall is a recorded deviation, never a gate failure)
-- **Lint / format:** per the repo's `code-quality-py` instructions and root
-  linter config (e.g. `.flake8`)
+- **Lint / format:** `uv run ruff check .` and `uv run ruff format --check .`
+  — Ruff is the pinned formatter + linter for every Python project,
+  configured in the project's `pyproject.toml` (`[tool.ruff]`). There is
+  no second formatter and no per-project rule shopping.
 - **Dockerfile:** multi-stage per `sdlc-project-scaffolding` — Azure Linux
   Python base, `COPY --from=ghcr.io/astral-sh/uv:latest`, `uv sync --frozen`
-- **CI steps:** `uv sync --frozen` → `uv run pytest --cov --junitxml=results.xml` → `docker build`
+- **CI steps:** `uv sync --frozen` → `uv run ruff check .` → `uv run ruff format --check .` → `uv run pytest --cov --junitxml=results.xml` → `docker build`
 - **Template source:** the org's base / API / agent template repos from
   copilot-instructions; otherwise the bundled default template
   (`assets/templates/python/api`); the profile layout above is the
@@ -173,18 +180,25 @@ Python 3.12 is the default runtime version.
 - **Build:** `pnpm build`
 - **Test:** `pnpm test` (Vitest); direct equivalent: `npx vitest run`
 - **Coverage target:** 80% (Class 2 — a shortfall is a recorded deviation, never a gate failure)
-- **Lint / format:** `npx eslint .` and `npx prettier --check src`
+- **Lint / format:** `pnpm lint` (ESLint flat config, `eslint.config.mjs`)
+  and `pnpm format:check` (Prettier, `.prettierrc.json`) — both configs
+  ship in the template at the project root; CI runs both.
 - **Dockerfile:** multi-stage — Node build stage → nginx serve stage
-- **CI steps:** `pnpm install --frozen-lockfile` → `pnpm test` → `pnpm build` → `docker build`
+- **CI steps:** `pnpm install --frozen-lockfile` → `pnpm lint` → `pnpm format:check` → `pnpm test` → `pnpm build` → `docker build`
 - **Template source:** an org template repo overrides when declared;
   otherwise the bundled default template (`assets/templates/typescript/web`),
   which follows the React + TypeScript structure in
   `sdlc-project-scaffolding`.
 
-Defaults that belong to this profile: TypeScript 7, React + Next.js,
-shadcn/ui components, Tailwind CSS. TypeScript 7 requires Next.js 16.2.11
-or later — Next 15's TypeScript integration cannot use the TS 7 native
-compiler API (measured 2026-10-18 building the bundled template).
+Defaults that belong to this profile: TypeScript 6, React + Next.js,
+shadcn/ui components, Tailwind CSS. TypeScript is held at 6.x: the
+profile's pinned lint toolchain (typescript-eslint, loaded by
+eslint-config-next) does not support TypeScript 7 yet, and a standard
+whose lint gate cannot run is not a standard (measured 2026-11-11:
+TS 7.0.2 makes `eslint .` fail while loading its config; TS 6 runs
+lint, format check, tests, and build green). The Next.js pin (16.2.11
+or later) already satisfies the floor TypeScript 7 will need, so
+moving to 7 is a one-line change when typescript-eslint support lands.
 
 ## Profile: dotnet
 
@@ -231,14 +245,21 @@ compiler API (measured 2026-10-18 building the bundled template).
   needs richer failures, declare exception types in the service layer
   and map them in one middleware; never per-endpoint catch blocks.
 - **Coverage target:** 80% (Class 2 — a shortfall is a recorded deviation, never a gate failure)
-- **Lint / format:** `dotnet format --verify-no-changes`; analyzers run as
-  part of `dotnet build` (the org may set `TreatWarningsAsErrors` in CI).
+- **Lint / format:** `dotnet format --verify-no-changes`; analyzers and
+  code style run as part of `dotnet build` — the template's
+  `Directory.Build.props` at the solution root pins `AnalysisLevel`
+  latest-recommended, `EnforceCodeStyleInBuild`, and
+  `TreatWarningsAsErrors`, so warnings fail the build rather than
+  scrolling past. The one recorded exception: test projects carry
+  their own `.editorconfig` exempting CA1707, because test method
+  names use the Unit_Scenario_Expectation convention.
 - **Dockerfile:** multi-stage — build stage
   `mcr.microsoft.com/dotnet/sdk:10.0` (restore → `dotnet publish -c Release`),
   runtime stage `mcr.microsoft.com/dotnet/aspnet:10.0`, non-root `APP_UID`
   user, `EXPOSE 8080`, `ENTRYPOINT ["dotnet", "<Name>API.dll"]`.
 - **CI steps (GitHub Actions, default):** `actions/setup-dotnet` →
-  `dotnet restore` → `dotnet build -c Release` → `dotnet test -c Release`.
+  `dotnet restore` → `dotnet format --verify-no-changes` →
+  `dotnet build -c Release` → `dotnet test -c Release`.
   **ADO variant** (organization declares Azure DevOps): `DotNetCoreCLI@2`
   restore → build → test with `PublishTestResults@2` in `azure_cicd.yaml`.
 - **Devcontainer:** `mcr.microsoft.com/devcontainers/dotnet` (org-pinned tag).
@@ -371,15 +392,18 @@ the default runtime.
   (`var Err…`) and map them in the web layer in one place; never
   string-match error text in handlers.
 - **Coverage target:** 80% (Class 2 — a shortfall is a recorded deviation, never a gate failure)
-- **Lint / format:** `gofmt -l .` (must print nothing) and
-  `go vet ./...`.
+- **Lint / format:** `gofmt -l .` (must print nothing), `go vet ./...`,
+  and `golangci-lint run` — the standard linter set (errcheck, govet,
+  ineffassign, staticcheck, unused) pinned in the project's
+  `.golangci.yml`; CI runs all three.
 - **Dockerfile:** multi-stage — build stage `golang:1.27`
   (`CGO_ENABLED=0 go build`), runtime stage
   `gcr.io/distroless/static-debian12:nonroot` (static binary running as
   the distroless non-root user), `EXPOSE 8080`,
   `ENTRYPOINT ["/server"]`.
 - **CI steps (GitHub Actions, default):** `actions/setup-go` (1.27) →
-  `gofmt` check → `go vet ./...` → `go test ./...` → `docker build`.
+  `gofmt` check → `go vet ./...` → `golangci-lint run` →
+  `go test ./...` → `docker build`.
 - **Devcontainer:** `mcr.microsoft.com/devcontainers/base:ubuntu` with
   the `go` feature (version 1.27).
 - **Patterns:** interface-first services, mirroring the other profiles —
@@ -450,7 +474,9 @@ organization declaration, per the decision rule above).
   it; never hand-map the same failure in several handlers.
 - **Coverage target:** 80% (Class 2 — a shortfall is a recorded deviation, never a gate failure)
 - **Lint / format:** `cargo fmt --check` and
-  `cargo clippy --all-targets -- -D warnings`.
+  `cargo clippy --all-targets -- -D warnings` — the pins live in the
+  project's `rustfmt.toml` (edition, width) and `clippy.toml` (MSRV,
+  so clippy never suggests an API newer than `rust-version`).
 - **Dockerfile:** multi-stage — build stage `rust:1.99`
   (`cargo build --release`), runtime stage
   `gcr.io/distroless/cc-debian12:nonroot` (the binary links libc,

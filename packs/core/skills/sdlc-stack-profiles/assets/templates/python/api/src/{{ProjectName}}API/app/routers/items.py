@@ -23,9 +23,7 @@ async def list_items(service: IItemService = Depends(get_item_service)):
 
 
 @router.get("/{item_id}", response_model=Item)
-async def get_item(
-    item_id: int, service: IItemService = Depends(get_item_service)
-):
+async def get_item(item_id: int, service: IItemService = Depends(get_item_service)):
     # A missing item raises NotFoundError in the service; the
     # composition root's handler maps it to 404.
     return await service.get_item_async(item_id)

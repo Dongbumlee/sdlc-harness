@@ -16,7 +16,7 @@ public class InMemoryItemRepository : IItemRepository
         return item;
     }
 
-    public Item? Get(int id) => _items.TryGetValue(id, out var item) ? item : null;
+    public Item? GetById(int id) => _items.TryGetValue(id, out var item) ? item : null;
 
     public IReadOnlyList<Item> List() => _items.Values.OrderBy(i => i.Id).ToList();
 }
