@@ -15,10 +15,15 @@ class IItemRepository(Protocol):
 
 
 class IItemService(Protocol):
-    """Service contract used by the routers."""
+    """Service contract used by the routers.
+
+    Services raise the domain errors from app.services.errors for
+    failures (a missing item is NotFoundError, not a None return);
+    the composition root maps them to HTTP status codes.
+    """
 
     async def create_item_async(self, request: ItemCreate) -> Item: ...
 
-    async def get_item_async(self, item_id: int) -> Item | None: ...
+    async def get_item_async(self, item_id: int) -> Item: ...
 
     async def list_items_async(self) -> list[Item]: ...

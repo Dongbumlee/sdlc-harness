@@ -136,6 +136,12 @@ defect: follow the profile (the declared standard) and report the mismatch.
   or poetry unless the user explicitly requests it.
 - **Build:** `uv sync --frozen` (no separate compile step)
 - **Test:** `uv run pytest --cov`
+- **Domain errors:** service-layer failures live in
+  `app/services/errors.py` (`DomainError` + NotFound/Forbidden/
+  Conflict/Validation). Services raise them; the composition root
+  maps them to HTTP status codes. Routers never translate failures,
+  and a project adds its own failures as `DomainError` subclasses in
+  that module — never ad-hoc exceptions inside a service.
 - **Shared test helpers:** pytest runs with `--import-mode=importlib`
   (pyproject), under which test modules cannot import `conftest`. The
   template's conftest puts `tests/` on `sys.path`: shared fixture

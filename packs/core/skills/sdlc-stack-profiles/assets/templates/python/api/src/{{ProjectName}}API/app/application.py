@@ -1,10 +1,28 @@
 import os
 
+from fastapi import Request
+from fastapi.responses import JSONResponse
+
 from app.libs.base.application_base import Application_Base
 from app.libs.base.typed_fastapi import TypedFastAPI
 from app.routers import http_probes, items
+from app.services.errors import (
+    ConflictError,
+    ForbiddenError,
+    NotFoundError,
+    ValidationError,
+)
 from app.services.implementations import InMemoryItemRepository, ItemService
 from app.services.interfaces import IItemRepository, IItemService
+
+# Domain error -> HTTP status. Services raise (app.services.errors);
+# this mapping is the only place the two vocabularies meet.
+_ERROR_STATUS = {
+    NotFoundError: 404,
+    ForbiddenError: 403,
+    ConflictError: 409,
+    ValidationError: 400,
+}
 
 
 class Application(Application_Base):
@@ -27,6 +45,7 @@ class Application(Application_Base):
         config = self.application_context.configuration
         self.app = TypedFastAPI(title=config.app_name, version="0.1.0")
         self.app.set_app_context(self.application_context)
+        self._register_error_handlers()
 
         # Health probes
         self.app.include_router(http_probes.router)
@@ -34,6 +53,14 @@ class Application(Application_Base):
         # DI registration, then routers that depend on the registrations
         self._register_dependencies()
         self._config_routers()
+
+    def _register_error_handlers(self):
+        for error_type, status_code in _ERROR_STATUS.items():
+
+            async def handler(request: Request, exc, _status=status_code):
+                return JSONResponse(status_code=_status, content={"detail": exc.detail})
+
+            self.app.add_exception_handler(error_type, handler)
 
     def _register_dependencies(self):
         repository = InMemoryItemRepository()
