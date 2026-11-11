@@ -219,6 +219,10 @@ compiler API (measured 2026-10-18 building the bundled template).
 - **Test:** `dotnet test <Name>.sln -c Release`; coverage:
   `dotnet test <Name>.sln -c Release --collect "XPlat Code Coverage"`
   (coverlet). Test framework: xUnit with `Microsoft.NET.Test.Sdk`.
+- **Errors:** the web layer owns HTTP translation — endpoints return
+  `Results.*` and services signal absence with `null`. When a service
+  needs richer failures, declare exception types in the service layer
+  and map them in one middleware; never per-endpoint catch blocks.
 - **Coverage target:** 80% (Class 2 — a shortfall is a recorded deviation, never a gate failure)
 - **Lint / format:** `dotnet format --verify-no-changes`; analyzers run as
   part of `dotnet build` (the org may set `TreatWarningsAsErrors` in CI).
@@ -281,6 +285,11 @@ compiler API (measured 2026-10-18 building the bundled template).
 - **Build:** `./mvnw -B package -DskipTests`
 - **Test:** `./mvnw -B test`; coverage: `./mvnw -B verify` (JaCoCo report
   under `target/site/jacoco/`).
+- **Errors:** the web layer owns HTTP translation — controllers throw
+  `ResponseStatusException` and services return `Optional`. When a
+  service needs richer failures, declare domain exceptions in the
+  service layer and map them in one `@RestControllerAdvice`; never
+  per-controller catch blocks.
 - **Coverage target:** 80% (Class 2 — a shortfall is a recorded deviation, never a gate failure)
 - **Lint / format:** `./mvnw -B spotless:check` (googleJavaFormat), bound to
   the `verify` phase in the template's pom.
@@ -349,6 +358,11 @@ the default runtime.
 - **Build:** `go build ./...`
 - **Test:** `go test ./...`; coverage:
   `go test -coverprofile=coverage.out ./...`.
+- **Errors:** the web layer owns HTTP translation (`writeError`) and
+  services signal absence with `nil`. When a service needs richer
+  failures, declare sentinel errors in the service package
+  (`var Err…`) and map them in the web layer in one place; never
+  string-match error text in handlers.
 - **Coverage target:** 80% (Class 2 — a shortfall is a recorded deviation, never a gate failure)
 - **Lint / format:** `gofmt -l .` (must print nothing) and
   `go vet ./...`.
@@ -418,6 +432,15 @@ organization declaration, per the decision rule above).
 - **Build:** `cargo build`
 - **Test:** `cargo test`; coverage: `cargo llvm-cov` (requires the
   `cargo-llvm-cov` tool — install it once per environment).
+- **Shared test helpers:** integration tests under `tests/` are
+  separate crates. Shared helpers live in `tests/common/mod.rs` and
+  are pulled in with `mod common;` — a `.rs` file placed directly
+  under `tests/` becomes its own test crate instead of a library.
+- **Errors:** handlers own HTTP translation, returning
+  `(StatusCode, Json)`; services signal absence with `Option`. When
+  a service needs richer failures, declare one error enum in the
+  service module implementing `IntoResponse` and let handlers return
+  it; never hand-map the same failure in several handlers.
 - **Coverage target:** 80% (Class 2 — a shortfall is a recorded deviation, never a gate failure)
 - **Lint / format:** `cargo fmt --check` and
   `cargo clippy --all-targets -- -D warnings`.
