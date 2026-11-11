@@ -57,7 +57,7 @@ expected:
     - OIDC
     - secretmanager
     - requirements
-    - 401
+    - "401"
   graders:
     - type: keyword
       weight: 0.3

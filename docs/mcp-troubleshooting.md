@@ -62,7 +62,7 @@ Get-Content "$env:USERPROFILE\.claude.json" -Raw | ConvertFrom-Json
 
 **Cause:** (Fixed) Step 0 wasn't forceful enough.
 
-**Fix:** Updated in Harness agent v1.0.2+. Step 0 is now a hard gate with mandatory status table output.
+**Fix:** Step 0 is a hard gate with mandatory status table output in current releases.
 
 ### 5. Non-interactive mode (`-p`) limitations
 
@@ -85,13 +85,22 @@ Get-Content "$env:USERPROFILE\.claude.json" -Raw | ConvertFrom-Json
 
 Note: Claude tools use `"mcpServers"` key; VSCode/Copilot use `"servers"` key.
 
-## Required Servers
+## Configured Servers
+
+The workspace template configures 7 servers. Posture at run start differs
+by server (see `docs/base-definitions.md` §10.2): only awesome-copilot is
+a hard stop; a GitHub MCP authentication failure warns and the run
+continues in degraded local mode — it never gates a phase.
 
 | Server | Purpose | Type |
 |--------|---------|------|
-| awesome-copilot | Best practices (OWASP, Docker, Bicep) | Docker |
+| awesome-copilot | Best practices (OWASP, Docker, Bicep) | Docker (stdio) |
 | github | Repo access, PR creation | HTTP |
-| context7 | Framework documentation | npx |
+| azure | Azure resource validation and management | npx (stdio) |
+| azure-devops | ADO wikis, pipelines, work items | npx (stdio) |
+| microsoft-learn | Microsoft Learn documentation | HTTP |
+| context7 | Framework documentation | npx (stdio) |
+| playwright | Browser automation for E2E testing | npx (stdio) |
 
 ## Still Stuck?
 

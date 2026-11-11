@@ -57,6 +57,9 @@ QA Coordinator (adversarial posture — never downgrade findings)
 ```
 
 Each reviewer scores 1-10 with hard fail thresholds (Security ≥ 8, others ≥ 7).
+The compliance slot matches the project's cloud pack — Azure in this example;
+an AWS or GCP project gets its own compliance reviewer in the same slot, and
+with no cloud target recorded, no compliance reviewer runs.
 
 ## Step 5: Engineer reviews the synthesized QA report
 
@@ -79,7 +82,10 @@ The QA Coordinator synthesizes all 9 perspectives into a single prioritized repo
 ```
 
 If the verdict is ⛔, Harness enters the **iterative QA loop**: delegates fixes to the
-Implementer, then re-runs only the failing reviewers. This continues up to 3 rounds.
+Implementer, then re-reviews only the changed ranges in the failing domains (a
+*delta re-review* — untouched domains keep their scores). Round caps scale with
+the task's grade: 2 rounds for Small, 3 for Medium and Large. Suggestions never
+consume a round.
 
 ## Step 6: Documentation and release
 

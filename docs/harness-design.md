@@ -22,16 +22,16 @@ to be skeptical — dramatically improves output quality.
 |---|---|---|---|
 | **Analyst** | Design completeness, testability, scope control, NFR coverage | — (produces criteria for others) | Design revision loop via Harness |
 | **Scaffolder** | Template fidelity, file existence, dependency correctness | Required files checklist | Structure validation via Harness |
-| **Deployer** | AVM versions, compilation, no hardcoded values, diagnostics, WAF | Infrastructure quality checklist | Bicep fix loop via Harness |
+| **Deployer** | AVM versions, compilation, no hardcoded values, diagnostics | Infrastructure quality checklist | Bicep fix loop via Harness |
 | **Implementer** | Acceptance criteria coverage table | Sprint contract before coding | QA re-review loop (up to 3 rounds) |
 | **Documenter** | Template compliance, code accuracy, no placeholders, link integrity | — | Revision loop via Harness |
 | **QA Reviewers** | — (they ARE the evaluators) | — | Adversarial scoring with thresholds |
 
 ## Evaluation gates
 
-- **Weighted scoring**: Security × 1.5, others × 1.0 → composite = `(security × 1.5 + sum(others)) / 9.5`
-- **Hard-fail rules**: composite < 7, security < 8, any Critical finding
-- **3-tier escalation**: auto-retry → targeted retry → user decision (max 3 rounds)
+- **Weighted scoring**: Security × 1.5, others × 1.0 → composite = `(security × 1.5 + sum of other active domains) / (1.5 + active domains)` — 9.5 is only the full-panel denominator.
+- **Hard-fail rules**: composite < 7, security < 8, any domain < 5, any Critical finding, or two or more Important findings within a single reviewer domain
+- **3-tier escalation**: auto-retry → targeted retry → user decision; round caps scale with the task grade (Phase 6: Small 2, Medium 3, Large 3)
 - **Phase-specific routing**: not all phases need all 9 reviewers
 
 ## Structured reviewer output
@@ -41,6 +41,7 @@ All 9 QA reviewers emit structured YAML between delimiters:
 ```yaml
 ---sdlc-review-output---
 reviewer: "<agent-name>"
+status: complete | partial
 score: <1-10>
 verdict: PASS | FAIL | CRITICAL_FAIL
 findings:
@@ -49,6 +50,15 @@ findings:
     description: "<finding>"
     location: "<file:line>"
     recommendation: "<fix>"
+    scope: in-scope | out-of-scope
+    requirement: "<acceptance criterion or recorded standard>"
+not_checked:
+  - "<area not covered, and why>"
 reasoning: "<evaluation summary>"
 ---end-sdlc-review-output---
 ```
+
+Every finding carries a `severity`, a `scope`, and the `requirement` it is
+measured against; every block carries `status` and `not_checked` — see
+`docs/base-definitions.md` §4 for the canonical contract and the severity
+translation table (finding levels ↔ synthesis terms).
