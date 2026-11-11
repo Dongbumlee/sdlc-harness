@@ -2,11 +2,36 @@
 # Licensed under MIT
 """Generate macOS-style terminal screenshot PNGs for README."""
 
+import os
+from pathlib import Path
+
 from PIL import Image, ImageDraw, ImageFont
 
-FONT_PATH = "/tmp/jbmono/fonts/ttf/JetBrainsMono-Regular.ttf"
-FONT_BOLD_PATH = "/tmp/jbmono/fonts/ttf/JetBrainsMono-Bold.ttf"
-OUTPUT_DIR = "/home/donlee/works/sdlc-harness-dev/docs/assets"
+REPO_ROOT = Path(__file__).resolve().parents[1]
+OUTPUT_DIR = REPO_ROOT / "docs" / "assets"
+
+# JetBrains Mono is not bundled; point SDLC_JBMONO_DIR at a directory holding
+# JetBrainsMono-Regular.ttf / JetBrainsMono-Bold.ttf, or use one of the
+# default locations below.
+_FONT_DIRS = [
+    Path(os.environ["SDLC_JBMONO_DIR"]) if os.environ.get("SDLC_JBMONO_DIR") else None,
+    Path("/tmp/jbmono/fonts/ttf"),
+    Path.home() / ".local" / "share" / "fonts",
+]
+
+
+def _font_path(filename):
+    for base in _FONT_DIRS:
+        if base is not None and (base / filename).is_file():
+            return str(base / filename)
+    raise FileNotFoundError(
+        f"{filename} not found; set SDLC_JBMONO_DIR to the directory "
+        "containing the JetBrains Mono TTFs."
+    )
+
+
+FONT_PATH = _font_path("JetBrainsMono-Regular.ttf")
+FONT_BOLD_PATH = _font_path("JetBrainsMono-Bold.ttf")
 
 # Catppuccin Mocha palette
 BG = (30, 30, 46)
@@ -115,7 +140,7 @@ def generate_vscode():
         [("  https://github.com/Dongbumlee/sdlc-harness", YELLOW)],
         "",
         [("  ✓ ", GREEN), ("Cloning repository...", GREEN)],
-        [("  ✓ ", GREEN), ("Found plugin.json — 19 agents, 16 skills", GREEN)],
+        [("  ✓ ", GREEN), ("Found plugin.json — 21 agents, 24 skills", GREEN)],
         [("  ✓ ", GREEN), ("Plugin \"sdlc-harness\" installed successfully", GREEN)],
     ]
     img = create_terminal(620, lines, "VS Code — Command Palette")
@@ -132,8 +157,8 @@ def generate_cli():
         [("  Detecting plugin format...", DIM)],
         "",
         [("  ✓ ", GREEN), ("Found root plugin.json", GREEN)],
-        [("  ✓ ", GREEN), ("Loaded 19 agents", GREEN)],
-        [("  ✓ ", GREEN), ("Loaded 16 skills (13 core + 3 Azure)", GREEN)],
+        [("  ✓ ", GREEN), ("Loaded 21 agents", GREEN)],
+        [("  ✓ ", GREEN), ("Loaded 24 skills (14 core + 4 Azure + 3 AWS + 3 GCP)", GREEN)],
         [("  ✓ ", GREEN), ("Workspace MCP configuration is available after initialization", GREEN)],
         "",
         [("  Plugin ", TEXT), ("sdlc-harness", YELLOW), (" installed successfully.", TEXT)],
@@ -156,8 +181,8 @@ def generate_marketplace():
         "",
         [("── ", DIM), ("Browse available plugins", DIM), (" ──", DIM)],
         [("❯ ", BLUE), ("copilot plugin marketplace browse sdlc-harness", TEXT)],
-        [("    sdlc-harness", YELLOW), ("  v1.0.0", DIM)],
-        [("    19 agents · 16 skills · 7 MCP servers", DIM)],
+        [("    sdlc-harness", YELLOW), ("  v1.3.0", DIM)],
+        [("    21 agents · 24 skills · 7 MCP servers", DIM)],
         [("    Multi-agent SDLC orchestration with adversarial QA", DIM)],
         "",
         "---",
