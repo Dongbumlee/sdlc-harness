@@ -1,3 +1,4 @@
+from app.services.errors import NotFoundError
 from app.services.interfaces import IItemRepository
 from app.services.models import Item, ItemCreate
 
@@ -33,8 +34,11 @@ class ItemService:
     async def create_item_async(self, request: ItemCreate) -> Item:
         return await self._repository.add_async(request)
 
-    async def get_item_async(self, item_id: int) -> Item | None:
-        return await self._repository.get_async(item_id)
+    async def get_item_async(self, item_id: int) -> Item:
+        item = await self._repository.get_async(item_id)
+        if item is None:
+            raise NotFoundError("Item not found")
+        return item
 
     async def list_items_async(self) -> list[Item]:
         return await self._repository.list_async()

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, Request, status
 
 from app.services.interfaces import IItemService
 from app.services.models import Item, ItemCreate
@@ -26,7 +26,6 @@ async def list_items(service: IItemService = Depends(get_item_service)):
 async def get_item(
     item_id: int, service: IItemService = Depends(get_item_service)
 ):
-    item = await service.get_item_async(item_id)
-    if item is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item not found")
-    return item
+    # A missing item raises NotFoundError in the service; the
+    # composition root's handler maps it to 404.
+    return await service.get_item_async(item_id)
