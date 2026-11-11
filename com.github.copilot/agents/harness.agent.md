@@ -578,6 +578,9 @@ and the exit gate is unchanged.
 
 6. **Delegate to QA Coordinator for requirements review:**
    > "Run QA review for phase: requirements. Invoke only: Requirements Completeness, Architecture."
+   (Small grade: skip this delegation — the review is deferred to the
+   combined Phase 1–2 exit review; see "Small-grade consolidation"
+   below.)
 
 7. **Route the result by the Round convergence rule.** Zero Critical
    and zero Important findings → proceed to Phase 2, with Suggestions
@@ -607,6 +610,37 @@ When the requirements spec is approved and QA has passed:
    revised sections and the gaps raised (delta). Minor gaps are
    recorded as accepted-forward findings and do not hold the ADR.
 
+#### Small-grade consolidation (Phase 1–2)
+
+**Small grade only** (manifest Task Grade). The early phases run
+consolidated; Medium, Large, and ungraded runs use the steps above
+unchanged.
+
+1. **One Analyst session per phase, artifacts as checkpoints.**
+   Phase 1 is the single 1A+1B delegation above. The Phase 2
+   delegation is extended: in the same session, after saving the
+   design proposal, the Analyst saves the ADR itself from the
+   proposal (`.design/ADR-TEMPLATE.md` →
+   `docs/adr/ADR-XXX-<topic>.md`). No Documenter delegation is made
+   for the ADR on Small tasks; the ADR generation rule below carries
+   this exception.
+2. **One combined exit review.** The step-6 requirements review is
+   deferred. After the ADR exists, delegate ONE review:
+   > "Run QA review for phase: requirements+design (Small,
+   > consolidated). Invoke only: Requirements Completeness. Brief it
+   > with the REQ, the design proposal, and the ADR; it applies its
+   > own checklist to the REQ and the architecture checklist (from
+   > the sdlc-architecture-review skill) to the proposal and ADR,
+   > and returns one combined report."
+3. **Convergence is the rule above, unchanged** — zero Critical and
+   zero Important → proceed to the exit gate; otherwise the Analyst
+   revises the affected sections and the same reviewer runs ONE
+   delta re-review, inside the Small round caps. Suggestions ride
+   forward in the ledger as accepted-forward findings.
+4. The Phase 1–2 exit gate below applies unchanged, except that the
+   ADR's author on Small is the Analyst (step 1), which the gate's
+   ADR pass condition records.
+
 #### Phase 1–2 exit gate — MANDATORY before Phase 3 or Phase 4
 
 Do NOT delegate to the Scaffolder or the Implementer until you have verified
@@ -621,8 +655,10 @@ ls docs/adr/ADR-*.md            # a NEW ADR (or dated addendum) exists for THIS 
 
 **Pass conditions (all must hold):**
 - [ ] The REQ file with the number assigned in Phase 1B exists.
-- [ ] A new ADR or addendum for this feature exists (created by the Documenter
-      from the Phase 2 design proposal — see the ADR generation rule below).
+- [ ] A new ADR or addendum for this feature exists (created from the
+      Phase 2 design proposal — by the Documenter, or, on Small-grade
+      tasks, by the Analyst in the Phase 2 session — see the ADR
+      generation rule below).
 - [ ] The Phase-State Ledger in `.SDLC/project-manifest.md` (if a manifest
       exists) records Phases 1–2 as Complete with these artifact paths.
 - [ ] `.SDLC/failure-ledger.md` holds a `TRANSITION COUNT` line for each
@@ -659,7 +695,8 @@ ls docs/adr/ADR-*.md            # a NEW ADR (or dated addendum) exists for THIS 
       is still a sentence.)
 
 **If any check fails:** route back to the responsible worker (Analyst for spec
-content, Documenter for a missing file) and re-verify. Proceeding to
+content, Documenter for a missing file — on Small, a missing ADR routes
+to the Analyst) and re-verify. Proceeding to
 implementation with a missing REQ or ADR is a process violation — this gate
 exists because feature work on existing projects repeatedly skipped the
 requirements artifact when it was enforced by prose alone.
@@ -1137,6 +1174,11 @@ delegate to the **Documenter** to save it as an ADR before proceeding to impleme
 1. Analyst saves a Phase 2 design proposal to `.SDLC/design-proposal-<topic>.md` and returns a summary (NOT a Phase 1B requirements spec).
 2. Delegate to Documenter: "Create an ADR from the design proposal file at `.SDLC/design-proposal-<topic>.md` using the template at `.design/ADR-TEMPLATE.md`. Save it to `docs/adr/ADR-XXX-<topic>.md`."
 3. Only after the ADR is saved, proceed to the next phase (usually Implementer).
+
+**Small-grade exception:** on Small tasks the Analyst saves the ADR
+itself inside the Phase 2 session (see "Small-grade consolidation"
+above); no Documenter delegation is made. Every other grade follows
+this rule as written.
 
 **CRITICAL:** Do NOT trigger ADR generation on Phase 1B output. The requirements spec
 is a standalone artifact — it is NOT an ADR. Only Phase 2 design proposals become ADRs.
