@@ -3,10 +3,10 @@
 > **Generated file — do not edit by hand.**
 > Regenerate with `python3 tools/generate_agent_inventory.py`.
 
-**Version:** 1.1.0
-**Generated:** 2026-10-06
+**Version:** 1.2.0
+**Generated:** 2026-11-10
 **Total agents:** 21 (21 agent files)
-**Total skills:** 22
+**Total skills:** 24
 
 ## 1. Agent Summary
 
@@ -22,7 +22,7 @@
 | 8 | `documenter.agent.md` | Documenter | Phase Worker | 5 | No | `sdlc-adr-authoring`, `sdlc-reference-catalog` |
 | 9 | `gcp-compliance-reviewer.agent.md` | GCP Compliance Reviewer | QA Reviewer | 6 (sub) | No | `sdlc-reviewer-output-format` |
 | 10 | `harness.agent.md` | Harness | Orchestrator | All (1–9) | — | `sdlc-canary-runner`, `sdlc-requirements-discovery`, `sdlc-workspace-init` |
-| 11 | `implementer.agent.md` | Implementer | Phase Worker | 4 | No | `sdlc-blob-storage`, `sdlc-cosmos-repository`, `sdlc-project-manifest`, `sdlc-reference-catalog`, `sdlc-stack-profiles` |
+| 11 | `implementer.agent.md` | Implementer | Phase Worker | 4 | No | `sdlc-project-manifest`, `sdlc-reference-catalog`, `sdlc-stack-profiles` |
 | 12 | `llm-behavior-reviewer.agent.md` | LLM Behavior Reviewer | QA Reviewer | 6 (sub) | No | `sdlc-project-qa`, `sdlc-security-review`, `sdlc-reviewer-output-format` |
 | 13 | `qa-bug-checklist-reviewer.agent.md` | QA Bug Checklist Reviewer | Standalone | On-demand | Yes | `sdlc-qa-bug-checklist`, `sdlc-security-review`, `sdlc-azure-deployment` |
 | 14 | `qa-coordinator.agent.md` | QA Coordinator | Orchestrator + Phase Worker | 6 | No | `sdlc-reviewer-output-format`, `sdlc-project-qa` |
@@ -52,24 +52,26 @@
 | 2 | `sdlc-architecture-review` | sdlc-architecture-review | Review code for architecture and design consistency following SDLC layering rules and application project patterns. Use when reviewing PR... | Architecture Reviewer |
 | 3 | `sdlc-aws-deployment` | sdlc-aws-deployment | Create AWS infrastructure with CDK (TypeScript) using L2/L3 constructs, deploy containerized APIs to Lambda (container image + Function U... | — |
 | 4 | `sdlc-azure-deployment` | sdlc-azure-deployment | Create Azure infrastructure with Bicep using Azure Verified Modules (AVM), configure azd orchestration, and manage deployment lifecycle. ... | Deployer, QA Bug Checklist Reviewer |
-| 5 | `sdlc-blob-storage` | sdlc-blob-storage | Implement Azure Blob Storage and Queue operations using the approved Storage library. Use when uploading, downloading, listing, or managi... | Implementer |
+| 5 | `sdlc-blob-storage` | sdlc-blob-storage | Implement Azure Blob Storage and Queue operations using the approved Storage library. Use when uploading, downloading, listing, or managi... | — |
 | 6 | `sdlc-canary-runner` | sdlc-canary-runner | Instructs the Harness agent how to run E2E canary tests against SDLC phase agents. Canary mode validates that the harness orchestration i... | Harness |
 | 7 | `sdlc-code-quality` | sdlc-code-quality | Review and enforce code quality standards for Python, TypeScript, React, Java, C#, Go, and Rust following SDLC quality instruction files.... | Code Quality Reviewer |
-| 8 | `sdlc-cosmos-repository` | sdlc-cosmos-repository | Implement Azure Cosmos DB data access using the approved Cosmos DB library with Repository Pattern. Use when creating entities, repositor... | Implementer |
+| 8 | `sdlc-cosmos-repository` | sdlc-cosmos-repository | Implement Azure Cosmos DB data access using the approved Cosmos DB library with Repository Pattern. Use when creating entities, repositor... | — |
 | 9 | `sdlc-dynamodb-repository` | sdlc-dynamodb-repository | Implement DynamoDB data access with single-table design and the Repository Pattern over boto3. Use when creating entities, repositories, ... | — |
 | 10 | `sdlc-firestore-repository` | sdlc-firestore-repository | Implement Firestore data access with an explicit collection design and the Repository Pattern over the google-cloud-firestore client. Use... | — |
 | 11 | `sdlc-gcp-deployment` | sdlc-gcp-deployment | Create GCP infrastructure with Terraform using the google provider, deploy containerized APIs to Cloud Run (HTTPS, scale-to-zero) and lon... | — |
 | 12 | `sdlc-gcs-storage` | sdlc-gcs-storage | Implement Cloud Storage with private buckets, uniform bucket-level access, and V4 signed URLs. Use when creating buckets, generating sign... | — |
-| 13 | `sdlc-project-manifest` | sdlc-project-manifest | Generate and read the project manifest that records which templates and patterns were chosen during scaffolding. This manifest is the sin... | Implementer, Scaffolder |
-| 14 | `sdlc-project-qa` | sdlc-project-qa | Comprehensive product QA checklist for enterprise applications and AI agents, covering UX/accessibility, core functionality, LLM behavior... | Deployment Readiness Reviewer, LLM Behavior Reviewer, QA Coordinator, Test Coverage Reviewer, UX & Accessibility Reviewer |
-| 15 | `sdlc-project-scaffolding` | sdlc-project-scaffolding | Scaffold new application project structures from templates with CI/CD pipelines, Dockerfiles, and devcontainers. Use when creating a new ... | Scaffolder |
-| 16 | `sdlc-qa-bug-checklist` | sdlc-qa-bug-checklist | Bug-driven QA checklist distilled from 338 real bugs across 9 production Azure DevOps projects with detailed error patterns, Azure error ... | QA Bug Checklist Reviewer |
-| 17 | `sdlc-reference-catalog` | sdlc-reference-catalog | Manage the living reference catalog — research methodology, population rules, consumption rules, append-only enforcement, and review chec... | Analyst, Deployer, Documenter, Implementer, Scaffolder |
-| 18 | `sdlc-requirements-discovery` | sdlc-requirements-discovery | Guides the Analyst agent through collaborative requirements discovery with the user. Covers elicitation patterns, question strategies, re... | Analyst, Harness |
-| 19 | `sdlc-reviewer-output-format` | sdlc-reviewer-output-format | Structured YAML output format for SDLC QA reviewer agents. Ensures consistent, parseable review output across all 9 reviewer domains. Use... | Architecture Reviewer, AWS Compliance Reviewer, Azure Compliance Reviewer, Code Quality Reviewer, Deployment Readiness Reviewer, GCP Compliance Reviewer, LLM Behavior Reviewer, QA Coordinator, Requirements Completeness Reviewer, Security Reviewer, Test Coverage Reviewer, UX & Accessibility Reviewer |
-| 20 | `sdlc-s3-storage` | sdlc-s3-storage | Implement Amazon S3 object storage with private buckets, presigned URLs, and lifecycle rules. Use when uploading, downloading, listing, o... | — |
-| 21 | `sdlc-security-review` | sdlc-security-review | Perform SDLC-aligned security review combining OWASP Top 10 with project-specific Azure patterns. Use when reviewing code for security vu... | LLM Behavior Reviewer, QA Bug Checklist Reviewer, Security Reviewer |
-| 22 | `sdlc-workspace-init` | sdlc-workspace-init | Initialize a new repository with SDLC workspace files — MCP config, copilot-instructions.md, quality instructions, and prompt files. Use ... | Harness |
+| 13 | `sdlc-harness` | sdlc-harness | Start or continue an SDLC workflow using the sdlc-harness plugin. Use for any feature development, bug fix, or project task that should g... | — |
+| 14 | `sdlc-project-manifest` | sdlc-project-manifest | Generate and read the project manifest that records which templates and patterns were chosen during scaffolding. This manifest is the sin... | Implementer, Scaffolder |
+| 15 | `sdlc-project-qa` | sdlc-project-qa | Comprehensive product QA checklist for enterprise applications and AI agents, covering UX/accessibility, core functionality, LLM behavior... | Deployment Readiness Reviewer, LLM Behavior Reviewer, QA Coordinator, Test Coverage Reviewer, UX & Accessibility Reviewer |
+| 16 | `sdlc-project-scaffolding` | sdlc-project-scaffolding | Scaffold new application project structures from templates with CI/CD pipelines, Dockerfiles, and devcontainers. Use when creating a new ... | Scaffolder |
+| 17 | `sdlc-qa-bug-checklist` | sdlc-qa-bug-checklist | Bug-driven QA checklist distilled from 338 real bugs across 9 production Azure DevOps projects with detailed error patterns, Azure error ... | QA Bug Checklist Reviewer |
+| 18 | `sdlc-reference-catalog` | sdlc-reference-catalog | Manage the living reference catalog — research methodology, population rules, consumption rules, append-only enforcement, and review chec... | Analyst, Deployer, Documenter, Implementer, Scaffolder |
+| 19 | `sdlc-requirements-discovery` | sdlc-requirements-discovery | Guides the Analyst agent through collaborative requirements discovery with the user. Covers elicitation patterns, question strategies, re... | Analyst, Harness |
+| 20 | `sdlc-reviewer-output-format` | sdlc-reviewer-output-format | Structured YAML output format for SDLC QA reviewer agents. Ensures consistent, parseable review output across all 9 reviewer domains. Use... | Architecture Reviewer, AWS Compliance Reviewer, Azure Compliance Reviewer, Code Quality Reviewer, Deployment Readiness Reviewer, GCP Compliance Reviewer, LLM Behavior Reviewer, QA Coordinator, Requirements Completeness Reviewer, Security Reviewer, Test Coverage Reviewer, UX & Accessibility Reviewer |
+| 21 | `sdlc-s3-storage` | sdlc-s3-storage | Implement Amazon S3 object storage with private buckets, presigned URLs, and lifecycle rules. Use when uploading, downloading, listing, o... | — |
+| 22 | `sdlc-security-review` | sdlc-security-review | Perform SDLC-aligned security review combining OWASP Top 10 with project-specific Azure patterns. Use when reviewing code for security vu... | LLM Behavior Reviewer, QA Bug Checklist Reviewer, Security Reviewer |
+| 23 | `sdlc-stack-profiles` | sdlc-stack-profiles | Per-stack profiles that declare everything language-specific in the harness — project files, layout, package manager, build/test/lint com... | Implementer, Scaffolder |
+| 24 | `sdlc-workspace-init` | sdlc-workspace-init | Initialize a new repository with SDLC workspace files — MCP config, copilot-instructions.md, quality instructions, and prompt files. Use ... | Harness |
 
 ## 4. Phase-to-Agent Mapping
 
@@ -103,7 +105,7 @@
 | `azure/storage` | Implementer |
 | `browser` | Harness, Implementer, QA Coordinator |
 | `context7/*` | Analyst, Harness, Implementer, QA Coordinator, Scaffolder |
-| `edit` | Deployer, Documenter, Harness, Implementer, Release Manager, Scaffolder |
+| `edit` | Analyst, Deployer, Documenter, Harness, Implementer, Release Manager, Scaffolder |
 | `execute` | Harness, Implementer |
 | `fetch` | Analyst, Harness |
 | `github/*` | Analyst, Architecture Reviewer, AWS Compliance Reviewer, Azure Compliance Reviewer, Deployer, Documenter, GCP Compliance Reviewer, Harness, Implementer, Release Manager, Scaffolder |
@@ -138,6 +140,8 @@ User
       ├── QA Coordinator
       │    ├── architecture-reviewer.agent.md
       │    ├── azure-compliance-reviewer.agent.md
+      │    ├── aws-compliance-reviewer.agent.md
+      │    ├── gcp-compliance-reviewer.agent.md
       │    ├── code-quality-reviewer.agent.md
       │    ├── security-reviewer.agent.md
       │    ├── test-coverage-reviewer.agent.md
