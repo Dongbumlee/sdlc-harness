@@ -1,0 +1,19 @@
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.coverage
+htmlcov/
+dist/
+*.egg-info/
+# A library does not commit a lock file: consumers must resolve the
+# declared ranges against their own dependency set. The lock file
+# exists only as a local/CI working artifact.
+uv.lock
+
+# Secrets — never commit real values (see SECURITY.md)
+.env
+.env.*
+!.env.example
+*.pem
+*.key

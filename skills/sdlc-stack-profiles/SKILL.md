@@ -76,10 +76,13 @@ Every profile declares the same fields:
 
 Every profile ships a **bundled default template** in this skill's assets:
 `assets/templates/<profile>/<kind>/` (python/api, dotnet/api,
-typescript/web, java/api, go/api, rust/api). A template is the profile expressed as files: project
-files, layout, Dockerfile, CI stub, devcontainer, a health endpoint, one
-sample vertical slice (an `items` resource), and tests that prove the
-wiring. Every bundled template's test suite also includes **architecture
+typescript/web, java/api, go/api, rust/api, and the library kind:
+python/library, dotnet/library). A template is the profile expressed as files: project
+files, layout, CI stub, and tests that prove the wiring; service
+templates add a Dockerfile, devcontainer, a health endpoint, and one
+sample vertical slice (an `items` resource), while library templates
+ship a small sample public API instead (see the library paragraph
+below). Every bundled template's test suite also includes **architecture
 conformance tests** that enforce the profile's dependency direction
 mechanically (layers may only depend in the declared direction) — they
 run as part of the profile's Test command, so a layering violation fails
@@ -97,7 +100,8 @@ tree to the repository root; substitute the tokens declared in its
 `template.yaml` in file names and contents (`{{ProjectName}}` — PascalCase
 base name; `{{project-name}}` — the kebab-case name derived from it;
 `{{Year}}` — the current four-digit year, written into the `LICENSE`
-copyright line); delete
+copyright line; a template may declare one more, `{{project_name}}` —
+the snake_case import name, used by python/library); delete
 `template.yaml`; generate lock files with the profile's install command
 (lock files are never templated); then run the template's `verify` steps —
 the profile's install, build, and test commands. The scaffold is not
@@ -134,6 +138,33 @@ publishing empty notes. Every template also ships a README stub at
 its root (what it is, how to run it, links to SECURITY.md and the
 changelog); the design phase expands the stub into the full
 project README.
+
+**Library type — reversed defaults:** a library's consumers are
+other codebases' builds, so compatibility is the product and
+several service defaults invert. Dependencies are declared as
+abstract ranges, never exact versions, and **no lock file is
+committed** (the CI security job generates one transiently for
+scanning) — a library declares what it can work with; an
+application records what it did work with. The public surface is
+explicit, small, and machine-checked: python declares `__all__`
+and CI diffs the API against the last release with griffe; .NET
+declares `PublicAPI.Shipped/Unshipped.txt` and the
+PublicApiAnalyzers fail the build when code and declaration
+disagree. Tests are black-box against the public API only, the
+README quickstart is executed in CI (a runnable example file,
+plus doctests in python), and CI tests the declared support range
+— every supported runtime version, and for python also the lowest
+allowed dependency resolution. There is no Dockerfile, no app
+configuration, and no deploy job. Publishing happens only from a
+release tag, through registry trusted publishing (OIDC — no
+stored registry token), and only after the built artefact passes
+a consumer smoke test in a clean project; the tag is the version
+(python also requires the tag to match `pyproject.toml`).
+Deprecation is a written policy in the template README: mark in
+one release (a runtime warning or `[Obsolete]`), remove no
+earlier than the next major. The library kind ships for python
+and dotnet today; the other profiles follow the same standard
+when their library templates land.
 
 **License:** every bundled template ships an MIT `LICENSE` at its root
 (ADR-0003). An organization template or an explicit user decision overrides

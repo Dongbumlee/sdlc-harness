@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>{{ProjectName}}</RootNamespace>
+    <!-- Package identity. The version here is the in-development
+         version; releases pack with the version taken from the git
+         tag (see .github/workflows/release.yml). -->
+    <PackageId>{{ProjectName}}</PackageId>
+    <Version>0.1.0</Version>
+    <Description>{{ProjectName}} — a .NET library.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- The public API is a declared contract: every public symbol
+         must be listed in PublicAPI.Unshipped.txt (PublicAPI.Shipped.txt
+         once released). The analyzer fails the build — warnings are
+         errors in this solution — when code and declaration disagree,
+         so an accidental breaking change fails the PR instead of a
+         consumer's build. -->
+    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="3.3.4">
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
+    <!-- Runtime dependencies are declared as version ranges, never
+         exact versions: consumers resolve the range against their
+         own dependency graph. Example:
+         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="[8.0.0,11.0.0)" /> -->
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+</Project>

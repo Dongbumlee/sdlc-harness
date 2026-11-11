@@ -1,0 +1,23 @@
+<Project>
+
+  <!-- Organization baseline for every scaffolded .NET solution.
+       One settings file at the solution root: analyzers run in the
+       build at the recommended level, code style is enforced in the
+       build, and warnings fail the build — a warning that scrolls
+       past is a defect that ships. Per-project csproj files carry
+       only what is specific to that project.
+
+       Library delta: unlike the service baseline, this file does
+       NOT enable RestorePackagesWithLockFile. A library's consumers
+       resolve its declared PackageReference ranges against their
+       own dependency graph; a committed lock file would describe
+       one resolution as if it were the contract. The CI security
+       job generates a lock file transiently when it scans. -->
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+</Project>
