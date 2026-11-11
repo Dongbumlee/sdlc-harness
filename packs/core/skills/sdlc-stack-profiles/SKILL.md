@@ -136,6 +136,12 @@ defect: follow the profile (the declared standard) and report the mismatch.
   or poetry unless the user explicitly requests it.
 - **Build:** `uv sync --frozen` (no separate compile step)
 - **Test:** `uv run pytest --cov`
+- **Shared test helpers:** pytest runs with `--import-mode=importlib`
+  (pyproject), under which test modules cannot import `conftest`. The
+  template's conftest puts `tests/` on `sys.path`: shared fixture
+  factories and scenario builders go in a plain module under `tests/`
+  (e.g. `tests/rig.py`), imported by name; conftest itself holds only
+  fixture definitions.
 - **Coverage target:** 80% (Class 2 — a shortfall is a recorded deviation, never a gate failure)
 - **Lint / format:** per the repo's `code-quality-py` instructions and root
   linter config (e.g. `.flake8`)
