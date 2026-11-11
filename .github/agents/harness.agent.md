@@ -684,6 +684,20 @@ ls docs/adr/ADR-*.md            # a NEW ADR (or dated addendum) exists for THIS 
       requirements overrode the bundled .NET 10 template that excludes
       both, unchecked by any gate, and propagated into the manifest
       and the test project.)
+      **Mechanical check (stacks with an extractor — dotnet):** the
+      version comparison is run, not read. Run
+      `python3 <sdlc-stack-profiles skill dir>/scripts/check_stack_conformance.py --stack <stack> --docs <REQ> <ADR>`
+      and quote its output in the phase report. Every CONTRADICTION
+      line is an Important finding routed back as above; every
+      NOT-IN-TEMPLATE line must be corrected in the spec or recorded
+      in the manifest as a deliberate deviation before this gate
+      passes. An UNVERIFIED result (no extractor for the stack)
+      falls back to the manual comparison above. (Measured
+      2026-11-10, second occurrence: an ADR claiming ASP.NET Core
+      8.0 / Mvc.Testing 8.0 / xUnit 2.7 over the .NET 10 template
+      passed this gate because the comparison was a reading the
+      seat did not perform; the review checked template layout,
+      not versions.)
 - [ ] **Traceability, both directions:** every FR and NFR in the REQ is
       named by at least one design element in the Phase 2 proposal/ADR and
       at least one planned verification (test or check named in the
