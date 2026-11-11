@@ -58,6 +58,7 @@ TEST_FILE_RES = [
     re.compile(r".*\.test\.tsx?$"),
     re.compile(r".*Test\.java$"),
     re.compile(r".*_test\.go$"),
+    re.compile(r".*_test\.rs$"),
 ]
 
 failures: list[str] = []
