@@ -1,0 +1,76 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install (a library carries no lock file; ranges resolve fresh)
+        run: pnpm install --no-frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm format:check
+      - name: Build
+        run: pnpm build
+      - name: API report must match the built surface
+        run: pnpm api:check
+      - name: Run the documented quickstart against the built package
+        run: node examples/quickstart.mjs
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # The declared support range (package.json engines): every
+        # supported Node line is exercised, not just the newest.
+        node: [20, 22, 24]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Install
+        run: pnpm install --no-frozen-lockfile
+      - name: Test
+        run: pnpm test
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # gitleaks scans history
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install secrets scanner (gitleaks, pinned)
+        run: |
+          curl -sSfL https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz | tar -xz -C /tmp gitleaks
+          sudo install /tmp/gitleaks /usr/local/bin/gitleaks
+      - name: Scan for secrets
+        run: gitleaks git --redact .
+      - name: Install (dependency scan needs the resolved tree)
+        run: pnpm install --no-frozen-lockfile
+      - name: Install vulnerability scanner (OSV-Scanner, pinned)
+        run: |
+          curl -sSfL -o /tmp/osv-scanner https://github.com/google/osv-scanner/releases/download/v2.7.1/osv-scanner_linux_amd64
+          sudo install /tmp/osv-scanner /usr/local/bin/osv-scanner
+      - name: Scan dependencies for known vulnerabilities
+        # --no-ignore: the transient pnpm-lock.yaml is git-ignored by
+        # design (libraries commit no lock file) — the scanner must
+        # still read it.
+        run: osv-scanner scan --recursive --no-ignore .

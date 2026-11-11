@@ -1,0 +1,6 @@
+dist
+coverage
+pnpm-lock.yaml
+# API Extractor working files and its generated report are not hand-formatted.
+temp
+etc

@@ -1,0 +1,114 @@
+name: Release
+
+# Cut a release by pushing a version tag:
+#   git tag v0.2.0 && git push origin v0.2.0
+# The tag must match the POM version and have a matching
+# CHANGELOG.md section — the release fails otherwise. Publishing
+# targets Maven Central through the Central Portal: artifacts are
+# GPG-signed and deployed with the pom's `release` profile, using a
+# dedicated Portal token and GPG key from environment secrets
+# (Maven Central offers no trusted-publishing/OIDC exchange).
+on:
+  push:
+    tags: ["v*.*.*"]
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: src/{{ProjectName}}Lib
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+      - name: Verify (compile, test, format check, package)
+        run: ./mvnw -B verify
+      - name: The tag must equal the POM version
+        id: version
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          pom="$(./mvnw -B -q help:evaluate -Dexpression=project.version -DforceStdout)"
+          if [ "$tag" != "$pom" ]; then
+            echo "tag v$tag does not match POM version $pom"
+            exit 1
+          fi
+          echo "version=$tag" >> "$GITHUB_OUTPUT"
+
+  publish:
+    needs: verify
+    runs-on: ubuntu-latest
+    environment: maven-central
+    permissions:
+      contents: write # create the GitHub Release
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+          server-id: central
+          server-username: MAVEN_CENTRAL_USERNAME
+          server-password: MAVEN_CENTRAL_PASSWORD
+      - name: Smoke-test the jar in a clean consumer project
+        run: |
+          ./mvnw -B -q package -DskipTests
+          jar="$(ls target/{{project-name}}-*.jar | grep -v -e sources -e javadoc | head -1)"
+          mkdir -p /tmp/consumer
+          cat > /tmp/consumer/Consumer.java <<'EOF'
+          import com.example.{{PackageName}}.TextTransforms;
+          public class Consumer {
+            public static void main(String[] args) {
+              if (!TextTransforms.slugify("Hello World").equals("hello-world")) {
+                System.exit(1);
+              }
+            }
+          }
+          EOF
+          javac -cp "$jar" -d /tmp/consumer /tmp/consumer/Consumer.java
+          java -cp "$jar:/tmp/consumer" Consumer
+      - name: Import the publishing GPG key
+        uses: crazy-max/ghaction-import-gpg@v6
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.GPG_PASSPHRASE }}
+      - name: Sign and publish to Maven Central
+        env:
+          MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+        run: ./mvnw -B deploy -Prelease -DskipTests
+      - name: Extract release notes from CHANGELOG.md
+        working-directory: .
+        run: |
+          version="${{ needs.verify.outputs.version }}"
+          awk -v ver="$version" '
+            $0 ~ "^## \\[" ver "\\]" { found=1; next }
+            found && /^## \[/ { exit }
+            found { print }
+          ' CHANGELOG.md > /tmp/notes.md
+          if [ ! -s /tmp/notes.md ]; then
+            echo "CHANGELOG.md has no section for $version — the release contract requires one."
+            exit 1
+          fi
+      - name: Create the GitHub Release
+        working-directory: .
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version="${{ needs.verify.outputs.version }}"
+          gh release create "v$version" \
+            --title "v$version" \
+            --notes-file /tmp/notes.md \
+            "src/{{ProjectName}}Lib/target/{{project-name}}-$version.jar" \
+            "src/{{ProjectName}}Lib/target/{{project-name}}-$version-sources.jar" \
+            "src/{{ProjectName}}Lib/target/{{project-name}}-$version-javadoc.jar"

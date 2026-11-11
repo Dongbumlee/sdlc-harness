@@ -90,4 +90,6 @@ jobs:
         run: |
           curl -sSfL -o "$RUNNER_TEMP/osv-scanner" https://github.com/google/osv-scanner/releases/download/v2.7.1/osv-scanner_linux_amd64
           chmod +x "$RUNNER_TEMP/osv-scanner"
-          "$RUNNER_TEMP/osv-scanner" scan --recursive ./
+          # --no-ignore: the transient uv.lock is git-ignored by design
+          # (libraries commit no lock file) — the scanner must still read it.
+          "$RUNNER_TEMP/osv-scanner" scan --recursive --no-ignore ./

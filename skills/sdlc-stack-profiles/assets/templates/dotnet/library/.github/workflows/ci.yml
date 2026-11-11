@@ -49,4 +49,6 @@ jobs:
         run: |
           curl -sSfL -o "$RUNNER_TEMP/osv-scanner" https://github.com/google/osv-scanner/releases/download/v2.7.1/osv-scanner_linux_amd64
           chmod +x "$RUNNER_TEMP/osv-scanner"
-          "$RUNNER_TEMP/osv-scanner" scan --recursive ./
+          # --no-ignore: build outputs and the transient lock file live
+          # under git-ignored paths — the scanner must still read them.
+          "$RUNNER_TEMP/osv-scanner" scan --recursive --no-ignore ./
