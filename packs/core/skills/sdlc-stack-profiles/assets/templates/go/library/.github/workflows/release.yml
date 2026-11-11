@@ -1,0 +1,82 @@
+name: Release
+
+# A Go library publishes by tagging: the module proxy serves the tagged
+# source straight from this repository, so there is no registry upload
+# and no credential. This workflow verifies the tag, runs a consumer
+# smoke test against it, and cuts the GitHub Release from CHANGELOG.md.
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/{{ProjectName}}Lib
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.27"
+      - name: Verify format
+        run: test -z "$(gofmt -l .)"
+      - name: Vet
+        run: go vet ./...
+      - name: Test
+        run: go test ./...
+
+  release:
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.27"
+      - name: Consumer smoke test (clean module, tagged source)
+        run: |
+          SMOKE="$RUNNER_TEMP/smoke"
+          mkdir -p "$SMOKE"
+          cd "$SMOKE"
+          go mod init example.com/smoke
+          # Depend on the library from this checkout at the release tag —
+          # the same source the module proxy will serve for the tag.
+          go mod edit -require="example.com/{{project-name}}@${GITHUB_REF_NAME}" \
+            -replace="example.com/{{project-name}}=${{ github.workspace }}/src/{{ProjectName}}Lib"
+          cat > main.go <<'EOF'
+          package main
+
+          import (
+              "fmt"
+
+              "example.com/{{project-name}}/textkit"
+          )
+
+          func main() {
+              fmt.Println(textkit.Slugify("Hello, World!"))
+          }
+          EOF
+          go mod tidy
+          test "$(go run .)" = "hello-world"
+      - name: Extract release notes from CHANGELOG.md
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          awk -v ver="$VERSION" '
+            $0 ~ "^## \\[" ver "\\]" { found=1; next }
+            found && /^## \[/ { exit }
+            found { print }
+          ' CHANGELOG.md > release-notes.md
+          if [ ! -s release-notes.md ]; then
+            echo "::error::No CHANGELOG.md section for version $VERSION. Move the Unreleased entries under a '## [$VERSION] - YYYY-MM-DD' heading before tagging."
+            exit 1
+          fi
+      - name: Create GitHub Release
+        run: gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --notes-file release-notes.md
+        env:
+          GH_TOKEN: ${{ github.token }}

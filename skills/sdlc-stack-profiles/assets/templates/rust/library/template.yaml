@@ -1,0 +1,37 @@
+# Bundled default template — rust / library
+# Instantiation: copy this tree to the repository root, substitute the
+# tokens below in file names and contents, delete template.yaml, then run
+# the verify steps. Cargo.lock is never committed for a library (it is
+# git-ignored and generated transiently by CI for scanning). Libraries
+# follow the library standard in the sdlc-stack-profiles skill
+# ("Library type — reversed defaults"): caret dependency ranges, the
+# public API checked with cargo-semver-checks, and crates.io trusted
+# publishing from the release tag.
+id: rust/library
+profile: rust
+kind: library
+project_dirs:
+  - src/{{ProjectName}}Lib
+tokens:
+  - name: ProjectName
+    description: PascalCase base name of the product or service, e.g. TaskTracker
+    default: Sample
+  - name: project-name
+    description: kebab-case name derived from ProjectName, e.g. task-tracker — used for the Cargo package name
+    default: sample
+  - name: CrateName
+    description: Snake-case library crate name derived from ProjectName, e.g. task_tracker
+    default: sample
+  - name: Year
+    description: Four-digit year written into the LICENSE copyright line at instantiation (use the current year)
+    default: 2026
+verify:
+  - step: install
+    cwd: src/{{ProjectName}}Lib
+    command: cargo fetch
+  - step: build
+    cwd: src/{{ProjectName}}Lib
+    command: cargo build
+  - step: test
+    cwd: src/{{ProjectName}}Lib
+    command: cargo test

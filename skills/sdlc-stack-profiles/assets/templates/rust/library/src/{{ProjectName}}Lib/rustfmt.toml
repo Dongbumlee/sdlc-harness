@@ -1,0 +1,6 @@
+# rustfmt — the pinned format baseline. Values equal the rustfmt
+# defaults on purpose: the standard is explicit, not implied, so a
+# future rustfmt release cannot silently move the project's style.
+edition = "2024"
+max_width = 100
+tab_spaces = 4
