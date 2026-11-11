@@ -1,0 +1,4 @@
+#nullable enable
+{{ProjectName}}.TextTransforms
+static {{ProjectName}}.TextTransforms.Slugify(string! text) -> string!
+static {{ProjectName}}.TextTransforms.Truncate(string! text, int maxLength, string! ellipsis = "…") -> string!

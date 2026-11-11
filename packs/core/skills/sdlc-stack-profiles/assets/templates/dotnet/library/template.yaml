@@ -1,0 +1,30 @@
+# Bundled default template — dotnet / library
+# Instantiation: copy this tree to the repository root, substitute the
+# tokens below in file names and contents, delete template.yaml, then run
+# the verify steps. Lock files are never templated — and never committed:
+# a library declares PackageReference version ranges, it does not impose
+# a lock file on its consumers. See the sdlc-stack-profiles skill
+# ("Bundled default templates").
+id: dotnet/library
+profile: dotnet
+kind: library
+project_dirs:
+  - src/{{ProjectName}}
+  - src/{{ProjectName}}.Tests
+tokens:
+  - name: ProjectName
+    description: PascalCase base name of the product, e.g. TextKit
+    default: Sample
+  - name: Year
+    description: Four-digit year written into the LICENSE copyright line at instantiation (use the current year)
+    default: 2026
+verify:
+  - step: install
+    cwd: .
+    command: dotnet restore {{ProjectName}}.sln
+  - step: build
+    cwd: .
+    command: dotnet build {{ProjectName}}.sln -c Release
+  - step: test
+    cwd: .
+    command: dotnet test {{ProjectName}}.sln -c Release

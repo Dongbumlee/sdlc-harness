@@ -1,0 +1,93 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - name: Install dependencies
+        run: uv sync
+      - name: Lint (ruff)
+        run: uv run ruff check .
+      - name: Verify format (ruff)
+        run: uv run ruff format --check .
+      - name: Run the quickstart example
+        run: uv run python examples/quickstart.py
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - name: Test on Python ${{ matrix.python-version }}
+        run: |
+          uv sync --python ${{ matrix.python-version }}
+          uv run pytest --cov
+
+  lowest:
+    # The floor of the declared contract: oldest supported Python
+    # resolving the lowest allowed dependency versions. A range
+    # that only ever gets tested at its newest resolution is a
+    # range that does not work.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - name: Test at the lowest supported resolution
+        run: |
+          uv sync --python 3.10 --resolution lowest-direct
+          uv run pytest
+
+  api:
+    # Compatibility is the product: diff the public API against the
+    # last release so a breaking change fails here, not in a
+    # consumer's build. Skips until the first release tag exists.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: astral-sh/setup-uv@v5
+      - name: API compatibility (griffe)
+        run: |
+          uv sync
+          if TAG=$(git describe --tags --abbrev=0 2>/dev/null); then
+            uv run griffe check {{project_name}} --against "$TAG" --search src
+          else
+            echo "No release tag yet — the API check starts with the first release."
+          fi
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Secret scan (gitleaks)
+        run: |
+          curl -sSfL https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz | tar -xz --no-same-owner -C "$RUNNER_TEMP" gitleaks
+          "$RUNNER_TEMP/gitleaks" git --redact .
+      - uses: astral-sh/setup-uv@v5
+      - name: Resolve a lock file for scanning
+        # The repository deliberately commits no lock file (see
+        # .gitignore); generate one here so the dependency scan has
+        # a resolved set to audit.
+        run: uv lock
+      - name: Dependency scan (OSV-Scanner)
+        run: |
+          curl -sSfL -o "$RUNNER_TEMP/osv-scanner" https://github.com/google/osv-scanner/releases/download/v2.7.1/osv-scanner_linux_amd64
+          chmod +x "$RUNNER_TEMP/osv-scanner"
+          "$RUNNER_TEMP/osv-scanner" scan --recursive ./
