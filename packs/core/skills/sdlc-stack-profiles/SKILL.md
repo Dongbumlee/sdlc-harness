@@ -5,7 +5,7 @@ description: >-
   project files, layout, package manager, build/test/lint commands, Dockerfile
   and CI patterns — so the SDLC process itself stays stack-neutral. Use when
   scaffolding, implementing, testing, or reviewing a project in any supported
-  stack (python, typescript, dotnet), or when an organization adopts the
+  stack (python, typescript, dotnet, java), or when an organization adopts the
   harness with its own stack standards.
 version: "1.0"
 author: sdlc-harness
@@ -38,8 +38,8 @@ In order:
 The Scaffolder records the resolved stack in the manifest's Projects table.
 Every later phase reads it from there.
 
-If the declared stack has an instruction pair but no profile (today: java,
-go, rust), it is not a supported stack (see "Adding a stack"): stop and
+If the declared stack has an instruction pair but no profile (today: go,
+rust), it is not a supported stack (see "Adding a stack"): stop and
 surface the gap to the user — never fall through to the python/typescript
 defaults for it.
 
@@ -76,7 +76,7 @@ Every profile declares the same fields:
 
 Every profile ships a **bundled default template** in this skill's assets:
 `assets/templates/<profile>/<kind>/` (python/api, dotnet/api,
-typescript/web). A template is the profile expressed as files: project
+typescript/web, java/api). A template is the profile expressed as files: project
 files, layout, Dockerfile, CI stub, devcontainer, a health endpoint, one
 sample vertical slice (an `items` resource), and tests that prove the
 wiring. Every bundled template's test suite also includes **architecture
@@ -233,11 +233,75 @@ compiler API (measured 2026-10-18 building the bundled template).
 
 ---
 
+## Profile: java
+
+- **Project files:** `pom.xml` per project, plus the committed Maven wrapper
+  (`mvnw`, `mvnw.cmd`, `.mvn/wrapper/`) — the wrapper pins the Maven version,
+  so there is no lock file and no system-Maven dependency.
+- **Layout:**
+  ```
+  src/
+  └── <Name>API/
+      ├── pom.xml
+      ├── mvnw                        ← committed wrapper (pins Maven)
+      ├── Dockerfile
+      └── src/
+          ├── main/java/com/example/<packagename>/
+          │   ├── <Name>Application.java   ← composition root (wiring only)
+          │   ├── web/                     ← controllers (HTTP boundary)
+          │   ├── service/                 ← interfaces + implementations + repositories
+          │   └── model/                   ← records / DTOs
+          ├── main/resources/application.properties
+          └── test/java/com/example/<packagename>/   ← mirrors the main tree
+  ```
+  Layers are **packages**, and the dependency direction is web → service →
+  model. The Application class in the base package is the composition root —
+  the only place implementations are wired. Tests mirror the main packages
+  under `src/test/java` (Maven convention), they are not a separate project.
+- **Runtime:** Java 21 LTS (this profile's default; the organization may pin
+  a newer LTS).
+- **Package manager / build tool:** **Maven via the committed wrapper** —
+  restore: `./mvnw -B dependency:resolve`. **Decision rule:** Maven is the
+  bundled default because its build is declarative and convention-fixed, so
+  the profile can pin it exactly and every project builds the same way.
+  Gradle is used only when the organization declares it — its build scripts
+  are code, and code drifts. Never the system `mvn`: the wrapper is the pin.
+- **Build:** `./mvnw -B package -DskipTests`
+- **Test:** `./mvnw -B test`; coverage: `./mvnw -B verify` (JaCoCo report
+  under `target/site/jacoco/`).
+- **Coverage target:** 80% (Class 2 — a shortfall is a recorded deviation, never a gate failure)
+- **Lint / format:** `./mvnw -B spotless:check` (googleJavaFormat), bound to
+  the `verify` phase in the template's pom.
+- **Dockerfile:** multi-stage — build stage `maven:3.9-eclipse-temurin-21`
+  (`mvn package`), runtime stage `eclipse-temurin:21-jre`, non-root user,
+  `EXPOSE 8080`, `ENTRYPOINT ["java", "-jar", "app.jar"]`.
+- **CI steps (GitHub Actions, default):** `actions/setup-java` (temurin 21,
+  maven cache) → `./mvnw -B verify` → `docker build`.
+- **Devcontainer:** `mcr.microsoft.com/devcontainers/base:ubuntu` with the
+  `java` feature (version 21).
+- **Patterns:** interface-first services, mirroring the other profiles —
+  controllers depend on service interfaces, services on repository
+  interfaces, and the Application class wires the implementations as
+  `@Bean` methods (explicit composition root, the counterpart of the
+  python template's app context). Constructor injection only. Every API
+  exposes `/health` and `/health/ready` with the same response shape as
+  the other templates.
+- **Template source:** the org's Java template repo from
+  copilot-instructions when declared; otherwise the bundled default
+  template (`assets/templates/java/api`); this profile's layout is the
+  last-resort fallback.
+
+Defaults that belong to this profile: Spring Boot 3.5 is the default
+framework (its parent POM manages dependency versions); Java 21 LTS is
+the default runtime.
+
+---
+
 ## Adding a stack
 
 A new stack is **data, not code**: add one profile section above (all fields),
 confirm a matching instruction pair exists in `sdlc-workspace-init` assets
-(`code-quality-<stack>` / `test-quality-<stack>` — go, java, and rust already
+(`code-quality-<stack>` / `test-quality-<stack>` — go and rust already
 have theirs), add a bundled default template under `assets/templates/` whose
 `verify` steps pass, and the Scaffolder, Implementer, and QA agents pick the
 stack up through profile resolution. No agent file changes. A stack counts

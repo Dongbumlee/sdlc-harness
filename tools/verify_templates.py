@@ -56,6 +56,7 @@ TEST_FILE_RES = [
     re.compile(r".*\.Tests\.csproj$"),
     re.compile(r".*Tests\.cs$"),
     re.compile(r".*\.test\.tsx?$"),
+    re.compile(r".*Test\.java$"),
 ]
 
 failures: list[str] = []
@@ -180,6 +181,11 @@ def instantiate(template_dir: Path, data: dict, dest: Path) -> None:
                 shutil.copyfile(src, target)
             else:
                 target.write_text(substitute(text, defaults), encoding="utf-8")
+            # Preserve the executable bit (e.g. a template's mvnw): a text
+            # rewrite would otherwise silently strip it and the verify
+            # steps could not run the script they ship.
+            if src.stat().st_mode & 0o111:
+                target.chmod(target.stat().st_mode | 0o111)
 
 
 def run_step(command: str, cwd: Path, env: dict | None = None):

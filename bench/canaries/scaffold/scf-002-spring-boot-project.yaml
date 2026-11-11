@@ -1,0 +1,91 @@
+# Canary: Spring Boot Project Scaffolding
+id: scf-002-spring-boot-project
+version: "1.0"
+phase: scaffold
+title: "Spring Boot Project Scaffolding"
+description: >
+  Tests the AI agent's ability to scaffold a production-ready Spring Boot
+  project with the harness java profile structure, the committed Maven
+  wrapper, layered packages, entry points, and development tooling.
+
+prompt: |
+  You are a senior Java engineer. Scaffold a production-ready Spring Boot
+  project for a user management microservice with the following
+  specifications:
+
+  Project Requirements:
+  - Service name: user-management-api
+  - Java 21 LTS with Maven via the committed wrapper (mvnw)
+  - Spring Boot 3.5 with Spring MVC for the REST layer
+  - Spring Data JPA with PostgreSQL as the primary data store
+  - Bean Validation (jakarta.validation) for request models
+  - JWT-based authentication with refresh tokens
+
+  Expected Project Structure:
+  1. pom.xml with the Spring Boot parent and a committed Maven wrapper
+  2. Layered packages under the base package: web, service, model —
+     dependency direction web -> service -> model
+  3. Configuration in application.properties with .env-style overrides
+  4. Health check and readiness endpoints (/health, /health/ready)
+  5. A composition-root Application class that wires implementations
+  6. Dockerfile with multi-stage build (Maven build + JRE runtime)
+  7. docker-compose.yml for local development (app + postgres)
+  8. googleJavaFormat enforced via Spotless in the verify phase
+  9. JUnit 5 tests with MockMvc, plus an architecture test that enforces
+     the package dependency direction
+  10. A GitHub Actions CI workflow that runs ./mvnw verify
+
+  For each file generated, include appropriate comments explaining the
+  purpose. Ensure all imports are valid and the project builds with
+  `./mvnw verify` out of the box (aside from database provisioning).
+
+expected:
+  keywords:
+    - pom.xml
+    - Dockerfile
+    - docker-compose
+    - Spring Boot
+    - Maven
+    - mvnw
+    - JUnit
+  graders:
+    - type: keyword
+      weight: 0.3
+      config:
+        required:
+          - pom.xml
+          - Dockerfile
+          - Spring Boot
+          - Maven
+          - mvnw
+          - JUnit
+          - MockMvc
+          - jakarta
+          - Spotless
+        forbidden: ["TODO", "placeholder"]
+    - type: structural
+      weight: 0.3
+      config:
+        required_sections:
+          - project structure
+          - configuration
+          - entry point
+          - database
+          - testing
+          - containerization
+    - type: llm-judge
+      weight: 0.4
+      config:
+        criteria:
+          - completeness
+          - technical_accuracy
+          - clarity
+          - production_readiness
+          - best_practices
+
+timeout_seconds: 120
+tags:
+  - scaffold
+  - spring-boot
+  - java
+  - project-structure
