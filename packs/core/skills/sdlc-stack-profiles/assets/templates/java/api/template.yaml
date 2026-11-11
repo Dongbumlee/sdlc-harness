@@ -1,0 +1,34 @@
+# Bundled default template — java / api
+# Instantiation: copy this tree to the repository root, substitute the
+# tokens below in file names and contents, delete template.yaml, then run
+# the verify steps. The Maven wrapper pins the build tool; there is no
+# lock file to generate. See the sdlc-stack-profiles skill ("Bundled
+# default templates").
+id: java/api
+profile: java
+kind: api
+project_dirs:
+  - src/{{ProjectName}}API
+tokens:
+  - name: ProjectName
+    description: PascalCase base name of the product or service, e.g. TaskTracker
+    default: Sample
+  - name: project-name
+    description: kebab-case distribution name derived from ProjectName, e.g. task-tracker
+    default: sample
+  - name: PackageName
+    description: Java base package segment derived from ProjectName — lowercase, alphanumerics only, e.g. tasktracker
+    default: sample
+  - name: Year
+    description: Four-digit year written into the LICENSE copyright line at instantiation (use the current year)
+    default: 2026
+verify:
+  - step: install
+    cwd: src/{{ProjectName}}API
+    command: ./mvnw -B -q dependency:resolve
+  - step: build
+    cwd: src/{{ProjectName}}API
+    command: ./mvnw -B package -DskipTests
+  - step: test
+    cwd: src/{{ProjectName}}API
+    command: ./mvnw -B test

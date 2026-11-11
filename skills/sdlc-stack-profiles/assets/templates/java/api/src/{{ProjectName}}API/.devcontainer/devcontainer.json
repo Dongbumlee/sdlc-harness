@@ -1,0 +1,1 @@
+{"features":{"ghcr.io/devcontainers/features/java:1":{"version":"21"}},"image":"mcr.microsoft.com/devcontainers/base:ubuntu","name":"{{ProjectName}}API (Java 21)"}
