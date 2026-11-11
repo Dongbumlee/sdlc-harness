@@ -7,40 +7,29 @@ How the Harness agent drives work through the SDLC. This document describes the
 
 ## State diagram
 
+```mermaid
+flowchart TD
+    REQ["REQUEST"] -->|first run only| INIT["INITIALIZE<br/>MCP readiness · bootstrap workspace files"]
+    REQ --> DISP["DISPATCH"]
+    INIT --> DISP
+    DISP --> WORK["WORK<br/>worker agent, self-evaluation before handoff"]
+    WORK --> VAL["VALIDATE<br/>Harness review of the worker's output"]
+    VAL -->|accepted| ADV["ADVANCE"]
+    VAL -->|issues, rounds remaining| FIX["FIX LOOP<br/>round cap by task grade"]
+    FIX --> WORK
+    FIX -->|cap exhausted| BLK["BLOCKED<br/>user decision"]
+    VAL -->|Phase 6| QA["QA_GATE<br/>QA Coordinator + reviewer panel"]
+    QA -->|verdict PASS| ADV
+    QA -->|verdict FAIL, escalation tiers 1–2| FIX
+    QA -->|CRITICAL_FAIL or tier 3| BLK
+    ADV -->|more phases remain| DISP
+    ADV -->|all phases done| DONE["COMPLETE"]
 ```
-                          ┌─────────────────────────────┐
-                          │         INITIALIZE          │  (first run only)
-                          │  MCP readiness · bootstrap  │   workspace files
-                          └──────────────┬──────────────┘
-                                         ▼
-┌─────────┐    ┌──────────┐    ┌──────────────────┐    ┌──────────┐    ┌──────────┐
-│ REQUEST │───▶│ DISPATCH │───▶│       WORK       │───▶│ VALIDATE │───▶│ ADVANCE  │
-└─────────┘    └──────────┘    │  (worker agent,  │    │ (self-   │    │ (next    │
-     │                         │  self-evaluation │    │  eval +  │    │  phase)  │
-     │                         │  before handoff) │    │ harness  │    └────┬─────┘
-     │                         └──────────────────┘    │ review)  │         │
-     │                                                 └───┬────┘         │
-     │                                                     │ issues?       │ all phases
-     │                                                     ▼ done?         ▼ done
-     │                                              ┌────────────┐   ┌──────────┐
-     │                                              │  FIX LOOP  │   │ COMPLETE │
-     │                                              │ (≤3 rounds)│   └──────────┘
-     │                                              └─────┬──────┘
-     │                                                    │ still failing
-     │                                                    ▼
-     │                                              ┌────────────┐
-     └─────────────────────────────────────────────▶│  BLOCKED   │◀── CRITICAL_FAIL
-                                                    │ (user      │    or 3 rounds
-                                                    │  decision) │    exhausted
-                                                    └────────────┘
 
-Phase 6 takes a detour through the QA gate:
-
-   VALIDATE ──▶ QA_GATE ──▶ PASS ──▶ ADVANCE
-                   │
-                   ▼ FAIL → 3-tier escalation (auto-retry → user-confirmed
-                             retry → user decision), max 3 QA rounds
-```
+Phase 6 takes the detour through the QA gate shown above: on FAIL, the
+3-tier escalation applies (auto-retry → user-confirmed retry → user
+decision), within the grade's round cap (Phase 6: Small 2, Medium 3,
+Large 3).
 
 ## States
 
@@ -69,10 +58,12 @@ Phase 6 takes a detour through the QA gate:
 
 ### VALIDATE
 - Harness reviews the worker's output against the phase's acceptance criteria.
-- Issues found → **FIX LOOP**: send findings back to the worker, up to 3 rounds.
-  Fixes applied without re-verification are not accepted — every phase
-  transition is an evaluation point.
-- Still failing after 3 rounds → **BLOCKED**.
+- Issues found → **FIX LOOP**: Critical or Important findings are fixed, then
+  verified by one delta re-review of the changed ranges. Round caps scale
+  with the task grade (phase-exit reviews: Small 1 full + 1 delta, Medium 2,
+  Large 3). Fixes applied without re-verification are not accepted — every
+  phase transition is an evaluation point.
+- Still failing at the round cap → **BLOCKED** (a user decision).
 
 ### QA_GATE (Phase 6)
 - Harness delegates to the **QA Coordinator**, specifying which reviewers to
@@ -90,13 +81,15 @@ Phase 6 takes a detour through the QA gate:
   2. **User-confirmed retry** — present score progression; retry with targeted
      guidance if the user agrees.
   3. **User decision** — present full results; the user chooses override,
-     manual fix, or abandon. Hard limit: 3 QA rounds total.
+     manual fix, or abandon. Round caps by grade: Small 2, Medium 3,
+     Large 3.
 
 ### ADVANCE
 - Move to the next requested phase. Two automatic rules:
-  - **ADR generation:** a Phase 2 design proposal is automatically handed to the
+  - **ADR generation:** a Phase 2 design proposal is handed to the
     Documenter to save as an ADR in `docs/adr/` before implementation begins.
-    (Phase 1B requirements specs are NOT ADRs.)
+    On Small tasks the flow consolidates instead: the Analyst saves the ADR
+    inside the Phase 2 session. (Phase 1B requirements specs are NOT ADRs.)
   - **Quality instruction compliance** is verified after every implementation
     phase via the QA Coordinator.
 
@@ -127,6 +120,12 @@ Phase 6 takes a detour through the QA gate:
 
 ## Phase-specific QA routing
 
+This table is the **Medium** ceremony. Grade modulates it: on **Small**,
+phase-exit reviews invoke only the first-listed (primary) reviewer per
+phase — Phase 6 on Small keeps the always-active panel (the grade cuts
+rounds, not perspectives); on **Large**, `implement` and `qa` run the
+full panel.
+
 | Phase | Reviewers invoked |
 |---|---|
 | requirements | Requirements Completeness, Architecture |
@@ -135,7 +134,7 @@ Phase 6 takes a detour through the QA gate:
 | implement | All 9 (full review) |
 | document | Code Quality |
 | qa | All 9 (full review) |
-| deploy | Deployment Readiness, Security, Azure Compliance |
+| deploy | Deployment Readiness, Security, Cloud Compliance |
 | rai | Security, LLM Behavior |
 | release | Deployment Readiness, Code Quality |
 
@@ -151,7 +150,7 @@ Phase 6 takes a detour through the QA gate:
 | VALIDATE | FIX LOOP | Issues found, rounds remaining |
 | VALIDATE | ADVANCE / QA_GATE | Phase output accepted |
 | FIX LOOP | WORK | Findings sent back to worker |
-| FIX LOOP | BLOCKED | 3 rounds exhausted |
+| FIX LOOP | BLOCKED | Round cap exhausted (grade-based) |
 | VALIDATE (phase 6) | QA_GATE | Delegate to QA Coordinator |
 | QA_GATE | ADVANCE | Verdict PASS |
 | QA_GATE | FIX LOOP | Verdict FAIL, escalation tier 1–2, rounds remaining |

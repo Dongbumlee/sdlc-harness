@@ -8,6 +8,14 @@ file is the defect.
 **Scope of the scan behind it:** all 67 pack markdown files (17,700 lines),
 the `.design/` templates, and the workspace-init assets (instructions, prompts,
 templates) in `Dongbumlee/sdlc-harness` at main `c4f1659`.
+**Amendments since adoption** (definition changes, each shipped and
+verified): 2026-11-10 — Go and Rust stacks completed (§9.4; PRs #65–#66,
+with the python template repairs of PRs #67–#69). 2026-11-11 — the
+functional-unit counting rule (§8.1; PR #70, verified by a live grade
+probe), the Small-grade consolidated Phase 1–2 flow (§2.4, §6.5;
+PR #71, validated live), and the mechanical stack-conformance check
+(§3 Phase 2; PR #72, verified against the live run that exposed the
+defect).
 **How each definition was chosen:** where the harness already defined a term
 in one place — usually the most recent deliberate change (PRs #31–#54) — that
 definition is canonical. Where no definition existed anywhere, this document
@@ -124,8 +132,11 @@ An artifact is due when a gate requires it, whoever produces it. In
 particular: the ADR is a **Phase 2 decision record** — authored by the
 Documenter on the Harness's delegation from the Analyst's design proposal —
 and it must exist before the Phase 1–2 exit gate can pass, even though the
-Documenter is the Phase 5 owner. The same rule resolves every "which phase
-is this document" question: the gate that checks it decides when it exists.
+Documenter is the Phase 5 owner. **Small-grade exception (PR #71):** on
+Small tasks the Analyst authors the ADR inside the Phase 2 session — the
+artifact and the gate are unchanged; only the authoring session
+consolidates. The same rule resolves every "which phase is this document"
+question: the gate that checks it decides when it exists.
 
 ## 3. Exit definitions — one per phase
 
@@ -149,8 +160,11 @@ ever differ, this list is the standard and the agent file is the defect.
   basis recorded (not the intake placeholder, not `ungraded`); the spec's
   stack claims conform to the stack profile and bundled template (§9.2 —
   the profile wins a contradiction; a user-approved deviation is recorded
-  in the manifest instead); Phase 1 and Phase 2 `TRANSITION COUNT` lines
-  exist.
+  in the manifest instead); where the stack has a mechanical extractor
+  (dotnet), the conformance claim is verified by running the
+  stack-profiles skill's `check_stack_conformance.py` against the REQ
+  and ADR and quoting its output — the comparison is executed, not read
+  (PR #72); Phase 1 and Phase 2 `TRANSITION COUNT` lines exist.
 - **Phase 3 — Scaffold.** The Harness's Phase 3 gate passes verbatim:
   `src/` layout per the Scaffolder's RULE #1 and the bundled template
   (verbatim copy including the sample slice and its tests), LICENSE from
@@ -377,6 +391,12 @@ domain pulls that domain into the round.
   only the first-listed (primary) reviewer per phase — **Phase 6 on
   Small keeps the always-active panel** (the grade cuts rounds, not
   perspectives); on Large, `implement` and `qa` run the full panel.
+- **Small consolidation of Phases 1–2 (PR #71):** on Small, the Phase 1
+  step-6 review is deferred and the two phases exit through **one
+  combined review** — one reviewer applying the requirements checklist
+  to the REQ and the architecture checklist to the proposal and ADR —
+  under the same convergence rule (§6.1). The separate-rounds reading
+  of §6.2's Small row applies to every other phase exit.
 
 ## 7. Pit-stop counting (failure ledger)
 
@@ -413,7 +433,7 @@ domain pulls that domain into the round.
 | Ledger format | `Phase \| Status \| Artifacts \| Updated \| Notes` — five columns. (The manifest skill's four-column format predates live use; the five-column form, which carries the Notes the gates cite, is canonical. (Adopted
 2026-11-10, decision D5.) |
 | Ledger rows | Exactly the rows of §2.1, in order. |
-| Task Grade | Two-axis record (size × complexity) with its basis, per the approved sizing criteria: provisional at intake (size axis), fixed at design; upgrades are free, downgrades require the user's approval; personal/payment/health data raises one step. |
+| Task Grade | Two-axis record (size × complexity) with its basis, per the approved sizing criteria: provisional at intake (size axis), fixed at design; upgrades are free, downgrades require the user's approval; personal/payment/health data raises one step. **Counting rule (PR #70):** the size axis counts *user-facing operations* (an endpoint doing a distinct job, a screen, a command) — never requirements, however many FRs describe one operation; cross-cutting concerns (validation, error handling, persistence, tests, API documentation) are never units. Calibration anchors recorded in the grading text: Task Tracker API ≈ 5–8 units, URL shortener = 5 units, both Small. |
 | Verifier | The phase gates (§3). A record no gate checks is treated as unwritten — the standing lesson of PRs #52/#54. |
 
 ### 8.2 The other records
@@ -424,7 +444,7 @@ domain pulls that domain into the round.
 | Run guidance (`.SDLC/run-guidance.md`) | Pit-stop review | Pit-stop review only | Read on resume; included in later delegations; run-scoped — never overrides shipped rules, promotion is offline via PR only |
 | Reference catalog (`.github/reference-catalog.md`) | Workspace-init (empty template, 5 fixed sections) | Analyst populates in Phases 1–2; any agent may **append** after approval | Harness review checkpoint (§10.1); append-only after approval (or auto-approval); entries carry `Source: [agent] (Phase [N])` |
 | REQ document | Analyst (1B) from the approved discovery summary | Analyst | Phase 1 gate; status lifecycle `Draft → Under Review → Approved → Superseded` (template) |
-| ADR set (`docs/adr/`) | Documenter, from the Analyst's design proposal, one ADR per proposal by default (PR-era granularity rule) | Documenter | Phase 1–2 exit gate; status starts `Proposed` |
+| ADR set (`docs/adr/`) | Documenter, from the Analyst's design proposal, one ADR per proposal by default (PR-era granularity rule); on Small, the Analyst in the Phase 2 session (§2.4, PR #71) | Documenter (or the Analyst, on Small) | Phase 1–2 exit gate; status starts `Proposed` |
 | Design proposal (`.SDLC/design-proposal-<topic>.md`) | Analyst — sketch first, expanded section by section; saved as a file by the Analyst, or verbatim by the Documenter if the Analyst cannot save | Analyst | Phase 2 gate input |
 | Evidence pack (`.SDLC/qa-evidence/`) | Harness (collector script + full test run to `test-run.txt` + CI Evidence section) | Harness | QA Coordinator consumes; a verdict without it is not a Phase 6 verdict |
 | QA findings (GitHub) | QA Coordinator | Coordinator | The ledger is the local source of truth; GitHub sync is one-way, ledger → GitHub (ADR-0003) |
@@ -480,12 +500,16 @@ chain for that project.
 
 A stack counts as **supported** only with all four of: a profile, an
 instruction pair, a bundled template, and a passing greenfield E2E run.
-Instruction pairs without the rest (today: Java, Go, Rust) do not make a
-stack supported, and stack selection must not fall through to another
-language's default for them silently — it stops and surfaces the gap.
-(The Python profile's template-source line, which substitutes
-".github/reference-catalog.md patterns" for step 4, diverges from this
-chain and is listed for alignment.)
+Instruction pairs without the rest do not make a stack supported, and
+stack selection must not fall through to another language's default for
+them silently — it stops and surfaces the gap. (The Python profile's
+template-source line, which substitutes ".github/reference-catalog.md
+patterns" for step 4, diverges from this chain and is listed for
+alignment.)
+**Supported set (as of v1.3.0):** Python, .NET, TypeScript, Java
+(Spring Boot template, PR #64), Go (stdlib template, PR #65), Rust
+(axum template, PR #66) — each with profile, instruction pair, bundled
+template, and a verified greenfield instantiation of that template.
 
 ## 10. Operational definitions
 
