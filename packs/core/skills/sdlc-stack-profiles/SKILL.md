@@ -144,27 +144,41 @@ other codebases' builds, so compatibility is the product and
 several service defaults invert. Dependencies are declared as
 abstract ranges, never exact versions, and **no lock file is
 committed** (the CI security job generates one transiently for
-scanning) — a library declares what it can work with; an
-application records what it did work with. The public surface is
-explicit, small, and machine-checked: python declares `__all__`
-and CI diffs the API against the last release with griffe; .NET
-declares `PublicAPI.Shipped/Unshipped.txt` and the
-PublicApiAnalyzers fail the build when code and declaration
-disagree. Tests are black-box against the public API only, the
-README quickstart is executed in CI (a runnable example file,
-plus doctests in python), and CI tests the declared support range
-— every supported runtime version, and for python also the lowest
-allowed dependency resolution. There is no Dockerfile, no app
-configuration, and no deploy job. Publishing happens only from a
-release tag, through registry trusted publishing (OIDC — no
-stored registry token), and only after the built artefact passes
-a consumer smoke test in a clean project; the tag is the version
-(python also requires the tag to match `pyproject.toml`).
-Deprecation is a written policy in the template README: mark in
-one release (a runtime warning or `[Obsolete]`), remove no
-earlier than the next major. The library kind ships for python
-and dotnet today; the other profiles follow the same standard
-when their library templates land.
+scanning, and scans it with the scanner's ignore rules disabled —
+the transient lock is git-ignored by design, and a scanner that
+respects the ignore file silently scans nothing) — a library
+declares what it can work with; an application records what it
+did work with. The public surface is explicit, small, and
+machine-checked: python declares `__all__` and CI diffs the API
+against the last release with griffe; .NET declares
+`PublicAPI.Shipped/Unshipped.txt` and the PublicApiAnalyzers fail
+the build when code and declaration disagree; typescript exposes
+only the entry point through the package `exports` map, keeps
+the api-extractor report of the surface committed, and CI fails
+when the report and the built declarations disagree (exports
+carry `@public` release tags); java pins the declared surface
+with a reflection test in the build and CI diffs the compiled jar
+against the last release with japicmp, failing on binary- or
+source-incompatible changes. Tests are black-box against the
+public API only, the README quickstart is executed in CI (a
+runnable example file, plus doctests in python), and CI tests
+the declared support range — every supported runtime version,
+and for python also the lowest allowed dependency resolution.
+There is no Dockerfile, no app configuration, and no deploy job.
+Publishing happens only from a release tag, through registry
+trusted publishing (OIDC — no stored registry token), and only
+after the built artefact passes a consumer smoke test in a clean
+project; the tag is the version (python and typescript also
+require the tag to match the manifest version). Maven Central is
+the one documented exception to trusted publishing: it has no
+OIDC exchange, so the java template publishes with a dedicated
+Central Portal token and a dedicated GPG key held as release
+environment secrets. Deprecation is a written policy in the
+template README: mark in one release (a runtime warning,
+`[Obsolete]`, a `@deprecated` tag, or `@Deprecated`), remove no
+earlier than the next major. The library kind ships for python,
+dotnet, typescript, and java today; go and rust follow the same
+standard when their library templates land.
 
 **License:** every bundled template ships an MIT `LICENSE` at its root
 (ADR-0003). An organization template or an explicit user decision overrides
