@@ -8,3 +8,9 @@ htmlcov/
 results.xml
 dist/
 *.egg-info/
+
+# Secrets — never commit real values (see SECURITY.md)
+.env.*
+!.env.example
+*.pem
+*.key

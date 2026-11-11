@@ -5,3 +5,11 @@ coverage.out
 .idea/
 .vscode/
 .DS_Store
+
+# Secrets and local configuration — never commit real values;
+# configuration arrives through environment variables (see SECURITY.md)
+.env
+.env.*
+!.env.example
+*.pem
+*.key

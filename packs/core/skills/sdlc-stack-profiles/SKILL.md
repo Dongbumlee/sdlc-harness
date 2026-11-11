@@ -109,6 +109,20 @@ at its root — the editor-level baseline (charset, line endings,
 indentation) that the profile's toolchain formatters enforce in CI,
 so a contributor's editor agrees with the gate before CI ever runs.
 
+**Security baseline:** every bundled template ships `SECURITY.md`
+(private vulnerability reporting, response expectations, and the
+secret-handling rules) and a `renovate.json` — the pinned
+dependency-update policy: weekly grouped updates, a 3-day minimum
+release age, patch automerge for development-only dependencies,
+major updates always human-reviewed. Every template CI workflow
+declares top-level `permissions: contents: read` and a `security`
+job — a gitleaks secret scan over the git history and an
+OSV-Scanner scan of the project's dependency lock files, both
+version-pinned in the workflow — and the deploy job requires the
+security job as well as the build. Containers run as a non-root
+user on an unprivileged port. A template whose sample fails its own
+scans is a harness defect, like any other template/profile mismatch.
+
 **License:** every bundled template ships an MIT `LICENSE` at its root
 (ADR-0003). An organization template or an explicit user decision overrides
 the license text; the Scaffolder records the license actually shipped next
@@ -182,7 +196,11 @@ Python 3.12 is the default runtime version.
 - **Coverage target:** 80% (Class 2 — a shortfall is a recorded deviation, never a gate failure)
 - **Lint / format:** `pnpm lint` (ESLint flat config, `eslint.config.mjs`)
   and `pnpm format:check` (Prettier, `.prettierrc.json`) — both configs
-  ship in the template at the project root; CI runs both.
+  ship in the template at the project root; CI runs both. The
+  template's `.prettierignore` excludes the files Next.js manages
+  itself (`next-env.d.ts`, `tsconfig.json` — Next rewrites the
+  latter in its own format on build, so formatting it by hand only
+  creates churn).
 - **Dockerfile:** multi-stage — Node build stage → nginx serve stage
 - **CI steps:** `pnpm install --frozen-lockfile` → `pnpm lint` → `pnpm format:check` → `pnpm test` → `pnpm build` → `docker build`
 - **Template source:** an org template repo overrides when declared;
@@ -199,6 +217,17 @@ TS 7.0.2 makes `eslint .` fail while loading its config; TS 6 runs
 lint, format check, tests, and build green). The Next.js pin (16.2.11
 or later) already satisfies the floor TypeScript 7 will need, so
 moving to 7 is a one-line change when typescript-eslint support lands.
+
+Two dependency pins in the template's `package.json` are security
+holds, verified against the template's own OSV-Scanner gate
+(2026-11-11): Vitest is at 4.x because the 3.x tree carried critical
+vulnerabilities (tinypool), and a pnpm override lifts `minimatch@10`
+to ^11 — typescript-eslint's estree resolves minimatch 10, whose
+only fixed line is 11. Remove the override when eslint-config-next's
+typescript-eslint no longer resolves minimatch 10. The Vitest 4 move
+also retired the `esbuild.jsx` setting in `vitest.config.ts`:
+Vitest 4 transforms JSX via oxc, and the stale key failed
+`next build`'s type check against Vitest 4's bundled Vite types.
 
 ## Profile: dotnet
 
