@@ -9,6 +9,6 @@ namespace {{ProjectName}}API.Services;
 public interface IItemRepository
 {
     Item Add(CreateItemRequest request);
-    Item? Get(int id);
+    Item? GetById(int id);
     IReadOnlyList<Item> List();
 }

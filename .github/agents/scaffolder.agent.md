@@ -73,9 +73,9 @@ apply to every stack unchanged. Record the resolved stack in the manifest.
 - **TypeScript/React package manager:** `pnpm` is the default. Use `pnpm` for all
   TypeScript/JavaScript/React projects (`pnpm-lock.yaml`). Do NOT use npm or yarn
   unless the user explicitly requests it.
-- **TypeScript version:** TypeScript 7 is the default for all new TypeScript projects.
+- **TypeScript version:** TypeScript 6 is the default for all new TypeScript projects (held at 6.x — typescript-eslint does not support TypeScript 7 yet; see the typescript stack profile).
 - **Python API framework:** FastAPI is the default for all Python API projects.
-- **Web UI stack:** React + Next.js (with TypeScript 7) is the default for all web UI projects.
+- **Web UI stack:** React + Next.js (with TypeScript 6) is the default for all web UI projects.
 - **UI component library:** shadcn/ui is the default for all web UI projects.
   Use Tailwind CSS for styling.
 

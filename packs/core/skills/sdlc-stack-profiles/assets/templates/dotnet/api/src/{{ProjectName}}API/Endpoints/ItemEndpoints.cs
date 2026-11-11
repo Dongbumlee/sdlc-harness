@@ -23,7 +23,7 @@ public static class ItemEndpoints
 
         group.MapGet("/{id:int}", (int id, IItemService service) =>
         {
-            var item = service.Get(id);
+            var item = service.GetById(id);
             return item is null ? Results.NotFound() : Results.Ok(item);
         });
 

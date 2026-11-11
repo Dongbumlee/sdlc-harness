@@ -37,9 +37,7 @@ class Application(Application_Base):
     app: TypedFastAPI
 
     def __init__(self):
-        super().__init__(
-            env_file_path=os.path.join(os.path.dirname(__file__), ".env")
-        )
+        super().__init__(env_file_path=os.path.join(os.path.dirname(__file__), ".env"))
 
     def initialize(self):
         config = self.application_context.configuration
@@ -65,9 +63,7 @@ class Application(Application_Base):
     def _register_dependencies(self):
         repository = InMemoryItemRepository()
         self.application_context.add_singleton(IItemRepository, repository)
-        self.application_context.add_singleton(
-            IItemService, ItemService(repository)
-        )
+        self.application_context.add_singleton(IItemService, ItemService(repository))
 
     def _config_routers(self):
         for router in (items.router,):

@@ -25,6 +25,8 @@ jobs:
           dotnet-version: "10.0.x"
       - name: Restore
         run: dotnet restore {{ProjectName}}.sln
+      - name: Verify format
+        run: dotnet format {{ProjectName}}.sln --verify-no-changes --no-restore
       - name: Build
         run: dotnet build {{ProjectName}}.sln -c Release --no-restore
       - name: Test

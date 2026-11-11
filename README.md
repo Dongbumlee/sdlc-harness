@@ -213,7 +213,7 @@ and a verified greenfield run of that template. Six stacks qualify:
 |-------|-----------------|----------------|
 | **Python** | FastAPI API | FastAPI + pytest, layered web/service/data layout |
 | **.NET** | ASP.NET Core API | .NET 10 (`net10.0`), xUnit + coverlet |
-| **TypeScript** | Web app | Next.js (TypeScript 7 requires Next.js ≥ 16.2.11) |
+| **TypeScript** | Web app | Next.js ≥ 16.2.11 on TypeScript 6 (held at 6.x — typescript-eslint does not support TS 7 yet) |
 | **Java** | Spring Boot API | Java 21 LTS, Spring Boot 3.5, Maven wrapper, JUnit + JaCoCo |
 | **Go** | HTTP API | Go 1.27, standard library `net/http` only — no web framework |
 | **Rust** | HTTP API | Rust edition 2024, axum, one crate with layered modules |
