@@ -405,7 +405,7 @@ beyond that burns trial credits; say which, per service.
 
 ## Step 7: Offline fallback
 
-If the Google Cloud docs MCP server (or any MCP server) is unavailable in the
+If the Google Developer Knowledge MCP server (or any MCP server) is unavailable in the
 environment, do not block the build — proceed from provider knowledge plus
 this skill, and note the limitation in the build log. The pack's guidance
 must stand on its own; MCP servers are accelerators, not prerequisites.

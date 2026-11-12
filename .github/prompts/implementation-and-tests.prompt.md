@@ -17,11 +17,11 @@ How to use (VS Code):
 
 You are implementing a feature or change that already has an approved design.
 
-This repository uses Azure services and standard patterns for Cosmos DB and Blob Storage. Prefer existing abstractions and
+This repository’s cloud and data services are recorded in `.github/copilot-instructions.md` (§1). Prefer existing abstractions and
 repositories over new ad-hoc code.
 
-This prompt supports **SDLC Phase 4 – Implementation with Test Strategy** as defined in
-`.github/SDLC-with-Copilot-and-Azure.md`. Follow its exit criteria.
+This prompt supports **SDLC Phase 4 – Implementation with Test Strategy**. The exit criteria
+for this phase are the ones listed in this prompt.
 
 ## Inputs from the user
 
@@ -51,10 +51,12 @@ Before starting, load these resources for accurate implementation:
    - FastAPI + Pydantic (for API services)
    - React + Vite (for web frontend)
    - Azure AI Agent Framework (for agent services)
-4. **Language-specific best practices** — from awesome-copilot (load conditionally):
-   - React frontend: `mcp_awesome-copil_load_instruction` → `"reactjs"`
-   - MCP tools: `mcp_awesome-copil_load_instruction` → `"python-mcp-server"`
-   - TypeScript tests: `mcp_awesome-copil_load_instruction` → `"nodejs-javascript-vitest"`
+4. **Language-specific best practices** — fetched from the `github/awesome-copilot`
+   repository via the GitHub MCP server's file-contents tool or `fetch`
+   (conditionally; skip if unreachable):
+   - React frontend: `instructions/reactjs.instructions.md`
+   - MCP tools: `instructions/python-mcp-server.instructions.md`
+   - TypeScript tests: `instructions/nodejs-javascript-vitest.instructions.md`
 
 ## Steps
 
@@ -81,7 +83,7 @@ Before starting, load these resources for accurate implementation:
 
 1. **Locate relevant code**
    - Identify the modules/classes/functions that should be changed or created.
-   - All layers live under `src/` as independent projects:
+   - All layers live under `src/` as independent projects following the application project pattern:
      - API: `src/<Name>API/app/` (FastAPI routers, services), `src/<Name>API/tests/`, `src/<Name>API/pyproject.toml`
      - Business: `src/<Name>Business/src/` (domain models, repositories, shared services), `src/<Name>Business/tests/`
      - Agent: `src/<Name>Agent/src/` (agents, MCP tools, middleware), `src/<Name>Agent/tests/`
@@ -90,7 +92,8 @@ Before starting, load these resources for accurate implementation:
      - API depends on Business (imports domain models, calls business services)
      - Agent depends on Business (shares domain models, uses repositories)
      - Business is the shared core — no dependency on API or Agent
-     - Web calls API via HTTP — no direct dependency on Python layers\n   - For data access (lives in the **Business** layer):
+     - Web calls API via HTTP — no direct dependency on Python layers
+   - For data access (lives in the **Business** layer):
      - Cosmos DB: look for existing `RepositoryBase` subclasses using `the approved Cosmos DB library`.
      - Blob/Queue: look for existing `AsyncStorageBlobHelper` / `AsyncStorageQueueHelper` usage via `the approved Storage library`.
    - For APIs and services (varies by template):
@@ -118,24 +121,34 @@ Before starting, load these resources for accurate implementation:
      - **First:** implement the production code.
      - **Immediately after:** write the unit test for that code.
      - Do NOT batch all tests at the end — test each step as you go.
-   - Use these Python libraries (do NOT use raw Azure SDKs):
+   - Use the project's approved data libraries (do NOT use raw cloud SDKs
+     where an approved library exists). In the Python/Azure template family
+     those are:
      - `the approved Cosmos DB library` via `RepositoryBase[Entity, KeyType]` pattern.
      - `the approved Storage library` via `AsyncStorageBlobHelper` / `AsyncStorageQueueHelper` with `async with`.
-   - Unit tests go in `tests/` at the project root (match existing folder structure).
+   - Unit tests go in the project's own tests folder from the Step 1 layout
+     (`src/<Name>API/tests/` for Python, `src/<Name>API.Tests/` for .NET).
    - Follow the language-specific quality standards:
      - **Python**: `.github/instructions/code-quality-py.instructions.md` and `.github/instructions/test-quality.instructions.md`
      - **TypeScript**: `.github/instructions/code-quality-ts.instructions.md` and `.github/instructions/test-quality-ts.instructions.md`
      - **React (TSX)**: `.github/instructions/code-quality-tsx.instructions.md` and `.github/instructions/test-quality-tsx.instructions.md`
+     - **Java**: `.github/instructions/code-quality-java.instructions.md` and `.github/instructions/test-quality-java.instructions.md`
+     - **C#**: `.github/instructions/code-quality-csharp.instructions.md` and `.github/instructions/test-quality-csharp.instructions.md`
+     - **Go**: `.github/instructions/code-quality-go.instructions.md` and `.github/instructions/test-quality-go.instructions.md`
+     - **Rust**: `.github/instructions/code-quality-rust.instructions.md` and `.github/instructions/test-quality-rust.instructions.md`
 
 4. **Write/update integration tests (after all code + unit tests)**
    - After all implementation steps are complete with unit tests:
      - Write **API-level integration tests** for new endpoints (HTTP tests using test client).
      - Write **data access integration tests** that exercise Cosmos DB/Blob via the library abstractions.
-   - Integration tests go in `tests/integration/` or `tests/` alongside unit tests.
+   - Integration tests go in the project's `tests/integration/` or alongside
+     unit tests in the project's tests folder.
 
 5. **Run all tests and verify**
    - Run `uv run pytest --cov` (Python) or `npx vitest run` (TypeScript/React).
-   - Verify all tests pass and coverage meets thresholds.
+   - Verify all tests pass. Report coverage against the stack profile's
+     target — the target is a Class 2 quality target: a shortfall is a
+     recorded deviation, not a failure.
 
 6. **Check for cross-cutting concerns**
    - Logging:
@@ -149,7 +162,7 @@ Before starting, load these resources for accurate implementation:
 
 7. **Map to CI/CD**
    - If the change requires new build or test steps (e.g., new test project, new integration test stage):
-     - Suggest updates to Azure DevOps pipelines (e.g., `azure-pipelines.yml` or `/ado/*.yml`).
+     - Suggest updates to the GitHub Actions workflows (e.g., `.github/workflows/ci.yml`).
      - Keep the pipeline structure consistent with existing stages.
 
 8. **Self-evaluation before completion**
@@ -172,16 +185,18 @@ Before starting, load these resources for accurate implementation:
    - Unit tests cover key logic including edge cases.
    - Integration tests exist for high-risk flows.
    - No new TODOs left in critical paths without tracking issues.
-   - Code-quality and test-quality standards are met (copyright headers, docstrings,
-     naming conventions, comment cleanup, import order).
+   - Code-quality and test-quality standards are met (docstrings, naming
+     conventions, comment cleanup, import order; no third-party copyright headers).
    - Self-evaluation completed with acceptance criteria coverage table.
    - All acceptance criteria have corresponding passing tests.
+   - No test was weakened or deleted to reach green — any test change cites
+     the sprint-contract delta that authorizes it (test integrity).
    - For each criterion, mark it as:
      - ✅ satisfied
      - ⚠️ partially satisfied (explain what remains)
      - ⛔ not satisfied (explain what is missing)
 
-9. **Output format**
+10. **Output format**
 
 Return your answer in this structure:
 

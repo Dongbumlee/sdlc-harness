@@ -229,12 +229,12 @@ The QA Coordinator and the Harness speak in verdict language:
 **Critical / Important / Suggestion / minor**. The translation between the
 two vocabularies is fixed and total — it is not left to the synthesizer:
 
-| Finding level (YAML) | Synthesis term | Bug-checklist term | ADO priority | RAI risk level |
+| Finding level (YAML) | Synthesis term | Bug-checklist term | GitHub priority label | RAI risk level |
 |---|---|---|---|---|
-| `critical` | **Critical** | 🔴 Blocker | 1 - Critical | Critical |
-| `high` | **Important** | 🟠 Warning | 2 - High | High |
-| `medium` | **Suggestion** | 🟡 Info | 3 - Medium | Medium |
-| `low` | minor | (not reported) | 4 - Low | Low |
+| `critical` | **Critical** | 🔴 Blocker | `priority: critical` | Critical |
+| `high` | **Important** | 🟠 Warning | `priority: high` | High |
+| `medium` | **Suggestion** | 🟡 Info | `priority: medium` | Medium |
+| `low` | minor | (not reported) | `priority: low` | Low |
 
 Rules that follow from the table:
 
@@ -528,8 +528,7 @@ default:
 
 | Server | At run start (Harness Step 0) | Inside a QA run (Coordinator Step 0) | Canary mode |
 |---|---|---|---|
-| awesome-copilot | **Hard stop** — skills cannot load best practices without it | Warn and proceed | Preflight FAIL (`mcp_unavailable`), run marked degraded |
-| GitHub | Warn, degraded mode; the only hard gate involving GitHub is repository establishment at intake (ADR-0003) | Warn and proceed | Preflight FAIL |
+| GitHub | Warn, degraded mode; the only hard gate involving GitHub is repository establishment at intake (ADR-0003). GitHub MCP also carries the best-practice instruction loads (the awesome-copilot collection, fetched from its GitHub repository — ADR-0003 D7), so its loss degrades pattern quality as well as forge access | Warn and proceed | Preflight FAIL |
 | Context7 | Warn and proceed | Warn and proceed | Preflight FAIL |
 
 The run-start column governs full harness runs; the QA column governs a
@@ -602,7 +601,7 @@ per row, then regenerates the mirrors and runs the full battery
 
 | # | Divergence | Canonical (§) | Files to align |
 |---|---|---|---|
-| 1 | Severity translation never stated where it is applied; Coordinator mixes both vocabularies (Step 2 "(Critical → High → Medium)", Step 5 ADO table) | §4.2 table | qa-coordinator.agent.md |
+| 1 | Severity translation never stated where it is applied; Coordinator mixes both vocabularies (Step 2 "(Critical → High → Medium)", Step 5 priority table) | §4.2 table | qa-coordinator.agent.md |
 | 2 | Requirements-completeness reviewer defines its own severity criteria table in a third labeling | §4.1/§4.2 | requirements-completeness-reviewer.agent.md |
 | 3 | Format-skill example YAML omits `scope`, `requirement`, `status`, `not_checked` that its own rules mandate | §4.1 | sdlc-reviewer-output-format/SKILL.md |
 | 4 | Coordinator Tier 1 condition (scores 5–6, no Critical) permits an auto-loop the Harness forbids for composite-only failures; no mention of Important | §6.3 | qa-coordinator.agent.md |

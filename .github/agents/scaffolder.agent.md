@@ -2,7 +2,7 @@
 name: Scaffolder
 description: "Use when creating new project structures, scaffolding services from templates, setting up CI/CD pipelines, Dockerfiles, or devcontainers. Handles SDLC Phase 3 repo structure."
 user-invocable: false
-tools: ['read', 'search', 'edit', 'terminal', 'github/*', 'awesome-copilot/*', 'context7/*', 'azure-devops/*']
+tools: ['read', 'search', 'edit', 'terminal', 'github/*', 'context7/*']
 skills: ['sdlc-project-manifest', 'sdlc-project-scaffolding', 'sdlc-reference-catalog', 'sdlc-stack-profiles']
 ---
 
@@ -85,8 +85,7 @@ apply to every stack unchanged. Record the resolved stack in the manifest.
 2. Set up per-project devcontainer configurations. (Creation is yours; the
    Deployer validates them at Phase 3B and Phase 8.)
 3. Generate CI pipeline stubs for the resolved CI system (build + test + deploy
-   stages): GitHub Actions `.github/workflows/ci.yml` by default, per-project
-   ADO `azure_cicd.yaml` when the organization declares Azure DevOps.
+   stages): GitHub Actions `.github/workflows/ci.yml`.
 4. Create the stack profile's project file, `Dockerfile`, and build configurations.
 5. Set up root-level compliance files and quality instruction files.
 
@@ -115,10 +114,10 @@ Include `Source: Scaffolder (Phase 3)` on your entries.
    - If no org template repos are declared, skip the probe — the bundled
      default template needs no network access.
 
-0b. **Check awesome-copilot MCP (recommended):**
-   - Probe: `mcp_awesome-copil_search_instructions(keywords: "docker")`
+0b. **Check the awesome-copilot collection (recommended):**
+   - Probe: search the collection's `instructions/` directory in the `github/awesome-copilot` repository (via GitHub MCP code search or `fetch`) for "docker".
    - If it **fails**, WARN the user and proceed:
-     > ⚠️ awesome-copilot MCP is not running. Docker/CI-CD best practices will not be loaded.
+     > ⚠️ The awesome-copilot collection is unreachable. Docker/CI-CD best practices will not be loaded.
      > I will proceed using local knowledge only. Dockerfile and pipeline quality may be reduced.
 
 1. **Fetch the template structure from the resolved template source:**
@@ -136,33 +135,23 @@ Include `Source: Scaffolder (Phase 3)` on your entries.
      per that skill's contract. The stack profile's prose layout is only the
      last-resort fallback.
 
-2. **Load containerization and CI/CD best practices from awesome-copilot** (skip if unavailable):
-   - Use `mcp_awesome-copil_load_instruction` to load `"containerization-docker-best-practices"` — multi-stage
+2. **Load containerization and CI/CD best practices from awesome-copilot** (skip if the collection is unreachable):
+   - Load "containerization-docker-best-practices" from the awesome-copilot collection on GitHub (file `instructions/containerization-docker-best-practices.instructions.md` in the `github/awesome-copilot` repository, via the GitHub MCP server's file-contents tool or `fetch`) — multi-stage
      Docker builds, layer caching, image security, runtime configuration.
-   - Use `mcp_awesome-copil_load_instruction` to load `"kubernetes-deployment-best-practices"` — pod security,
+   - Load "kubernetes-deployment-best-practices" from the awesome-copilot collection on GitHub (file `instructions/kubernetes-deployment-best-practices.instructions.md` in the `github/awesome-copilot` repository, via the GitHub MCP server's file-contents tool or `fetch`) — pod security,
      resource limits, health checks (when scaffolding for Kubernetes/AKS).
-   - Use `mcp_awesome-copil_load_instruction` to load `"azure-devops-pipelines"` — ADO pipeline YAML
-     structure, stages, deployment strategies (when generating ADO CI/CD stubs).
-   - Use `mcp_awesome-copil_load_instruction` to load `"github-actions-ci-cd-best-practices"` — GitHub Actions
+   - Load "github-actions-ci-cd-best-practices" from the awesome-copilot collection on GitHub (file `instructions/github-actions-ci-cd-best-practices.instructions.md` in the `github/awesome-copilot` repository, via the GitHub MCP server's file-contents tool or `fetch`) — GitHub Actions
      workflow structure, caching, matrix strategies (when generating GitHub Actions stubs).
 
 3. **Load up-to-date docs via Context7:**
    - Use Context7 MCP to get current `uv` / `azd` / Docker documentation.
-
-4. **Fetch team engineering standards from Azure DevOps wiki (if configured):**
-   - If `.github/copilot-instructions.md` defines a team ADO wiki (`ADO Wiki Project` /
-     `ADO Wiki Identifier`), search it for team-specific scaffolding guidelines:
-     - Search: `mcp_ado_search_wiki(searchText: "scaffolding OR project structure", project: "<ADO_WIKI_PROJECT>")`
-     - Fetch page content: `mcp_ado_wiki_get_page_content(wikiIdentifier: "<ADO_WIKI_IDENTIFIER>", project: "<ADO_WIKI_PROJECT>", path: "/<page-path>")`
-   - If no wiki is configured or ADO MCP authentication fails (browser login required on first use),
-     inform the user and proceed with public sources (awesome-copilot instructions, Context7).
 
 ## Skills
 
 Activate the **`sdlc-project-scaffolding`** skill (invoke `/sdlc-project-scaffolding` or let the agent load it automatically).
 This skill provides the application project folder structure, template selection logic,
 Dockerfile patterns, and loads Docker/containerization best practices from
-awesome-copilot MCP.
+the awesome-copilot collection on GitHub.
 
 Activate the **`sdlc-project-manifest`** skill (invoke `/sdlc-project-manifest` or let the agent load it automatically).
 
@@ -284,7 +273,6 @@ src/
     ├── .gitignore
     ├── .env
     ├── README.md                  ← Per-project README
-    ├── azure_cicd.yaml            ← ADO CI stub (ADO organizations only; default CI is the repo-level .github/workflows/ci.yml)
     └── es-metadata.yml            ← Engineering system metadata
 ```
 
@@ -378,7 +366,7 @@ At the end of your scaffolding output, include an **SDLC Exit Criteria Check** s
 
 - Repository folders match the selected template / stack profile layout: ✅/⚠️/⛔
 - Project file for the stack (`pyproject.toml` / `package.json` / `.csproj`) configured with correct dependencies: ✅/⚠️/⛔
-- CI stub created for the resolved CI system (GitHub Actions `.github/workflows/ci.yml`, or ADO `azure_cicd.yaml` for ADO organizations): ✅/⚠️/⛔
+- CI stub created for the resolved CI system (GitHub Actions `.github/workflows/ci.yml`): ✅/⚠️/⛔
 - Template source and provenance recorded in the manifest for each project: ✅/⚠️/⛔
 - Quality instruction files in place for the repo's language stack: ✅/⚠️/⛔
 - `.gitignore` and `.dockerignore` properly configured: ✅/⚠️/⛔

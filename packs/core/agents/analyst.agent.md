@@ -2,15 +2,14 @@
 name: Analyst
 description: "Use when clarifying requirements, discovering what to build, producing requirements specifications, evaluating design options, proposing architecture decisions, or mapping features to cloud services. Operates in three modes: Phase 1A (collaborative discovery), Phase 1B (requirements specification), and Phase 2 (design proposal)."
 user-invocable: false
-tools: ['read', 'search', 'edit', 'fetch', 'github/*', 'awesome-copilot/*', 'context7/*', 'azure-devops/*']
+tools: ['read', 'search', 'edit', 'fetch', 'github/*', 'context7/*']
 skills: ['sdlc-requirements-discovery', 'sdlc-reference-catalog']
 ---
 
 <!-- Tools usage note:
-  - azure-devops/*: Only used when cloud.provider is "azure" in harness-config.yml.
-    If the project uses AWS or GCP, these tools are not invoked.
   - github/*: Used in all modes for reference catalog and pattern research.
-  - awesome-copilot/*: Used in Phase 2 for planning best practices.
+  - awesome-copilot collection: Planning best practices are fetched from the
+    awesome-copilot collection on GitHub (via github/* or fetch) in Phase 2.
   - context7/*: Used in Phase 2 for framework documentation.
 -->
 
@@ -194,24 +193,18 @@ specs as constraints, and never re-spec behavior that is already specified.
      in `.github/reference-catalog.md` and state in your output that live
      verification was not possible. Do NOT stop the workflow.
 
-0b. **Check awesome-copilot MCP (recommended):**
-   - Probe: `mcp_awesome-copil_search_instructions(keywords: "planning")`
+0b. **Check the awesome-copilot collection (recommended):**
+   - Probe: search the collection's `instructions/` directory in the `github/awesome-copilot` repository (via GitHub MCP code search or `fetch`) for "planning".
    - If it **fails**, WARN the user and proceed:
-     > ⚠️ awesome-copilot MCP is not running. Planning best practices will not be loaded.
+     > ⚠️ The awesome-copilot collection is unreachable. Planning best practices will not be loaded.
      > I will proceed using local knowledge only.
 
-0c. **Check cloud-specific MCP (conditional):**
-   - Determine the project's cloud. Read the `cloud.provider` field in
+0c. **Determine the project's cloud:**
+   - Read the `cloud.provider` field in
      `harness-config.yml` at the workspace root. If the key is absent, read
      the Cloud field in `.github/copilot-instructions.md` (§1) and write the
      value back to `harness-config.yml` as `cloud.provider`. If neither
      records a cloud, ask the user — never assume a cloud.
-   - If the provider is `azure`:
-     - Probe: `mcp_azure-devops_core_list_projects()`
-     - If it **fails**, WARN the user and proceed:
-       > ⚠️ Azure DevOps MCP is not available. Team wiki standards will not be fetched.
-       > I will proceed without ADO wiki content.
-   - If the provider is NOT `azure`, skip ADO MCP checks entirely.
 
 0d. **Sketch first.** Before the full proposal, save the decision sketch
    as the FIRST content of the proposal file: the decisions to make, the
@@ -222,9 +215,9 @@ specs as constraints, and never re-spec behavior that is already specified.
    interrupts you, the sketch on disk shows exactly where the design
    stands.
 
-1. **Load planning tools from awesome-copilot** (skip if unavailable):
-   - Use `mcp_awesome-copil_load_collection` to load `"project-planning"`.
-   - Use `mcp_awesome-copil_load_instruction` to load `"task-implementation"`.
+1. **Load planning tools from awesome-copilot** (skip if the collection is unreachable):
+   - Load the "project-planning" collection index from the awesome-copilot collection on GitHub (the `github/awesome-copilot` repository, via the GitHub MCP server's file-contents tool or `fetch`).
+   - Load "task-implementation" from the awesome-copilot collection on GitHub (file `instructions/task-implementation.instructions.md` in the `github/awesome-copilot` repository, via the GitHub MCP server's file-contents tool or `fetch`).
 
 2. **Fetch reference catalog from GitHub MCP:**
    - Use `mcp_github_get_file_contents` to fetch `reference-catalog.md` from the SDLC template repo.
@@ -237,10 +230,6 @@ specs as constraints, and never re-spec behavior that is already specified.
 
 4. **Load up-to-date library docs:**
    - Use **Context7 MCP** to get current documentation for frameworks being evaluated.
-
-5. **Fetch team engineering standards** (cloud-conditional):
-   - If `cloud.provider` is `azure`: search ADO wiki for architecture guidelines.
-   - Otherwise: skip this step.
 
 ### Design constraints
 

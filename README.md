@@ -183,19 +183,25 @@ Inspired by [Anthropic's harness design research](https://www.anthropic.com/engi
 
 See [docs/harness-design.md](docs/harness-design.md) for the full research-to-implementation mapping.
 
-### MCP integration (7 servers)
+### MCP integration
 
-Agents fetch live context from external tools — no stale training data:
+Agents fetch live context from external tools — no stale training data.
+Three servers are core to every workspace; each cloud pack adds its
+vendor's servers:
 
 | Server | Purpose | Used by |
 |--------|---------|---------|
-| **GitHub MCP** | SDK patterns, reference repos, code search | Implementer, Scaffolder, Analyst |
-| **Awesome-Copilot** | OWASP Top 10, Bicep best practices, Python standards | Security Reviewer, Deployer |
-| **Azure MCP** | Validate Azure resources, manage subscriptions | Deployer, Azure Compliance Reviewer |
-| **Azure DevOps MCP** | ADO wikis, pipelines, work items | QA Coordinator, Deployer |
-| **Microsoft Learn MCP** | AVM module docs, Azure service documentation | Deployer, Documenter |
+| **GitHub MCP** | SDK patterns, reference repos, code search; also fetches best-practice instructions and collections (OWASP Top 10, Bicep best practices, Python standards) from the `github/awesome-copilot` repository — a discovery-time source, not a configured server | Implementer, Scaffolder, Analyst, Security Reviewer, Deployer |
 | **Context7** | Current framework docs (FastAPI, React, etc.) | Implementer, Analyst |
 | **Playwright** | Browser automation for E2E testing | QA Coordinator |
+| **Azure MCP Server** | Validate Azure resources, manage subscriptions (Azure pack) | Deployer, Azure Compliance Reviewer |
+| **Microsoft Learn MCP** | AVM module docs, Azure service documentation (Azure pack) | Deployer, Documenter |
+| **AWS MCP Server** | The one managed AWS MCP Server, via the pinned MCP Proxy for AWS (AWS pack) | Deployer, AWS Compliance Reviewer |
+| **Google Developer Knowledge MCP** | Google Cloud documentation (GCP pack) | Deployer, GCP Compliance Reviewer |
+| **Firestore MCP** | Firestore managed endpoint (GCP pack) | Implementer, GCP Compliance Reviewer |
+
+GitHub is the only forge — there is no Azure DevOps (or other tracker)
+server.
 
 > **Setup:** Run `tools/check-mcp.ps1` (Windows) or `tools/check-mcp.sh` (Linux/macOS)
 > to auto-configure MCP servers for VSCode, Copilot CLI, Claude Code, and Claude Desktop.

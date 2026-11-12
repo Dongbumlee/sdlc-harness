@@ -21,8 +21,8 @@ This repository uses Azure services, standard scaffolding templates, and the arc
 in the repository custom instructions. Follow the reference catalog at `.github/reference-catalog.md`
 for template selection.
 
-This prompt supports **SDLC Phase 3 – Repo Structure Configuration** as defined in
-`.github/SDLC-with-Copilot-and-Azure.md`. Follow its exit criteria.
+This prompt supports **SDLC Phase 3 – Repo Structure Configuration**. The exit criteria
+for this phase are the ones listed in this prompt.
 
 ## Inputs from the user
 
@@ -39,7 +39,8 @@ If any of these are unclear, ask 1–2 focused questions before proceeding.
 
 1. Scaffold repo structure aligned with the matching template from the reference catalog.
 2. Set up per-project devcontainer configurations.
-3. Generate per-project `azure_cicd.yaml` pipeline stubs (build + test + deploy stages).
+3. Generate CI pipeline stubs (build + test + deploy stages) for GitHub Actions:
+   `.github/workflows/ci.yml`. GitHub is the only supported forge and CI system.
 4. Include quality gates (linting/type-checking configs).
 5. Ensure the structure supports the SDLC phases (implementation, testing, docs, release).
 
@@ -50,20 +51,18 @@ Before starting, load these resources for authoritative patterns:
 1. **Template structure** — `mcp_github_get_file_contents` → fetch the directory structure
    from the matching template repo (`the base app template repo`, `the API template repo`,
    or `the agent template repo`)
-2. **Docker best practices** — `mcp_awesome-copil_load_instruction` → `"containerization-docker-best-practices"`
+2. **Docker best practices** — fetch `instructions/containerization-docker-best-practices.instructions.md`
+   from the `github/awesome-copilot` repository via the GitHub MCP server's file-contents
+   tool or `fetch` (skip if unreachable)
    (multi-stage builds, layer caching, image security)
-3. **Kubernetes best practices** — `mcp_awesome-copil_load_instruction` → `"kubernetes-deployment-best-practices"`
+3. **Kubernetes best practices** — fetch `instructions/kubernetes-deployment-best-practices.instructions.md`
+   from the `github/awesome-copilot` repository via the GitHub MCP server's file-contents
+   tool or `fetch` (skip if unreachable)
    (when scaffolding for AKS: pod security, resource limits, health checks)
-4. **CI/CD pipeline best practices** — load the one matching your pipeline platform:
-   - ADO: `mcp_awesome-copil_load_instruction` → `"azure-devops-pipelines"`
-   - GitHub Actions: `mcp_awesome-copil_load_instruction` → `"github-actions-ci-cd-best-practices"`
+4. **CI/CD pipeline best practices** — fetch `instructions/github-actions-ci-cd-best-practices.instructions.md`
+   from the `github/awesome-copilot` repository via the GitHub MCP server's file-contents
+   tool or `fetch` (skip if unreachable)
 5. **Package manager docs** — Use **Context7 MCP** to get current `uv` / `azd` / Docker documentation
-6. **Team standards wiki (optional)** — If `.github/copilot-instructions.md` configures a team
-   Azure DevOps wiki, search it for team-specific scaffolding standards (they take precedence):
-   - Search: `mcp_ado_search_wiki(searchText: "scaffolding OR project structure", project: "<ADO_WIKI_PROJECT>")`
-   - Fetch content: `mcp_ado_wiki_get_page_content(wikiIdentifier: "<ADO_WIKI_IDENTIFIER>", project: "<ADO_WIKI_PROJECT>", path: "/<page-path>")`
-   - If no wiki is configured or ADO MCP authentication fails, proceed with the public sources
-     above (awesome-copilot instructions, Context7).
 
 ## IMPORTANT: Scope boundary
 
@@ -73,13 +72,12 @@ This prompt is for **scaffolding only** — folder structure, configuration file
 - Folder structure with empty/stub files
 - `pyproject.toml` / `package.json` with dependencies listed
 - `Dockerfile` per project (multi-stage build template)
-- Per-project `azure_cicd.yaml` pipeline stubs (build + test + deploy stages)
+- CI pipeline stubs (GitHub Actions; build + test + deploy stages)
 - `.gitignore`, `.dockerignore`, `.env.example`
 - Per-project `.devcontainer/` and `.github/`
 - Stub `main.py` or `App.tsx` with minimal boilerplate (imports + app initialization only)
 - Empty test directories with `conftest.py` or test config
 - Root-level compliance files (`TRANSPARENCY_FAQ.md`, `CODE_OF_CONDUCT.md`, etc.)
-- Empty test directories with `conftest.py` or test config
 
 **DO NOT generate:**
 - Business logic, service classes, or domain models
@@ -107,6 +105,7 @@ Based on the project type, choose the matching template from `.github/reference-
 
 ### 2. Create layered folder structure under `src/`
 
+Follow the application project pattern.
 Each layer is an **independent project** under `src/` with its own devcontainer, Dockerfile, and dependencies:
 
 ```
@@ -158,7 +157,6 @@ src/
     ├── .gitignore
     ├── .env
     ├── README.md
-    ├── azure_cicd.yaml            ← Per-project ADO CI/CD pipeline stub
     └── es-metadata.yml
 ```
 
@@ -185,7 +183,7 @@ Ensure these files exist per project and are correctly configured:
 
 ### 3. Generate CI/CD pipelines
 
-Based on the user's chosen platform, generate the appropriate pipeline files.
+Generate the GitHub Actions pipeline files (GitHub is the only supported CI system).
 
 #### GitHub Actions
 
@@ -223,41 +221,18 @@ Create files under `.github/workflows/`:
 # Environments: staging → production (with approval gate)
 ```
 
-#### Azure DevOps (ADO)
-
-Create pipeline files at the repo root or under `/ado/`:
-
-**Build & Test** (`azure-pipelines.yml` or `ado/ci.yml`):
-```yaml
-# Trigger: main branch, PR validation
-# Stages:
-#   - Build: install deps, lint, type-check
-#   - Test: run pytest/vitest with coverage, publish results
-#   - Security: run security scanning tasks
-```
-
-**Deployment** (`ado/deploy.yml` or stages in main pipeline):
-```yaml
-# Stages:
-#   - Build: produce artifact (container image or package)
-#   - Deploy-Staging: deploy to staging, run smoke tests
-#   - Approve: manual approval gate
-#   - Deploy-Production: deploy to production, health check
-#   - Post-Deploy: verify metrics (error rates, latency, Cosmos RU)
-```
-
 ### 4. Quality gates
 
 Every pipeline MUST include these quality gates:
 
-| Gate | GitHub Actions | ADO |
-|---|---|---|
-| **Lint / format** | `ruff check` / `npx eslint` | Same commands in script tasks |
-| **Type check** | `mypy` / `npx tsc --noEmit` | Same commands in script tasks |
-| **Unit tests** | `pytest --cov` / `npx vitest run --coverage` | Same with test result publishing |
-| **Coverage threshold** | Fail if below threshold (e.g., 80%) | Same with coverage gates |
-| **Security scan** | CodeQL + dependency review | Built-in security tasks or third-party |
-| **Docker build** | Build + scan image | Build + scan image |
+| Gate | GitHub Actions |
+|---|---|
+| **Lint / format** | `ruff check` / `npx eslint` |
+| **Type check** | `mypy` / `npx tsc --noEmit` |
+| **Unit tests** | `pytest --cov` / `npx vitest run --coverage` |
+| **Coverage target** | Report coverage against the stack profile's target (e.g., 80%) — a shortfall is recorded as a deviation, never a pipeline failure (Class 2) |
+| **Security scan** | CodeQL + dependency review |
+| **Docker build** | Build + scan image |
 
 ### 5. Infrastructure as Code — delegate to Deployment prompt
 
@@ -265,7 +240,7 @@ If the project needs Azure resource provisioning (Bicep/AVM templates, `azd` con
 Codespaces/Dev Containers), this is handled by a separate SDLC Phase:
 
 > **Use `.github/prompts/deployment.prompt.md`** for all infrastructure-as-code work.
-> It covers Bicep templates with AVM modules, `azure.yaml` for `azd`, WAF toggle parameters,
+> It covers Bicep templates with AVM modules, `azure.yaml` for `azd`,
 > Landing Zone alignment, Dockerfiles, and Dev Container configurations.
 
 **This prompt (Phase 3) should NOT generate Bicep templates or infrastructure code.**
@@ -276,7 +251,7 @@ running the deployment prompt as a follow-up step.
 
 ### 6. SDLC Exit Criteria check (Phase 3)
 
-Verify the following exit criteria from `.github/SDLC-with-Copilot-and-Azure.md`:
+Verify the following exit criteria:
 
 - Repository folders and projects are created or updated to match architecture and templates.
 - Pipeline definitions are updated or confirmed to:
@@ -308,6 +283,6 @@ Example invocation for engineers:
 "Copilot, use `.github/prompts/repo-structure-and-cicd.prompt.md` to:
  Set up a new FastAPI service for order processing. It uses Cosmos DB via
  the approved Cosmos DB library and Blob Storage via the approved Storage library. Deploy to Azure Container Apps.
- I need both GitHub Actions and ADO pipelines. Use the the API template repo
+ I need GitHub Actions pipelines. Use the the API template repo
  as the base structure."
 -->

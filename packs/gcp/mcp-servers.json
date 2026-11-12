@@ -1,1 +1,23 @@
-{"_comment":"No official Google Cloud MCP server pack exists (unlike AWS awslabs/* or @azure/mcp). The GCP pack's skills are written to stand alone — MCP servers are accelerators, never prerequisites (lesson from the AWS pack's MCP-assumption gap). If a Google-maintained MCP server appears, register it here.","servers":{}}
+{
+  "_comment": "Google does not ship one unified cloud MCP server; parity with the other packs is assembled from Google's managed remote endpoints. (1) Developer Knowledge is this pack's vendor documentation server (the Microsoft Learn / AWS Knowledge counterpart): enable the Developer Knowledge API in a project, create an API key restricted to that API, and supply it via the input below. (2) Per-service managed endpoints follow the pattern https://<service>.googleapis.com/mcp (about 60 services, GA; enable per project with 'gcloud beta services mcp enable <service>'); firestore is registered because this pack ships a Firestore repository skill. Cloud Storage has no managed endpoint — the GCS skill works through gsutil/gcloud. (3) For database access beyond the managed endpoints, Google's open-source MCP Toolbox for Databases is the documented local route. Per-service endpoints authenticate with Google OAuth/ADC; a client that cannot attach an ADC bearer token needs a token helper in front of them.",
+  "inputs": [
+    {
+      "id": "gcp_developer_knowledge_api_key",
+      "type": "promptString",
+      "description": "API key for the Google Developer Knowledge API (restrict the key to that API)"
+    }
+  ],
+  "servers": {
+    "google-developer-knowledge": {
+      "type": "http",
+      "url": "https://developerknowledge.googleapis.com/mcp",
+      "headers": {
+        "X-Goog-Api-Key": "${input:gcp_developer_knowledge_api_key}"
+      }
+    },
+    "gcp-firestore": {
+      "type": "http",
+      "url": "https://firestore.googleapis.com/mcp"
+    }
+  }
+}

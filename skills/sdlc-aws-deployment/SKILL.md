@@ -106,17 +106,13 @@ Do not let the builder discover this mid-deploy.
 
 ## Step 1: Load CDK best practices
 
-Use the CDK MCP server for construct selection and patterns:
+Use the managed AWS MCP Server (the `aws` server in
+`packs/aws/mcp-servers.json`, reached through the MCP Proxy for AWS) for
+construct selection and patterns, authoritative service documentation,
+and pricing checks on the chosen architecture — it carries all three
+roles the retired awslabs local servers used to split.
 
-```
-# via packs/aws/mcp-servers.json -> aws-cdk (uvx awslabs.cdk-mcp-server@latest)
-```
-
-For authoritative service docs, use the AWS documentation MCP server
-(`awslabs.aws-documentation-mcp-server`). For cost checks on the chosen
-architecture, use the pricing MCP server (`awslabs.aws-pricing-mcp-server`).
-
-**Offline fallback:** if the MCP servers are unavailable in the environment,
+**Offline fallback:** if the MCP server is unavailable in the environment,
 do not block the build — proceed from CDK API knowledge plus this skill, and
 note the limitation in the build log. The pack's guidance must stand on its
 own; MCP servers are accelerators, not prerequisites.

@@ -2,7 +2,7 @@
 name: Test Coverage Reviewer
 description: "Use when reviewing test quality, coverage gaps, assertion effectiveness, mocking patterns, edge case coverage, or running Playwright e2e tests."
 user-invocable: false
-tools: ['read', 'search', 'terminal', 'awesome-copilot/*', 'playwright/*']
+tools: ['read', 'search', 'fetch', 'terminal', 'playwright/*']
 skills: ['sdlc-reviewer-output-format', 'sdlc-project-qa']
 ---
 
@@ -25,14 +25,14 @@ and assertion effectiveness**.
 
 ## Before reviewing
 
-> **MCP note:** The QA Coordinator checks awesome-copilot availability before launching
-> reviewers. If awesome-copilot is unavailable, skip MCP load calls below and use the
-> local test quality instruction files instead. Note this in your output:
-> _"⚠️ awesome-copilot unavailable — test review based on local quality rules only."_
+> **MCP note:** The QA Coordinator checks GitHub MCP availability before launching
+> reviewers. If the awesome-copilot collection is unreachable, skip the collection loads
+> below and use the local test quality instruction files instead. Note this in your output:
+> _"⚠️ awesome-copilot collection unreachable — test review based on local quality rules only."_
 
-1. **Load testing best practices from awesome-copilot** (skip if unavailable):
-   - Use `mcp_awesome-copil_load_instruction` to load `"playwright-typescript"` (for E2E testing).
-   - Use `mcp_awesome-copil_load_instruction` to load `"playwright-python"` (for Python E2E).
+1. **Load testing best practices from the awesome-copilot collection** (skip if unreachable):
+   - Load `"playwright-typescript"` from the awesome-copilot collection on GitHub (file `instructions/playwright-typescript.instructions.md` in the `github/awesome-copilot` repository, via the GitHub MCP server's file-contents tool or `fetch`) (for E2E testing).
+   - Load `"playwright-python"` from the awesome-copilot collection on GitHub (file `instructions/playwright-python.instructions.md` in the `github/awesome-copilot` repository, via the GitHub MCP server's file-contents tool or `fetch`) (for Python E2E).
 
 2. **Read the applicable test quality instruction file:**
    - For Python tests: read `.github/instructions/test-quality.instructions.md`.

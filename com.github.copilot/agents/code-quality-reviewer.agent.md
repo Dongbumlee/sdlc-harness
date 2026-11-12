@@ -2,7 +2,7 @@
 name: Code Quality Reviewer
 description: "Use when reviewing code for naming conventions, docstring coverage, dead code, comment quality, type annotations, import organization, or DRY violations."
 user-invocable: false
-tools: ['read', 'search', 'awesome-copilot/*']
+tools: ['read', 'search', 'fetch']
 skills: ['sdlc-reviewer-output-format', 'sdlc-code-quality']
 ---
 
@@ -31,14 +31,15 @@ the template patterns recorded in the manifest (DI pattern, service interfaces, 
 
 ## Before reviewing
 
-> **MCP note:** The QA Coordinator checks awesome-copilot availability before launching
-> reviewers. If awesome-copilot is unavailable, skip MCP load calls below and use the
-> local skill file and quality instruction files instead. Note this in your output:
-> _"⚠️ awesome-copilot unavailable — review based on local quality rules only."_
+> **MCP note:** The QA Coordinator checks GitHub MCP availability before launching
+> reviewers. If the awesome-copilot collection is unreachable, skip the collection loads
+> below and use the local skill file and quality instruction files instead. Note this in
+> your output:
+> _"⚠️ awesome-copilot collection unreachable — review based on local quality rules only."_
 
 1. **Load the SDLC code quality skill** — invoke `/sdlc-code-quality`
-   and follow its step-by-step procedure. The skill handles loading awesome-copilot
-   best practices and SDLC quality instruction files.
+   and follow its step-by-step procedure. The skill handles fetching best practices
+   from the awesome-copilot collection on GitHub and SDLC quality instruction files.
 
 2. **Read the applicable quality instruction file:**
    - For Python: read `.github/instructions/code-quality-py.instructions.md`.

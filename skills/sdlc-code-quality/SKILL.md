@@ -22,26 +22,30 @@ user-invocable: false
 
 ## Step 1: Load quality best practices
 
-Load from awesome-copilot:
+Load from the awesome-copilot collection on GitHub, via the GitHub MCP
+server's file-contents tool:
 
 ```
-mcp_awesome-copil_load_instruction(
-  filename: "self-explanatory-code-commenting",
-  mode: "instructions"
+mcp_github_get_file_contents(
+  owner: "github",
+  repo: "awesome-copilot",
+  path: "instructions/self-explanatory-code-commenting.instructions.md"
 )
 ```
 
 ```
-mcp_awesome-copil_load_instruction(
-  filename: "performance-optimization",
-  mode: "instructions"
+mcp_github_get_file_contents(
+  owner: "github",
+  repo: "awesome-copilot",
+  path: "instructions/performance-optimization.instructions.md"
 )
 ```
 
 ```
-mcp_awesome-copil_load_instruction(
-  filename: "object-calisthenics",
-  mode: "instructions"
+mcp_github_get_file_contents(
+  owner: "github",
+  repo: "awesome-copilot",
+  path: "instructions/object-calisthenics.instructions.md"
 )
 ```
 

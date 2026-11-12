@@ -116,8 +116,10 @@ class TestPluginPackJson:
         with open(mcp_path) as f:
             mcp = json.load(f)  # raises if invalid JSON
         servers = mcp.get("servers", {})
-        assert "aws-cdk" in servers, "aws-cdk server missing from pack mcp-servers.json"
-        assert "aws-docs" in servers, "aws-docs server missing from pack mcp-servers.json"
+        # The managed AWS MCP Server replaced the retired awslabs local
+        # servers (ADR-0003 D7): one "aws" entry is the whole pack set.
+        assert "aws" in servers, "aws server missing from pack mcp-servers.json"
+        assert len(servers) == 1, f"expected only the managed aws server, got {sorted(servers)}"
 
     def test_pack_skills_all_exist(self):
         """Every skill listed in the pack must exist under packs/aws/skills/."""

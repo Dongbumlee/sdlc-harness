@@ -23,50 +23,42 @@ user-invocable: false
 
 ## Step 1: Load deployment best practices
 
-Load from awesome-copilot:
+Load from the awesome-copilot collection on GitHub, via the GitHub MCP
+server's file-contents tool:
 
 ```
-mcp_awesome-copil_load_instruction(
-  filename: "azure-deployment-preflight/SKILL.md",
-  mode: "skills"
+mcp_github_get_file_contents(
+  owner: "github",
+  repo: "awesome-copilot",
+  path: "skills/azure-deployment-preflight/SKILL.md"
 )
 ```
 
 For AVM module updates:
 
 ```
-mcp_awesome-copil_load_instruction(
-  filename: "update-avm-modules-in-bicep/SKILL.md",
-  mode: "skills"
+mcp_github_get_file_contents(
+  owner: "github",
+  repo: "awesome-copilot",
+  path: "skills/update-avm-modules-in-bicep/SKILL.md"
 )
 ```
 
 For Bicep coding standards:
 
 ```
-mcp_awesome-copil_load_instruction(
-  filename: "bicep-code-best-practices",
-  mode: "instructions"
+mcp_github_get_file_contents(
+  owner: "github",
+  repo: "awesome-copilot",
+  path: "instructions/bicep-code-best-practices.instructions.md"
 )
 ```
 
-## Step 2: Load Bicep/AVM standards (public sources; optional team wiki override)
+## Step 2: Load Bicep/AVM standards (public sources)
 
-Start with public guidance (already loaded in Step 1 via awesome-copilot). Supplement with
-**Microsoft Learn MCP** for authoritative AVM module documentation.
-
-If `.github/copilot-instructions.md` configures a team Azure DevOps wiki, fetch team-specific
-standards — they take precedence over generic practices:
-
-```
-mcp_ado_wiki_get_page_content(
-  wikiIdentifier: "<ADO_WIKI_IDENTIFIER>",
-  project: "<ADO_WIKI_PROJECT>",
-  path: "/<team-standards-page>"
-)
-```
-
-If no wiki is configured or ADO MCP authentication fails, proceed with the public sources above.
+Start with public guidance (already loaded in Step 1 from the awesome-copilot
+collection). Supplement with **Microsoft Learn MCP** for authoritative AVM
+module documentation.
 
 ## Step 3: AVM modules — MANDATORY for ALL resources
 

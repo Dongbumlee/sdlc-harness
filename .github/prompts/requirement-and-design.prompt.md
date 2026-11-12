@@ -1,5 +1,5 @@
 ---
-description: "Analyze requirements and design solutions for new features. Produces ADR-ready design proposals with Azure service mapping, architecture decisions, and test strategy."
+description: "Analyze requirements and design solutions for new features. Produces ADR-ready design proposals with cloud service mapping, architecture decisions, and test strategy."
 agent: "Analyst"
 argument-hint: "Describe the feature or requirement to analyze"
 ---
@@ -19,11 +19,11 @@ argument-hint: "Describe the feature or requirement to analyze"
 
  You are helping analyze requirements and design a solution inside this repository.
 
- This repo uses Azure (Cosmos DB, Blob Storage, etc.) and the architecture and technology rules defined in the repository custom
+ This repo’s cloud, data stores, and services are recorded in `.github/copilot-instructions.md` (§1) — design against those, together with the architecture and technology rules defined in the repository custom
  instructions.
 
- This prompt supports **SDLC Phases 1–2 (Requirement Analysis and Design)** as defined in
- `.github/SDLC-with-Copilot-and-Azure.md`. Follow their exit criteria.
+ This prompt supports **SDLC Phases 1–2 (Requirement Analysis and Design)**. The exit criteria
+ for these phases are the ones listed in this prompt.
 
  ## Inputs from the user
 
@@ -35,31 +35,31 @@ argument-hint: "Describe the feature or requirement to analyze"
  ## Goals
 
  1. Clarify requirements.
- 2. Propose a design consistent with this repo’s architecture and patterns, including Azure usage.
+ 2. Propose a design consistent with this repo’s architecture and patterns, including cloud service usage.
  3. Identify which phases of the SDLC will be impacted and which artifacts are needed.
  ## Context loading (MCP resources)
 
  Before starting, load these resources for enriched analysis:
 
- 1. **Planning tools** — `mcp_awesome-copil_load_collection` → `"project-planning"`
+ 1. **Planning tools** — fetch the `project-planning` collection from the
+    `github/awesome-copilot` repository via the GitHub MCP server's file-contents tool
+    or `fetch` (skip if unreachable)
     (structured planning patterns and feature breakdown guidance)
- 2. **Task breakdown** — `mcp_awesome-copil_load_instruction` → `"task-implementation"`
+ 2. **Task breakdown** — fetch `instructions/task-implementation.instructions.md` from the
+    `github/awesome-copilot` repository via the GitHub MCP server's file-contents tool
+    or `fetch` (skip if unreachable)
     (feature decomposition into implementable steps)
  3. **Reference catalog** — `mcp_github_get_file_contents` → fetch `reference-catalog.md`
-    from the SDLC template repo (verify Azure service choices match approved libraries)
+    from the SDLC template repo (verify cloud service choices match approved libraries)
  4. **Template patterns** — `mcp_github_get_file_contents` → fetch project structure from
     the matching template repo (`the base app template repo`, `the API template repo`,
     or `the agent template repo`)
  5. **Framework docs** — Use **Context7 MCP** to get current documentation for frameworks
     being evaluated (FastAPI, Pydantic, Azure AI Agent Framework, etc.)
- 6. **Public architecture guidance** — Use **Microsoft Learn MCP** and awesome-copilot
-    (`mcp_awesome-copil_load_collection` → `"azure-cloud-development"`) for current
-    architecture and Azure design guidance.
- 7. **Team standards wiki (optional)** — If `.github/copilot-instructions.md` configures a team
-    Azure DevOps wiki, search it for team-specific guidelines (they take precedence over generic guidance):
-    - Search: `mcp_ado_search_wiki(searchText: "architecture", project: "<ADO_WIKI_PROJECT>")`
-    - Fetch content: `mcp_ado_wiki_get_page_content(wikiIdentifier: "<ADO_WIKI_IDENTIFIER>", project: "<ADO_WIKI_PROJECT>", path: "/<page-path>")`
-    - If no wiki is configured or ADO MCP authentication fails, proceed with the public sources above.
+ 6. **Public architecture guidance** — Use **Microsoft Learn MCP** and the
+    `azure-cloud-development` collection (fetch the `azure-cloud-development` collection
+    from the `github/awesome-copilot` repository via the GitHub MCP server's file-contents
+    tool or `fetch`, skip if unreachable) for current architecture and cloud design guidance.
  ## Steps
 
  1. **Clarify requirements**
@@ -70,7 +70,7 @@ argument-hint: "Describe the feature or requirement to analyze"
       - Non-goals / out of scope
       - Constraints (tech, performance, security, RAI, data residency, etc.)
 
- 2. **Align with architecture and Azure conventions**
+ 2. **Align with architecture and cloud conventions**
     - Based on repo instructions and existing code:
       - Identify which layers are involved (routers/endpoints, services, domain logic, data access).
       - Identify which Azure services are relevant (Cosmos DB, Blob Storage, etc.).
@@ -90,16 +90,16 @@ argument-hint: "Describe the feature or requirement to analyze"
       - Any RAI / security/privacy considerations if applicable.
 
  4. **Map to the SDLC**
-    - For each SDLC Phase, specify what needs to be done:
-      1. Requirement Analysis – what is now clear or still open.
-      2. Design – what artifacts should be created (e.g., ADR, design doc).
-      3. Repo structure / CI–CD – new folders, pipelines, or configs needed (especially for new Azure resources).
-      4. Implementation – modules/files/classes to create or modify.
-      5. Tests – which test suites to add or extend (unit, integration).
-      6. Documentation – which docs to update/create.
-      7. QA – manual/exploratory testing, performance checks, etc.
-      8. RAI review – any model/AI/data concerns to review.
-      9. Release – any special release or migration steps.
+    - For each SDLC Phase, specify what needs to be done (phase numbering is
+      the canonical model — tests are part of Phase 4, not a phase of their own):
+      1. Requirement Analysis (Phase 1) – what is now clear or still open.
+      2. Design (Phase 2) – what artifacts should be created (e.g., ADR, design doc).
+      3. Scaffold (Phase 3) – repo structure / CI–CD: new folders, pipelines, or configs needed (especially for new Azure resources).
+      4. Implementation (Phase 4) – modules/files/classes to create or modify, and which test suites to add or extend (unit, integration).
+      5. Documentation (Phase 5) – which docs to update/create.
+      6. QA (Phase 6) – manual/exploratory testing, performance checks, etc.
+      7. RAI review (Phase 7) – any model/AI/data concerns to review.
+      8. Release (Phases 8–9) – any special release or migration steps.
 
 
  5. **SDLC Exit Criteria check (Phases 1-2)**
@@ -111,9 +111,9 @@ argument-hint: "Describe the feature or requirement to analyze"
     - Azure library choices are explicit and compliant.
     - Reuse of internal patterns and/or external templates is identified.
     - For each criterion, mark it as:
-      - Satisfied
-      - Partially satisfied (explain what remains)
-      - Not satisfied (explain what is missing)
+      - ✅ satisfied
+      - ⚠️ partially satisfied (explain what remains)
+      - ⛔ not satisfied (explain what is missing)
 
  6. **Output format**
 

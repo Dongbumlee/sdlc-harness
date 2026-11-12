@@ -1,6 +1,6 @@
 # ADR-0003: GitHub-Native Operations — Repository First, Work Tracked in Issues/PRs, Test Evidence from CI
 
-- **Status:** Accepted
+- **Status:** Accepted (amended 2026-11-12 — D6, D7 added)
 - **Date:** 2026-10-19
 - **Deciders:** Dongbum Lee (product owner), Cindy (harness maintainer)
 - **Related:** ADR-0002 (bundled default templates), manifest Phase-State Ledger, QA evidence pack
@@ -128,6 +128,63 @@ Structure underneath the activity:
   (`qa-evidence/test-run.txt`) remains the fallback when no CI run exists,
   and the QA report states that limitation explicitly when it applies —
   the same honesty rule as the recorded-not-re-run pattern it replaces.
+
+### D6. The forge standard is GitHub only — no tracker adapters (amendment, 2026-11-12)
+
+Decided by the product owner on 2026-11-11 after a market review of the
+late-2026 MCP/forge landscape, and implemented the next day.
+
+- **One standard, no variants.** GitHub is the only forge and work
+  medium the harness supports: Issues are the phase medium, PRs the
+  review medium, Actions logs the gate evidence (D4/D5). The harness
+  does **not** build or maintain adapters for Jira, GitLab, or Azure
+  DevOps — a single pinned standard is the product's premise (the
+  same rule the template program applies to every other decision
+  point), and each additional medium would import its own workflow
+  semantics into every phase.
+- **Azure DevOps remnants are removed, not deprecated.** The
+  `azure-devops` MCP server leaves the default set; the Scaffolder's
+  ADO CI variant and the project guide's ADO sections are deleted.
+  Grounds beyond the one-standard rule: Microsoft itself steers
+  repositories toward GitHub (its own migration tooling included),
+  and the ADO remote MCP works only with Microsoft-ecosystem
+  clients — a harness that must run on any client cannot build on
+  it. A customer organization's own tracker remains that
+  organization's property; it is never a harness-supported variant.
+- Jira and GitLab MCP servers exist and are GA; their exclusion is
+  a standards decision, not a capability judgement, and this ADR is
+  where a future reversal would have to argue itself in.
+
+### D7. The MCP set is small, per-pack, and vendor-current (amendment, 2026-11-12)
+
+- **Core set (every workspace): three servers.** The official
+  GitHub MCP (remote), Context7 (cross-ecosystem library docs),
+  and Playwright (browser acts/E2E). Nothing else is core.
+- **Vendor servers live in their cloud pack, at parity.** Each
+  cloud pack carries its vendor's current standard MCP surface the
+  way the Azure pack carries the Azure MCP Server: the Azure pack
+  adds Microsoft Learn; the AWS pack replaces its five retired
+  awslabs local servers with the one managed AWS MCP Server (which
+  also absorbs the documentation/knowledge role — AWS recommends
+  removing the old standalone entries); the GCP pack gains the
+  Developer Knowledge server plus the managed per-service
+  endpoints matching its skills (Google ships no unified server).
+  A pack loads only when its cloud is in play, so an unused
+  vendor's tools never occupy context.
+- **Curated-instruction MCPs are not a runtime category.**
+  awesome-copilot leaves the runtime set: the category has been
+  absorbed by skills and instruction files. The collection remains
+  a **setup/discovery-time** source — agents fetch named
+  instructions from the `github/awesome-copilot` repository
+  through the GitHub MCP server or `fetch`, with the same
+  skip-if-unavailable degradation as before. What an organization
+  adopts from it gets pinned into the project's own instruction
+  files and skills, versioned with the project.
+- **Tool names are referenced at server level.** Agent and skill
+  prose names the server and the capability ("the GitHub MCP
+  server's file-contents tool"), never a client-rendered tool
+  name (`mcp_<server>_<tool>` display strings, including truncated
+  ones, differ per client and rot silently).
 
 ## Consequences
 

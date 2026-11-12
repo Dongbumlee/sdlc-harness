@@ -21,12 +21,15 @@ user-invocable: false
 
 ## Step 1: Load Cosmos DB data modeling guidance
 
-For data modeling decisions (partition keys, denormalization, indexing):
+For data modeling decisions (partition keys, denormalization, indexing), load
+the data modeling skill from the awesome-copilot collection on GitHub, via
+the GitHub MCP server's file-contents tool:
 
 ```
-mcp_awesome-copil_load_instruction(
-  filename: "cosmosdb-datamodeling/SKILL.md",
-  mode: "skills"
+mcp_github_get_file_contents(
+  owner: "github",
+  repo: "awesome-copilot",
+  path: "skills/cosmosdb-datamodeling/SKILL.md"
 )
 ```
 

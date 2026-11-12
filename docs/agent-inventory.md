@@ -4,7 +4,7 @@
 > Regenerate with `python3 tools/generate_agent_inventory.py`.
 
 **Version:** 1.3.0
-**Generated:** 2026-11-11
+**Generated:** 2026-11-12
 **Total agents:** 21 (21 agent files)
 **Total skills:** 24
 
@@ -94,8 +94,6 @@
 | Tool / MCP Server | Agents Using It |
 |---|---|
 | `agent` | Harness, Implementer, QA Bug Checklist Reviewer, QA Coordinator |
-| `awesome-copilot/*` | Analyst, AWS Compliance Reviewer, Azure Compliance Reviewer, Code Quality Reviewer, Deployer, GCP Compliance Reviewer, Harness, Implementer, QA Coordinator, RAI Reviewer, Scaffolder, Security Reviewer, Test Coverage Reviewer |
-| `azure-devops/*` | Analyst, Deployer, Harness, Implementer, QA Coordinator, Scaffolder |
 | `azure/*` | Harness |
 | `azure/bicepschema` | Deployer |
 | `azure/cosmos` | Implementer |
@@ -107,7 +105,7 @@
 | `context7/*` | Analyst, Harness, Implementer, QA Coordinator, Scaffolder |
 | `edit` | Analyst, Deployer, Documenter, Harness, Implementer, Release Manager, Scaffolder |
 | `execute` | Harness, Implementer |
-| `fetch` | Analyst, Harness |
+| `fetch` | Analyst, Code Quality Reviewer, Harness, RAI Reviewer, Security Reviewer, Test Coverage Reviewer |
 | `github/*` | Analyst, Architecture Reviewer, AWS Compliance Reviewer, Azure Compliance Reviewer, Deployer, Documenter, GCP Compliance Reviewer, Harness, Implementer, Release Manager, Scaffolder |
 | `microsoft-learn/*` | Azure Compliance Reviewer, Deployer, Documenter, Harness, Implementer, QA Coordinator, RAI Reviewer |
 | `ms-python.python/configurePythonEnvironment` | Implementer |

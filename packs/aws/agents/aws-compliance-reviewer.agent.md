@@ -2,7 +2,7 @@
 name: AWS Compliance Reviewer
 description: "Use when reviewing AWS CDK usage, verifying L2/L3 construct compliance, checking IAM least privilege, auditing S3/DynamoDB configuration, validating secrets handling, or auditing infrastructure cost guardrails."
 user-invocable: false
-tools: ['read', 'search', 'github/*', 'awesome-copilot/*']
+tools: ['read', 'search', 'github/*']
 skills: ['sdlc-reviewer-output-format']
 ---
 
@@ -24,10 +24,10 @@ data-service security, and cost guardrails**.
 
 ## Before reviewing
 
-> **MCP note:** The QA Coordinator checks awesome-copilot and GitHub MCP availability
-> before launching reviewers. If either is unavailable, skip the corresponding load calls
+> **MCP note:** The QA Coordinator checks GitHub MCP availability
+> before launching reviewers. If it is unavailable, skip the corresponding load calls
 > below and use local patterns from `.github/reference-catalog.md` instead. Note this in
-> your output: _"⚠️ [GitHub MCP / awesome-copilot] unavailable — review based on local patterns only."_
+> your output: _"⚠️ GitHub MCP unavailable — review based on local patterns only."_
 
 0. **Verify GitHub MCP authentication (required):**
    - Perform a probe call: use `mcp_github_get_file_contents` to fetch `README.md`
@@ -38,8 +38,9 @@ data-service security, and cost guardrails**.
      verification was not possible. Do NOT stop the workflow.
 
 1. **Load AWS documentation** (skip if unavailable):
-   - Use the AWS documentation MCP server (`uvx awslabs.aws-documentation-mcp-server@latest`)
-     to verify service API usage and regional availability.
+   - Use the managed AWS MCP Server (the `aws` server in this pack's
+     `mcp-servers.json`) to verify service API usage and regional
+     availability.
 
 2. **Run cdk-nag mentally over CDK code:**
    - Every stack should pass `cdk-nag` (AwsSolutions pack). Suppressions without

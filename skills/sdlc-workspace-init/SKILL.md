@@ -101,8 +101,6 @@ Ask the user for:
 2. **Business domain** (required) — e.g., "Intelligent document processing"
 3. **Tech stack** (required) — e.g., "Python, FastAPI, React, TypeScript"
 4. **Primary language(s)** (derived from tech stack) — used to filter instruction files (e.g., `code-quality-py.md` vs `code-quality-ts.md`)
-5. **ADO wiki project** (optional) — e.g., "MyTeam Engineering" (leave blank to use public sources only)
-6. **ADO wiki identifier** (optional) — e.g., "MyTeam-Engineering.wiki" (leave blank to use public sources only)
 
 ### Step 5: Deploy copilot-instructions.md
 
@@ -111,8 +109,6 @@ Ask the user for:
    - `{{PROJECT_NAME}}` → user's project name
    - `{{BUSINESS_DOMAIN}}` → user's business domain
    - `{{TECH_STACK}}` → user's tech stack
-   - `{{ADO_WIKI_PROJECT}}` → user's ADO wiki project (optional; if blank, write `(not configured)`)
-   - `{{ADO_WIKI_IDENTIFIER}}` → user's ADO wiki identifier (optional; if blank, write `(not configured)`)
 3. Write the result to `.github/copilot-instructions.md`.
 
 ### Step 6: Create empty reference catalog template
@@ -151,7 +147,7 @@ Write this content to `.github/reference-catalog.md`:
 ```
 
 > **Why an empty template?** The Analyst populates this during the design phase using live research
-> from GitHub MCP, Context7, awesome-copilot, and web sources. A static pre-populated catalog
+> from GitHub MCP (including the awesome-copilot collection), Context7, and web sources. A static pre-populated catalog
 > falls out of date; a living catalog stays current with each project's actual tech stack.
 
 ### Step 6b: Ask catalog review preference

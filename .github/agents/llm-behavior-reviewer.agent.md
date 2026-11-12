@@ -32,8 +32,8 @@ Focus on **Categories 3 and 4** (LLM & Agent Behavior, Data & File Handling).
 
 > **MCP note:** This reviewer uses local skill files (`sdlc-project-qa` and
 > `sdlc-security-review`). No external MCP servers are directly required.
-> If referenced skills attempt to load awesome-copilot resources and it is unavailable,
-> skip those calls and note: _"⚠️ awesome-copilot unavailable — review based on local skill only."_
+> If referenced skills attempt to load awesome-copilot collection resources and the
+> collection is unreachable, skip those loads and note: _"⚠️ awesome-copilot collection unreachable — review based on local skill only."_
 
 1. **Load the project QA skill** — invoke `/sdlc-project-qa`
    and follow the checklist for Categories 3 and 4.

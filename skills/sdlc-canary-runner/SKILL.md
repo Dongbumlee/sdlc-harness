@@ -47,21 +47,21 @@ failure, and the e2e result must show it as such (see Step 0).
 
 | Phase | Required MCP servers (default) | Why |
 |-------|-------------------------------|-----|
-| `requirements` | `awesome-copilot`, `context7` | Reference catalog patterns, library docs for requirements quality |
-| `design` | `awesome-copilot`, `context7` | ADR/architecture patterns, library docs |
-| `scaffold` | `awesome-copilot`, `context7` | Project scaffolding patterns, framework docs |
-| `implement` | `awesome-copilot`, `context7` | Language best practices, API docs for implementation |
-| `qa` | `awesome-copilot` | Security/code-quality guidance the QA gates are graded against |
+| `requirements` | `github`, `context7` | Reference catalog patterns, library docs for requirements quality |
+| `design` | `github`, `context7` | ADR/architecture patterns, library docs |
+| `scaffold` | `github`, `context7` | Project scaffolding patterns, framework docs |
+| `implement` | `github`, `context7` | Language best practices, API docs for implementation |
+| `qa` | `github` | Security/code-quality guidance the QA gates are graded against |
 | `document` | _(none)_ | Graded on prompt-contained content; MCP is advisory only |
-| `deploy` | `awesome-copilot`, `azure` | Deployment patterns, Bicep/deployment schemas |
+| `deploy` | `github`, `azure` | Deployment patterns, Bicep/deployment schemas |
 | `release` | `github` | Changelog/release data comes from the repo |
 | `publish` | `github` | Publish verification against repo releases/tags |
-| `rai` | `awesome-copilot` | Responsible-AI review guidance |
+| `rai` | `github` | Responsible-AI review guidance |
 
 A canary spec may override this with its own `requires_mcp` list
 (see `schemas/canary-spec.schema.json`). An explicit empty list (`requires_mcp: []`)
 means the canary has no hard MCP dependency and always runs. All other servers
-present in `.vscode/mcp.json` (e.g. `microsoft-learn`, `playwright`, `azure-devops`)
+present in `.vscode/mcp.json` (e.g. `microsoft-learn`, `playwright`)
 are treated as advisory: their status is recorded in `mcp_status` but never
 triggers a failure.
 
@@ -76,7 +76,8 @@ MCP servers behind it — never let a dead server silently turn into a FAIL.
    `skills/sdlc-workspace-init/assets/mcp.template.json`).
 2. For each server, determine its status — one of `ready`, `unavailable`, `unknown` —
    and record a short `reason`:
-   - **Docker-based stdio** (`command: "docker"`, e.g. `awesome-copilot`):
+   - **Docker-based stdio** (`command: "docker"`; no bundled server uses
+     docker, but an organization pack may add one):
      run `docker info`. If it fails → `unavailable` (`docker daemon not reachable`).
      If the daemon is up, run `docker image inspect <image>`. If the image is
      missing locally, attempt `docker pull <image>` with a 300s timeout (first
@@ -91,9 +92,9 @@ MCP servers behind it — never let a dead server silently turn into a FAIL.
 3. Write the resulting map to the run's `mcp_status` field, e.g.:
    ```json
    "mcp_status": {
-     "awesome-copilot": { "status": "unavailable", "reason": "docker daemon not reachable" },
+     "context7": { "status": "unavailable", "reason": "npx not found" },
      "github": { "status": "ready", "reason": "http endpoint" },
-     "context7": { "status": "ready", "reason": "npx present (shallow check)" }
+     "playwright": { "status": "ready", "reason": "npx present (shallow check)" }
    }
    ```
 4. Resolve each canary's required servers later (Step 2) against this map.
@@ -138,9 +139,9 @@ For each spec:
      "verdict": "FAIL",
      "composite_score": 0.0,
      "failure_reasons": [
-       "mcp_unavailable: awesome-copilot — docker daemon not reachable. Fix: start Docker and pre-pull ghcr.io/microsoft/mcp-dotnet-samples/awesome-copilot:latest, then re-run."
+       "mcp_unavailable: context7 — npx not found. Fix: install Node.js (which provides npx), then re-run."
      ],
-     "missing_mcp": ["awesome-copilot"]
+     "missing_mcp": ["context7"]
    }
    ```
    MCP-unavailable failures count as failures in the summary and force the run
@@ -244,9 +245,9 @@ After all canaries complete, write a JSON result file:
   "timestamp": "2026-04-13T07:30:00Z",
   "mode": "degraded",
   "mcp_status": {
-    "awesome-copilot": { "status": "unavailable", "reason": "docker daemon not reachable" },
+    "context7": { "status": "unavailable", "reason": "npx not found" },
     "github": { "status": "ready", "reason": "http endpoint" },
-    "context7": { "status": "ready", "reason": "npx present (shallow check)" }
+    "playwright": { "status": "ready", "reason": "npx present (shallow check)" }
   },
   "summary": {
     "total": 10,
@@ -277,9 +278,9 @@ After all canaries complete, write a JSON result file:
       "verdict": "FAIL",
       "composite_score": 0.0,
       "failure_reasons": [
-        "mcp_unavailable: awesome-copilot — docker daemon not reachable. Fix: start Docker and pre-pull ghcr.io/microsoft/mcp-dotnet-samples/awesome-copilot:latest, then re-run."
+        "mcp_unavailable: context7 — npx not found. Fix: install Node.js (which provides npx), then re-run."
       ],
-      "missing_mcp": ["awesome-copilot"]
+      "missing_mcp": ["context7"]
     }
   ]
 }
@@ -349,11 +350,11 @@ Present a concise summary table:
 |----|-------|-------|-------|---------|
 | req-001 | requirements | E-commerce API Requirements | 0.91 | ✅ PASS |
 | des-001 | design        | E-commerce Architecture    | 0.88 | ✅ PASS |
-| scf-001 | scaffold      | FastAPI Project Scaffolding | 0.00 | ❌ FAIL (mcp_unavailable: awesome-copilot) |
+| scf-001 | scaffold      | FastAPI Project Scaffolding | 0.00 | ❌ FAIL (mcp_unavailable: context7) |
 ...
 
 **Summary:** 6 passed, 4 failed / 10 total | Composite: 0.62
-**Mode:** degraded — `awesome-copilot` unavailable (docker daemon not reachable); 4 canaries failed with `mcp_unavailable`. Fix: start Docker and pre-pull the image, then re-run.
+**Mode:** degraded — `context7` unavailable (npx not found); 4 canaries failed with `mcp_unavailable`. Fix: install Node.js (which provides npx), then re-run.
 **Results:** bench/results/canary-run-2026-04-13.json
 ```
 

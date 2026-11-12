@@ -240,12 +240,14 @@ addopts = ["--import-mode=importlib"]
 repo-level `src/` directory.** For example, an API project has its code at
 `src/CustomerFeedbackAPI/app/` — the `app/` is the code root inside the project.
 
-Also load containerization best practices:
+Also load containerization best practices from the awesome-copilot collection
+on GitHub, via the GitHub MCP server's file-contents tool:
 
 ```
-mcp_awesome-copil_load_instruction(
-  filename: "containerization-docker-best-practices.instructions.md",
-  mode: "instructions"
+mcp_github_get_file_contents(
+  owner: "github",
+  repo: "awesome-copilot",
+  path: "instructions/containerization-docker-best-practices.instructions.md"
 )
 ```
 
@@ -350,42 +352,12 @@ For each project, also create these files using the template as reference:
 
 ## Step 6: CI/CD pipeline stub
 
-Create the CI stub for the CI system the profile resolves to. **Default:
-GitHub Actions** — one `.github/workflows/ci.yml` at the repository root,
-path-filtered to the project, with a Build job (install → test → build →
-docker build, commands from the project's stack profile) and a Deploy job
-that needs Build and runs only on pushes to `main`. The bundled templates
-ship this file; instantiate it with the template.
-
-**Variant — Azure DevOps** (the organization declares ADO in its profile
-override): create `azure_cicd.yaml` per project instead. The stub below is
-the **python profile** under ADO; take the build/test commands from the
-project's stack profile (dotnet: `DotNetCoreCLI@2` restore/build/test;
-typescript: `pnpm install --frozen-lockfile`, `pnpm test`, `pnpm build`).
-The stage structure (Build → Deploy, main-branch gated) is the same for
-every stack and both CI systems:
-
-```yaml
-trigger:
-  paths:
-    include:
-      - src/<ProjectName>/**
-
-stages:
-  - stage: Build
-    jobs:
-      - job: BuildAndTest
-        steps:
-          - script: uv sync --frozen
-          - script: uv run pytest --cov --junitxml=results.xml
-          - script: docker build -t $(imageName) .
-
-  - stage: Deploy
-    dependsOn: Build
-    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
-    jobs:
-      - deployment: DeployToACA
-```
+Create the GitHub Actions CI stub — one `.github/workflows/ci.yml` at the
+repository root, path-filtered to the project, with a Build job
+(install → test → build → docker build, commands from the project's stack
+profile) and a Deploy job that needs Build and runs only on pushes to
+`main`. The bundled templates ship this file; instantiate it with the
+template.
 
 ## Gotchas
 

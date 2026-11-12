@@ -31,9 +31,9 @@ teams from repeating the same mistakes.
 
 Before loading skills that depend on MCP servers, verify availability:
 
-- **awesome-copilot**: Probe `mcp_awesome-copil_search_instructions(keywords: "security")`
+- **awesome-copilot collection**: Probe by searching the `instructions/` directory of the `github/awesome-copilot` repository (via the GitHub MCP server or `fetch`) for instructions matching "security"
   - If it **fails**, WARN the user:
-    > ⚠️ awesome-copilot MCP is not running. Security and deployment best practices
+    > ⚠️ awesome-copilot collection unreachable. Security and deployment best practices
     > from the `sdlc-security-review` and `sdlc-azure-deployment` skills will use local
     > checklist data only (no fresh OWASP or Bicep guidelines).
   - Proceed with the review using local skill files.

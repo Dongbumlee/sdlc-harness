@@ -41,9 +41,13 @@ argument-hint: "Describe the feature or requirement to analyze"
 
  Before starting, load these resources for enriched analysis:
 
- 1. **Planning tools** — `mcp_awesome-copil_load_collection` → `"project-planning"`
+ 1. **Planning tools** — fetch the `project-planning` collection from the
+    `github/awesome-copilot` repository via the GitHub MCP server's file-contents tool
+    or `fetch` (skip if unreachable)
     (structured planning patterns and feature breakdown guidance)
- 2. **Task breakdown** — `mcp_awesome-copil_load_instruction` → `"task-implementation"`
+ 2. **Task breakdown** — fetch `instructions/task-implementation.instructions.md` from the
+    `github/awesome-copilot` repository via the GitHub MCP server's file-contents tool
+    or `fetch` (skip if unreachable)
     (feature decomposition into implementable steps)
  3. **Reference catalog** — `mcp_github_get_file_contents` → fetch `reference-catalog.md`
     from the SDLC template repo (verify cloud service choices match approved libraries)
@@ -52,14 +56,10 @@ argument-hint: "Describe the feature or requirement to analyze"
     or `the agent template repo`)
  5. **Framework docs** — Use **Context7 MCP** to get current documentation for frameworks
     being evaluated (FastAPI, Pydantic, Azure AI Agent Framework, etc.)
- 6. **Public architecture guidance** — Use **Microsoft Learn MCP** and awesome-copilot
-    (`mcp_awesome-copil_load_collection` → `"azure-cloud-development"`) for current
-    architecture and cloud design guidance.
- 7. **Team standards wiki (optional)** — If `.github/copilot-instructions.md` configures a team
-    Azure DevOps wiki, search it for team-specific guidelines (they take precedence over generic guidance):
-    - Search: `mcp_ado_search_wiki(searchText: "architecture", project: "<ADO_WIKI_PROJECT>")`
-    - Fetch content: `mcp_ado_wiki_get_page_content(wikiIdentifier: "<ADO_WIKI_IDENTIFIER>", project: "<ADO_WIKI_PROJECT>", path: "/<page-path>")`
-    - If no wiki is configured or ADO MCP authentication fails, proceed with the public sources above.
+ 6. **Public architecture guidance** — Use **Microsoft Learn MCP** and the
+    `azure-cloud-development` collection (fetch the `azure-cloud-development` collection
+    from the `github/awesome-copilot` repository via the GitHub MCP server's file-contents
+    tool or `fetch`, skip if unreachable) for current architecture and cloud design guidance.
  ## Steps
 
  1. **Clarify requirements**
