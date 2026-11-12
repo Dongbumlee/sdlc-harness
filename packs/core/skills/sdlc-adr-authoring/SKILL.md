@@ -21,12 +21,14 @@ authoring agent's own phase (base definitions §2.4).
 
 ## Step 1: Load ADR best practices
 
-Load the generic ADR creation skill from awesome-copilot:
+Load the generic ADR creation skill from the awesome-copilot collection on
+GitHub, via the GitHub MCP server's file-contents tool:
 
 ```
-mcp_awesome-copil_load_instruction(
-  filename: "create-architectural-decision-record/SKILL.md",
-  mode: "skills"
+mcp_github_get_file_contents(
+  owner: "github",
+  repo: "awesome-copilot",
+  path: "skills/create-architectural-decision-record/SKILL.md"
 )
 ```
 

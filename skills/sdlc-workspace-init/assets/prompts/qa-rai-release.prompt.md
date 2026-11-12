@@ -28,16 +28,22 @@ argument-hint: "Describe the feature or change to review and release"
 
  Before starting, load these resources for thorough quality review:
 
- 1. **OWASP security checklist** — `mcp_awesome-copil_load_instruction` → `"security-and-owasp"`
+ 1. **OWASP security checklist** — fetch `instructions/security-and-owasp.instructions.md` from the
+    `github/awesome-copilot` repository via the GitHub MCP server's file-contents tool
+    or `fetch` (skip if unreachable)
     (OWASP Top 10 mapped review — load fresh every review)
- 2. **Code quality patterns** — from awesome-copilot:
-    - `mcp_awesome-copil_load_instruction` → `"self-explanatory-code-commenting"`
-    - `mcp_awesome-copil_load_instruction` → `"performance-optimization"`
-    - `mcp_awesome-copil_load_instruction` → `"object-calisthenics"`
- 3. **Test frameworks** — from awesome-copilot (load conditionally):
-    - Python E2E: `mcp_awesome-copil_load_instruction` → `"playwright-python"`
-    - TypeScript E2E: `mcp_awesome-copil_load_instruction` → `"playwright-typescript"`
- 4. **RAI safety review** — `mcp_awesome-copil_load_instruction` → `"ai-prompt-engineering-safety-review"`
+ 2. **Code quality patterns** — fetched from the `github/awesome-copilot` repository
+    via the GitHub MCP server's file-contents tool or `fetch` (skip if unreachable):
+    - `instructions/self-explanatory-code-commenting.instructions.md`
+    - `instructions/performance-optimization.instructions.md`
+    - `instructions/object-calisthenics.instructions.md`
+ 3. **Test frameworks** — fetched from the `github/awesome-copilot` repository
+    (conditionally; skip if unreachable):
+    - Python E2E: `instructions/playwright-python.instructions.md`
+    - TypeScript E2E: `instructions/playwright-typescript.instructions.md`
+ 4. **RAI safety review** — fetch `instructions/ai-prompt-engineering-safety-review.instructions.md`
+    from the `github/awesome-copilot` repository via the GitHub MCP server's
+    file-contents tool or `fetch` (skip if unreachable)
     (when the change involves AI/data — prompt injection, bias, hallucination checks)
  5. **Live SDK verification** — `mcp_github_get_file_contents` → fetch latest `README.md`
     from `the project's Cosmos DB library repo (from copilot-instructions.md)` and `the Storage library repo`
@@ -119,7 +125,7 @@ argument-hint: "Describe the feature or change to review and release"
       - Script location (e.g., `/scripts/release/release-orders-history.sh`).
       - Steps:
         - Tagging / version bump.
-        - Triggering ADO pipeline or direct deployment commands.
+        - Triggering the GitHub Actions pipeline or direct deployment commands.
         - Post-deploy validation commands and monitoring.
 
  4. **SDLC Exit Criteria check**

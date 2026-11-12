@@ -14,13 +14,17 @@ How to use (VS Code):
     Blob Storage, and Container Apps."
 -->
 
-# Deployment & Infrastructure Prompt (SDLC Phase 3 + Phase 8)
+# Deployment & Infrastructure Prompt (SDLC Phase 3 + Phases 8–9)
+
+> **Scope:** this is the **Azure** variant of the deployment prompt
+> (Bicep/AVM/azd). For AWS or GCP targets, use the installed cloud pack's
+> deployment skill instead — no manual-mode prompt ships for them yet.
 
 You are creating or updating the Azure deployment infrastructure for a project.
 
 This prompt covers two SDLC phases:
 - **Phase 3** — Infrastructure as Code (Bicep/AVM) and `azd` configuration
-- **Phase 8** — Release script preparation and deployment automation
+- **Phases 8–9** — Release preparation: release scripts and deployment automation
 
 Follow the Azure Verified Modules (AVM) patterns for Landing Zone alignment,
 and use Azure Developer CLI (`azd`) for deployment orchestration.
@@ -46,37 +50,34 @@ If any of these are unclear, ask 1–2 focused questions before proceeding.
 
 ## Context loading (MCP resources)
 
-Before starting, load these resources in **priority order** (team standards first):
+Before starting, load these resources:
 
 1. **Bicep/AVM standards — public sources:**
-   - **Bicep best practices** — `mcp_awesome-copil_load_instruction` → `"bicep-code-best-practices"`
+   - **Bicep best practices** — fetch `instructions/bicep-code-best-practices.instructions.md` from the
+     `github/awesome-copilot` repository via the GitHub MCP server's file-contents tool or
+     `fetch` (skip if unreachable)
      (naming conventions, structure, parameters, security, AVM patterns)
-   - **AVM guidance collection** — `mcp_awesome-copil_load_collection` → `"azure-cloud-development"`
+   - **AVM guidance collection** — fetch the `azure-cloud-development` collection
+     from the `github/awesome-copilot` repository via the GitHub MCP server's file-contents
+     tool or `fetch` (skip if unreachable)
      (includes the `update-avm-modules-in-bicep` prompt for updating AVM module versions)
    - **Microsoft Learn MCP** — authoritative AVM module documentation
    - **Azure MCP Bicep tools** — AVM module discovery, resource type schemas, Bicep file validation,
-     deployment best practices (IaC rules, WAF alignment)
+     deployment best practices (IaC rules)
    - **AVM module registry** — look up module availability and latest versions from the official registry:
      `#fetch https://azure.github.io/Azure-Verified-Modules/indexes/bicep/bicep-resource-modules/`
      Cross-reference all `br/public:avm/res/...` references against this authoritative source.
-2. **Team standards wiki (optional)** — If `.github/copilot-instructions.md` configures a team Azure DevOps
-   wiki, team-specific Bicep/AVM standards take precedence over the generic best practices above:
-   ```
-   mcp_ado_wiki_get_page_content(
-     wikiIdentifier: "<ADO_WIKI_IDENTIFIER>",
-     project: "<ADO_WIKI_PROJECT>",
-     path: "/<team-standards-page>"
-   )
-   ```
-   If no wiki is configured or ADO MCP authentication fails (browser login required on first use),
-   inform the user and proceed with the public sources above.
-3. **Docker best practices** — `mcp_awesome-copil_load_instruction` → `"containerization-docker-best-practices"`
+2. **Docker best practices** — fetch `instructions/containerization-docker-best-practices.instructions.md`
+   from the `github/awesome-copilot` repository via the GitHub MCP server's file-contents
+   tool or `fetch` (skip if unreachable)
    (multi-stage builds, layer caching, image security)
-4. **Kubernetes best practices** — `mcp_awesome-copil_load_instruction` → `"kubernetes-deployment-best-practices"`
+3. **Kubernetes best practices** — fetch `instructions/kubernetes-deployment-best-practices.instructions.md`
+   from the `github/awesome-copilot` repository via the GitHub MCP server's file-contents
+   tool or `fetch` (skip if unreachable)
    (when deploying to AKS: pod security, resource limits, health checks)
-5. **CI/CD pipelines** — load the one matching your pipeline platform:
-   - ADO: `mcp_awesome-copil_load_instruction` → `"azure-devops-pipelines"`
-   - GitHub Actions: `mcp_awesome-copil_load_instruction` → `"github-actions-ci-cd-best-practices"`
+4. **CI/CD pipelines** — fetch `instructions/github-actions-ci-cd-best-practices.instructions.md`
+   from the `github/awesome-copilot` repository via the GitHub MCP server's file-contents
+   tool or `fetch` (skip if unreachable)
 
 ## Steps
 
@@ -95,8 +96,7 @@ Create `infra/` folder structure:
 ```
 infra/
 ├── main.bicep                    # Main orchestration (all resources)
-├── main.parameters.json          # Default parameters (non-WAF)
-├── main.waf.parameters.json      # WAF-aligned parameters (private networking + monitoring)
+├── main.parameters.json          # Default parameters
 ├── abbreviations.json            # Azure resource abbreviations (azd convention)
 ├── modules/
 │   ├── containerAppsEnvironment.bicep # Shared Container Apps Environment (ONE per solution)
@@ -104,7 +104,7 @@ infra/
 │   ├── cosmosDb.bicep              # Cosmos DB with AVM + private endpoints
 │   ├── storageAccount.bicep        # Storage with AVM + blob/queue private endpoints
 │   ├── ai-services-deployments.bicep # AI Foundry / OpenAI model deployments
-│   ├── virtualNetwork.bicep        # VNet + subnets (when enablePrivateNetworking)
+│   ├── virtualNetwork.bicep        # VNet + subnets (when the design calls for a VNet)
 │   └── role.bicep                  # Reusable RBAC role assignment
 └── vscode_web/                   # VS Code Web launch config (optional)
     └── index.json
@@ -139,33 +139,13 @@ scripts/
   - **Managed Identity** — prefer user-assigned identity shared across services
   - **RBAC role assignments** — use AVM's `roleAssignments` param with least-privilege
   - **Tags** — standard tags (azd-env-name, TemplateName, CreatedBy)
-  - **Private endpoints** — conditional on `enablePrivateNetworking` toggle
+  - **Private endpoints** — when the design implements private networking as a full path (VNet + private DNS + endpoints); there is no toggle for it
   - **Import AVM common types** — `import { roleAssignmentType } from 'br/public:avm/utl/types/avm-common-types:0.5.1'`
 
-**Well-Architected Framework (WAF) toggle parameters:**
-
-Every `main.bicep` MUST include these boolean parameters for Landing Zone alignment:
-
-```bicep
-@description('Optional. Enable private networking for applicable resources.')
-param enablePrivateNetworking bool = false
-
-@description('Optional. Enable monitoring (App Insights + Log Analytics).')
-param enableMonitoring bool = false
-
-@description('Optional. Enable redundancy (zone redundancy, geo-replication).')
-param enableRedundancy bool = false
-
-@description('Optional. Enable scalability (autoscaling, higher SKUs).')
-param enableScalability bool = false
-
-@description('Optional. Enable/Disable usage telemetry for module.')
-param enableTelemetry bool = true
-```
-
-**Two-tier parameter files:**
-- `main.parameters.json` — default (non-WAF): all toggles `false`
-- `main.waf.parameters.json` — WAF-aligned: `enablePrivateNetworking`, `enableMonitoring`, `enableScalability` all `true`
+**Parameters:** Environment-specific values live in `main.parameters.json`.
+Monitoring (Log Analytics + App Insights) is always provisioned — diagnostic
+settings are not optional. Redundancy and scaling are set per resource from
+the design’s availability and performance requirements, not via global toggles.
 
 **Landing Zone alignment:**
 
@@ -188,12 +168,13 @@ var allTags = union({
   'CreatedBy': deployerIdentityName
 }, tags)
 
-// Conditional private networking
-module virtualNetwork './modules/virtualNetwork.bicep' = if (enablePrivateNetworking) { ... }
+// Private networking module — include only when the design implements the
+// full private path (VNet + private DNS + private endpoints); no partial toggle
+module virtualNetwork './modules/virtualNetwork.bicep' = { ... }
 
-// Conditional monitoring
-module logAnalytics 'br/public:avm/res/operational-insights/workspace:<VERSION>' = if (enableMonitoring) { ... }
-module appInsights 'br/public:avm/res/insights/component:<VERSION>' = if (enableMonitoring) { ... }
+// Monitoring — always provisioned (see the Parameters note above)
+module logAnalytics 'br/public:avm/res/operational-insights/workspace:<VERSION>' = { ... }
+module appInsights 'br/public:avm/res/insights/component:<VERSION>' = { ... }
 
 // Outputs for azd
 output AZURE_COSMOS_ENDPOINT string = cosmosDb.outputs.endpoint
@@ -243,8 +224,8 @@ module containerAppsEnv 'br/public:avm/res/app/managed-environment:<VERSION>' = 
   params: {
     name: 'cae-${solutionSuffix}'
     location: location
-    logAnalyticsWorkspaceResourceId: enableMonitoring ? logAnalyticsWorkspaceResourceId : ''
-    zoneRedundant: enableRedundancy
+    logAnalyticsWorkspaceResourceId: logAnalyticsWorkspaceResourceId
+    zoneRedundant: false // Set true when the design requires zone redundancy
     tags: allTags
   }
 }
@@ -634,7 +615,7 @@ azd env get-values > .env
 echo "✅ Post-provisioning complete."
 ```
 
-### 8. SDLC Exit Criteria check (Phase 3 + Phase 8)
+### 8. SDLC Exit Criteria check (Phase 3 + Phases 8–9)
 
 Verify the following exit criteria:
 
@@ -644,7 +625,7 @@ Verify the following exit criteria:
 - `.devcontainer/devcontainer.json` is configured for Codespaces.
 - Pipeline definitions include `azd` deployment stages.
 
-**Phase 8 — Release Preparation:**
+**Phases 8–9 — Release:**
 - Deployment is repeatable via `azd up` (idempotent).
 - Environment promotion strategy is defined.
 - Post-provisioning hooks exist and are tested.
@@ -667,7 +648,7 @@ Return a single markdown response with these sections:
 - **Environment Strategy** — promotion flow and env-specific configs
 - **Post-Provisioning Scripts** — hook scripts
 - **Follow-up Tasks** — manual steps (secrets, DNS, custom domains)
-- **SDLC Exit Criteria Check (Phase 3 + Phase 8)** with ✅/⚠️/⛔
+- **SDLC Exit Criteria Check (Phase 3 + Phases 8–9)** with ✅/⚠️/⛔
 
 <!--
 Example invocation for engineers:

@@ -1,57 +1,18 @@
 {
+  "_comment": "The managed AWS MCP Server (GA) replaces the five retired awslabs local servers (cdk, documentation, dynamodb, ecs, pricing). AWS folds documentation/knowledge tools into the managed server and recommends removing the old standalone entries, including the former AWS Knowledge server. Auth: the MCP Proxy for AWS (pinned) signs requests with the user's IAM credentials (SigV4) and forwards to the regional managed endpoint; clients that support the server's OAuth flow may instead register the endpoint directly as an http server. Scoping agent access is IAM's job: use the aws:ViaAWSMCPService / aws:CalledViaAWSMCP condition keys. Region: endpoint and metadata use us-west-2, matching this pack's previous default.",
   "servers": {
-    "aws-cdk": {
-      "args": [
-        "awslabs.cdk-mcp-server@latest"
-      ],
+    "aws": {
+      "type": "stdio",
       "command": "uvx",
-      "env": {
-        "AWS_REGION": "us-west-2",
-        "FASTMCP_LOG_LEVEL": "ERROR"
-      },
-      "type": "stdio"
-    },
-    "aws-docs": {
       "args": [
-        "awslabs.aws-documentation-mcp-server@latest"
+        "mcp-proxy-for-aws==1.6.0",
+        "https://aws-mcp.us-west-2.api.aws/mcp",
+        "--metadata",
+        "AWS_REGION=us-west-2"
       ],
-      "command": "uvx",
       "env": {
-        "FASTMCP_LOG_LEVEL": "ERROR"
-      },
-      "type": "stdio"
-    },
-    "aws-dynamodb": {
-      "args": [
-        "awslabs.dynamodb-mcp-server@latest"
-      ],
-      "command": "uvx",
-      "env": {
-        "AWS_REGION": "us-west-2",
-        "FASTMCP_LOG_LEVEL": "ERROR"
-      },
-      "type": "stdio"
-    },
-    "aws-ecs": {
-      "args": [
-        "awslabs.ecs-mcp-server@latest"
-      ],
-      "command": "uvx",
-      "env": {
-        "AWS_REGION": "us-west-2",
-        "FASTMCP_LOG_LEVEL": "ERROR"
-      },
-      "type": "stdio"
-    },
-    "aws-pricing": {
-      "args": [
-        "awslabs.aws-pricing-mcp-server@latest"
-      ],
-      "command": "uvx",
-      "env": {
-        "FASTMCP_LOG_LEVEL": "ERROR"
-      },
-      "type": "stdio"
+        "AWS_REGION": "us-west-2"
+      }
     }
   }
 }

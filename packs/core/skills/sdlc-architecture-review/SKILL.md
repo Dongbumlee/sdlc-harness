@@ -16,12 +16,14 @@ Review code for structural alignment with SDLC architecture rules and applicatio
 
 ## Step 1: Load architecture guidance
 
-Load blueprint generation guidance from awesome-copilot:
+Load blueprint generation guidance from the awesome-copilot collection on
+GitHub, via the GitHub MCP server's file-contents tool:
 
 ```
-mcp_awesome-copil_load_instruction(
-  filename: "architecture-blueprint-generator/SKILL.md",
-  mode: "skills"
+mcp_github_get_file_contents(
+  owner: "github",
+  repo: "awesome-copilot",
+  path: "skills/architecture-blueprint-generator/SKILL.md"
 )
 ```
 

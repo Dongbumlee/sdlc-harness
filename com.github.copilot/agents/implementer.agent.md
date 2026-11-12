@@ -2,7 +2,7 @@
 name: Implementer
 description: "Use when writing production code, implementing features, adding API endpoints, creating data models, or writing unit and integration tests. Follows SDLC Phase 4 with test-driven implementation."
 user-invocable: false
-tools: ['execute', 'read', 'agent', 'edit', 'search', 'web', 'browser', 'awesome-copilot/*', 'context7/*', 'github/*', 'azure/keyvault', 'azure/storage', 'azure/cosmos', 'azure-devops/*', 'microsoft-learn/*', 'ms-python.python/getPythonEnvironmentInfo', 'ms-python.python/getPythonExecutableCommand', 'ms-python.python/installPythonPackage', 'ms-python.python/configurePythonEnvironment', 'todo']
+tools: ['execute', 'read', 'agent', 'edit', 'search', 'web', 'browser', 'context7/*', 'github/*', 'azure/keyvault', 'azure/storage', 'azure/cosmos', 'microsoft-learn/*', 'ms-python.python/getPythonEnvironmentInfo', 'ms-python.python/getPythonExecutableCommand', 'ms-python.python/installPythonPackage', 'ms-python.python/configurePythonEnvironment', 'todo']
 skills: ['sdlc-project-manifest', 'sdlc-reference-catalog', 'sdlc-stack-profiles']
 ---
 
@@ -174,10 +174,10 @@ Include `Source: Implementer (Phase 4)` on your entries.
      in `.github/reference-catalog.md` and warn that live verification was not
      possible. Do NOT stop the workflow.
 
-1b. **Check awesome-copilot MCP (recommended):**
-   - Probe: `mcp_awesome-copil_search_instructions(keywords: "react")`
+1b. **Check the awesome-copilot collection (recommended):**
+   - Probe: search the collection's `instructions/` directory in the `github/awesome-copilot` repository (via GitHub MCP code search or `fetch`) for "react".
    - If it **fails**, WARN the user and proceed:
-     > ⚠️ awesome-copilot MCP is not running. Language/framework best practices will not be loaded.
+     > ⚠️ The awesome-copilot collection is unreachable. Language/framework best practices will not be loaded.
      > I will proceed using local knowledge only.
 
 2. **Fetch live patterns for the project's data libraries from GitHub MCP:**
@@ -266,11 +266,11 @@ Include `Source: Implementer (Phase 4)` on your entries.
    - For React frontend: load current React + Vite documentation.
    - For AI agents: load the documentation for the project's recorded agent framework.
 
-3. **Load language-specific best practices from awesome-copilot** (skip if unavailable):
-   - Frontend React work: `mcp_awesome-copil_load_instruction` → `"reactjs"`.
-   - MCP tool development: `mcp_awesome-copil_load_instruction` → `"python-mcp-server"`.
-   - TypeScript tests: `mcp_awesome-copil_load_instruction` → `"nodejs-javascript-vitest"`.
-   - AI agent development: `mcp_awesome-copil_load_instruction` → `"azure-ai-agent-service"`.
+3. **Load language-specific best practices from awesome-copilot** (skip if the collection is unreachable):
+   - Frontend React work: load "reactjs" from the awesome-copilot collection on GitHub (file `instructions/reactjs.instructions.md` in the `github/awesome-copilot` repository, via the GitHub MCP server's file-contents tool or `fetch`).
+   - MCP tool development: load "python-mcp-server" from the awesome-copilot collection on GitHub (file `instructions/python-mcp-server.instructions.md` in the `github/awesome-copilot` repository, via the GitHub MCP server's file-contents tool or `fetch`).
+   - TypeScript tests: load "nodejs-javascript-vitest" from the awesome-copilot collection on GitHub (file `instructions/nodejs-javascript-vitest.instructions.md` in the `github/awesome-copilot` repository, via the GitHub MCP server's file-contents tool or `fetch`).
+   - AI agent development: load "azure-ai-agent-service" from the awesome-copilot collection on GitHub (file `instructions/azure-ai-agent-service.instructions.md` in the `github/awesome-copilot` repository, via the GitHub MCP server's file-contents tool or `fetch`).
 
 ## Service directory map
 

@@ -51,10 +51,12 @@ Before starting, load these resources for accurate implementation:
    - FastAPI + Pydantic (for API services)
    - React + Vite (for web frontend)
    - Azure AI Agent Framework (for agent services)
-4. **Language-specific best practices** — from awesome-copilot (load conditionally):
-   - React frontend: `mcp_awesome-copil_load_instruction` → `"reactjs"`
-   - MCP tools: `mcp_awesome-copil_load_instruction` → `"python-mcp-server"`
-   - TypeScript tests: `mcp_awesome-copil_load_instruction` → `"nodejs-javascript-vitest"`
+4. **Language-specific best practices** — fetched from the `github/awesome-copilot`
+   repository via the GitHub MCP server's file-contents tool or `fetch`
+   (conditionally; skip if unreachable):
+   - React frontend: `instructions/reactjs.instructions.md`
+   - MCP tools: `instructions/python-mcp-server.instructions.md`
+   - TypeScript tests: `instructions/nodejs-javascript-vitest.instructions.md`
 
 ## Steps
 
@@ -160,7 +162,7 @@ Before starting, load these resources for accurate implementation:
 
 7. **Map to CI/CD**
    - If the change requires new build or test steps (e.g., new test project, new integration test stage):
-     - Suggest updates to Azure DevOps pipelines (e.g., `azure-pipelines.yml` or `/ado/*.yml`).
+     - Suggest updates to the GitHub Actions workflows (e.g., `.github/workflows/ci.yml`).
      - Keep the pipeline structure consistent with existing stages.
 
 8. **Self-evaluation before completion**

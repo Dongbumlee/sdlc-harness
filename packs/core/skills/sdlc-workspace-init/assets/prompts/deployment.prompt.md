@@ -50,12 +50,16 @@ If any of these are unclear, ask 1–2 focused questions before proceeding.
 
 ## Context loading (MCP resources)
 
-Before starting, load these resources in **priority order** (team standards first):
+Before starting, load these resources:
 
 1. **Bicep/AVM standards — public sources:**
-   - **Bicep best practices** — `mcp_awesome-copil_load_instruction` → `"bicep-code-best-practices"`
+   - **Bicep best practices** — fetch `instructions/bicep-code-best-practices.instructions.md` from the
+     `github/awesome-copilot` repository via the GitHub MCP server's file-contents tool or
+     `fetch` (skip if unreachable)
      (naming conventions, structure, parameters, security, AVM patterns)
-   - **AVM guidance collection** — `mcp_awesome-copil_load_collection` → `"azure-cloud-development"`
+   - **AVM guidance collection** — fetch the `azure-cloud-development` collection
+     from the `github/awesome-copilot` repository via the GitHub MCP server's file-contents
+     tool or `fetch` (skip if unreachable)
      (includes the `update-avm-modules-in-bicep` prompt for updating AVM module versions)
    - **Microsoft Learn MCP** — authoritative AVM module documentation
    - **Azure MCP Bicep tools** — AVM module discovery, resource type schemas, Bicep file validation,
@@ -63,24 +67,17 @@ Before starting, load these resources in **priority order** (team standards firs
    - **AVM module registry** — look up module availability and latest versions from the official registry:
      `#fetch https://azure.github.io/Azure-Verified-Modules/indexes/bicep/bicep-resource-modules/`
      Cross-reference all `br/public:avm/res/...` references against this authoritative source.
-2. **Team standards wiki (optional)** — If `.github/copilot-instructions.md` configures a team Azure DevOps
-   wiki, team-specific Bicep/AVM standards take precedence over the generic best practices above:
-   ```
-   mcp_ado_wiki_get_page_content(
-     wikiIdentifier: "<ADO_WIKI_IDENTIFIER>",
-     project: "<ADO_WIKI_PROJECT>",
-     path: "/<team-standards-page>"
-   )
-   ```
-   If no wiki is configured or ADO MCP authentication fails (browser login required on first use),
-   inform the user and proceed with the public sources above.
-3. **Docker best practices** — `mcp_awesome-copil_load_instruction` → `"containerization-docker-best-practices"`
+2. **Docker best practices** — fetch `instructions/containerization-docker-best-practices.instructions.md`
+   from the `github/awesome-copilot` repository via the GitHub MCP server's file-contents
+   tool or `fetch` (skip if unreachable)
    (multi-stage builds, layer caching, image security)
-4. **Kubernetes best practices** — `mcp_awesome-copil_load_instruction` → `"kubernetes-deployment-best-practices"`
+3. **Kubernetes best practices** — fetch `instructions/kubernetes-deployment-best-practices.instructions.md`
+   from the `github/awesome-copilot` repository via the GitHub MCP server's file-contents
+   tool or `fetch` (skip if unreachable)
    (when deploying to AKS: pod security, resource limits, health checks)
-5. **CI/CD pipelines** — load the one matching your pipeline platform:
-   - ADO: `mcp_awesome-copil_load_instruction` → `"azure-devops-pipelines"`
-   - GitHub Actions: `mcp_awesome-copil_load_instruction` → `"github-actions-ci-cd-best-practices"`
+4. **CI/CD pipelines** — fetch `instructions/github-actions-ci-cd-best-practices.instructions.md`
+   from the `github/awesome-copilot` repository via the GitHub MCP server's file-contents
+   tool or `fetch` (skip if unreachable)
 
 ## Steps
 

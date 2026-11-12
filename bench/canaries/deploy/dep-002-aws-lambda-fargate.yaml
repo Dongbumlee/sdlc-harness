@@ -85,7 +85,7 @@ expected:
 
 timeout_seconds: 120
 requires_mcp:
-  - awesome-copilot
+  - github
 tags:
   - deploy
   - aws

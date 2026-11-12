@@ -2,7 +2,7 @@
 name: Azure Compliance Reviewer
 description: "Use when reviewing Azure SDK usage, verifying the approved Cosmos DB library/the approved Storage library patterns, checking Bicep/AVM compliance, validating identity management, or auditing infrastructure configuration."
 user-invocable: false
-tools: ['read', 'search', 'github/*', 'awesome-copilot/*', 'microsoft-learn/*']
+tools: ['read', 'search', 'github/*', 'microsoft-learn/*']
 skills: ['sdlc-reviewer-output-format']
 ---
 
@@ -24,10 +24,10 @@ and identity management**.
 
 ## Before reviewing
 
-> **MCP note:** The QA Coordinator checks awesome-copilot and GitHub MCP availability
-> before launching reviewers. If either is unavailable, skip the corresponding load calls
+> **MCP note:** The QA Coordinator checks GitHub MCP availability
+> before launching reviewers. If it is unavailable, skip the corresponding load calls
 > below and use local patterns from `.github/reference-catalog.md` instead. Note this in
-> your output: _"⚠️ [GitHub MCP / awesome-copilot] unavailable — review based on local patterns only."_
+> your output: _"⚠️ GitHub MCP unavailable — review based on local patterns only."_
 
 0. **Verify GitHub MCP authentication (required):**
    - Perform a probe call: use `mcp_github_get_file_contents` to fetch `README.md` from
@@ -43,8 +43,8 @@ and identity management**.
    - Use `mcp_github_get_file_contents` to fetch `README.md` from
      `the project's Storage library repo (from copilot-instructions.md)` — verify Blob/Queue patterns.
 
-2. **Load Bicep best practices from awesome-copilot** (skip if unavailable):
-   - Use `mcp_awesome-copil_load_instruction` to load `"bicep-code-best-practices"`.
+2. **Load Bicep best practices from the awesome-copilot collection** (skip if unreachable):
+   - Load `"bicep-code-best-practices"` from the awesome-copilot collection on GitHub (file `instructions/bicep-code-best-practices.instructions.md` in the `github/awesome-copilot` repository, via the GitHub MCP server's file-contents tool or `fetch`).
    - Apply these standards to any Bicep files in the change.
 
 3. **Check Azure resource configuration via Azure MCP (if applicable):**

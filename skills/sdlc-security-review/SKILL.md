@@ -5,7 +5,7 @@ description: >-
   Azure patterns. Use when reviewing code for security vulnerabilities, secrets
   exposure, auth issues, injection risks, or OWASP compliance. Triggers on any
   code review, PR review, or security audit request. Loads fresh OWASP checklist
-  from awesome-copilot MCP on every review.
+  from the awesome-copilot collection on GitHub on every review.
 version: "1.0"
 author: sdlc-harness
 user-invocable: false
@@ -17,21 +17,24 @@ Perform a security-focused code review aligned with SDLC Phase 6 and OWASP Top 1
 
 ## Step 1: Load OWASP checklist (every review — do not cache)
 
-Load the latest OWASP security guidance from awesome-copilot MCP:
+Load the latest OWASP security guidance from the awesome-copilot collection
+on GitHub, via the GitHub MCP server's file-contents tool:
 
 ```
-mcp_awesome-copil_load_instruction(
-  filename: "security-and-owasp.instructions.md",
-  mode: "instructions"
+mcp_github_get_file_contents(
+  owner: "github",
+  repo: "awesome-copilot",
+  path: "instructions/security-and-owasp.instructions.md"
 )
 ```
 
 Also load the AI safety review skill if the change involves AI/LLM code:
 
 ```
-mcp_awesome-copil_load_instruction(
-  filename: "ai-prompt-engineering-safety-review/SKILL.md",
-  mode: "skills"
+mcp_github_get_file_contents(
+  owner: "github",
+  repo: "awesome-copilot",
+  path: "skills/ai-prompt-engineering-safety-review/SKILL.md"
 )
 ```
 

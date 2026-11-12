@@ -87,20 +87,38 @@ Note: Claude tools use `"mcpServers"` key; VSCode/Copilot use `"servers"` key.
 
 ## Configured Servers
 
-The workspace template configures 7 servers. Posture at run start differs
-by server (see `docs/base-definitions.md` §10.2): only awesome-copilot is
-a hard stop; a GitHub MCP authentication failure warns and the run
-continues in degraded local mode — it never gates a phase.
+The workspace template configures three core servers in every workspace;
+each cloud pack adds its vendor's servers (ADR-0003 D7). Posture at run
+start differs by server (see `docs/base-definitions.md` §10.2): no server
+is a hard stop — a GitHub MCP authentication failure warns and the run
+continues in degraded local mode; it never gates a phase. GitHub MCP also
+carries the best-practice instruction and collection loads (fetched from
+the `github/awesome-copilot` repository), so its loss degrades pattern
+quality as well as forge access.
+
+**Core (every workspace):**
 
 | Server | Purpose | Type |
 |--------|---------|------|
-| awesome-copilot | Best practices (OWASP, Docker, Bicep) | Docker (stdio) |
-| github | Repo access, PR creation | HTTP |
-| azure | Azure resource validation and management | npx (stdio) |
-| azure-devops | ADO wikis, pipelines, work items | npx (stdio) |
-| microsoft-learn | Microsoft Learn documentation | HTTP |
+| github | Repo access, PR creation; awesome-copilot instruction/collection loads | HTTP (remote) |
 | context7 | Framework documentation | npx (stdio) |
 | playwright | Browser automation for E2E testing | npx (stdio) |
+
+**Per cloud pack:**
+
+| Server | Purpose | Type |
+|--------|---------|------|
+| azure | Azure MCP Server (`@azure/mcp`) — Azure resource validation and management (namespaces: deploy, bicepschema, group, keyvault, storage, cosmos) | npx (stdio) |
+| microsoft-learn | Microsoft Learn documentation (Azure pack) | HTTP |
+| AWS MCP Server | The one managed AWS MCP Server, reached via the pinned MCP Proxy for AWS (AWS pack) | HTTP via proxy |
+| Google Developer Knowledge | Google Cloud documentation (GCP pack) | HTTP |
+| Firestore | Firestore managed endpoint (GCP pack) | HTTP |
+
+awesome-copilot is **not** a configured server: it is a discovery-time
+source — agents fetch named instructions and collections from the
+`github/awesome-copilot` repository through the GitHub MCP server or
+`fetch`, skipping a load if it is unreachable. There is likewise no
+Azure DevOps server — GitHub is the only forge (ADR-0003 D6).
 
 ## Still Stuck?
 

@@ -1,7 +1,7 @@
 ---
 name: Harness
 description: "Use when starting any SDLC task, building a new feature, fixing bugs, running QA, creating documentation, or deploying infrastructure. Orchestrates the full software development lifecycle across requirements, design, implementation, testing, QA, and release."
-tools: ['agent', 'read', 'search', 'edit', 'execute', 'terminal', 'fetch', 'web', 'browser', 'todo', 'github/*', 'awesome-copilot/*', 'context7/*', 'azure-devops/*', 'azure/*', 'microsoft-learn/*', 'playwright/*']
+tools: ['agent', 'read', 'search', 'edit', 'execute', 'terminal', 'fetch', 'web', 'browser', 'todo', 'github/*', 'context7/*', 'azure/*', 'microsoft-learn/*', 'playwright/*']
 skills: ['sdlc-canary-runner', 'sdlc-requirements-discovery', 'sdlc-workspace-init']
 agents: ['Analyst', 'Scaffolder', 'Deployer', 'Implementer', 'Documenter', 'QA Coordinator', 'RAI Reviewer', 'Release Manager', 'Requirements Completeness Reviewer']
 ---
@@ -52,14 +52,15 @@ Before processing any task, perform these checks in order:
 
 ### Step 0: MCP server readiness check — MANDATORY, DO NOT SKIP
 
-**Before doing ANY work**, verify that the required MCP servers are running.
+**Before doing ANY work**, verify that the required MCP servers are running
+and the awesome-copilot collection is reachable.
 This step is a hard gate. Do NOT proceed to Phase 1 until you have shown
 the status table below to the user. Do NOT summarize, approximate, or skip
 the probe calls. Run each probe call exactly as written.
 
 | # | MCP Server | Probe Call | Required For |
 |---|---|---|---|
-| 1 | **awesome-copilot** | `mcp_awesome-copil_search_instructions(keywords: "security")` | Skills loading (OWASP, Docker, Bicep, ADR best practices) |
+| 1 | **awesome-copilot collection** | Search the collection's `instructions/` directory in the `github/awesome-copilot` repository (via GitHub MCP code search or `fetch`) for "security" | Skills loading (OWASP, Docker, Bicep, ADR best practices) |
 | 2 | **GitHub MCP** | `mcp_github_get_me()` or any lightweight GitHub API call | Repository access, PR creation, code search |
 | 3 | **Context7** | `mcp_context7_resolve-library-id(libraryName: "fastapi")` | Framework documentation |
 
@@ -69,63 +70,29 @@ the probe calls. Run each probe call exactly as written.
 >
 > | Server | Status | Impact if unavailable |
 > |---|---|---|
-> | awesome-copilot | Ready / Not running | Skills cannot load best practices (OWASP, Docker, Bicep) |
+> | awesome-copilot | Reachable / Unreachable | Skills cannot load best practices (OWASP, Docker, Bicep) |
 > | GitHub MCP | Ready / Not configured | Cannot access repos, create PRs, or search code |
 > | Context7 | Ready / Not running | Cannot load framework docs (FastAPI, React, etc.) |
 >
-> *Azure MCP, Azure DevOps MCP, and Microsoft Learn MCP are checked on demand by worker agents.*
+> *Azure MCP and Microsoft Learn MCP are checked on demand by worker agents.*
 
 **Decision rules:**
 
 - **All 3 pass -> proceed normally.**
-- **awesome-copilot fails -> STOP.** Tell the user:
-  > The `awesome-copilot` MCP server is not running. This server is required for
-  > loading best practices used by skills (security, deployment, scaffolding, code quality).
-  >
-  > **To fix:** Add this to your `.vscode/mcp.json` (create the file if it does not exist):
-  >
-  > ```json
-  > {
-  >   "servers": {
-  >     "awesome-copilot": {
-  >       "type": "stdio",
-  >       "command": "docker",
-  >       "args": ["run", "--rm", "-i", "ghcr.io/microsoft/mcp-dotnet-samples/awesome-copilot:latest"]
-  >     },
-  >     "github": {
-  >       "type": "http",
-  >       "url": "https://api.githubcopilot.com/mcp/"
-  >     },
-  >     "context7": {
-  >       "type": "stdio",
-  >       "command": "npx",
-  >       "args": ["-y", "@upstash/context7-mcp@latest"]
-  >     }
-  >   }
-  > }
-  > ```
-  >
-  > Then restart the MCP servers in VS Code (click "Start" above each server
-  > definition in `.vscode/mcp.json`).
-  >
-  > **Pre-flight check:** Verify MCP configuration before starting.
-  > No clone needed — download and run directly:
-  >
-  > PowerShell:
-  > ```powershell
-  > Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Dongbumlee/sdlc-harness/main/tools/check-mcp.ps1" -OutFile "check-mcp.ps1"
-  > .\check-mcp.ps1
-  > ```
-  >
-  > Bash:
-  > ```bash
-  > curl -sO https://raw.githubusercontent.com/Dongbumlee/sdlc-harness/main/tools/check-mcp.sh
-  > chmod +x check-mcp.sh && ./check-mcp.sh
-  > ```
-  >
-  > If you have the repo cloned: `git pull`, then `./tools/check-mcp.sh` or `.\tools\check-mcp.ps1`.
-  >
-  > Verify manually: `docker ps` should show the awesome-copilot container.
+- **awesome-copilot collection unreachable -> warn and proceed in degraded
+  mode.** The collection is fetched from the `github/awesome-copilot`
+  repository via the GitHub MCP server or `fetch` — there is no local
+  server whose absence could be fixed by starting it, and the local
+  skills carry their own checklists, so the run continues with the
+  best-practice loads skipped and the degradation recorded in the run
+  status (never silent). Tell the user:
+  > The awesome-copilot collection is unreachable, so best-practice
+  > instruction loads are skipped for this run and skills fall back to
+  > their local checklists. To restore the loads, make sure the GitHub
+  > MCP server is configured in `.vscode/mcp.json` and can read the
+  > `github/awesome-copilot` repository, or restore network access to
+  > GitHub. (Canary runs keep this a preflight FAIL — see
+  > `docs/base-definitions.md` §10.2.)
 
 - **GitHub MCP fails -> warn and proceed with degraded mode.** GitHub MCP enhances
   the workflow (repo access, PR creation, code search across repos) but is not

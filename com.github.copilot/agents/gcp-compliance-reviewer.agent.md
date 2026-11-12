@@ -2,7 +2,7 @@
 name: GCP Compliance Reviewer
 description: "Use when reviewing Terraform usage, verifying least-privilege IAM, checking Cloud Storage/Firestore configuration, validating secrets handling, or auditing infrastructure cost guardrails on GCP."
 user-invocable: false
-tools: ['read', 'search', 'github/*', 'awesome-copilot/*']
+tools: ['read', 'search', 'github/*']
 skills: ['sdlc-reviewer-output-format']
 ---
 
@@ -25,10 +25,10 @@ data-service security, and cost guardrails on GCP**.
 
 ## Before reviewing
 
-> **MCP note:** The QA Coordinator checks awesome-copilot and GitHub MCP availability
-> before launching reviewers. If either is unavailable, skip the corresponding load calls
+> **MCP note:** The QA Coordinator checks GitHub MCP availability
+> before launching reviewers. If it is unavailable, skip the corresponding load calls
 > below and use local patterns from `.github/reference-catalog.md` instead. Note this in
-> your output: _"⚠️ [GitHub MCP / awesome-copilot] unavailable — review based on local patterns only."_
+> your output: _"⚠️ GitHub MCP unavailable — review based on local patterns only."_
 
 0. **Verify GitHub MCP authentication (required):**
    - Perform a probe call: use `mcp_github_get_file_contents` to fetch `README.md`

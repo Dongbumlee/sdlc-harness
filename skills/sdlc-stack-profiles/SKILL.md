@@ -66,7 +66,7 @@ Every profile declares the same fields:
 | Lint / format | Exact check commands |
 | Coverage target | The profile's coverage quality target — a Class 2 target: a shortfall is a recorded deviation, never a gate failure |
 | Dockerfile | Base images and multi-stage outline |
-| CI steps | Build-stage commands for the CI stub — GitHub Actions (`.github/workflows/ci.yml`) by default; ADO `azure_cicd.yaml` where the organization declares Azure DevOps |
+| CI steps | Build-stage commands for the CI stub — GitHub Actions (`.github/workflows/ci.yml`) |
 | Devcontainer | Image |
 | Template source | Org template repo (from copilot-instructions) if any; otherwise the bundled default template (below); the profile layout is the last-resort fallback |
 
@@ -511,8 +511,6 @@ Vitest 4 transforms JSX via oxc, and the stale key failed
 - **CI steps (GitHub Actions, default):** `actions/setup-dotnet` →
   `dotnet restore` → `dotnet format --verify-no-changes` →
   `dotnet build -c Release` → `dotnet test -c Release`.
-  **ADO variant** (organization declares Azure DevOps): `DotNetCoreCLI@2`
-  restore → build → test with `PublishTestResults@2` in `azure_cicd.yaml`.
 - **Devcontainer:** `mcr.microsoft.com/devcontainers/dotnet` (org-pinned tag).
 - **Patterns:** dependency injection uses the built-in
   `Microsoft.Extensions.DependencyInjection` container — register services in

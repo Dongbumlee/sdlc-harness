@@ -32,7 +32,7 @@ Focus on **Categories 1 and 2** (UX & Accessibility, Core Functionality & State)
 
 > **MCP note:** This reviewer uses local skill files (`sdlc-project-qa`) for code review
 > and **Playwright MCP** for live browser testing (if the app is running). The QA Coordinator's
-> Step 0 checks awesome-copilot but does not affect this reviewer's core functionality.
+> Step 0 checks GitHub MCP availability but does not affect this reviewer's core functionality.
 
 1. **Load the project QA skill** — invoke `/sdlc-project-qa`
    and follow the checklist for Categories 1 and 2.

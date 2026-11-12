@@ -2,7 +2,7 @@
 name: Deployer
 description: "Use when creating Azure infrastructure with Bicep/AVM, configuring azd orchestration, managing deployment lifecycle, or preparing release automation. Handles SDLC Phases 3 and 8."
 user-invocable: false
-tools: ['read', 'search', 'edit', 'terminal', 'github/*', 'awesome-copilot/*', 'azure/deploy', 'azure/bicepschema', 'azure/group', 'microsoft-learn/*', 'azure-devops/*']
+tools: ['read', 'search', 'edit', 'terminal', 'github/*', 'azure/deploy', 'azure/bicepschema', 'azure/group', 'microsoft-learn/*']
 skills: ['sdlc-azure-deployment', 'sdlc-reference-catalog']
 ---
 
@@ -46,52 +46,17 @@ Include `Source: Deployer (Phase 8)` on your entries.
      in `.github/reference-catalog.md` and warn that live verification was not
      possible. Do NOT stop the workflow.
 
-0b. **Check awesome-copilot MCP (recommended):**
-   - Probe: `mcp_awesome-copil_search_instructions(keywords: "bicep")`
+0b. **Check the awesome-copilot collection (recommended):**
+   - Probe: search the collection's `instructions/` directory in the `github/awesome-copilot` repository (via GitHub MCP code search or `fetch`) for "bicep".
    - If it **fails**, WARN the user and proceed:
-     > ⚠️ awesome-copilot MCP is not running. Bicep/Docker/pipeline best practices will not be loaded.
+     > ⚠️ The awesome-copilot collection is unreachable. Bicep/Docker/pipeline best practices will not be loaded.
      > I will proceed using local knowledge and Azure MCP tools. Infrastructure quality may be reduced.
 
-0c. **Check Azure DevOps MCP (only if a team wiki is configured):**
-   - If `.github/copilot-instructions.md` configures a team ADO wiki, probe: `mcp_azure-devops_core_list_projects()`
-   - If the probe **fails**, WARN the user prominently and explain the impact:
-     > ⚠️ **Azure DevOps MCP is not available. Team wiki standards CANNOT be fetched.**
-     > Team-specific Bicep coding standards from the configured ADO wiki will not be applied.
-     > I will proceed using public sources (awesome-copilot, Microsoft Learn, Azure MCP).
-     >
-     > **Options:**
-     > 1. Start the ADO MCP server and retry (recommended)
-     > 2. Proceed without the team wiki — I will note this gap in the output
-   - If proceeding without the team wiki, add a **prominent warning** at the top of every
-     generated Bicep file:
-     ```
-     // ⚠️ WARNING: Generated without team wiki Bicep standards.
-     // Review against team standards before deployment.
-     ```
-   - Also add a warning section in the output report:
-     > ### ⚠️ Team Wiki Standards Not Applied
-     > Team-specific Bicep standards from the ADO wiki were not loaded.
-     > The configured wiki pages should be reviewed manually.
-   - If no team wiki is configured, skip this check — the public sources in step 1 apply.
-
 1. **Load Bicep/AVM standards:**
-   a. **Public sources** (always):
-      - `mcp_awesome-copil_load_instruction` → `"bicep-code-best-practices"` (naming, structure, parameters, security, AVM patterns)
-      - `mcp_awesome-copil_load_collection` → `"azure-cloud-development"` (includes `update-avm-modules-in-bicep`)
-      - Microsoft Learn MCP for authoritative AVM module documentation
-      - Azure MCP Bicep tools for AVM module discovery, resource schemas, and file validation
-   b. **Team wiki (optional)** — if `.github/copilot-instructions.md` configures a team ADO wiki,
-      team-specific standards take precedence over the public sources above:
-      ```
-      mcp_ado_wiki_get_page_content(
-        wikiIdentifier: "<ADO_WIKI_IDENTIFIER>",
-        project: "<ADO_WIKI_PROJECT>",
-        path: "/<team-standards-page>"
-      )
-      ```
-      If no wiki is configured or ADO MCP is unavailable, proceed with the public sources and note the gap.
-   - If ADO MCP authentication fails (browser login required on first use), inform the user
-     and proceed with other sources. Do NOT skip team standards silently.
+   - Load "bicep-code-best-practices" from the awesome-copilot collection on GitHub (file `instructions/bicep-code-best-practices.instructions.md` in the `github/awesome-copilot` repository, via the GitHub MCP server's file-contents tool or `fetch`) — naming, structure, parameters, security, AVM patterns.
+   - Load the "azure-cloud-development" collection index from the same repository the same way (includes `update-avm-modules-in-bicep`).
+   - Microsoft Learn MCP for authoritative AVM module documentation
+   - Azure MCP Bicep tools for AVM module discovery, resource schemas, and file validation
 
 2. **Look up AVM modules from the official registry:**
    - The authoritative source for AVM module availability, versions, and documentation is:
@@ -109,18 +74,16 @@ Include `Source: Deployer (Phase 8)` on your entries.
    - Get Azure deployment best practices: use Azure MCP `bestpractices` tool for
      IaC rules and deployment guidance.
 
-4. **Load additional best practices from awesome-copilot** (skip if unavailable):
-   - Use `mcp_awesome-copil_load_instruction` to load `"bicep-code-best-practices"` — Bicep naming conventions,
+4. **Load additional best practices from awesome-copilot** (skip if the collection is unreachable):
+   - Load "bicep-code-best-practices" from the awesome-copilot collection on GitHub (file `instructions/bicep-code-best-practices.instructions.md` in the `github/awesome-copilot` repository, via the GitHub MCP server's file-contents tool or `fetch`) — Bicep naming conventions,
      structure, parameters, security.
-   - Use `mcp_awesome-copil_load_instruction` to load `"containerization-docker-best-practices"` — multi-stage
+   - Load "containerization-docker-best-practices" from the awesome-copilot collection on GitHub (file `instructions/containerization-docker-best-practices.instructions.md` in the `github/awesome-copilot` repository, via the GitHub MCP server's file-contents tool or `fetch`) — multi-stage
      Docker builds, layer caching, image security.
-   - Use `mcp_awesome-copil_load_instruction` to load `"kubernetes-deployment-best-practices"` — pod security,
+   - Load "kubernetes-deployment-best-practices" from the awesome-copilot collection on GitHub (file `instructions/kubernetes-deployment-best-practices.instructions.md` in the `github/awesome-copilot` repository, via the GitHub MCP server's file-contents tool or `fetch`) — pod security,
      resource limits, health checks, scaling (when deploying to AKS).
-   - Use `mcp_awesome-copil_load_instruction` to load `"azure-devops-pipelines"` — ADO pipeline YAML structure,
-     deployment strategies, variable management (when using ADO CI/CD).
-   - Use `mcp_awesome-copil_load_instruction` to load `"github-actions-ci-cd-best-practices"` — GitHub Actions
-     workflow structure, security, caching, deployment strategies (when using GitHub Actions).
-   - **Available prompts** (load via `mcp_awesome-copil_load_collection` → `"azure-cloud-development"`):
+   - Load "github-actions-ci-cd-best-practices" from the awesome-copilot collection on GitHub (file `instructions/github-actions-ci-cd-best-practices.instructions.md` in the `github/awesome-copilot` repository, via the GitHub MCP server's file-contents tool or `fetch`) — GitHub Actions
+     workflow structure, security, caching, deployment strategies.
+   - **Available prompts** (from the "azure-cloud-development" collection index, loaded from the same repository the same way):
      - `update-avm-modules-in-bicep` — update AVM module versions in existing Bicep files.
      - `az-cost-optimize` — analyze and optimize Azure resource costs.
      - `azure-resource-health-diagnose` — diagnose Azure resource health issues.
