@@ -75,14 +75,15 @@ Every profile declares the same fields:
 ## Bundled default templates
 
 Every profile ships a **bundled default template** in this skill's assets:
-`assets/templates/<profile>/<kind>/` (python/api, dotnet/api,
-typescript/web, java/api, go/api, rust/api, and the library kind:
-python/library, dotnet/library). A template is the profile expressed as files: project
+`assets/templates/<profile>/<kind>/` — the service kinds (python/api,
+dotnet/api, typescript/web, java/api, go/api, rust/api), the library
+kind for all six stacks (see the library paragraph below), and the
+cli kind (go/cli today; see the CLI paragraph below). A template is the profile expressed as files: project
 files, layout, CI stub, and tests that prove the wiring; service
 templates add a Dockerfile, devcontainer, a health endpoint, and one
 sample vertical slice (an `items` resource), while library templates
-ship a small sample public API instead (see the library paragraph
-below). Every bundled template's test suite also includes **architecture
+ship a small sample public API instead and cli templates ship a
+sample command tree over an importable library core. Every bundled template's test suite also includes **architecture
 conformance tests** that enforce the profile's dependency direction
 mechanically (layers may only depend in the declared direction) — they
 run as part of the profile's Test command, so a layering violation fails
@@ -187,6 +188,41 @@ template README: mark in one release (a runtime warning,
 `// Deprecated:` doc paragraph, or `#[deprecated]`), remove no
 earlier than the next major. The library kind ships for all six
 stacks: python, dotnet, typescript, java, go, and rust.
+
+**CLI type — the interface is the contract:** a CLI's consumers are
+scripts and agents, so its flags, stdout schema, and exit codes are
+an API surface and are tested like one (the canonical source is
+clig.dev). Arguments are parsed by the ecosystem library, never
+hand-rolled (cobra for go, clap for rust, Click/Typer for python,
+System.CommandLine for dotnet, Commander for typescript), with a
+`tool <noun> <verb>` command structure and a thin entry point over
+an importable library core — the testable logic never lives in the
+entry point. Primary data goes to stdout, diagnostics to stderr;
+exit codes follow a small documented map (0 success, 1 failure,
+2 usage error) printed in the help text and the README. Data
+commands offer `--format plain|json` (plus a `--json` shorthand);
+color is decided from TTY detection, the `NO_COLOR` environment
+variable, and `--no-color`, and never touches piped output.
+Destructive actions carry `--dry-run`, overwriting requires
+`--force`, and prompting never happens when stdin is not a TTY
+(`--no-input` makes that explicit); secrets are read from the
+environment, never from a flag. Configuration precedence is stated
+in the help: flags, then environment, then defaults. Tests pin the
+contract: golden files for help and primary output, exit-code
+tests per failure mode, argument-parsing tables. Distribution is
+this type's biggest delta and is tag-driven in the GoReleaser
+shape for every stack: cross-compiled binaries for linux, darwin,
+and windows on amd64 and arm64, archives with a SHA-256 checksums
+file, GitHub Releases plus the package channels users actually
+use (Homebrew, deb/rpm, the language channel), shell completions
+and a man page generated from the parser — never hand-written —
+and the version injected from the tag (an untagged build reports
+`dev`); `--version` prints `name version X`, a shape scripts parse
+and which never changes. Changes to the `--json` schema, the exit
+codes, or flag names are breaking changes and ship only in a
+major release. The cli kind ships for go today (cobra +
+GoReleaser); the other stacks follow the same contract with
+their parser and the equivalent release tooling.
 
 **License:** every bundled template ships an MIT `LICENSE` at its root
 (ADR-0003). An organization template or an explicit user decision overrides

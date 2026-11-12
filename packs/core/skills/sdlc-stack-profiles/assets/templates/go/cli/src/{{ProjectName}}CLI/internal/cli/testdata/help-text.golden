@@ -1,0 +1,22 @@
+Text transformations over the textkit core. Results go to stdout, or to a file with --out.
+
+Usage:
+  {{project-name}} text [command]
+
+Available Commands:
+  slugify     Convert text to a lowercase hyphenated slug
+  truncate    Shorten text to at most --max characters
+
+Flags:
+  -h, --help   help for text
+
+Global Flags:
+      --dry-run         show what would happen without writing anything
+      --format string   output format: plain or json (default "plain")
+      --json            shorthand for --format json
+      --no-color        disable color in diagnostics (NO_COLOR is also honoured)
+      --no-input        never prompt; fail instead of asking
+      --quiet           suppress diagnostics
+      --verbose         print diagnostics about what the command is doing
+
+Use "{{project-name}} text [command] --help" for more information about a command.

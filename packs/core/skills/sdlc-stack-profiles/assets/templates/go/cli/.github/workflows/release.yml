@@ -1,0 +1,72 @@
+name: Release
+
+# Tag-driven: the tag is the version, injected into the binary by
+# GoReleaser. The release runs only when CHANGELOG.md has a section
+# for the tag — release notes are that section, not a generated log.
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/{{ProjectName}}CLI
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.27"
+      - name: Test
+        run: go test ./...
+
+  release:
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.27"
+      - name: Extract release notes from CHANGELOG.md
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          awk -v ver="$VERSION" '
+            $0 ~ "^## \\[" ver "\\]" { found=1; next }
+            found && /^## \[/ { exit }
+            found { print }
+          ' CHANGELOG.md > release-notes.md
+          if [ ! -s release-notes.md ]; then
+            echo "::error::No CHANGELOG.md section for version $VERSION. Move the Unreleased entries under a '## [$VERSION] - YYYY-MM-DD' heading before tagging."
+            exit 1
+          fi
+      - name: Generate man pages and completions
+        working-directory: src/{{ProjectName}}CLI
+        run: |
+          go build -o "$RUNNER_TEMP/{{project-name}}" ./cmd/{{project-name}}
+          mkdir -p "$GITHUB_WORKSPACE/man" "$GITHUB_WORKSPACE/completions"
+          "$RUNNER_TEMP/{{project-name}}" man "$GITHUB_WORKSPACE/man"
+          for shell in bash zsh fish; do
+            "$RUNNER_TEMP/{{project-name}}" completion "$shell" > "$GITHUB_WORKSPACE/completions/{{project-name}}.$shell"
+          done
+        env:
+          GITHUB_WORKSPACE: ${{ github.workspace }}
+      - name: Release with GoReleaser
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          version: "~> v2"
+          args: release --clean --release-notes=release-notes.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Required only when the homebrew_casks section in
+          # .goreleaser.yaml is enabled (skip_upload removed): a token
+          # that can write to the Homebrew tap repository.
+          HOMEBREW_TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
