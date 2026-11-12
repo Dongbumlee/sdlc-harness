@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>{{ProjectName}}Worker</RootNamespace>
+    <AssemblyName>{{ProjectName}}Worker</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- The job store is SQLite via Microsoft.Data.Sqlite: the whole
+         correctness story (idempotency transaction, outbox, claim
+         leases) is testable with no external services. -->
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.15" />
+  </ItemGroup>
+
+</Project>
