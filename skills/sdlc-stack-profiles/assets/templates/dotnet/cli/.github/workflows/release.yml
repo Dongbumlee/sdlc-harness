@@ -1,0 +1,125 @@
+name: Release
+
+# Tag-driven: the tag must match the app project's Version and have
+# a CHANGELOG section. Artefacts are the CLI shape shared by every
+# stack: one self-contained single-file binary per platform, a
+# SHA-256 checksums file, generated man pages, plus the language
+# channel (the NuGet tool package).
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: read
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      version: ${{ steps.check.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Tag matches csproj and CHANGELOG section exists
+        id: check
+        run: |
+          VERSION=$(grep -m1 '<Version>' src/{{ProjectName}}.Cli/{{ProjectName}}.Cli.csproj | sed 's/.*<Version>\(.*\)<\/Version>.*/\1/')
+          if [ "v$VERSION" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match csproj version $VERSION"
+            exit 1
+          fi
+          grep -q "^## \[$VERSION\]" CHANGELOG.md || {
+            echo "::error::No CHANGELOG.md section for version $VERSION"
+            exit 1
+          }
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+      - name: Test
+        run: |
+          dotnet restore {{ProjectName}}.sln
+          dotnet test {{ProjectName}}.sln -c Release
+
+  binaries:
+    needs: gate
+    strategy:
+      matrix:
+        rid: [win-x64, win-arm64, linux-x64, linux-arm64, osx-x64, osx-arm64]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+      - name: Publish the single-file binary
+        run: |
+          dotnet publish src/{{ProjectName}}.Cli/{{ProjectName}}.Cli.csproj -c Release -r ${{ matrix.rid }} --self-contained -p:PublishSingleFile=true -p:Version=${{ needs.gate.outputs.version }} -o out
+          EXT=""
+          case "${{ matrix.rid }}" in win-*) EXT=".exe" ;; esac
+          mv "out/{{project-name}}$EXT" "{{project-name}}-${{ needs.gate.outputs.version }}-${{ matrix.rid }}$EXT"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bin-${{ matrix.rid }}
+          path: "{{project-name}}-${{ needs.gate.outputs.version }}-${{ matrix.rid }}*"
+
+  publish:
+    needs: [gate, binaries]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: release
+          pattern: bin-*
+          merge-multiple: true
+      - name: Man page from the Linux binary
+        run: |
+          sudo apt-get update && sudo apt-get install -y help2man
+          BIN="release/{{project-name}}-${{ needs.gate.outputs.version }}-linux-x64"
+          chmod +x "$BIN"
+          mkdir -p release/man
+          help2man --no-info --name "{{ProjectName}} sample command-line tool" -o release/man/{{project-name}}.1 "$BIN"
+      - name: Checksums
+        working-directory: release
+        run: sha256sum {{project-name}}-* > checksums.txt
+      - name: Extract release notes from CHANGELOG.md
+        run: |
+          VERSION="${{ needs.gate.outputs.version }}"
+          awk -v ver="$VERSION" '
+            $0 ~ "^## \\[" ver "\\]" { found=1; next }
+            found && /^## \[/ { exit }
+            found { print }
+          ' CHANGELOG.md > release-notes.md
+      - name: Create the GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" release/* \
+            --title "$GITHUB_REF_NAME" --notes-file release-notes.md
+
+  nuget:
+    needs: gate
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write # NuGet trusted publishing (OIDC) — no stored key
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+      - name: Pack the tool package
+        run: |
+          dotnet pack src/{{ProjectName}}.Cli/{{ProjectName}}.Cli.csproj -c Release -p:Version=${{ needs.gate.outputs.version }} -o nupkg
+      - name: NuGet login (trusted publishing)
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: ${{ secrets.NUGET_USER }}
+      - name: Push to NuGet
+        run: dotnet nuget push nupkg/*.nupkg --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json

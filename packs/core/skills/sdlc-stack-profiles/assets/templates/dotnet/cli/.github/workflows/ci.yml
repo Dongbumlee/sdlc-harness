@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "Directory.Build.props"
+      - "{{ProjectName}}.sln"
+      - ".github/workflows/ci.yml"
+  pull_request:
+    paths:
+      - "src/**"
+      - "Directory.Build.props"
+      - "{{ProjectName}}.sln"
+      - ".github/workflows/ci.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+      - name: Restore (locked)
+        run: dotnet restore {{ProjectName}}.sln --locked-mode
+      - name: Format check
+        run: dotnet format {{ProjectName}}.sln --verify-no-changes
+      - name: Build (analyzers on, warnings are errors)
+        run: dotnet build {{ProjectName}}.sln -c Release --no-restore
+      - name: Test (golden outputs + exit codes pin the CLI contract)
+        run: dotnet test {{ProjectName}}.sln -c Release --no-build
+
+  single-file:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+      - name: Publish smoke build (the release binary's shape)
+        run: |
+          dotnet publish src/{{ProjectName}}.Cli/{{ProjectName}}.Cli.csproj -c Release -r linux-x64 --self-contained -p:PublishSingleFile=true -o publish
+          ./publish/{{project-name}} --version
+          ./publish/{{project-name}} text slugify "Hello, World!"
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Secret scan (gitleaks)
+        run: |
+          curl -sSfL https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz | tar -xz --no-same-owner -C "$RUNNER_TEMP" gitleaks
+          "$RUNNER_TEMP/gitleaks" git --redact .
+      - name: Dependency scan (OSV-Scanner)
+        run: |
+          curl -sSfL -o "$RUNNER_TEMP/osv-scanner" https://github.com/google/osv-scanner/releases/download/v2.7.1/osv-scanner_linux_amd64
+          chmod +x "$RUNNER_TEMP/osv-scanner"
+          "$RUNNER_TEMP/osv-scanner" scan --recursive ./

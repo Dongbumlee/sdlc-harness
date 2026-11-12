@@ -1,0 +1,21 @@
+Description:
+  Text transformations over the Cli.Core library.
+
+Usage:
+  {{project-name}} text [command] [options]
+
+Options:
+  -?, -h, --help     Show help and usage information
+  --format <format>  Output format for data commands: plain or json.
+  --json             Shorthand for --format json.
+  --no-color         Disable colour in diagnostics (NO_COLOR is also honoured).
+  --verbose          Print diagnostics about what the command is doing.
+  --quiet            Suppress diagnostics.
+  --no-input         Never prompt; fail instead of asking.
+  --dry-run          Show what would happen without writing anything.
+  --version          Print version.
+
+Commands:
+  slugify <text>   Convert text to a lowercase hyphenated slug.
+  truncate <text>  Shorten text to at most --max characters.
+
