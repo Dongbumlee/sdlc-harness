@@ -18,8 +18,9 @@ packs/core/skills/sdlc-stack-profiles/assets/templates/<profile>/<kind>/:
     every declared token is used
   - every project_dirs entry exists in the tree
   - the first project dir contains a Dockerfile — except the library
-    kind, which must NOT contain one (a library ships no container
-    artefact; a Dockerfile there is leftover application scaffolding);
+    and cli kinds, which must NOT contain one (neither ships a
+    container artefact; a Dockerfile there is leftover application
+    scaffolding);
     the tree contains a .github/workflows/ci.yml and at least one
     test file
   - verify steps are exactly install -> build -> test, each with cwd+command
@@ -144,9 +145,9 @@ def check_template(template_yaml: Path) -> dict | None:
         if not literal.is_dir():
             fail(f"{rel}: project_dirs entry '{project_dir}' not found in tree")
     first_project = template_dir / data["project_dirs"][0]
-    if kind == "library":
+    if kind in ("library", "cli"):
         if (first_project / "Dockerfile").is_file():
-            fail(f"{rel}: library templates ship no Dockerfile, found one "
+            fail(f"{rel}: {kind} templates ship no Dockerfile, found one "
                  f"in first project dir '{data['project_dirs'][0]}'")
     elif not (first_project / "Dockerfile").is_file():
         fail(f"{rel}: no Dockerfile in first project dir '{data['project_dirs'][0]}'")

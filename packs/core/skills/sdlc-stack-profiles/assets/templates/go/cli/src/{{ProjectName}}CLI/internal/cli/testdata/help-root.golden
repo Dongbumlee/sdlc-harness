@@ -1,0 +1,35 @@
+{{ProjectName}} is a sample command-line tool built from the go/cli
+template. It demonstrates the CLI contract: data goes to stdout,
+diagnostics go to stderr, and the command surface (flags, output
+schema, exit codes) is a tested API.
+
+Exit codes:
+  0  success
+  1  failure (the command ran but could not complete)
+  2  usage error (unknown command, bad flags, invalid arguments)
+
+Configuration precedence: flags, then environment
+(<PREFIX>_FORMAT and friends, where the prefix is the
+upper-cased tool name), then defaults. Secrets are read from
+the environment, never from flags.
+
+Usage:
+  {{project-name}} [command]
+
+Available Commands:
+  completion  Generate the autocompletion script for the specified shell
+  help        Help about any command
+  text        Text transformations
+
+Flags:
+      --dry-run         show what would happen without writing anything
+      --format string   output format: plain or json (default "plain")
+  -h, --help            help for {{project-name}}
+      --json            shorthand for --format json
+      --no-color        disable color in diagnostics (NO_COLOR is also honoured)
+      --no-input        never prompt; fail instead of asking
+      --quiet           suppress diagnostics
+      --verbose         print diagnostics about what the command is doing
+  -v, --version         version for {{project-name}}
+
+Use "{{project-name}} [command] --help" for more information about a command.
