@@ -1,0 +1,37 @@
+# Bundled default template — system / microservices
+# Instantiation: copy this tree to the repository root, substitute the
+# tokens below in file names and contents, delete template.yaml. This
+# template scaffolds a SYSTEM, not a service: the composition layer
+# that sits over per-service projects (each instantiated from its own
+# stack's api template — see services/README.md). It follows the
+# microservices standard in the sdlc-stack-profiles skill
+# ("Microservices type — a system, not a bigger service"): CI defined
+# once as a reusable workflow, consumer-driven contracts with a
+# can-i-deploy deploy gate, a database per service, and shared code
+# limited to thin wire types.
+id: system/microservices
+profile: system
+kind: microservices
+project_dirs:
+  - tools/system-e2e
+  - services
+tokens:
+  - name: SystemName
+    description: PascalCase name of the system, e.g. ShopPlatform
+    default: Sample
+  - name: system-name
+    description: kebab-case name derived from SystemName, e.g. shop-platform
+    default: sample
+  - name: Year
+    description: Four-digit year written into the LICENSE copyright line at instantiation (use the current year)
+    default: 2026
+verify:
+  - step: install
+    cwd: tools/system-e2e
+    command: python3 --version
+  - step: build
+    cwd: tools/system-e2e
+    command: python3 -m py_compile system_e2e.py
+  - step: test
+    cwd: tools/system-e2e
+    command: python3 -m unittest discover -v

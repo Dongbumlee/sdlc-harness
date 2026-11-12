@@ -1,0 +1,41 @@
+# Local composition for the {{SystemName}} system.
+#
+# This file and system.json are two views of one service list; the
+# scaffolder renders both from the same source, and the system E2E
+# checker validates the map. Each service builds from its own
+# directory under services/ (instantiated from that stack's api
+# template), owns its datastore, and reads its own .env file —
+# there is no shared .env and no shared database: cross-service
+# data goes through the contracts in contracts/, never tables.
+name: {{system-name}}
+
+services:
+  items-api:
+    build: ./services/items-api
+    ports:
+      - "8081:8080"
+    env_file:
+      - ./services/items-api/.env
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  catalog-api:
+    build: ./services/catalog-api
+    ports:
+      - "8082:8080"
+    env_file:
+      - ./services/catalog-api/.env
+    environment:
+      # In-cluster address of the provider, per the system map.
+      ITEMS_API_URL: http://items-api:8080
+    depends_on:
+      items-api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 5

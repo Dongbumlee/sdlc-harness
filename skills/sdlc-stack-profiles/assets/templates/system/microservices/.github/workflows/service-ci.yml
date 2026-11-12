@@ -1,0 +1,97 @@
+name: Service CI (reusable)
+
+# THE one definition of service CI for this system — the
+# microservices standard's central rule. Every service calls this
+# workflow from its own repository (or path-filtered job) at a
+# pinned ref; no service copies pipeline YAML of its own. (The
+# documented failure mode is copy-pasted pipelines drifting until
+# one service silently stops running the security stages.)
+#
+# The stack-specific work is delegated to the service's uniform
+# entry points — the same install/build/test commands its template
+# declares — so this file owns the STAGES every service must pass,
+# and the service owns only how its stack runs them:
+#   1. per-service CI entry (install -> build -> test)
+#   2. secret scan (gitleaks, pinned)
+#   3. dependency scan (OSV-Scanner, pinned)
+#   4. contract stage: consumers publish their pact; providers
+#      verify against the broker (see contracts/CONTRACTS.md)
+#
+# A service repository calls it like:
+#   jobs:
+#     ci:
+#       uses: <org>/{{system-name}}-system/.github/workflows/service-ci.yml@v1
+#       with:
+#         service: items-api
+#         contract-role: provider   # or consumer, or none
+
+on:
+  workflow_call:
+    inputs:
+      service:
+        description: Service name, matching system.json
+        required: true
+        type: string
+      working-directory:
+        description: Service directory (monorepo layout); "." for a service repository
+        required: false
+        type: string
+        default: "."
+      contract-role:
+        description: consumer | provider | none
+        required: false
+        type: string
+        default: "none"
+      ci-command:
+        description: The service's CI entry point (its template's install/build/test)
+        required: false
+        type: string
+        default: "./ci.sh"
+
+permissions:
+  contents: read
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Service CI entry (install -> build -> test)
+        run: ${{ inputs.ci-command }}
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Secret scan (gitleaks v8.30.1, pinned binary)
+        run: |
+          curl -sSfL https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz | tar -xz gitleaks
+          ./gitleaks detect --source . --no-git --redact --exit-code 1
+      - name: Dependency scan (OSV-Scanner v2.7.1, pinned binary)
+        working-directory: ${{ inputs.working-directory }}
+        run: |
+          curl -sSfL -o osv-scanner https://github.com/google/osv-scanner/releases/download/v2.7.1/osv-scanner_linux_amd64
+          chmod +x osv-scanner
+          ./osv-scanner --recursive . --no-ignore
+
+  contracts:
+    if: inputs.contract-role != 'none'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Publish or verify contracts
+        env:
+          CONTRACT_ROLE: ${{ inputs.contract-role }}
+          SERVICE: ${{ inputs.service }}
+        run: |
+          # The service's contract entry point (declared beside its
+          # code): consumers publish their pact to the broker here;
+          # providers verify against every published consumer pact
+          # and publish the result. See contracts/CONTRACTS.md.
+          ./contract.sh
