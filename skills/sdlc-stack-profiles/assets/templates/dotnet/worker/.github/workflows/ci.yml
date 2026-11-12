@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/{{ProjectName}}Worker/**"
+      - "src/{{ProjectName}}Worker.Tests/**"
+      - "{{ProjectName}}.sln"
+      - ".github/workflows/ci.yml"
+  pull_request:
+    paths:
+      - "src/{{ProjectName}}Worker/**"
+      - "src/{{ProjectName}}Worker.Tests/**"
+      - "{{ProjectName}}.sln"
+      - ".github/workflows/ci.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+      - name: Restore
+        run: dotnet restore {{ProjectName}}.sln
+      - name: Verify format
+        run: dotnet format {{ProjectName}}.sln --verify-no-changes --no-restore
+      - name: Build
+        run: dotnet build {{ProjectName}}.sln -c Release --no-restore
+      - name: Test
+        run: dotnet test {{ProjectName}}.sln -c Release --no-build
+      - name: Build Docker image
+        run: docker build -f src/{{ProjectName}}Worker/Dockerfile -t {{project-name}}-worker .
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Secret scan (gitleaks)
+        run: |
+          curl -sSfL https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz | tar -xz --no-same-owner -C "$RUNNER_TEMP" gitleaks
+          "$RUNNER_TEMP/gitleaks" git --redact .
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+      - name: Restore (materialize packages.lock.json for the scan)
+        run: dotnet restore {{ProjectName}}.sln
+      - name: Dependency scan (OSV-Scanner)
+        run: |
+          curl -sSfL -o "$RUNNER_TEMP/osv-scanner" https://github.com/google/osv-scanner/releases/download/v2.7.1/osv-scanner_linux_amd64
+          chmod +x "$RUNNER_TEMP/osv-scanner"
+          "$RUNNER_TEMP/osv-scanner" scan --recursive ./
+
+  deploy:
+    needs: [build, security]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy (organization step)
+        run: echo "Deploy {{ProjectName}}Worker here — wire the organization's deployment action (see the sdlc deployment skills)."
