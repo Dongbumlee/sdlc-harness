@@ -1,0 +1,22 @@
+@page
+@model {{ProjectName}}Web.Pages.IndexModel
+<h1>Items</h1>
+@if (Model.Items.Count > 0)
+{
+    <ul class="items">
+        @foreach (var item in Model.Items)
+        {
+            <li><span class="item-id">#@item.Id</span> @item.Name</li>
+        }
+    </ul>
+}
+else
+{
+    <p>No items yet. Add the first one below.</p>
+}
+
+<form method="post" class="add-item">
+    <label for="item-name">Item name</label>
+    <input id="item-name" name="name" type="text" required maxlength="120" />
+    <button type="submit">Add item</button>
+</form>

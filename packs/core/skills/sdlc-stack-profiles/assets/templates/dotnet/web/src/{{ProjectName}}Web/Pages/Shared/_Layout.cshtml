@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="/site.css" />
+</head>
+<body>
+    <a class="skip-link" href="#main">Skip to main content</a>
+    <header>
+        <p class="app-name">@ViewData["AppName"]</p>
+        <nav aria-label="Primary">
+            <ul>
+                <li><a href="/">Items</a></li>
+                <li><a href="/health">Health</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main id="main">
+        @RenderBody()
+    </main>
+    <footer>
+        <p>@ViewData["AppName"] — server-rendered sample.</p>
+    </footer>
+</body>
+</html>
