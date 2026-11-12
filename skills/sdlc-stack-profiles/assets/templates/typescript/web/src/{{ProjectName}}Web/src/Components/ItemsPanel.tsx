@@ -26,14 +26,19 @@ export function ItemsPanel() {
   return (
     <section className="mx-auto flex w-full max-w-xl flex-col gap-4 p-6">
       <h1 className="text-2xl font-semibold">{{ProjectName}}</h1>
-      <div className="flex gap-2">
-        <input
-          aria-label="Item name"
-          className="h-9 flex-1 rounded-md border border-neutral-200 px-3 text-sm"
-          value={name}
-          onChange={(event) => setName(event.target.value)}
-          placeholder="Item name"
-        />
+      <div className="flex items-end gap-2">
+        <div className="flex flex-1 flex-col gap-1">
+          <label htmlFor="item-name" className="text-sm">
+            Item name
+          </label>
+          <input
+            id="item-name"
+            className="h-9 flex-1 rounded-md border border-neutral-200 px-3 text-sm"
+            value={name}
+            onChange={(event) => setName(event.target.value)}
+            placeholder="Item name"
+          />
+        </div>
         <Button onClick={addItem}>Add item</Button>
       </div>
       {error ? <p className="text-sm text-red-600">{error}</p> : null}

@@ -1,1 +1,8 @@
 @import "tailwindcss";
+
+/* The web type's markup floor includes visible focus: keyboard
+   users must be able to see where they are (WCAG 2.2 AA). */
+:focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: 2px;
+}
