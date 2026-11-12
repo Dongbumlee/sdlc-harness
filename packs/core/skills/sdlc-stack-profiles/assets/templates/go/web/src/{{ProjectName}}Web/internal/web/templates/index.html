@@ -1,0 +1,19 @@
+{{define "title"}}Items · {{.Public.AppName}}{{ end }}
+{{define "content"}}
+<h1>Items</h1>
+{{if .Items}}
+<ul class="items">
+  {{range .Items}}
+  <li><span class="item-id">#{{.ID}}</span> {{.Name}}</li>
+  {{ end }}
+</ul>
+{{ else }}
+<p>No items yet. Add the first one below.</p>
+{{ end }}
+
+<form method="post" action="/items" class="add-item">
+  <label for="item-name">Item name</label>
+  <input id="item-name" name="name" type="text" required maxlength="120" />
+  <button type="submit">Add item</button>
+</form>
+{{ end }}
