@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+  <head>
+    <title th:text="|Items · ${appName}|">Items</title>
+  </head>
+  <body>
+    <section>
+      <h1>Items</h1>
+      <ul class="items" th:if="${not #lists.isEmpty(items)}">
+        <li th:each="item : ${items}">
+          <span class="item-id" th:text="|#${item.id}|">#1</span>
+          <span th:text="${item.name}">Item name</span>
+        </li>
+      </ul>
+      <p th:if="${#lists.isEmpty(items)}">No items yet. Add the first one below.</p>
+
+      <form method="post" action="/items" class="add-item">
+        <label for="item-name">Item name</label>
+        <input id="item-name" name="name" type="text" required maxlength="120" />
+        <button type="submit">Add item</button>
+      </form>
+    </section>
+  </body>
+</html>
