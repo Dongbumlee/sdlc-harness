@@ -1,0 +1,26 @@
+Usage: {{project-name}} [OPTIONS] COMMAND [ARGS]...
+
+  {{ProjectName}} is a sample command-line tool built from the python/cli template. It
+  demonstrates the CLI contract: data goes to stdout, diagnostics go to stderr,
+  and the command surface (flags, output schema, exit codes) is a tested API.
+
+  Exit codes:   0  success   1  failure (the command ran but could not complete)
+  2  usage error (unknown command, bad flags, invalid arguments)
+
+  Configuration precedence: flags, then environment (<PREFIX>_FORMAT and
+  friends, where the prefix is the upper-cased tool name), then defaults.
+  Secrets are read from the environment, never from flags.
+
+Options:
+  --version        Show the version and exit.
+  --format FORMAT  Output format for data commands: plain or json.
+  --json           Shorthand for --format json.
+  --no-color       Disable colour in diagnostics (NO_COLOR is also honoured).
+  --verbose        Print diagnostics about what the command is doing.
+  --quiet          Suppress diagnostics.
+  --no-input       Never prompt; fail instead of asking.
+  --dry-run        Show what would happen without writing anything.
+  --help           Show this message and exit.
+
+Commands:
+  text  Text transformations over the textkit core.
