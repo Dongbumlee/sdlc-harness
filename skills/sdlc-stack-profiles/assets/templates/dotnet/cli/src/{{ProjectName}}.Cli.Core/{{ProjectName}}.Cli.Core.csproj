@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>{{ProjectName}}.Cli.Core</RootNamespace>
+    <IsPackable>false</IsPackable>
+    <!-- The CLI's library core: the testable logic, free of argument
+         parsing and I/O. The executable is a thin shell over it. -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+</Project>
