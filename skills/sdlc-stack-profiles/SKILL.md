@@ -78,8 +78,8 @@ Every profile ships a **bundled default template** in this skill's assets:
 `assets/templates/<profile>/<kind>/` — the service kinds (python/api,
 dotnet/api, typescript/web, java/api, go/api, rust/api), the web
 kind (typescript/web plus the server-rendered python/web,
-go/web, dotnet/web, and rust/web; see the Web paragraph below),
-the library
+go/web, dotnet/web, rust/web, and java/web; see the Web
+paragraph below), the library
 kind for all six stacks (see the library paragraph below), the
 cli kind (all six stacks; see the CLI paragraph below), and the
 worker kind for all six stacks (see the Worker paragraph below). A template is the profile expressed as files: project
@@ -259,10 +259,11 @@ reported in CI rather than hard gates, because lab scores vary
 by runner. The web kind ships for typescript (Next.js), python
 (FastAPI + Jinja2 server-rendered), go (net/http +
 html/template server-rendered, assets embedded in the binary),
-dotnet (ASP.NET Core Razor Pages), and rust (axum + MiniJinja);
-java follows the same contract, and the
-typescript template — which predates the structural split —
-comes under the same rules in a follow-up pass.
+dotnet (ASP.NET Core Razor Pages), rust (axum + MiniJinja),
+and java (Spring Boot + Thymeleaf) — the contract is shipped
+for every stack's web template except typescript's, which
+predates the structural split and comes under the same rules
+in a follow-up pass.
 
 **Worker type — correctness under redelivery:** A worker is
 designed for at-least-once delivery: the same job can arrive
