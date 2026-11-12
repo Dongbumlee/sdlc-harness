@@ -79,8 +79,8 @@ Every profile ships a **bundled default template** in this skill's assets:
 dotnet/api, typescript/web, java/api, go/api, rust/api), the library
 kind for all six stacks (see the library paragraph below), the
 cli kind (all six stacks; see the CLI paragraph below), and the
-worker kind (python/worker and dotnet/worker; see the Worker
-paragraph below). A template is the profile expressed as files: project
+worker kind (python, dotnet, typescript, and java; see the
+Worker paragraph below). A template is the profile expressed as files: project
 files, layout, CI stub, and tests that prove the wiring; service
 templates add a Dockerfile, devcontainer, a health endpoint, and one
 sample vertical slice (an `items` resource), while library templates
@@ -268,9 +268,11 @@ template: duplicate delivery applies the effect once, a poison
 message dead-letters, a crash mid-job recovers through the lease,
 plus backoff scheduling, outbox single-drain, and replay — all
 against a fake clock, no sleeping. The worker kind ships for
-python (standard-library sqlite3, no runtime dependencies) and
-dotnet (Microsoft.Data.Sqlite); the other stacks follow the same
-contract with their canonical SQLite driver.
+python (standard-library sqlite3, no runtime dependencies),
+dotnet (Microsoft.Data.Sqlite), typescript (Node's built-in
+node:sqlite, no third-party driver), and java (xerial sqlite-jdbc);
+go and rust follow the same contract with their canonical SQLite
+driver.
 
 **License:** every bundled template ships an MIT `LICENSE` at its root
 (ADR-0003). An organization template or an explicit user decision overrides
