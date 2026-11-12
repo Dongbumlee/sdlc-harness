@@ -1,0 +1,66 @@
+name: Release
+
+# A system release versions the COMPOSITION — the map, the
+# contracts, and the E2E runner — never the services: each service
+# releases itself, on its own tag, through the reusable CI. There
+# is deliberately no system-wide service version or lockstep
+# release train.
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate the system map and contracts
+        run: python3 tools/system-e2e/system_e2e.py --map system.json --check
+      - name: System E2E tool tests
+        working-directory: tools/system-e2e
+        run: python3 -m unittest discover -v
+
+  release:
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract release notes from CHANGELOG.md
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          awk -v ver="$VERSION" '
+            $0 ~ "^## \\[" ver "\\]" { found=1; next }
+            found && /^## \[/ { exit }
+            found { print }
+          ' CHANGELOG.md > release-notes.md
+          if [ ! -s release-notes.md ]; then
+            echo "::error::No CHANGELOG.md section for version $VERSION. Move the Unreleased entries under a '## [$VERSION] - YYYY-MM-DD' heading before tagging."
+            exit 1
+          fi
+      - name: Create GitHub Release
+        run: gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --notes-file release-notes.md
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push the system E2E runner image
+        uses: docker/build-push-action@v6
+        with:
+          context: tools/system-e2e
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/{{system-name}}-e2e:${{ github.ref_name }}
+            ghcr.io/${{ github.repository_owner }}/{{system-name}}-e2e:latest

@@ -80,8 +80,10 @@ dotnet/api, typescript/web, java/api, go/api, rust/api), the web
 kind (the web kind for all six stacks; see the Web paragraph
 below), the library
 kind for all six stacks (see the library paragraph below), the
-cli kind (all six stacks; see the CLI paragraph below), and the
-worker kind for all six stacks (see the Worker paragraph below). A template is the profile expressed as files: project
+cli kind (all six stacks; see the CLI paragraph below), the
+worker kind for all six stacks (see the Worker paragraph below),
+and one stack-agnostic system template (system/microservices;
+see the Microservices paragraph below). A template is the profile expressed as files: project
 files, layout, CI stub, and tests that prove the wiring; service
 templates add a Dockerfile, devcontainer, a health endpoint, and one
 sample vertical slice (an `items` resource), while library templates
@@ -304,6 +306,44 @@ every stack, each on its canonical SQLite driver: python
 no third-party driver), java (xerial sqlite-jdbc), go
 (modernc.org/sqlite, pure Go), and rust (rusqlite, bundled
 engine); the contract is fully shipped for every stack.
+
+**Microservices type — a system, not a bigger service:** This
+kind is not the api template × N and it is not per-stack: one
+stack-agnostic template (`system/microservices`) scaffolds the
+**composition layer** — the artefact no single service owns —
+while each service is instantiated from its own stack's api
+template (services may mix stacks; what they share is the
+contract machinery, not a runtime). The composition ships:
+**a system map** (`system.json` — every service, port, health
+path, and owned datastore, plus every boundary and its pact;
+the human view lives in docs, the JSON is the source of truth);
+**local composition** (docker-compose bringing up all services,
+each with its own environment — never a shared `.env`);
+**CI defined once** — a reusable workflow every service calls at
+a pinned ref, owning the shared stages (the service's uniform
+install/build/test entry, the pinned secret and dependency
+scans, the contract stage), because copy-pasted per-service
+pipeline YAML drifting until one service silently stops running
+the security stages is the documented failure mode;
+**consumer-driven contract machinery** — a pact per boundary in
+the system repo (the broker is the living registry), provider
+verification in CI, and **`can-i-deploy` as the deploy gate**;
+compatibility is additive-only within a version with **N−1
+support** and a stated deprecation window, so consumers and
+providers deploy independently — a coordinated release is a
+defect, and there is no system-wide version or lockstep train;
+**a database per service** (cross-service data flows through
+contracts; cross-service effects use the owning service's
+transactional outbox); **shared libraries limited to thin,
+versioned wire artefacts** — types generated from the contracts,
+resilience/observability starters, test utilities; a fat shared
+`commons` with domain logic recreates the distributed monolith.
+The **system E2E suite is thin and separate**: a
+standard-library checker that validates the map and pact files
+and probes deployed services' health, run on a schedule or
+before a system release from its own pipeline — never as a
+per-service PR gate, because contract tests are the integration
+layer.
 
 **License:** every bundled template ships an MIT `LICENSE` at its root
 (ADR-0003). An organization template or an explicit user decision overrides

@@ -1,0 +1,1 @@
+{"consumer":{"name":"catalog-api"},"interactions":[{"description":"a request for the item list","request":{"method":"GET","path":"/items"},"response":{"body":[{"id":1,"name":"example"}],"headers":{"Content-Type":"application/json"},"status":200}}],"metadata":{"pactSpecification":{"version":"4.0"}},"provider":{"name":"items-api"}}

@@ -1,0 +1,38 @@
+name: System E2E
+
+# The thin system suite runs against DEPLOYED versions — on a
+# schedule and before a system release, never as a per-service PR
+# gate. Contract tests are the integration layer (service-ci.yml);
+# this pipeline only proves the composed system is alive and wired
+# the way system.json says.
+
+on:
+  schedule:
+    - cron: "17 5 * * *"
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Deployed environment to probe
+        required: true
+        default: staging
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate the map and contracts
+        run: python3 tools/system-e2e/system_e2e.py --map system.json --check
+      - name: Probe the deployed services
+        env:
+          ENVIRONMENT: ${{ inputs.environment || 'staging' }}
+        run: |
+          # Base URLs come from the environment's inventory; each
+          # --base maps a service in system.json to its deployed
+          # address. Fill these in for the environment — the map
+          # supplies names, ports, and health paths.
+          echo "Probing $ENVIRONMENT — set --base overrides per service here"
+          python3 tools/system-e2e/system_e2e.py --map system.json

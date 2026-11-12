@@ -1,0 +1,29 @@
+name: CI
+
+# The system repository's own CI: the composition layer is mostly
+# declarations, so its gate is the checker — the map parses, every
+# declared boundary has its pact, and the E2E tool's own tests pass.
+# Per-service CI does NOT live here; it is defined once in
+# service-ci.yml (a reusable workflow) and called by each service.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  system-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate the system map and contracts
+        run: python3 tools/system-e2e/system_e2e.py --map system.json --check
+      - name: System E2E tool tests
+        working-directory: tools/system-e2e
+        run: python3 -m unittest discover -v
