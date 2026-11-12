@@ -78,7 +78,7 @@ Every profile ships a **bundled default template** in this skill's assets:
 `assets/templates/<profile>/<kind>/` — the service kinds (python/api,
 dotnet/api, typescript/web, java/api, go/api, rust/api), the library
 kind for all six stacks (see the library paragraph below), and the
-cli kind (go/cli and rust/cli; see the CLI paragraph below). A template is the profile expressed as files: project
+cli kind (go/cli, rust/cli, and python/cli; see the CLI paragraph below). A template is the profile expressed as files: project
 files, layout, CI stub, and tests that prove the wiring; service
 templates add a Dockerfile, devcontainer, a health endpoint, and one
 sample vertical slice (an `items` resource), while library templates
@@ -223,9 +223,11 @@ keeps the parser's canonical, stable shape (the tool name plus the
 version), which scripts parse and which never changes within a
 major version. Changes to the `--json` schema, the exit
 codes, or flag names are breaking changes and ship only in a
-major release. The cli kind ships for go (cobra + GoReleaser) and
-rust (clap + cargo-dist); the other stacks follow the same
-contract with their parser and the equivalent release tooling.
+major release. The cli kind ships for go (cobra + GoReleaser),
+rust (clap + cargo-dist), and python (Click + PyInstaller binaries
+and a PyPI package, man pages rendered from the built tool's help);
+the other stacks follow the same contract with their parser and
+the equivalent release tooling.
 
 **License:** every bundled template ships an MIT `LICENSE` at its root
 (ADR-0003). An organization template or an explicit user decision overrides
