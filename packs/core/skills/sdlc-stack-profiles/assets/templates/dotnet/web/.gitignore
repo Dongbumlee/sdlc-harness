@@ -1,0 +1,22 @@
+**/[Bb]in/
+**/[Oo]bj/
+**/[Dd]ebug/
+**/[Rr]elease/
+.vs/
+.idea/
+*.user
+*.rsuser
+*.suo
+TestResults/
+[Tt]est[Rr]esult*/
+artifacts/
+BenchmarkDotNet.Artifacts/
+
+# Secrets and local configuration — never commit real values;
+# configuration arrives through environment variables (see SECURITY.md)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+appsettings.*.local.json
