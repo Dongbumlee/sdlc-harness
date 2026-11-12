@@ -1,0 +1,21 @@
+Usage: {{project-name}} text [options] [command]
+
+Text transformations over the textkit core.
+
+Options:
+  --format <format>             Output format for data commands: plain or json.
+                                (default: "plain")
+  --json                        Shorthand for --format json.
+  --no-color                    Disable colour in diagnostics (NO_COLOR is also
+                                honoured).
+  --verbose                     Print diagnostics about what the command is
+                                doing.
+  --quiet                       Suppress diagnostics.
+  --no-input                    Never prompt; fail instead of asking.
+  --dry-run                     Show what would happen without writing anything.
+  -h, --help                    display help for command
+
+Commands:
+  slugify [options] <text...>   Convert text to a lowercase hyphenated slug.
+  truncate [options] <text...>  Shorten text to at most --max characters.
+  help [command]                display help for command
