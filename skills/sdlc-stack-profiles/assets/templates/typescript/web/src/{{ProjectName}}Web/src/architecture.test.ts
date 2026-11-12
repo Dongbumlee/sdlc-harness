@@ -57,6 +57,29 @@ function* walk(dir: string): Generator<string> {
 }
 
 describe("architecture", () => {
+  it("keeps server-only configuration out of client code", () => {
+    // The web type's structural env split: lib/server-config holds
+    // secrets with no NEXT_PUBLIC_ prefix. Only server-side code
+    // (app-layer files without "use client") may import it — a
+    // client component importing it would ship the values to the
+    // browser the moment anything re-exports them.
+    const violations: string[] = [];
+    for (const file of walk(SRC)) {
+      const layer = layerOfFile(file);
+      const text = readFileSync(file, "utf8");
+      const isClient = /["']use client["']/.test(text);
+      for (const match of text.matchAll(/from\s+["']([^"']+)["']/g)) {
+        if (!match[1].endsWith("server-config")) continue;
+        if (layer !== "app" || isClient) {
+          violations.push(
+            `${path.relative(SRC, file)} (${layer}${isClient ? ", client" : ""}) imports ${match[1]}`,
+          );
+        }
+      }
+    }
+    expect(violations).toEqual([]);
+  });
+
   it("respects layer dependency direction", () => {
     const violations: string[] = [];
     for (const file of walk(SRC)) {
