@@ -78,7 +78,7 @@ Every profile ships a **bundled default template** in this skill's assets:
 `assets/templates/<profile>/<kind>/` — the service kinds (python/api,
 dotnet/api, typescript/web, java/api, go/api, rust/api), the library
 kind for all six stacks (see the library paragraph below), and the
-cli kind (go/cli today; see the CLI paragraph below). A template is the profile expressed as files: project
+cli kind (go/cli and rust/cli; see the CLI paragraph below). A template is the profile expressed as files: project
 files, layout, CI stub, and tests that prove the wiring; service
 templates add a Dockerfile, devcontainer, a health endpoint, and one
 sample vertical slice (an `items` resource), while library templates
@@ -216,13 +216,16 @@ and windows on amd64 and arm64, archives with a SHA-256 checksums
 file, GitHub Releases plus the package channels users actually
 use (Homebrew, deb/rpm, the language channel), shell completions
 and a man page generated from the parser — never hand-written —
-and the version injected from the tag (an untagged build reports
-`dev`); `--version` prints `name version X`, a shape scripts parse
-and which never changes. Changes to the `--json` schema, the exit
+and the release version derived from the tag — GoReleaser injects
+it into the binary (an untagged build reports `dev`), cargo-dist
+takes it from Cargo.toml and refuses a mismatched tag; `--version`
+keeps the parser's canonical, stable shape (the tool name plus the
+version), which scripts parse and which never changes within a
+major version. Changes to the `--json` schema, the exit
 codes, or flag names are breaking changes and ship only in a
-major release. The cli kind ships for go today (cobra +
-GoReleaser); the other stacks follow the same contract with
-their parser and the equivalent release tooling.
+major release. The cli kind ships for go (cobra + GoReleaser) and
+rust (clap + cargo-dist); the other stacks follow the same
+contract with their parser and the equivalent release tooling.
 
 **License:** every bundled template ships an MIT `LICENSE` at its root
 (ADR-0003). An organization template or an explicit user decision overrides
