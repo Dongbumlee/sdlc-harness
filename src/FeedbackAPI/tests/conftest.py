@@ -1,2 +1,0 @@
-"""Test configuration for FeedbackAPI."""
-
