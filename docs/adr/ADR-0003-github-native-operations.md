@@ -2,7 +2,7 @@
 
 - **Status:** Accepted (amended 2026-11-12 — D6, D7 added)
 - **Date:** 2026-10-19
-- **Deciders:** Dongbum Lee (product owner), Cindy (harness maintainer)
+- **Deciders:** Dongbum Lee (product owner, harness maintainer)
 - **Related:** ADR-0002 (bundled default templates), manifest Phase-State Ledger, QA evidence pack
 
 ## Context
