@@ -15,7 +15,10 @@ functional-unit counting rule (§8.1; PR #70, verified by a live grade
 probe), the Small-grade consolidated Phase 1–2 flow (§2.4, §6.5;
 PR #71, validated live), and the mechanical stack-conformance check
 (§3 Phase 2; PR #72, verified against the live run that exposed the
-defect).
+defect). 2026-11-12 — the pre-run design conversation and its records
+(§2.1, §8.2, §8.4): the design brief, the change path with total
+propagation, the living ADR set, approval posture, and run envelope
+(intake design D1–D16, approved by Dongbum 2026-11-12).
 **How each definition was chosen:** where the harness already defined a term
 in one place — usually the most recent deliberate change (PRs #31–#54) — that
 definition is canonical. Where no definition existed anywhere, this document
@@ -43,8 +46,11 @@ a different word.
 | **Failure signature** | A normalized description of a tool failure or rework cause (e.g. `edit file — old_str required`) such that repeated occurrences of the same underlying failure produce the same signature string. Signatures are counted from the failure ledger, nowhere else. |
 | **Pit-stop review** | The run review fired by the triggers in §7. Its output is guidance appended to `.SDLC/run-guidance.md`; it never edits shipped rules and never overrides a gate. |
 | **Evidence pack** | The Phase 6 input bundle assembled by the Harness before delegating to the QA Coordinator: changed artifacts, the full test-run output on disk, the Runtime Probes section (boot smoke + health + one read path per resource — an app that cannot boot never reaches the panel), CI evidence, and (from round 2 on) the "Changes since round N−1" section. A verdict rendered without an evidence pack is not a Phase 6 verdict. |
-| **Record** | A file whose content is workflow state: the manifest, the failure ledger, run guidance, the reference catalog, the run basis, the run retrospective. Records have exactly one creator, named writers, and a verifying gate (§8). |
+| **Record** | A file whose content is workflow state: the manifest, the design brief, the failure ledger, run guidance, the reference catalog, the run basis, the run retrospective. Records have exactly one creator, named writers, and a verifying gate (§8). |
 | **Run basis** | The block at the top of the manifest ledger recording the task the run serves and the artifacts the user approved, with short hashes. Work starts, changes scope, or stops only on the basis recorded here or a newer user instruction (§9). |
+| **Design brief** | The run's framing of record (`.SDLC/design-brief.md`): problem and users, capabilities and boundary, project type, stack, data and sensitivity, integrations and target, scale signals — each field carrying a status (`confirmed` / `proposed` / `open`) — plus the derived patterns, the approval posture, and the run envelope. Written by the Harness in the Step 0.75 design conversation; amended only by dated frame revisions. Its **Current frame** section is the effective reading (§8.4). |
+| **Approval posture** | The run's recorded autonomy grant: `attended` (default) or `unattended`. Under either posture, frame-moving changes, removals of user-visible capabilities, and the Phase 8 release decision require an explicit human approval. |
+| **Run envelope** | The grade-derived cost/time band recorded in the brief at intake (§8.2) and carried into the run basis as the run's budget; consumption is reported at phase transitions (§7). |
 | **Consistency** | Conformance to recorded standards, per PR #34: an artifact is consistent when it follows the precedence chain in §9.2. Consistency is measured within one project against its own records, never by comparison with another project's code. |
 | **Deviation** | A recorded departure from a standard. Class 2 deviations (§5) are written into the ledger with the record they break; an unrecorded departure is a defect, not a deviation. |
 | **Environment limitation** | The named exit condition defined in §10.3. It is a classification of a failure, never a pass. |
@@ -81,6 +87,10 @@ a different word.
 - The manifest ledger therefore has exactly these rows:
   `0, 1, 2, 3, 4, 5, 6, 7, 8-9`. The Phase 0 row and the Phase 7 row are
   part of the format, not run-time improvisations.
+- The **design conversation** (Harness Step 0.75) is a step inside
+  Phase 0, not a phase: it has no ledger row of its own, and the Phase 0
+  row's Notes cite the design brief it produces. It fixes the run's
+  frame before Phase 1; Phase 1A elicits requirements inside that frame.
 - Phase ownership is exclusive for *production* of the phase's artifacts.
   Support roles are named where they exist (Deployer supports 3B and the
   deployment mechanics inside Phase 8; the Release Manager owns the Phase 8
@@ -132,7 +142,9 @@ An artifact is due when a gate requires it, whoever produces it. In
 particular: the ADR is a **Phase 2 decision record** — authored by the
 Documenter on the Harness's delegation from the Analyst's design proposal —
 and it must exist before the Phase 1–2 exit gate can pass, even though the
-Documenter is the Phase 5 owner. **Small-grade exception (PR #71):** on
+Documenter is the Phase 5 owner. The set then stays alive for the whole
+run: later decision-bearing changes amend or extend it in the same
+change (§8.4). **Small-grade exception (PR #71):** on
 Small tasks the Analyst authors the ADR inside the Phase 2 session — the
 artifact and the gate are unchanged; only the authoring session
 consolidates. The same rule resolves every "which phase is this document"
@@ -144,18 +156,27 @@ Each phase has exactly one exit definition: the gate below. Agent files
 state these same criteria as a checklist; if an agent's list and this list
 ever differ, this list is the standard and the agent file is the defect.
 
+**Standing closure condition (all phases).** Every phase exit also
+verifies change closure (§8.4): each change accepted during the phase
+carries a complete propagation list, and removals stand at zero live
+references or carry a scheduled scrub pass in a named later pass.
+
 - **Phase 0 — Workspace Init.** `.github/copilot-instructions.md` exists
   with no unfilled placeholders that block Phase 1; instruction files and
   prompt files are copied; the MCP template is in place; the manifest
   skeleton exists with the run basis, the provisional Task Grade, and the
-  failure ledger file created beside it.
+  failure ledger file created beside it. For a greenfield run the design
+  brief also exists with its minimum set `confirmed` (§8.2); on an
+  unattended run the brief exists with the deferred minimum-set
+  clearance recorded for the Phase 1A approval.
 - **Phase 1 — Requirements.** A REQ document exists following
   `.design/REQ-TEMPLATE.md`: every functional requirement has a testable
   acceptance criterion; non-functional requirements have measurable
   targets; open questions are either answered or explicitly carried as
   recorded risks; the requirements QA loop has converged under §6.
 - **Phase 2 — Design.** A design proposal exists as a file (never only
-  inline); the ADR set exists per §2.4; the reference catalog is populated
+  inline); the ADR set exists per §2.4 and the ADR index matches the
+  ADR files' status lines (records check, §8.4); the reference catalog is populated
   and its review checkpoint has run; the Task Grade is fixed with its
   basis recorded (not the intake placeholder, not `ungraded`); the spec's
   stack claims conform to the stack profile and bundled template (§9.2 —
@@ -310,9 +331,10 @@ Every check in the harness belongs to exactly one class:
 
 - **Class 1 — structure, authorization, safety.** Blocks immediately when
   it fails. Membership is deliberately tiny: the Phase 3 Scaffolder
-  delegation, repository establishment at intake, gate-verified records
-  (Task Grade, `TRANSITION COUNT` lines), and the hard-fail rules of
-  §4.3 inside Phase 6.
+  delegation, repository establishment at intake, the intake
+  completeness check (§8.2), gate-verified records (Task Grade,
+  `TRANSITION COUNT` lines, current-state consistency per §8.4), and
+  the hard-fail rules of §4.3 inside Phase 6.
 - **Class 2 — judgment.** A failure is first recorded as a deviation in
   the ledger, against the specific record it breaks. A Class 2 check
   becomes a block only through a definition change that cites recorded
@@ -420,6 +442,11 @@ domain pulls that domain into the round.
 - Ledger discipline: a phase row is not Complete without its transition
   count line (§2.2). Counting is a checked transition step, not an
   instruction a seat may remember to follow.
+- **Run envelope.** When the brief records a run envelope (§8.2), it is
+  copied into the run basis as the run's budget at skeleton creation;
+  the transition count's spend line reports against it, and a breach is
+  surfaced at the next checkpoint with the run's options (continue /
+  re-grade / stop) — never a silent overrun, never a mid-phase kill.
 
 ## 8. Records and contracts
 
@@ -443,12 +470,22 @@ domain pulls that domain into the round.
 | Failure ledger (`.SDLC/failure-ledger.md`) | Harness at intake | Workers (own events), QA Coordinator, Harness (transition counts) | Transition procedure (§7); read on resume |
 | Run guidance (`.SDLC/run-guidance.md`) | Pit-stop review | Pit-stop review only | Read on resume; included in later delegations; run-scoped — never overrides shipped rules, promotion is offline via PR only |
 | Reference catalog (`.github/reference-catalog.md`) | Workspace-init (empty template, 5 fixed sections) | Analyst populates in Phases 1–2; any agent may **append** after approval | Harness review checkpoint (§10.1); append-only after approval (or auto-approval); entries carry `Source: [agent] (Phase [N])` |
+| Design brief (`.SDLC/design-brief.md`) | Harness, in the Step 0.75 design conversation | Harness only — amendments are appended, dated frame revisions, never silent rewrites | The intake completeness gate (Class 1, §5) before the Phase 1A delegation: the minimum set (fields 1–5) is `confirmed` and every other field carries an explicit status. Consumers: workspace-init (project name, domain, stack), the Analyst (1A/1B work inside the frame), the provisional Task Grade (fields 5 and 7 are its inputs), the Scaffolder (Phase 3 template selection must match the brief's type and stack; a mismatch is a gate finding) |
 | REQ document | Analyst (1B) from the approved discovery summary | Analyst | Phase 1 gate; status lifecycle `Draft → Under Review → Approved → Superseded` (template) |
-| ADR set (`docs/adr/`) | Documenter, from the Analyst's design proposal, one ADR per proposal by default (PR-era granularity rule); on Small, the Analyst in the Phase 2 session (§2.4, PR #71) | Documenter (or the Analyst, on Small) | Phase 1–2 exit gate; status starts `Proposed` |
+| ADR set (`docs/adr/`) | Documenter, from the Analyst's design proposal, one ADR per proposal by default (PR-era granularity rule); on Small, the Analyst in the Phase 2 session (§2.4, PR #71) | Documenter (or the Analyst, on Small). After Phase 2, any phase's decision-bearing change appends a **dated addendum** to its governing ADR or **adds a new ADR** in the same change; original text is never rewritten; a reversal supersedes — lifecycle `Proposed → Accepted → Superseded`, the superseded ADR pointing forward to its replacement | Phase 1–2 exit gate; status starts `Proposed`. The **ADR index** (`docs/adr/README.md`) lists every ADR with its status, is updated in the same change as any ADR delta, and exactly the Accepted set is in force; the records check (§8.4) verifies the index against the files |
 | Design proposal (`.SDLC/design-proposal-<topic>.md`) | Analyst — sketch first, expanded section by section; saved as a file by the Analyst, or verbatim by the Documenter if the Analyst cannot save | Analyst | Phase 2 gate input |
 | Evidence pack (`.SDLC/qa-evidence/`) | Harness (collector script + full test run to `test-run.txt` + CI Evidence section) | Harness | QA Coordinator consumes; a verdict without it is not a Phase 6 verdict |
 | QA findings (GitHub) | QA Coordinator | Coordinator | The ledger is the local source of truth; GitHub sync is one-way, ledger → GitHub (ADR-0003) |
+| Run tracking Issue (GitHub) | Harness, at GitHub intake | Harness (comments) | One Issue per run (`sdlc:run`), linking the brief; frame revisions, phase completions, and gate outcomes are posted as comments. Local records stay canonical; the sync is one-way (§8.4) |
+| Change Issues (GitHub) | Harness, on the change path (§8.4) | Harness | One Issue per change, labeled `change:add` / `change:modify` / `change:remove` (plus `frame-moving`); the propagation list is the Issue's task list; closure is verified at the next gate |
 | Run retrospective (`.SDLC/run-retrospective.md`) | Harness, at Phase 9, from the run's records | Harness only | The maintainer; candidate rule changes take effect only via a reviewed change to the shipped definitions |
+
+**Run envelope bands (operational defaults).** Small: spend ≤ $20,
+active run time ≤ 4 hours. Medium: spend ≤ $75, ≤ 2 days. Large:
+spend ≤ $250, ≤ 5 days. The user may set a different envelope at
+intake; the recorded value is the run's. The bands are management
+defaults for the run's owner — starting values, to be calibrated by
+run retrospectives — not product claims.
 
 ### 8.3 Document transport
 
@@ -456,6 +493,31 @@ Deliverables travel as files, never inline in delegation returns. After
 a context compaction, anything not re-verified against disk is
 UNVERIFIED and is re-read before use. These are standing rules of the
 base, restated here because records depend on them.
+
+### 8.4 Changes, propagation, and current state
+
+Requirements change after intake — added, modified, and removed —
+arriving from the user, from discovery, from QA, and from inspecting
+the built artifact. The change path (Harness, "Requirements changes
+after intake") classifies each change on arrival — within-frame or
+frame-moving — and every accepted change carries a **propagation
+list** across REQ · ADR/design · brief · implementation · tests ·
+docs · reference catalog · QA evidence, each entry *updated*,
+*unaffected (reason)*, or *scheduled (named pass)*. No change lands in
+code alone; closure is verified at the next gate (§3 standing
+condition). A removal closes only at **zero live references**.
+
+Histories are append-only, and each is paired with a **current-state
+reading**: the brief's **Current frame** (the fold of its frame
+revisions), the **ADR index** (exactly the Accepted ADRs are in
+force), and the manifest's recorded composition (for systems, the
+system map). Keeping a reading in sync with its history is part of
+change closure, and consistency is checked mechanically by
+`tools/check_records.py` — the project copy at
+`.SDLC/tools/check_records.py`, deployed by workspace-init together
+with the records-check workflow, whose result on a change PR is read
+back as gate evidence. Gates and resume read the current state first;
+history is read on demand.
 
 ## 9. Precedence and resolution — four chains, four questions
 

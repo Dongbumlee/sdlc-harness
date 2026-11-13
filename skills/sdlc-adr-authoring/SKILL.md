@@ -151,9 +151,29 @@ Before saving, verify:
 ## Step 5: Save and link
 
 1. Save to `docs/adr/ADR-XXX-<topic>.md`
-2. If a README index exists in `docs/adr/`, update it
+2. Update the ADR index (`docs/adr/README.md`) in the same change —
+   create it if missing. The index lists every ADR with its status;
+   exactly the Accepted set is in force, and the records check
+   (base definitions §8.4) verifies the index against the files.
 3. If this ADR results from an Analyst design proposal, carry forward all technical
    details — do not summarize or lose specificity
+
+## After Phase 2: addenda and supersession
+
+The ADR set is alive for the whole run, not only at its Phase 2 birth.
+A decision-bearing change in any phase, in the same change:
+
+- **Amends** — appends a dated addendum section to the governing ADR
+  (the change, its date, its trigger), or
+- **Extends** — adds a new ADR (numbering continues; one decision per
+  ADR), or
+- **Reverses** — the new ADR names the ADR it replaces; the replaced
+  ADR's Status becomes `Superseded` with a forward pointer to the new
+  ADR. Lifecycle: `Proposed → Accepted → Superseded`.
+
+Original ADR text is never rewritten — history is the addenda and the
+supersession chain; the current state is the index. Every path updates
+the index in the same change.
 
 ## Gotchas
 

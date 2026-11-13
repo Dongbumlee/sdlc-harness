@@ -153,6 +153,19 @@ For each spec:
 5. Grade the response (see Step 3).
 6. Record the result.
 
+**The spec is the brief (intake canaries).** When a canary exercises
+intake or a full run (a `harness` canary, or any canary whose flow
+passes through Harness Step 0.75), write the run's
+`.SDLC/design-brief.md` from the spec **before** delegating: parse the
+spec's `prompt` onto the brief's checklist fields (fields the prompt
+answers are `confirmed` — the spec is the user for this run), record
+the derived patterns the spec's expectations name, and record framing
+questions the spec leaves open as open questions — never invent
+answers. Canary runs then exercise the same downstream path as
+production (frame consumption, grade inputs, template match) instead
+of bypassing intake. The MCP preflight posture is unchanged: in
+canary mode an unreachable required server is a FAIL (§Step 0).
+
 **Run canaries sequentially** to avoid context overflow. If a phase agent returns an error or times out, record it as FAIL with reason "agent_error".
 
 ### Step 3: Grade the response
@@ -380,6 +393,7 @@ Follow the same procedure but skip the discovery step and report a single-row ta
 | Aspect | Production | Canary |
 |--------|-----------|--------|
 | Input source | User message | `prompt` field from YAML spec |
+| Design brief | From the Step 0.75 design conversation | Written from the spec before delegating |
 | Output destination | Chat response | `bench/results/` JSON file |
 | Evaluation | Human review | Automated graders + LLM-judge |
 | Agents invoked | Based on task | Based on `phase` routing table |
