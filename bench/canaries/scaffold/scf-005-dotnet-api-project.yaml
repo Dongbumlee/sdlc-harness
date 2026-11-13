@@ -1,0 +1,95 @@
+# Canary: ASP.NET Core API Project Scaffolding
+id: scf-005-dotnet-api-project
+version: "1.0"
+phase: scaffold
+title: "ASP.NET Core API Project Scaffolding"
+description: >
+  Tests the AI agent's ability to scaffold a production-ready
+  ASP.NET Core API project with the harness dotnet profile
+  structure, interface-first services, health checks, and
+  development tooling.
+
+prompt: |
+  You are a senior .NET engineer. Scaffold a production-ready
+  ASP.NET Core API project for a user management microservice with
+  the following specifications:
+
+  Project Requirements:
+  - Service name: user-management-api (.NET 10, minimal APIs)
+  - Solution layout: the API project and its test project under
+    `src/`, built and tested from the solution file
+  - Persistence behind a repository interface — the scaffold ships
+    an in-memory implementation; a real store drops in behind the
+    interface
+
+  Expected Project Structure:
+  1. A solution (.sln) with `src/<Name>API` and
+     `src/<Name>API.Tests` projects
+  2. Layered app project: Endpoints (route groups per resource),
+     Services (interfaces / implementations), Models — endpoints
+     depend on service interfaces, never on implementations
+  3. Dependency injection in Program.cs: interface-first service
+     registrations (repository singleton, service scoped)
+  4. Configuration via appsettings.json and environment overrides
+  5. Health checks registered with AddHealthChecks and mapped at
+     /health
+  6. Program.cs as the entry point using WebApplication — no
+     separate Startup class; Program exposed as a partial class so
+     integration tests can use WebApplicationFactory
+  7. A Dockerfile for the API project
+  8. Tests: endpoint integration tests plus an architecture test
+     that enforces the layer dependency direction; the whole
+     solution passes `dotnet test`
+  9. A GitHub Actions CI workflow that restores, builds, and tests
+     the solution
+
+  For each file generated, include appropriate comments explaining
+  the purpose. Ensure the project builds and all tests pass out of
+  the box.
+
+expected:
+  keywords:
+    - Program.cs
+    - Dockerfile
+    - ASP.NET Core
+    - health
+    - repository
+    - dotnet test
+  graders:
+    - type: keyword
+      weight: 0.3
+      config:
+        required:
+          - Program.cs
+          - Dockerfile
+          - ASP.NET Core
+          - health
+          - repository
+          - dotnet test
+          - dependency injection
+        forbidden: ["TODO", "placeholder"]
+    - type: structural
+      weight: 0.3
+      config:
+        required_sections:
+          - project structure
+          - configuration
+          - entry point
+          - testing
+          - containerization
+    - type: llm-judge
+      weight: 0.4
+      config:
+        criteria:
+          - completeness
+          - technical_accuracy
+          - clarity
+          - production_readiness
+          - best_practices
+
+timeout_seconds: 120
+tags:
+  - scaffold
+  - dotnet
+  - aspnetcore
+  - project-structure

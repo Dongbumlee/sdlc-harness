@@ -1,0 +1,99 @@
+# Canary: TypeScript Worker Scaffolding
+id: scf-012-typescript-worker
+version: "1.0"
+phase: scaffold
+title: "TypeScript Worker Scaffolding"
+description: >
+  Tests the AI agent's ability to scaffold a background worker
+  with the harness typescript profile structure, built for
+  correctness under redelivery: idempotency, a transactional
+  outbox, classified retries, and a dead-letter queue with replay.
+
+prompt: |
+  You are a senior TypeScript engineer. Scaffold a background
+  worker service (a report-mailer worker) with the following
+  specifications:
+
+  Project Requirements:
+  - TypeScript with pnpm as the package manager, tsc as the
+    build; the worker project lives in `src/<Name>Worker`
+  - Delivery is at-least-once: the worker must stay correct when
+    the same job is delivered twice
+  - The job store is SQLite, claimed with a lease
+
+  Expected Project Structure:
+  1. The worker package: package.json with build/test/lint
+     scripts, ESLint and Prettier configurations
+  2. Source split by role: `src/index.ts` (entry point starting
+     the loop), `src/worker.ts` (poll, claim, dispatch),
+     `src/store.ts` (the SQLite job store), `src/handlers.ts`
+     (job handlers)
+  3. Idempotency: every job carries an idempotency key with a
+     UNIQUE constraint, applied in the same transaction as the
+     job's effect
+  4. A transactional outbox: outbound effects are written in the
+     same transaction as the state change and published after
+  5. Failure handling: permanent failures go straight to the
+     dead-letter state; transient failures retry with exponential
+     backoff and full jitter (base 1s, cap 60s, max 5 attempts);
+     the dead-letter queue has an alarm and a replay path from
+     day one
+  6. A sample job (slugify) demonstrating the handler shape
+  7. A Dockerfile for the worker
+  8. Tests: the worker contract set — the defining tests include
+     redelivery idempotency, lease expiry reclaim, backoff
+     classification, and dead-letter replay, run against a fake
+     clock where time matters
+  9. A GitHub Actions CI workflow that installs with pnpm, builds,
+     and tests
+
+  For each file generated, include appropriate comments explaining
+  the purpose. Ensure the build and tests pass out of the box.
+
+expected:
+  keywords:
+    - package.json
+    - worker.ts
+    - idempotency
+    - outbox
+    - dead-letter
+    - SQLite
+    - Dockerfile
+  graders:
+    - type: keyword
+      weight: 0.3
+      config:
+        required:
+          - package.json
+          - worker.ts
+          - store.ts
+          - idempotency
+          - dead-letter
+          - SQLite
+          - Dockerfile
+        forbidden: ["TODO", "placeholder"]
+    - type: structural
+      weight: 0.3
+      config:
+        required_sections:
+          - project structure
+          - configuration
+          - entry point
+          - testing
+          - containerization
+    - type: llm-judge
+      weight: 0.4
+      config:
+        criteria:
+          - completeness
+          - technical_accuracy
+          - clarity
+          - production_readiness
+          - best_practices
+
+timeout_seconds: 120
+tags:
+  - scaffold
+  - typescript
+  - worker
+  - project-structure

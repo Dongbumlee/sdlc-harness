@@ -1,0 +1,92 @@
+# Canary: ASP.NET Core Razor Pages Web Scaffolding
+id: scf-009-dotnet-web
+version: "1.0"
+phase: scaffold
+title: "ASP.NET Core Razor Pages Web Scaffolding"
+description: >
+  Tests the AI agent's ability to scaffold a server-rendered web
+  app with the harness dotnet profile structure: Razor Pages, the
+  structural public/server configuration split, a health
+  endpoint, and page tests asserting the WCAG 2.2 AA floor.
+
+prompt: |
+  You are a senior .NET engineer. Scaffold a server-rendered web
+  application (an item catalog) with the following specifications:
+
+  Project Requirements:
+  - .NET 10, ASP.NET Core Razor Pages, solution layout with the
+    web project and its test project under `src/`
+  - Server-side rendering first; forms follow post/redirect/get
+  - The browser is untrusted: configuration is split structurally
+    into public (browser-safe) and server-only values
+
+  Expected Project Structure:
+  1. A solution (.sln) with `src/<Name>Web` and
+     `src/<Name>Web.Tests`
+  2. Razor Pages: an items page (list + add form) and a shared
+     layout, with models and a store behind a service seam
+  3. Configuration in a Configuration folder: PublicOptions and
+     ServerOptions bound from separate configuration sections —
+     server secrets never reach rendered output (a sentinel-secret
+     test proves it)
+  4. A /health endpoint returning a JSON status
+  5. Program.cs entry point with WebApplication, Razor Pages
+     services registered, Program exposed as a partial class for
+     WebApplicationFactory tests
+  6. A Dockerfile for the web project
+  7. Tests: page tests over the real pipeline (the items page
+     renders, the add form round-trips through post/redirect/get),
+     accessibility-floor assertions (landmarks, labels), and an
+     architecture test
+  8. A GitHub Actions CI workflow that restores, builds, and tests
+     the solution
+
+  For each file generated, include appropriate comments explaining
+  the purpose. Ensure `dotnet test` passes out of the box.
+
+expected:
+  keywords:
+    - Razor Pages
+    - Program.cs
+    - Dockerfile
+    - health
+    - post/redirect/get
+    - dotnet test
+  graders:
+    - type: keyword
+      weight: 0.3
+      config:
+        required:
+          - Razor Pages
+          - Program.cs
+          - Dockerfile
+          - health
+          - configuration
+          - dotnet test
+        forbidden: ["TODO", "placeholder"]
+    - type: structural
+      weight: 0.3
+      config:
+        required_sections:
+          - project structure
+          - configuration
+          - entry point
+          - testing
+          - containerization
+    - type: llm-judge
+      weight: 0.4
+      config:
+        criteria:
+          - completeness
+          - technical_accuracy
+          - clarity
+          - production_readiness
+          - best_practices
+
+timeout_seconds: 120
+tags:
+  - scaffold
+  - dotnet
+  - web
+  - razor-pages
+  - project-structure
