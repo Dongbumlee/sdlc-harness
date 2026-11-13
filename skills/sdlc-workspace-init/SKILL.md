@@ -32,6 +32,8 @@ system because they require per-project customization or live outside the plugin
 | `assets/instructions/*.instructions.md` | `.github/instructions/` | No — copied as-is |
 | `assets/prompts/*.prompt.md` | `.github/prompts/` | No — copied as-is |
 | *(generated at runtime)* | `.github/reference-catalog.md` | Yes — empty template with 5 fixed sections |
+| `assets/records-check/check_records.py` | `.SDLC/tools/check_records.py` | No — copied as-is (records consistency checker) |
+| `assets/records-check/sdlc-records-check.yml` | `.github/workflows/sdlc-records-check.yml` | No — copied as-is (records check on pull requests) |
 
 ## Procedure
 
@@ -53,7 +55,7 @@ If any are missing or empty → continue and deploy **only the missing pieces**.
 These directories may not exist in a fresh workspace:
 
 ```bash
-mkdir -p .github/instructions .github/prompts .vscode
+mkdir -p .github/instructions .github/prompts .github/workflows .vscode .SDLC/tools
 ```
 
 **This step is mandatory** — do NOT skip it. File writes will fail silently in
@@ -91,15 +93,19 @@ directories that don't exist.
    If invalid → `rm -f .vscode/mcp.json` and deploy fresh from step (b).
 
 After deploying (or confirming it exists), tell the user:
-> ✅ `.vscode/mcp.json` — 7 MCP server definitions ready.
+> ✅ `.vscode/mcp.json` — 3 MCP server definitions ready.
 > Please start all MCP servers: open `.vscode/mcp.json` and click **"Start"** on each.
 
 ### Step 4: Gather project information
 
-Ask the user for:
+**If `.SDLC/design-brief.md` exists, the design conversation (Harness
+Step 0.75) has already answered these questions — take the values from
+the brief and do NOT re-ask them.** Ask the user only for a value the
+brief leaves open:
+
 1. **Project name** (required) — e.g., "SmartDoc Analyzer"
-2. **Business domain** (required) — e.g., "Intelligent document processing"
-3. **Tech stack** (required) — e.g., "Python, FastAPI, React, TypeScript"
+2. **Business domain** (required) — the brief's "Problem and users" field
+3. **Tech stack** (required) — the brief's "Stack" field, e.g., "Python, FastAPI, React, TypeScript"
 4. **Primary language(s)** (derived from tech stack) — used to filter instruction files (e.g., `code-quality-py.md` vs `code-quality-ts.md`)
 
 ### Step 5: Deploy copilot-instructions.md
@@ -210,20 +216,35 @@ Copy each file from `assets/prompts/` to `.github/prompts/`:
 - [repo-documentation.prompt.md](./assets/prompts/repo-documentation.prompt.md)
 - [qa-rai-release.prompt.md](./assets/prompts/qa-rai-release.prompt.md)
 
+### Step 8b: Deploy the records check
+
+Copy the records-check assets (Step 2 created the target directories):
+
+- [records-check/check_records.py](./assets/records-check/check_records.py) → `.SDLC/tools/check_records.py`
+- [records-check/sdlc-records-check.yml](./assets/records-check/sdlc-records-check.yml) → `.github/workflows/sdlc-records-check.yml`
+
+The checker verifies the project's current-state records against their
+histories (the brief's Current frame against its frame revisions; the
+ADR index against the ADR files — base definitions §8.4). The workflow
+runs it on every pull request, and the Harness reads the result back as
+gate evidence. Deploy both files verbatim; never edit the deployed
+checker in a project — it is a copy of the plugin's `tools/check_records.py`.
+
 ### Step 9: Report
 
 ```
 ## ✅ SDLC Workspace Initialized
 
-- ✅ `.vscode/mcp.json` — 7 MCP server definitions deployed
+- ✅ `.vscode/mcp.json` — 3 MCP server definitions deployed
 - ✅ `.github/copilot-instructions.md` — customized for "{{PROJECT_NAME}}"
 - ✅ `.github/instructions/` — X quality instruction files deployed
 - ✅ `.github/prompts/` — 6 SDLC prompt files deployed
 - ✅ `.github/reference-catalog.md` — empty catalog template created (Analyst will populate during Phase 1-2)
+- ✅ `.SDLC/tools/check_records.py` + `.github/workflows/sdlc-records-check.yml` — records check deployed
 
 **Next steps:**
 1. **Start MCP servers** — open `.vscode/mcp.json` and click "Start" on each server.
-   All 7 servers are required.
+   All 3 servers are required.
 2. Review `.github/copilot-instructions.md` and adjust if needed.
 3. Use `/agent harness` to start your first SDLC task in Copilot CLI or Copilot App.
 4. Use `/requirement-and-design` to begin Phase 1-2.

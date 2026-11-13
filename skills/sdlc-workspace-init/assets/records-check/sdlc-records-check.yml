@@ -1,0 +1,23 @@
+name: SDLC records check
+
+# Deployed by the sdlc-workspace-init skill (Step 8b). On every pull
+# request, verifies the project's current-state records against their
+# histories: the design brief's Current frame must equal the fold of
+# its frame revisions, and the ADR index must match the ADR files'
+# own status lines (base definitions section 8.4). The Harness reads
+# this check's result back as gate evidence — a change PR whose
+# records are stale does not merge.
+
+on:
+  pull_request:
+
+jobs:
+  records:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Check records consistency
+        run: python3 .SDLC/tools/check_records.py --root .

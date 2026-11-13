@@ -137,12 +137,15 @@ python defaults.
 ## Phase-State Ledger
 
 **Run basis** — Task: <one line naming the task> (user instruction, <date>).
+Design brief: `.SDLC/design-brief.md` (Current frame as of frame revision <n>, <date>) — the run's framing of record.
+Tracking issue: <GitHub issue URL | local-only>.
 Approved artifacts:
 - <path> — approved by <approver>, <date>, sha256:<first 12 characters>
-Budget (optional): <amount> — set by <the user>, <date>. When a budget is
-recorded, the Harness reports cumulative spend against it in every
-transition count line; spend crossing the budget stops the run for a user
-decision, never a silent overrun.
+Budget: <spend / time band> — the design brief's run envelope
+(grade-derived; base definitions §8.2), or a value the user set at
+intake, <date>. The Harness reports cumulative spend against it in
+every transition count line; spend crossing the budget stops the run
+for a user decision, never a silent overrun.
 
 | Phase | Status | Artifacts | Updated | Notes |
 |---|---|---|---|---|
@@ -193,6 +196,10 @@ Do NOT invent patterns — read and record what the templates actually contain.
 ## For ALL OTHER AGENTS (read mode)
 
 **Before doing any work, read `.SDLC/project-manifest.md` if it exists.**
+Also read the **Current frame** section of `.SDLC/design-brief.md` when
+it exists — the run's framing of record (type, stack, sensitivity,
+approval posture, derived patterns). The brief's history sections are
+read on demand; the Current frame is the effective reading.
 
 This tells you:
 - Which template each project uses → follow its patterns exactly
