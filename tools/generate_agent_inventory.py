@@ -30,7 +30,7 @@ SKILL_DIR = REPO_ROOT / "skills"
 DOC_PATH = REPO_ROOT / "docs" / "agent-inventory.md"
 
 PHASE_RE = re.compile(r"SDLC\s+Phases?\s+([0-9+\-–—,.\s]+?)\s*:", re.IGNORECASE)
-GENERATED_RE = re.compile(r"^\*\*Generated:\*\* \d{4}-\d{2}-\d{2}$", re.M)
+GENERATED_RE = re.compile(r"^\*\*Generated:\*\* \d{4}-\d{2}-\d{2}\s*$", re.M)
 
 
 def without_generated_date(text: str) -> str:
@@ -157,9 +157,9 @@ def main() -> int:
     add("> **Generated file — do not edit by hand.**")
     add("> Regenerate with `python3 tools/generate_agent_inventory.py`.")
     add("")
-    add(f"**Version:** {version}")
-    add(f"**Generated:** {date.today().isoformat()}")
-    add(f"**Total agents:** {len(agents)} ({len(agent_files)} agent files)")
+    add(f"**Version:** {version}  ")
+    add(f"**Generated:** {date.today().isoformat()}  ")
+    add(f"**Total agents:** {len(agents)} ({len(agent_files)} agent files)  ")
     add(f"**Total skills:** {len(skills)}")
     add("")
 

@@ -1,8 +1,8 @@
 # ADR-0002: Bundled Default Templates
 
-> **Status:** Accepted (2026-10-18; merged via PR #21, implementation follows in the bundled-templates change)
-> **SDLC Phase:** 1-2 (Requirements & Design)
-> **Date:** 2026-10-18
+> **Status:** Accepted (2026-10-18; merged via PR #21, implementation follows in the bundled-templates change)  
+> **SDLC Phase:** 1-2 (Requirements & Design)  
+> **Date:** 2026-10-18  
 > **Author:** Dongbum(DB) Lee
 
 ---

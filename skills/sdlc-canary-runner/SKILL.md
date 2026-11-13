@@ -373,8 +373,8 @@ Present a concise summary table:
 | scf-001 | scaffold      | FastAPI Project Scaffolding | 0.00 | ❌ FAIL (mcp_unavailable: context7) |
 ...
 
-**Summary:** 6 passed, 4 failed / 10 total | Composite: 0.62
-**Mode:** degraded — `context7` unavailable (npx not found); 4 canaries failed with `mcp_unavailable`. Fix: install Node.js (which provides npx), then re-run.
+**Summary:** 6 passed, 4 failed / 10 total | Composite: 0.62  
+**Mode:** degraded — `context7` unavailable (npx not found); 4 canaries failed with `mcp_unavailable`. Fix: install Node.js (which provides npx), then re-run.  
 **Results:** bench/results/canary-run-2026-04-13.json
 ```
 

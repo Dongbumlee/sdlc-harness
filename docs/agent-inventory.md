@@ -3,9 +3,9 @@
 > **Generated file — do not edit by hand.**
 > Regenerate with `python3 tools/generate_agent_inventory.py`.
 
-**Version:** 1.3.1
-**Generated:** 2026-11-13
-**Total agents:** 21 (21 agent files)
+**Version:** 1.3.1  
+**Generated:** 2026-11-13  
+**Total agents:** 21 (21 agent files)  
 **Total skills:** 24
 
 ## 1. Agent Summary

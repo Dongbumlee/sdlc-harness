@@ -1,8 +1,8 @@
 # ADR-XXXX: [Title of Decision]
 
-> **Status:** Proposed | Accepted | Deprecated | Superseded
-> **SDLC Phase:** 2 (Design)
-> **Date:** YYYY-MM-DD
+> **Status:** Proposed | Accepted | Deprecated | Superseded  
+> **SDLC Phase:** 2 (Design)  
+> **Date:** YYYY-MM-DD  
 > **Author:** [Name or @Harness]
 
 ---

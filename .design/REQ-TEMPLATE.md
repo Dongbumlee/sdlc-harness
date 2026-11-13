@@ -1,9 +1,9 @@
 # REQ-XXXX: [Title]
 
-> **Status:** Draft | Under Review | Approved | Superseded
-> **SDLC Phase:** 1 (Requirements)
-> **Date:** YYYY-MM-DD
-> **Author:** [Name or @Harness]
+> **Status:** Draft | Under Review | Approved | Superseded  
+> **SDLC Phase:** 1 (Requirements)  
+> **Date:** YYYY-MM-DD  
+> **Author:** [Name or @Harness]  
 > **Approved by:** [Name — filled after user approval]
 
 ---
