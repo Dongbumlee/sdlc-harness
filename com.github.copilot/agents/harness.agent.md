@@ -999,7 +999,15 @@ Exception: strong consistency OR strong concurrency alone sets a
 Medium floor; both together mean Large.
 
 **Correction:** handling personal, payment, or health data raises the
-final grade one step.
+final grade one step — **counted once per fact**: when the
+strong-consistency (money) signal has already priced the same payment
+data into the complexity axis, the correction does not raise the grade
+a second time for that data. Personal and health data are never
+complexity signals, so their correction always applies; and the
+correction is a single step however many kinds of sensitive data
+apply. (Origin: the 2026-11-12 seat simulation — a one-job invoice
+worker and a seven-operation API both landed Large because payment
+was counted on both axes.)
 
 **Decision rule:** final grade = the higher axis grade, plus the
 correction. The basis is recorded in the manifest citing the
