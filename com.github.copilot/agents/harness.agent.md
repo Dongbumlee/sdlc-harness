@@ -586,7 +586,10 @@ is the Medium ceremony; the recorded grade scales it:
   never fires twice — when a review fires on a signature, append a
   `REVIEW <n> — <signature> spent` line to the failure ledger, and
   counting for that signature restarts after that line; at most
-  **3 reviews per run**. (Scheduled reviews
+  **3 reviews per run**. When a trigger is observed with the cap
+  already reached, open no further review: record the trigger and
+  its evidence in the failure ledger, stop, and present them to
+  the user for a decision. (Scheduled reviews
   were tested and rejected: reviewing on a clock interrupts healthy runs
   and costs more than it saves — evidence, not time, opens a review.)
   **Delegation-repeat rule (T5).** A run that is going wrong also
