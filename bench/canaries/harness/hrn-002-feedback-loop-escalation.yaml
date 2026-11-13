@@ -28,18 +28,25 @@ prompt: |
   ```
 
   The harness escalation protocol defines:
-  - Any `verdict: CRITICAL_FAIL` → Critical: STOP, require user decision
-  - 1-2 reviewers failed, scores 5-6, no Critical findings → Tier 1:
-    forward the QA feedback template to the Implementer, loop back to QA
-    for targeted re-review
+  - Any `verdict: CRITICAL_FAIL` → Critical: STOP, present results,
+    require user decision immediately
+  - ≥1 Critical or Important finding (no CRITICAL_FAIL) → Tier 1:
+    forward the QA Feedback Template to the Implementer; loop back to
+    QA for targeted re-review
   - Tier 1 still fails OR 3+ reviewers failed → Tier 2: present score
-    progression to user, ask about a targeted fix attempt
-  - After 2 fix attempts OR 3 total rounds → Tier 3: user chooses
-    override / manual fix / abandon
+    progression to user; ask if they want a targeted fix attempt
+  - After a Tier 2 attempt OR the grade round cap is reached → Tier 3:
+    present full results; user chooses override / manual fix / abandon
+
+  Convergence inside the tiers: Tier 1 auto-routing requires at least
+  one Critical or Important finding in the round. A fail driven only by
+  the composite score, with no Critical/Important findings, does not
+  auto-loop — it is recorded and presented to the user (Tier 2 decision).
 
   Question: what is the correct next step for THIS result, and why?
-  Note the trap: the failed reviewer scored 4 (below the 5-6 band) and has
-  a Critical finding — but the overall verdict is FAIL, not CRITICAL_FAIL.
+  Note the trap: the failed reviewer scored 4 and has a Critical
+  finding — but the overall verdict is FAIL, not CRITICAL_FAIL, and
+  the tiers key on the verdict and the findings, not on score bands.
 
   Deliverables:
   1. The correct tier and the exact next action, quoted from the protocol
