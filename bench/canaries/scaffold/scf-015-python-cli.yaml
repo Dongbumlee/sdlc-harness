@@ -1,0 +1,92 @@
+# Canary: Python CLI Scaffolding
+id: scf-015-python-cli
+version: "1.0"
+phase: scaffold
+title: "Python CLI Scaffolding"
+description: >
+  Tests the AI agent's ability to scaffold a command-line tool
+  with the harness python profile structure: Click as the parser,
+  the noun-verb command shape, the stdout/stderr and exit-code
+  contract, and golden-file tests.
+
+prompt: |
+  You are a senior Python engineer. Scaffold a command-line tool
+  ("textkit": text utilities such as slugify and truncate) with
+  the following specifications:
+
+  Project Requirements:
+  - Package manager: uv with pyproject.toml; Click as the
+    argument parser; the console script declared in
+    [project.scripts]
+  - The interface is the contract: commands follow
+    `tool <noun> <verb>`, data goes to stdout and diagnostics to
+    stderr, and exit codes are a documented map (0 success,
+    1 runtime failure, 2 usage error)
+
+  Expected Project Structure:
+  1. src layout: `src/<package>/cli.py` (Click commands and
+     dispatch only), `textkit.py` (the logic), `output.py`
+     (plain/JSON formatting), `__main__.py` so
+     `python -m <package>` works
+  2. A `--format plain|json` option on data commands; secrets
+     come from the environment, never from command-line flags
+  3. Tests: pytest golden-file tests for help text and command
+     output (plain and JSON), plus exit-code contract tests for
+     the success, runtime-failure, and usage-error paths
+  4. Distribution: the package publishes as an installable CLI
+     (wheel with the console script); the release workflow builds
+     and publishes on tag, in the same artefact shape as the
+     other stacks
+  5. No Dockerfile — a CLI ships as a package, not a container
+  6. A GitHub Actions CI workflow: `uv sync --locked`, ruff
+     check + ruff format --check, pytest
+
+  For each file generated, include appropriate comments explaining
+  the purpose. Ensure all tests pass out of the box.
+
+expected:
+  keywords:
+    - Click
+    - pyproject.toml
+    - golden
+    - exit code
+    - stdout
+    - pytest
+  graders:
+    - type: keyword
+      weight: 0.3
+      config:
+        required:
+          - Click
+          - pyproject.toml
+          - golden
+          - exit code
+          - stdout
+          - stderr
+          - pytest
+        forbidden: ["TODO", "placeholder"]
+    - type: structural
+      weight: 0.3
+      config:
+        required_sections:
+          - project structure
+          - commands
+          - configuration
+          - testing
+          - distribution
+    - type: llm-judge
+      weight: 0.4
+      config:
+        criteria:
+          - completeness
+          - technical_accuracy
+          - clarity
+          - production_readiness
+          - best_practices
+
+timeout_seconds: 120
+tags:
+  - scaffold
+  - python
+  - cli
+  - project-structure

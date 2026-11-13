@@ -1,0 +1,86 @@
+# Canary: Rust Library Scaffolding
+id: scf-026-rust-library
+version: "1.0"
+phase: scaffold
+title: "Rust Library Scaffolding"
+description: >
+  Tests the AI agent's ability to scaffold a publishable Rust
+  library crate with the harness rust profile structure: lib.rs
+  as the explicit public surface, public-API integration tests,
+  doc tests, and clippy/rustfmt hygiene.
+
+prompt: |
+  You are a senior Rust engineer. Scaffold a publishable Rust
+  library crate for text manipulation utilities ("textkit") with
+  the following specifications:
+
+  Project Requirements:
+  - Cargo; the crate lives in `src/<Name>Lib`
+  - The public surface is exactly what src/lib.rs exposes —
+    explicit re-exports, no glob leakage from internal modules
+  - clippy (clippy.toml) and rustfmt (rustfmt.toml) are the
+    pinned lint/format pair
+
+  Expected Project Structure:
+  1. Cargo.toml with the crate metadata (version, description,
+     license) ready for crates.io publishing
+  2. src/lib.rs declaring the crate's modules and re-exporting
+     the public API (a sample text-transforms module: slugify,
+     truncate) with rustdoc comments on every public item
+  3. Tests: integration tests under tests/ that use the crate
+     only through its public API (black-box — a public_api_test
+     that fails when the exposed surface drifts), plus doc tests
+     in the rustdoc examples
+  4. No Dockerfile — a library is consumed as a crate, never
+     deployed as a container
+  5. A GitHub Actions CI workflow that runs cargo build,
+     cargo test, clippy with warnings denied, and a rustfmt
+     check; a release workflow publishes on tag
+
+  For each file generated, include appropriate comments explaining
+  the purpose. Ensure `cargo test` passes out of the box.
+
+expected:
+  keywords:
+    - Cargo.toml
+    - lib.rs
+    - cargo test
+    - clippy
+    - rustdoc
+    - public API
+  graders:
+    - type: keyword
+      weight: 0.3
+      config:
+        required:
+          - Cargo.toml
+          - lib.rs
+          - cargo test
+          - clippy
+          - black-box
+          - doc tests
+        forbidden: ["TODO", "placeholder"]
+    - type: structural
+      weight: 0.3
+      config:
+        required_sections:
+          - project structure
+          - public surface
+          - testing
+          - packaging
+    - type: llm-judge
+      weight: 0.4
+      config:
+        criteria:
+          - completeness
+          - technical_accuracy
+          - clarity
+          - production_readiness
+          - best_practices
+
+timeout_seconds: 120
+tags:
+  - scaffold
+  - rust
+  - library
+  - project-structure

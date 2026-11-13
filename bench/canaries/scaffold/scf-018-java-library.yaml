@@ -1,0 +1,88 @@
+# Canary: Java Library Scaffolding
+id: scf-018-java-library
+version: "1.0"
+phase: scaffold
+title: "Java Library Scaffolding"
+description: >
+  Tests the AI agent's ability to scaffold a publishable Java
+  library with the harness java profile structure: plain Java
+  with the Maven wrapper, an explicit public surface checked by
+  test, black-box tests, and a runnable quickstart example.
+
+prompt: |
+  You are a senior Java engineer. Scaffold a publishable Java
+  library for text manipulation utilities ("textkit") with the
+  following specifications:
+
+  Project Requirements:
+  - Plain Java 21 with Maven (the Maven wrapper, ./mvnw, is the
+    build entry — no system Maven assumed); the project lives in
+    `src/<Name>Lib`
+  - The library's public surface is explicit and machine-checked
+  - Dependency versions are managed ranges in the pom — no
+    committed lock file (Maven Central publishing is the one
+    place the harness publishes artifacts, over OIDC)
+
+  Expected Project Structure:
+  1. pom.xml declaring the artifact, Java 21, JUnit 5 for tests,
+     and the Maven Central publishing configuration
+  2. The library code under src/main/java in the project's
+     package (a sample TextTransforms class: slugify, truncate)
+     with Javadoc on every public member
+  3. Tests: JUnit behavior tests plus a public-API surface test
+     that enumerates the compiled public surface and fails when
+     it drifts from the declared surface (tests are black-box —
+     they use the library as a consumer would)
+  4. An examples folder with a runnable Quickstart.java consuming
+     the library
+  5. No Dockerfile — a library is consumed as an artifact, never
+     deployed as a container
+  6. A GitHub Actions CI workflow that builds and tests with
+     ./mvnw; a release workflow publishes to Maven Central on tag
+
+  For each file generated, include appropriate comments explaining
+  the purpose. Ensure `./mvnw verify` passes out of the box.
+
+expected:
+  keywords:
+    - pom.xml
+    - mvnw
+    - JUnit
+    - Maven Central
+    - public surface
+  graders:
+    - type: keyword
+      weight: 0.3
+      config:
+        required:
+          - pom.xml
+          - mvnw
+          - JUnit
+          - Maven Central
+          - public surface
+          - black-box
+        forbidden: ["TODO", "placeholder"]
+    - type: structural
+      weight: 0.3
+      config:
+        required_sections:
+          - project structure
+          - public surface
+          - testing
+          - packaging
+    - type: llm-judge
+      weight: 0.4
+      config:
+        criteria:
+          - completeness
+          - technical_accuracy
+          - clarity
+          - production_readiness
+          - best_practices
+
+timeout_seconds: 120
+tags:
+  - scaffold
+  - java
+  - library
+  - project-structure

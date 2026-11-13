@@ -1,0 +1,98 @@
+# Canary: Python Worker Scaffolding
+id: scf-016-python-worker
+version: "1.0"
+phase: scaffold
+title: "Python Worker Scaffolding"
+description: >
+  Tests the AI agent's ability to scaffold a background worker
+  with the harness python profile structure, built for correctness
+  under redelivery: idempotency, a transactional outbox,
+  classified retries, and a dead-letter queue with replay.
+
+prompt: |
+  You are a senior Python engineer. Scaffold a background worker
+  service (an invoice-import worker) with the following
+  specifications:
+
+  Project Requirements:
+  - Package manager: uv with pyproject.toml; the worker project
+    lives in `src/<Name>Worker`
+  - Delivery is at-least-once: the worker must stay correct when
+    the same job is delivered twice
+  - The job store is SQLite, claimed with a lease; configuration
+    from the environment (.env.example documents every variable)
+
+  Expected Project Structure:
+  1. The app package: `app/__main__.py` (entry point),
+     `app/worker.py` (poll, claim, dispatch), `app/store.py`
+     (the SQLite job store), `app/handlers.py` (job handlers)
+  2. Idempotency: every job carries an idempotency key with a
+     UNIQUE constraint, applied in the same transaction as the
+     job's effect
+  3. A transactional outbox: outbound effects are written in the
+     same transaction as the state change and published after
+  4. Failure handling: permanent failures go straight to the
+     dead-letter state; transient failures retry with exponential
+     backoff and full jitter (base 1s, cap 60s, max 5 attempts);
+     the dead-letter queue has an alarm and a replay path from
+     day one
+  5. A sample job (slugify) demonstrating the handler shape
+  6. A single-stage Dockerfile on the Azure Linux Python image
+     (uv sync --frozen), running as a non-root user
+  7. Tests: the worker contract set in pytest — the defining
+     tests include redelivery idempotency, lease expiry reclaim,
+     backoff classification, and dead-letter replay, run against
+     a fake clock where time matters
+  8. A GitHub Actions CI workflow: `uv sync --locked`, ruff
+     check + ruff format --check, pytest
+
+  For each file generated, include appropriate comments explaining
+  the purpose. Ensure all tests pass out of the box.
+
+expected:
+  keywords:
+    - pyproject.toml
+    - worker.py
+    - store.py
+    - idempotency
+    - dead-letter
+    - SQLite
+    - Dockerfile
+  graders:
+    - type: keyword
+      weight: 0.3
+      config:
+        required:
+          - pyproject.toml
+          - worker.py
+          - store.py
+          - idempotency
+          - outbox
+          - dead-letter
+          - SQLite
+        forbidden: ["TODO", "placeholder"]
+    - type: structural
+      weight: 0.3
+      config:
+        required_sections:
+          - project structure
+          - configuration
+          - entry point
+          - testing
+          - containerization
+    - type: llm-judge
+      weight: 0.4
+      config:
+        criteria:
+          - completeness
+          - technical_accuracy
+          - clarity
+          - production_readiness
+          - best_practices
+
+timeout_seconds: 120
+tags:
+  - scaffold
+  - python
+  - worker
+  - project-structure

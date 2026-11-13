@@ -1,0 +1,95 @@
+# Canary: FastAPI Server-Rendered Web Scaffolding
+id: scf-017-python-web
+version: "1.0"
+phase: scaffold
+title: "FastAPI Server-Rendered Web Scaffolding"
+description: >
+  Tests the AI agent's ability to scaffold a server-rendered web
+  app with the harness python profile structure: FastAPI with
+  Jinja2 templates, the structural public/server configuration
+  split, a health endpoint, and page tests.
+
+prompt: |
+  You are a senior Python engineer. Scaffold a server-rendered
+  web application (an item catalog) with the following
+  specifications:
+
+  Project Requirements:
+  - Package manager: uv with pyproject.toml; FastAPI serves
+    Jinja2 server-rendered pages; the project lives in
+    `src/<Name>Web`
+  - Server-side rendering first; forms follow post/redirect/get
+  - The browser is untrusted: configuration is split structurally
+    into public (browser-safe) and server-only values
+
+  Expected Project Structure:
+  1. The app package: `app/main.py` (the app entry point),
+     `app/config.py` (configuration), `app/items.py` (the items
+     feature), templates in `app/templates` (base.html,
+     index.html) and static assets in `app/static`
+  2. Configuration split in config.py: a Public settings class
+     and a Server settings class as separate types — a server
+     secret cannot appear in rendered output by construction,
+     and a sentinel-secret test proves it
+  3. The items page (list + add form) rendered on the server;
+     the add form posts and redirects (303)
+  4. A /health endpoint returning a JSON status
+  5. A single-stage Dockerfile on the Azure Linux Python image
+     (uv sync --frozen), running as a non-root user
+  6. Tests: pytest page tests over the real app (the items page
+     renders, the add form round-trips through post/redirect/get),
+     the config boundary test, and accessibility-floor assertions
+     on the rendered markup
+  7. A GitHub Actions CI workflow: `uv sync --locked`, ruff
+     check + ruff format --check, pytest
+
+  For each file generated, include appropriate comments explaining
+  the purpose. Ensure all tests pass out of the box.
+
+expected:
+  keywords:
+    - FastAPI
+    - Jinja2
+    - pyproject.toml
+    - templates
+    - health
+    - pytest
+    - Dockerfile
+  graders:
+    - type: keyword
+      weight: 0.3
+      config:
+        required:
+          - FastAPI
+          - Jinja2
+          - pyproject.toml
+          - health
+          - configuration
+          - pytest
+          - Dockerfile
+        forbidden: ["TODO", "placeholder"]
+    - type: structural
+      weight: 0.3
+      config:
+        required_sections:
+          - project structure
+          - configuration
+          - entry point
+          - testing
+          - containerization
+    - type: llm-judge
+      weight: 0.4
+      config:
+        criteria:
+          - completeness
+          - technical_accuracy
+          - clarity
+          - production_readiness
+          - best_practices
+
+timeout_seconds: 120
+tags:
+  - scaffold
+  - python
+  - web
+  - project-structure

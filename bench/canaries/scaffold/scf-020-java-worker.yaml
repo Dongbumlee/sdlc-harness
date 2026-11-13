@@ -1,0 +1,100 @@
+# Canary: Java Worker Scaffolding
+id: scf-020-java-worker
+version: "1.0"
+phase: scaffold
+title: "Java Worker Scaffolding"
+description: >
+  Tests the AI agent's ability to scaffold a background worker
+  with the harness java profile structure: plain Java with an
+  embedded SQLite store, built for correctness under redelivery
+  — idempotency, a transactional outbox, classified retries, and
+  a dead-letter queue with replay.
+
+prompt: |
+  You are a senior Java engineer. Scaffold a background worker
+  service (an invoice-import worker) with the following
+  specifications:
+
+  Project Requirements:
+  - Plain Java 21 with Maven (./mvnw) — no framework; the
+    project lives in `src/<Name>Worker`
+  - Delivery is at-least-once: the worker must stay correct when
+    the same job is delivered twice
+  - The job store is embedded SQLite via sqlite-jdbc, claimed
+    with a lease
+
+  Expected Project Structure:
+  1. pom.xml with sqlite-jdbc and JUnit 5
+  2. The worker classes in the project's package: Main (entry
+     point), Worker (poll, claim, dispatch), JobStore (the
+     SQLite store), Handlers (job handlers)
+  3. Idempotency: every job carries an idempotency key with a
+     UNIQUE constraint, applied in the same transaction as the
+     job's effect
+  4. A transactional outbox: outbound effects are written in the
+     same transaction as the state change and published after
+  5. Failure handling: permanent failures go straight to the
+     dead-letter state; transient failures retry with exponential
+     backoff and full jitter (base 1s, cap 60s, max 5 attempts);
+     the dead-letter queue has an alarm and a replay path from
+     day one
+  6. A sample job (slugify) demonstrating the handler shape
+  7. A multi-stage Dockerfile (Maven build stage, Temurin JRE
+     runtime, non-root user)
+  8. Tests: the worker contract test — the defining tests
+     include redelivery idempotency, lease expiry reclaim,
+     backoff classification, and dead-letter replay, run against
+     a fake clock where time matters
+  9. A GitHub Actions CI workflow that builds and tests with
+     ./mvnw
+
+  For each file generated, include appropriate comments explaining
+  the purpose. Ensure `./mvnw verify` passes out of the box.
+
+expected:
+  keywords:
+    - pom.xml
+    - mvnw
+    - JobStore
+    - idempotency
+    - dead-letter
+    - SQLite
+    - Dockerfile
+  graders:
+    - type: keyword
+      weight: 0.3
+      config:
+        required:
+          - pom.xml
+          - mvnw
+          - JobStore
+          - idempotency
+          - outbox
+          - dead-letter
+          - SQLite
+        forbidden: ["TODO", "placeholder"]
+    - type: structural
+      weight: 0.3
+      config:
+        required_sections:
+          - project structure
+          - configuration
+          - entry point
+          - testing
+          - containerization
+    - type: llm-judge
+      weight: 0.4
+      config:
+        criteria:
+          - completeness
+          - technical_accuracy
+          - clarity
+          - production_readiness
+          - best_practices
+
+timeout_seconds: 120
+tags:
+  - scaffold
+  - java
+  - worker
+  - project-structure
