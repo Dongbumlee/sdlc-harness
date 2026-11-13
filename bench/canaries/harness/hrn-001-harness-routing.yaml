@@ -1,6 +1,6 @@
 # Canary: Harness Request Routing
 id: hrn-001-harness-routing
-version: "1.0"
+version: "1.1"
 phase: harness
 title: "Harness Request Routing"
 description: >
@@ -71,9 +71,9 @@ expected:
         criteria:
           - completeness
           - technical_accuracy
-          - severity_assessment
-          - remediation_quality
-          - actionability
+          - routing_correctness
+          - justification_quality
+          - sequencing_accuracy
 
 timeout_seconds: 120
 tags:
