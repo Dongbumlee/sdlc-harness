@@ -1,0 +1,87 @@
+# Canary: Python Library Scaffolding
+id: scf-014-python-library
+version: "1.0"
+phase: scaffold
+title: "Python Library Scaffolding"
+description: >
+  Tests the AI agent's ability to scaffold a publishable Python
+  library with the harness python profile structure: an explicit
+  __all__ public surface, black-box tests, a runnable quickstart,
+  and package hygiene (no committed lock file).
+
+prompt: |
+  You are a senior Python engineer. Scaffold a publishable Python
+  library for text manipulation utilities ("textkit") with the
+  following specifications:
+
+  Project Requirements:
+  - Package manager: uv with pyproject.toml; src layout
+  - The library's public surface is explicit and machine-checked
+  - Dependency versions are ranges in pyproject.toml; the
+    library does not commit a lock file for consumers to inherit
+
+  Expected Project Structure:
+  1. pyproject.toml with the project metadata and ruff as the
+     single formatter/linter (one tool, one line length)
+  2. src layout: `src/<package>/__init__.py` defines the public
+     surface through `__all__` (a sample core module: slugify,
+     truncate), with a py.typed marker for typed consumers
+  3. Tests: pytest behavior tests plus a public-API test that
+     fails when the compiled surface and `__all__` drift
+     (tests import from the package top level only — black-box)
+  4. An examples folder with a runnable quickstart.py that uses
+     the library the way an external consumer would
+  5. No Dockerfile — a library is consumed as a package, never
+     deployed as a container
+  6. A GitHub Actions CI workflow: `uv sync --locked`, ruff
+     check + ruff format --check, pytest with coverage; a
+     release workflow builds and publishes on tag
+
+  For each file generated, include appropriate comments explaining
+  the purpose. Ensure all tests pass and the code is properly
+  formatted out of the box.
+
+expected:
+  keywords:
+    - pyproject.toml
+    - __all__
+    - uv sync
+    - pytest
+    - ruff
+    - public surface
+  graders:
+    - type: keyword
+      weight: 0.3
+      config:
+        required:
+          - pyproject.toml
+          - __all__
+          - uv sync
+          - pytest
+          - ruff
+          - black-box
+        forbidden: ["TODO", "placeholder"]
+    - type: structural
+      weight: 0.3
+      config:
+        required_sections:
+          - project structure
+          - public surface
+          - testing
+          - packaging
+    - type: llm-judge
+      weight: 0.4
+      config:
+        criteria:
+          - completeness
+          - technical_accuracy
+          - clarity
+          - production_readiness
+          - best_practices
+
+timeout_seconds: 120
+tags:
+  - scaffold
+  - python
+  - library
+  - project-structure

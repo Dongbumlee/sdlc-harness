@@ -1,0 +1,101 @@
+# Canary: Microservices System Composition Scaffolding
+id: scf-030-system-microservices
+version: "1.0"
+phase: scaffold
+title: "Microservices System Composition Scaffolding"
+description: >
+  Tests the AI agent's ability to scaffold a multi-service
+  system with the harness system profile: system.json as the
+  source of truth, services composed from the per-stack
+  templates, one pact per declared boundary, CI defined once,
+  and a system end-to-end check.
+
+prompt: |
+  You are a senior systems engineer. Scaffold a two-service
+  system (an items service and a catalog service that reads
+  items through it) with the following specifications:
+
+  Project Requirements:
+  - One stack-agnostic system composition over per-stack service
+    templates — each service is an ordinary harness api project
+    of its stack
+  - system.json is the source of truth for the system map: every
+    service (name, kind, port, health path, owned datastore) and
+    every boundary (consumer, provider, pact) is declared there
+    and nowhere else
+  - A database per service: no service connects to another
+    service's datastore, ever
+
+  Expected Project Structure:
+  1. system.json declaring the two services and the one boundary
+     between them (catalog-api consumes items-api)
+  2. services/ holding each service's project, instantiated from
+     the matching per-stack api template with its own store,
+     its own /health endpoint, and its own tests
+  3. contracts/: one pact file per boundary declared in
+     system.json, plus CONTRACTS.md stating the boundary rules —
+     the consumer's CI publishes its pact, the provider verifies
+     against it, and can-i-deploy gates promotion; contract
+     changes are additive-only and N-1 compatible
+  4. CI defined once: a reusable service workflow
+     (service-ci.yml) parameterized per service, a top-level
+     ci.yml that calls it for every service, and a system-e2e
+     workflow — no per-service copies of the pipeline
+  5. A system end-to-end checker (tools/system-e2e) that composes
+     the system (docker-compose.yaml) and fails when a boundary
+     declared in system.json has no pact, when a service's
+     health path disagrees with the map, or when a consumer
+     reaches a provider's datastore instead of its API
+  6. docs/system-map.md: the human-readable system map, generated
+     from system.json (regenerated, never hand-edited)
+
+  For each file generated, include appropriate comments explaining
+  the purpose. Ensure the system e2e check and each service's own
+  tests pass out of the box.
+
+expected:
+  keywords:
+    - system.json
+    - pact
+    - boundary
+    - services
+    - can-i-deploy
+    - docker-compose
+  graders:
+    - type: keyword
+      weight: 0.3
+      config:
+        required:
+          - system.json
+          - pact
+          - boundary
+          - consumer
+          - provider
+          - can-i-deploy
+          - database per service
+        forbidden: ["TODO", "placeholder"]
+    - type: structural
+      weight: 0.3
+      config:
+        required_sections:
+          - system map
+          - services
+          - contracts
+          - ci
+          - end-to-end
+    - type: llm-judge
+      weight: 0.4
+      config:
+        criteria:
+          - completeness
+          - technical_accuracy
+          - clarity
+          - production_readiness
+          - best_practices
+
+timeout_seconds: 120
+tags:
+  - scaffold
+  - system
+  - microservices
+  - project-structure

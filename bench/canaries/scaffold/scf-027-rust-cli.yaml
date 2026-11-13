@@ -1,0 +1,94 @@
+# Canary: Rust CLI Scaffolding
+id: scf-027-rust-cli
+version: "1.0"
+phase: scaffold
+title: "Rust CLI Scaffolding"
+description: >
+  Tests the AI agent's ability to scaffold a command-line tool
+  with the harness rust profile structure: clap as the parser,
+  the noun-verb command shape, the stdout/stderr and exit-code
+  contract, golden-file tests, and cargo-dist distribution.
+
+prompt: |
+  You are a senior Rust engineer. Scaffold a command-line tool
+  ("textkit": text utilities such as slugify and truncate) with
+  the following specifications:
+
+  Project Requirements:
+  - Cargo; clap (derive) as the argument parser, with
+    clap_complete for shell completions and clap_mangen for man
+    pages; the crate lives in `src/<Name>CLI`
+  - The interface is the contract: commands follow
+    `tool <noun> <verb>`, data goes to stdout and diagnostics to
+    stderr, and exit codes are a documented map (0 success,
+    1 runtime failure, 2 usage error)
+
+  Expected Project Structure:
+  1. Cargo.toml with clap and serde_json; a library/binary split:
+     src/lib.rs holds the logic (textkit.rs), src/main.rs is the
+     thin entry, src/cli.rs defines the clap command tree,
+     src/output.rs handles plain/JSON formatting
+  2. Shell completions and man pages generated from the command
+     tree (clap_complete / clap_mangen)
+  3. A `--format plain|json` option on data commands; secrets
+     come from the environment, never from command-line flags
+  4. Tests: golden-file tests for help text and command output
+     (plain and JSON), plus exit-code contract tests for the
+     success, runtime-failure, and usage-error paths
+  5. Distribution: cargo-dist (dist-workspace.toml) builds the
+     release artefacts on tag — the same tag-driven shape as the
+     other stacks
+  6. No Dockerfile — a CLI ships as binaries, not a container
+  7. A GitHub Actions CI workflow that runs cargo build,
+     cargo test, clippy with warnings denied, and a rustfmt check
+
+  For each file generated, include appropriate comments explaining
+  the purpose. Ensure `cargo test` passes out of the box.
+
+expected:
+  keywords:
+    - Cargo.toml
+    - clap
+    - golden
+    - exit code
+    - stdout
+    - cargo test
+    - cargo-dist
+  graders:
+    - type: keyword
+      weight: 0.3
+      config:
+        required:
+          - Cargo.toml
+          - clap
+          - golden
+          - exit code
+          - stdout
+          - stderr
+          - cargo test
+        forbidden: ["TODO", "placeholder"]
+    - type: structural
+      weight: 0.3
+      config:
+        required_sections:
+          - project structure
+          - commands
+          - configuration
+          - testing
+          - distribution
+    - type: llm-judge
+      weight: 0.4
+      config:
+        criteria:
+          - completeness
+          - technical_accuracy
+          - clarity
+          - production_readiness
+          - best_practices
+
+timeout_seconds: 120
+tags:
+  - scaffold
+  - rust
+  - cli
+  - project-structure

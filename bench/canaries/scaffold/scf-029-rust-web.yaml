@@ -1,0 +1,99 @@
+# Canary: Rust Axum Web Scaffolding
+id: scf-029-rust-web
+version: "1.0"
+phase: scaffold
+title: "Rust Axum Web Scaffolding"
+description: >
+  Tests the AI agent's ability to scaffold a server-rendered web
+  app with the harness rust profile structure: axum with
+  MiniJinja templates, the structural public/server
+  configuration split, a health endpoint, and page tests.
+
+prompt: |
+  You are a senior Rust engineer. Scaffold a server-rendered web
+  application (an item catalog) with the following specifications:
+
+  Project Requirements:
+  - Cargo; axum as the web framework with MiniJinja
+    server-rendered templates on tokio; the crate lives in
+    `src/<Name>Web`
+  - Server-side rendering first; forms follow post/redirect/get
+  - The browser is untrusted: configuration is split structurally
+    into public (browser-safe) and server-only values
+
+  Expected Project Structure:
+  1. Cargo.toml with axum, minijinja, serde, tokio; the crate
+     split by role: src/main.rs (entry point), src/web.rs
+     (routes and handlers), src/items.rs (the items feature),
+     src/config.rs (configuration), src/lib.rs exposing the
+     modules to tests
+  2. Templates at the crate root (templates/base.html,
+     templates/index.html) and the stylesheet served as a static
+     asset
+  3. Configuration split in config.rs: public values and
+     server-only secrets as separate types — a server secret
+     cannot reach a template by construction, and a
+     sentinel-secret test proves it
+  4. The items page (list + add form) rendered on the server;
+     the add form posts and redirects (303); a /health endpoint
+     returning a JSON status
+  5. A multi-stage Dockerfile (Rust build stage, slim runtime,
+     non-root user)
+  6. Tests: page tests over the real router (tests/web_test.rs —
+     the items page renders, the add form round-trips through
+     post/redirect/get), the config boundary test, and
+     accessibility-floor assertions on the rendered markup
+  7. A GitHub Actions CI workflow that runs cargo build,
+     cargo test, clippy with warnings denied, and a rustfmt check
+
+  For each file generated, include appropriate comments explaining
+  the purpose. Ensure `cargo test` passes out of the box.
+
+expected:
+  keywords:
+    - Cargo.toml
+    - axum
+    - MiniJinja
+    - templates
+    - health
+    - cargo test
+    - Dockerfile
+  graders:
+    - type: keyword
+      weight: 0.3
+      config:
+        required:
+          - Cargo.toml
+          - axum
+          - MiniJinja
+          - health
+          - configuration
+          - cargo test
+          - Dockerfile
+        forbidden: ["TODO", "placeholder"]
+    - type: structural
+      weight: 0.3
+      config:
+        required_sections:
+          - project structure
+          - configuration
+          - entry point
+          - testing
+          - containerization
+    - type: llm-judge
+      weight: 0.4
+      config:
+        criteria:
+          - completeness
+          - technical_accuracy
+          - clarity
+          - production_readiness
+          - best_practices
+
+timeout_seconds: 120
+tags:
+  - scaffold
+  - rust
+  - web
+  - axum
+  - project-structure

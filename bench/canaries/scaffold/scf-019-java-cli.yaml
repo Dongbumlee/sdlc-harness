@@ -1,0 +1,94 @@
+# Canary: Java CLI Scaffolding
+id: scf-019-java-cli
+version: "1.0"
+phase: scaffold
+title: "Java CLI Scaffolding"
+description: >
+  Tests the AI agent's ability to scaffold a command-line tool
+  with the harness java profile structure: picocli as the parser,
+  the noun-verb command shape, the stdout/stderr and exit-code
+  contract, and golden-file tests.
+
+prompt: |
+  You are a senior Java engineer. Scaffold a command-line tool
+  ("textkit": text utilities such as slugify and truncate) with
+  the following specifications:
+
+  Project Requirements:
+  - Java 21 with Maven (./mvnw); picocli as the argument parser;
+    the project lives in `src/<Name>CLI`
+  - The interface is the contract: commands follow
+    `tool <noun> <verb>`, data goes to stdout and diagnostics to
+    stderr, and exit codes are a documented map (0 success,
+    1 runtime failure, 2 usage error — picocli's own usage-error
+    code is mapped onto it, not leaked)
+
+  Expected Project Structure:
+  1. pom.xml with picocli and JUnit 5; the shade/assembly build
+     produces one runnable jar
+  2. A cli package: the picocli command tree (root command plus
+     noun-verb subcommands) and the application entry class that
+     executes it and returns the mapped exit code; the logic
+     lives outside the command classes
+  3. A `--format plain|json` option on data commands; secrets
+     come from the environment, never from command-line flags
+  4. Tests: JUnit golden-file tests for help text and command
+     output (plain and JSON), plus exit-code contract tests for
+     the success, runtime-failure, and usage-error paths
+  5. Distribution: the runnable jar publishes on tag via the
+     release workflow (with a native-image path where the stack
+     declares one), in the same artefact shape as the other
+     stacks
+  6. No Dockerfile — a CLI ships as an artefact, not a container
+  7. A GitHub Actions CI workflow that builds and tests with
+     ./mvnw
+
+  For each file generated, include appropriate comments explaining
+  the purpose. Ensure `./mvnw verify` passes out of the box.
+
+expected:
+  keywords:
+    - picocli
+    - pom.xml
+    - mvnw
+    - golden
+    - exit code
+    - stdout
+  graders:
+    - type: keyword
+      weight: 0.3
+      config:
+        required:
+          - picocli
+          - pom.xml
+          - mvnw
+          - golden
+          - exit code
+          - stdout
+          - stderr
+        forbidden: ["TODO", "placeholder"]
+    - type: structural
+      weight: 0.3
+      config:
+        required_sections:
+          - project structure
+          - commands
+          - configuration
+          - testing
+          - distribution
+    - type: llm-judge
+      weight: 0.4
+      config:
+        criteria:
+          - completeness
+          - technical_accuracy
+          - clarity
+          - production_readiness
+          - best_practices
+
+timeout_seconds: 120
+tags:
+  - scaffold
+  - java
+  - cli
+  - project-structure

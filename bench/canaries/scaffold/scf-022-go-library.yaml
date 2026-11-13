@@ -1,0 +1,83 @@
+# Canary: Go Library Scaffolding
+id: scf-022-go-library
+version: "1.0"
+phase: scaffold
+title: "Go Library Scaffolding"
+description: >
+  Tests the AI agent's ability to scaffold a publishable Go
+  library with the harness go profile structure: a single public
+  package as the surface, example tests that double as
+  documentation, black-box tests, and golangci-lint hygiene.
+
+prompt: |
+  You are a senior Go engineer. Scaffold a publishable Go library
+  for text manipulation utilities ("textkit") with the following
+  specifications:
+
+  Project Requirements:
+  - Go modules; the library project lives in `src/<Name>Lib` with
+    its public package under it
+  - The public surface is the package's exported API — nothing
+    else is reachable (internal code stays under internal/)
+  - golangci-lint (.golangci.yml) is the pinned lint gate
+
+  Expected Project Structure:
+  1. go.mod declaring the module and Go version
+  2. One public package (`textkit`) holding the sample API
+     (Slugify, Truncate) with doc comments on every exported
+     symbol — the package documentation is the API documentation
+  3. Tests: black-box tests in the external test package
+     (textkit_test) plus example tests (Example functions) whose
+     output is verified by `go test` and rendered as
+     documentation
+  4. No Dockerfile — a library is consumed as a module, never
+     deployed as a container
+  5. A GitHub Actions CI workflow that runs go vet, golangci-lint,
+     and `go test ./...`; a release workflow tags module versions
+
+  For each file generated, include appropriate comments explaining
+  the purpose. Ensure `go test ./...` passes out of the box.
+
+expected:
+  keywords:
+    - go.mod
+    - go test
+    - golangci-lint
+    - example
+    - exported
+  graders:
+    - type: keyword
+      weight: 0.3
+      config:
+        required:
+          - go.mod
+          - go test
+          - golangci-lint
+          - example tests
+          - black-box
+          - doc comments
+        forbidden: ["TODO", "placeholder"]
+    - type: structural
+      weight: 0.3
+      config:
+        required_sections:
+          - project structure
+          - public surface
+          - testing
+          - packaging
+    - type: llm-judge
+      weight: 0.4
+      config:
+        criteria:
+          - completeness
+          - technical_accuracy
+          - clarity
+          - production_readiness
+          - best_practices
+
+timeout_seconds: 120
+tags:
+  - scaffold
+  - go
+  - library
+  - project-structure

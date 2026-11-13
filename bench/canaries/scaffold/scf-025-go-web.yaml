@@ -1,0 +1,92 @@
+# Canary: Go Server-Rendered Web Scaffolding
+id: scf-025-go-web
+version: "1.0"
+phase: scaffold
+title: "Go Server-Rendered Web Scaffolding"
+description: >
+  Tests the AI agent's ability to scaffold a server-rendered web
+  app with the harness go profile structure: net/http with
+  html/template, the structural public/server configuration
+  split, a health endpoint, and page tests.
+
+prompt: |
+  You are a senior Go engineer. Scaffold a server-rendered web
+  application (an item catalog) with the following specifications:
+
+  Project Requirements:
+  - Go modules, standard net/http with html/template rendering;
+    the project lives in `src/<Name>Web` with the entry point
+    under cmd/<project-name>
+  - Server-side rendering first; forms follow post/redirect/get
+  - The browser is untrusted: configuration is split structurally
+    into public (browser-safe) and server-only values
+
+  Expected Project Structure:
+  1. go.mod; internal packages by role: internal/config (the
+     configuration split), internal/items (the items feature),
+     internal/web (handlers, templates in internal/web/templates,
+     static assets in internal/web/static)
+  2. Configuration split in internal/config: public values and
+     server-only secrets as separate types — a server secret
+     cannot reach a template by construction, and a
+     sentinel-secret test proves it
+  3. The items page (list + add form) rendered on the server;
+     the add form posts and redirects (303)
+  4. A /health endpoint returning a JSON status
+  5. A multi-stage Dockerfile (Go build stage, distroless
+     nonroot runtime)
+  6. Tests: page tests over the real handlers (the items page
+     renders, the add form round-trips through post/redirect/get),
+     the config boundary test, and accessibility-floor assertions
+     on the rendered markup
+  7. A GitHub Actions CI workflow that runs go vet, golangci-lint,
+     and `go test ./...`
+
+  For each file generated, include appropriate comments explaining
+  the purpose. Ensure `go test ./...` passes out of the box.
+
+expected:
+  keywords:
+    - go.mod
+    - html/template
+    - health
+    - configuration
+    - go test
+    - Dockerfile
+  graders:
+    - type: keyword
+      weight: 0.3
+      config:
+        required:
+          - go.mod
+          - html/template
+          - health
+          - configuration
+          - go test
+          - Dockerfile
+        forbidden: ["TODO", "placeholder"]
+    - type: structural
+      weight: 0.3
+      config:
+        required_sections:
+          - project structure
+          - configuration
+          - entry point
+          - testing
+          - containerization
+    - type: llm-judge
+      weight: 0.4
+      config:
+        criteria:
+          - completeness
+          - technical_accuracy
+          - clarity
+          - production_readiness
+          - best_practices
+
+timeout_seconds: 120
+tags:
+  - scaffold
+  - go
+  - web
+  - project-structure
