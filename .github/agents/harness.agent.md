@@ -641,7 +641,9 @@ Small-grade combined delegation): the frame it fixes — type, stack,
 sensitivity, derived patterns — is the boundary of discovery. If
 discovery surfaces evidence the frame itself is wrong, the Analyst
 reports it and you route it through the change path (below); the frame
-is never renegotiated inside a Phase 1 delegation.
+is never renegotiated inside a Phase 1 delegation. A challenge that
+does not move the frame is recorded in the phase's ledger row Notes,
+with its basis and the user's decision.
 
 **For existing projects:** If `.SDLC/project-manifest.md` or `docs/requirements/` already
 exists, this is a feature request on an existing project — NOT a greenfield build.
@@ -915,7 +917,9 @@ found. Every accepted change travels one path:
 
 1. **Classify on arrival.** *Within-frame* — the frame still prices
    it: the change flows through the REQ machinery (REQ updated or
-   added) and the grade inputs are re-checked. *Frame-moving* — type,
+   added) and the grade inputs are re-checked. Record the change as a
+   dated delta entry in the brief — no frame revision; the frame did
+   not move. *Frame-moving* — type,
    stack, sensitivity, or the capability boundary moves: the change
    routes to you for a short re-intake over the affected fields only;
    append a dated **frame revision** to the brief (re-derived
