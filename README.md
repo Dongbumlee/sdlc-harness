@@ -69,7 +69,7 @@ Install once — get all 21 agents, 24 skills, and the full SDLC workflow instan
 > | Setting | Value | Why |
 > |---------|-------|-----|
 > | `chat.agent.defaultApproval` | `autopilot` | Without this, every tool call requires manual approval. |
-> | `github.copilot.chat.virtualTools.threshold` | `0` | Harness uses 7 MCP servers (~150+ tools). The default limit hides tools. |
+> | `github.copilot.chat.virtualTools.threshold` | `0` | Harness uses 3 core MCP servers, plus the vendor servers in your cloud pack. The default limit hides tools. |
 
 Open your project and bootstrap:
 
