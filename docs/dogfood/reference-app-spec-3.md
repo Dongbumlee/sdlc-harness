@@ -1,6 +1,6 @@
 # AI Brief — Dogfood Reference App Spec 3
 
-**Status:** draft (2026-10-04) — awaiting Dongbum's approval
+**Status:** draft (2026-10-04) — awaiting Dongbum's approval  
 **Purpose:** the third fixed-spec reference app. Scenarios 1–2 validated async
 jobs, scheduling, sync API, and cache — all with stubbed logic. This spec
 validates what none of them touched: **a real LLM in the loop**

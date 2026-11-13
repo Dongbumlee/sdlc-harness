@@ -1,6 +1,6 @@
 # Deep Research API — Dogfood Reference App Spec
 
-**Status:** draft (2026-09-29)
+**Status:** draft (2026-09-29)  
 **Purpose:** the fixed-spec reference app used to validate cloud packs end to end.
 The same spec is built once per cloud (Azure, AWS, GCP) using that cloud's pack;
 the three builds are compared to find pack gaps.

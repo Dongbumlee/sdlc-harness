@@ -1,7 +1,7 @@
 # Design Document: [Feature / Component Name]
 
-> **SDLC Phase:** 2 (Design)
-> **Date:** YYYY-MM-DD
+> **SDLC Phase:** 2 (Design)  
+> **Date:** YYYY-MM-DD  
 > **Author:** [Name or @Harness → Analyst agent]
 
 ---

@@ -1,8 +1,8 @@
 # ADR-0001: Pack Separation — Hybrid Model
 
-> **Status:** Accepted (implemented — the pack layout described here is the shipped repository structure)
-> **SDLC Phase:** 1-2 (Requirements & Design)
-> **Date:** 2026-09-29
+> **Status:** Accepted (implemented — the pack layout described here is the shipped repository structure)  
+> **SDLC Phase:** 1-2 (Requirements & Design)  
+> **Date:** 2026-09-29  
 > **Author:** Dongbum(DB) Lee
 
 ---

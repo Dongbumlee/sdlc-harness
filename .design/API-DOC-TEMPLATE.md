@@ -1,7 +1,7 @@
 # API Documentation: [Service Name]
 
-> **Base URL:** `/api/v1`
-> **Authentication:** Bearer token from the project's identity provider (e.g., Entra ID, Cognito, Google Identity Platform)
+> **Base URL:** `/api/v1`  
+> **Authentication:** Bearer token from the project's identity provider (e.g., Entra ID, Cognito, Google Identity Platform)  
 > **Date:** YYYY-MM-DD
 
 ---

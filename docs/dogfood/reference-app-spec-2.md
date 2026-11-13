@@ -1,6 +1,6 @@
 # Pulse API — Dogfood Reference App Spec 2
 
-**Status:** approved by Dongbum (2026-10-03) — Pulse deployment cycle completed 2026-10-04, all 3 clouds PASS
+**Status:** approved by Dongbum (2026-10-03) — Pulse deployment cycle completed 2026-10-04, all 3 clouds PASS  
 **Purpose:** the second fixed-spec reference app for pack validation. Scenario 1
 (Deep Research API, `reference-app-spec.md`) validated the async-job paved road
 (API + worker + queue + NoSQL + object storage). This spec validates what
