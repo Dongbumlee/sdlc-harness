@@ -175,6 +175,13 @@ Apply each grader in `expected.graders` and compute a weighted score.
 #### Keyword grader (`type: keyword`)
 
 Check the response text (case-insensitive) against `config.required` and `config.forbidden`.
+Normalize before matching: casefold the response text and each term, replace
+hyphens with spaces, and collapse runs of whitespace to a single space; apply
+the whole-word rule to the normalized text and terms. Normalization equates
+typographic variants of the same pinned term only (`exit-code` matches
+`exit code`); it never equates synonyms or paraphrases — a term the response
+expresses in different words is a miss, and choosing required terms a correct
+response cannot avoid remains spec-authoring discipline.
 Matching is whole-word (word-boundary): a term matches only when it appears as a
 complete word or phrase, not as a substring of a longer word (e.g. forbidden
 `placeholder` must not match `placeholders`; required `NO-GO` counts as its own
