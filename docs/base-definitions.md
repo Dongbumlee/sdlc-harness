@@ -425,7 +425,10 @@ domain pulls that domain into the round.
 - The failure ledger (`.SDLC/failure-ledger.md`) is created by the
   Harness at intake, beside the manifest skeleton (PR #54).
 - Line format: `date | phase | agent | kind | signature`, where kind ∈
-  `tool-failure | rework | claim-contradiction | no-progress`.
+  `tool-failure | rework | claim-contradiction | no-progress |
+  delegation`. The Harness appends one `delegation` line per
+  delegation it issues, signed with the delegation signature
+  (`<agent> — <work-item key>`).
 - Two writers: worker briefs instruct workers to append their own
   failure/rework lines before continuing; the QA Coordinator and the
   Harness append events they observe. At every phase transition the
@@ -433,11 +436,16 @@ domain pulls that domain into the round.
   failures from worker results, append any line a worker missed, count
   per signature since the last review, and append the phase's
   `TRANSITION COUNT` line — including when the counts are zero.
-- Triggers (unchanged from PR #33): **T1** the same failure signature
-  reaches its 3rd line; **T2** the same rework reason-class reaches its
-  2nd line; **T3** a claim contradicted by disk; **T4** no progress.
-  When a trigger fires, the pit-stop review runs before the next phase
-  is delegated; the spent signature is marked
+- Triggers: **T1** the same failure signature reaches its 3rd line;
+  **T2** the same rework reason-class reaches its 2nd line; **T3** a
+  claim contradicted by disk; **T4** no progress (T1–T4 unchanged from
+  PR #33); **T5** a delegation signature would be issued a 3rd time —
+  the first repeat may be issued only with a redirect recorded in the
+  brief and the delegation line, and the second repeat is not issued
+  at all: T5 fires the review first, the signature is spent, and the
+  work item proceeds only re-scoped, split, or escalated to the user
+  with the evidence. When a trigger fires, the pit-stop review runs
+  before the next phase is delegated; the spent signature is marked
   `REVIEW <n> — <signature> spent`. At most 3 reviews per run.
 - Ledger discipline: a phase row is not Complete without its transition
   count line (§2.2). Counting is a checked transition step, not an
@@ -467,7 +475,7 @@ domain pulls that domain into the round.
 
 | Record | Creator | Writers | Verifier / consumer |
 |---|---|---|---|
-| Failure ledger (`.SDLC/failure-ledger.md`) | Harness at intake | Workers (own events), QA Coordinator, Harness (transition counts) | Transition procedure (§7); read on resume |
+| Failure ledger (`.SDLC/failure-ledger.md`) | Harness at intake | Workers (own events), QA Coordinator, Harness (delegation lines, transition counts) | Transition procedure (§7); read on resume |
 | Run guidance (`.SDLC/run-guidance.md`) | Pit-stop review | Pit-stop review only | Read on resume; included in later delegations; run-scoped — never overrides shipped rules, promotion is offline via PR only |
 | Reference catalog (`.github/reference-catalog.md`) | Workspace-init (empty template, 5 fixed sections) | Analyst populates in Phases 1–2; any agent may **append** after approval | Harness review checkpoint (§10.1); append-only after approval (or auto-approval); entries carry `Source: [agent] (Phase [N])` |
 | Design brief (`.SDLC/design-brief.md`) | Harness, in the Step 0.75 design conversation | Harness only — amendments are appended, dated frame revisions, never silent rewrites | The intake completeness gate (Class 1, §5) before the Phase 1A delegation: the minimum set (fields 1–5) is `confirmed` and every other field carries an explicit status. Consumers: workspace-init (project name, domain, stack), the Analyst (1A/1B work inside the frame), the provisional Task Grade (fields 5 and 7 are its inputs), the Scaffolder (Phase 3 template selection must match the brief's type and stack; a mismatch is a gate finding) |

@@ -517,8 +517,14 @@ is the Medium ceremony; the recorded grade scales it:
   (created by you at intake — GitHub intake, step 4),
   one line per event —
   `<date> | <phase> | <agent> | <kind: tool-failure | rework |
-  claim-contradiction | no-progress> | <signature: step + error
-  class>`. Two writers keep it complete:
+  claim-contradiction | no-progress | delegation> | <signature>`.
+  For failure kinds the signature is `step + error class`; for a
+  delegation line it is the **delegation signature** — `<agent> —
+  <work-item key>`, the brief's target and action in a few words
+  (e.g. `Implementer — implement REQ-014 token refresh`). You write
+  the signature when you delegate, so a later delegation matches it
+  exactly or it is a different delegation. Two writers keep it
+  complete:
   - **Every delegation brief instructs the worker:** if a tool call
     fails, or the work you are handed is a rework of your own
     earlier output, append the event line to the failure ledger
@@ -526,8 +532,10 @@ is the Medium ceremony; the recorded grade scales it:
     regardless.
   - **You append** the events you observe yourself: every rework
     routing you make (T2), every claim a disk check contradicts
-    (T3), every no-progress interval (T4), and every failure a
-    worker's result reports that the worker did not record.
+    (T3), every no-progress interval (T4), every failure a
+    worker's result reports that the worker did not record — and
+    one `delegation` line for every delegation you issue, written
+    when you issue it (the T5 evidence, below).
   **Counting rule.** The count is a named step of every phase
   transition, performed by you before the phase's ledger row is set
   to Complete — and the phase's exit gate verifies it happened (see
@@ -540,10 +548,14 @@ is the Medium ceremony; the recorded grade scales it:
   2. Count signature lines since the last review (or run start):
      T1 fires at a signature's 3rd line, T2 at a reason class's 2nd
      rework line. If a trigger fires, run the review (below) before
-     delegating the next phase.
+     delegating the next phase. Delegation lines are counted per
+     signature for T5 — and the T5 comparison also runs before
+     every delegation, not only at transitions (see the
+     delegation-repeat rule below).
   3. Append the count itself as one line:
      `<date> | TRANSITION COUNT | phase <n> closed | T1 max:
-     <signature>=<k> | T2 max: <reason class>=<k> | reviews so
+     <signature>=<k> | T2 max: <reason class>=<k> | T5 max:
+     <signature>=<k> | reviews so
      far: <r>`. A transition with no failures still appends the
      line, with counts 0 — the line is the evidence the count ran.
      When the run basis records a budget, the line also carries
@@ -567,6 +579,8 @@ is the Medium ceremony; the recorded grade scales it:
     reason class.
   - **T3** — a worker or ledger claim is contradicted by a disk check.
   - **T4** — the no-progress condition above fires.
+  - **T5** — a delegation signature would be issued a 3rd time
+    (the delegation-repeat rule, below).
   Guards: a review requires at least one completed delegation since the
   previous review; a trigger signature that already fired is spent and
   never fires twice — when a review fires on a signature, append a
@@ -575,6 +589,39 @@ is the Medium ceremony; the recorded grade scales it:
   **3 reviews per run**. (Scheduled reviews
   were tested and rejected: reviewing on a clock interrupts healthy runs
   and costs more than it saves — evidence, not time, opens a review.)
+  **Delegation-repeat rule (T5).** A run that is going wrong also
+  repeats its delegations: the same brief, to the same agent, for
+  the same work item, returning the same result. T1 counts failures
+  inside the work and T2 counts rework returns; neither sees a loop
+  whose individual delegations each return plausibly. So:
+  - Before issuing any delegation, compare its signature against
+    the run's delegation lines in the failure ledger.
+  - A **first repeat** (the signature has 1 line) may be issued
+    only with a **redirect**: the brief states what changed — new
+    input or evidence, a narrowed scope, a different approach, or
+    a different delegate — and the new delegation line records it
+    as a trailing `(redirect: <what changed>)` in the signature
+    field. (For counting, a delegation line's signature is its
+    signature field with that suffix removed — the field never
+    carries a `|`, so the five-field line format stays parseable.)
+    Re-issuing the brief unchanged is not a repeat; it is the loop
+    itself, and it is not issued.
+  - A **second repeat** (the signature has 2 lines) is not issued.
+    T5 fires first: stop and run the review on the delegation
+    evidence — the recorded lines and the results they returned.
+    The review marks the signature spent; afterwards the work item
+    leaves only re-scoped (a new signature), split, or presented
+    to the user with the evidence. It is never issued identically
+    again in this run.
+  (Origin: the delegation-level loop was the residual gap in the
+  2026-11 pit-stop analysis — T1/T2 count events inside work, not
+  the delegations themselves. The shape follows the loop guard
+  measured in Microsoft's TokenEconomizer: redirect once, then
+  escalate with the evidence. Its learned time baseline is
+  replaced here by exact signature counting, because delegations
+  are discrete and already recorded; its judge is this review.
+  The guard stops the next identical issuance — never work
+  already in flight.)
   Review procedure:
   1. Read the ledger, the artifacts on disk, and the failures and rework
      since the last review. Treat every worker claim as a hypothesis

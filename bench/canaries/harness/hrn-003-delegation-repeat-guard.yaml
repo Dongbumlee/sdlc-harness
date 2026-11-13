@@ -1,0 +1,98 @@
+# Canary: Delegation-Repeat Guard (T5)
+id: hrn-003-delegation-repeat-guard
+version: "1.0"
+phase: harness
+title: "Delegation-Repeat Guard"
+description: >
+  Tests the harness's delegation-repeat rule (pit-stop trigger T5):
+  given a failure ledger holding two delegation lines with the same
+  signature — the second carrying a redirect — the third identical
+  delegation must not be issued. T5 fires the pit-stop review first,
+  and the work item leaves only re-scoped, split, or escalated to
+  the user with the evidence.
+
+prompt: |
+  You are the harness orchestrator, mid-Phase 4. The failure ledger
+  for this run contains these delegation lines (kind: delegation):
+
+  ```
+  2026-11-13 | 4 | Implementer | delegation | Implementer — implement REQ-014 token refresh
+  2026-11-13 | 4 | Implementer | delegation | Implementer — implement REQ-014 token refresh (redirect: added the failing-test output and the IdP error contract to the brief)
+  ```
+
+  Both delegations returned with the token refresh still failing.
+  You are about to issue the same delegation a third time, with the
+  same brief as the second attempt. The harness pit-stop protocol
+  defines:
+
+  - T1 — the same failure signature (same step, same error class)
+    occurs a 3rd time
+  - T2 — work is sent back for rework a 2nd time for the same
+    reason class
+  - T5 — the delegation-repeat rule: before issuing any delegation,
+    compare its signature against the run's delegation lines in the
+    failure ledger. A first repeat (the signature has 1 line) may
+    be issued only with a redirect — the brief states what changed,
+    and the delegation line records it. A second repeat (the
+    signature has 2 lines) is not issued: T5 fires, the pit-stop
+    review runs on the delegation evidence, the signature is marked
+    spent, and the work item leaves only re-scoped (a new
+    signature), split, or presented to the user with the evidence.
+    It is never issued identically again in this run.
+
+  Question: what do you do next, and why? Note the trap: no single
+  failure signature has occurred three times and no rework return
+  has happened — T1 and T2 do not fire. The loop here is the
+  delegation itself.
+
+  Deliverables:
+  1. Whether the third delegation is issued, and the trigger
+     that decides it
+  2. The review you run and the evidence it reads
+  3. The ways the work item may still proceed after the review
+
+expected:
+  keywords:
+    - T5
+    - delegation
+    - pit-stop review
+    - redirect
+    - spent
+  graders:
+    - type: keyword
+      weight: 0.3
+      config:
+        required:
+          - T5
+          - delegation
+          - pit-stop review
+          - redirect
+          - spent
+          - signature
+        forbidden: ["TODO", "placeholder"]
+    - type: structural
+      weight: 0.3
+      config:
+        required_sections:
+          - T5
+          - not issued
+          - pit-stop review
+          - evidence
+          - user
+    - type: llm-judge
+      weight: 0.4
+      config:
+        criteria:
+          - completeness
+          - technical_accuracy
+          - severity_assessment
+          - remediation_quality
+          - actionability
+
+timeout_seconds: 120
+tags:
+  - harness
+  - pit-stop
+  - delegation
+  - loop-guard
+  - orchestration
