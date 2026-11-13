@@ -103,7 +103,7 @@ Include `Source: Scaffolder (Phase 3)` on your entries.
 
 0. **Verify GitHub MCP authentication (only when org templates are declared):**
    - If `.github/copilot-instructions.md` declares organization template repos,
-     perform a probe call: use `mcp_github_get_file_contents` to fetch `README.md`
+     perform a probe call: use the GitHub MCP server's file-contents tool to fetch `README.md`
      from the project's app template repo.
    - If the call **fails or returns an auth error**, WARN the user and fall back
      to the profile's **bundled default template** (`sdlc-stack-profiles`
@@ -122,7 +122,7 @@ Include `Source: Scaffolder (Phase 3)` on your entries.
 
 1. **Fetch the template structure from the resolved template source:**
    - Organization template repos (from copilot-instructions): use
-     `mcp_github_get_file_contents` to get the directory structure from the
+     the GitHub MCP server's file-contents tool to get the directory structure from the
      matching template repo for the project's stack.
      - Base app → `the project's app template (from copilot-instructions.md)`
      - FastAPI → `the project's API template (from copilot-instructions.md)`

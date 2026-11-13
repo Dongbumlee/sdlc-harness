@@ -45,10 +45,10 @@ argument-hint: "Describe the feature or change to review and release"
     from the `github/awesome-copilot` repository via the GitHub MCP server's
     file-contents tool or `fetch` (skip if unreachable)
     (when the change involves AI/data — prompt injection, bias, hallucination checks)
- 5. **Live SDK verification** — `mcp_github_get_file_contents` → fetch latest `README.md`
+ 5. **Live SDK verification** — the GitHub MCP server's file-contents tool → fetch latest `README.md`
     from `the project's Cosmos DB library repo (from copilot-instructions.md)` and `the Storage library repo`
     to verify code follows current API patterns
- 6. **Release automation** — Use **GitHub MCP** (`mcp_github_list_commits`) to gather
+ 6. **Release automation** — Use **GitHub MCP** (its commit-listing tool) to gather
     recent commit history for changelog generation
 
  ## Inputs from the user

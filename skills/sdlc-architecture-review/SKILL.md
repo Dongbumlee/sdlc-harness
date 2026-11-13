@@ -20,20 +20,18 @@ Load blueprint generation guidance from the awesome-copilot collection on
 GitHub, via the GitHub MCP server's file-contents tool:
 
 ```
-mcp_github_get_file_contents(
-  owner: "github",
-  repo: "awesome-copilot",
+GitHub MCP server — file-contents tool, called with:
+  owner: "github"
+  repo: "awesome-copilot"
   path: "skills/architecture-blueprint-generator/SKILL.md"
-)
 ```
 
 For cross-repo pattern consistency, search via GitHub MCP:
 
 ```
-mcp_github_search_code(
-  q: "RepositoryBase RootEntityBase org:the project's GitHub org",
+GitHub MCP server — code-search tool, called with:
+  q: "RepositoryBase RootEntityBase org:the project's GitHub org"
   per_page: 5
-)
 ```
 
 ## Step 2: Verify layering rules

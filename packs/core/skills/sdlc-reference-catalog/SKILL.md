@@ -71,8 +71,8 @@ Mark user-specified entries as `Source: user-provided`.
 When populating the catalog, research sources in this priority order:
 
 1. **User-specified libraries/templates** — ask the user: "Are there any specific libraries, templates, or frameworks you'd like me to include in the reference catalog?" Mark these as `Source: user-provided`.
-2. **GitHub MCP** — fetch patterns from org reference repos (when available). Use `mcp_github_get_file_contents` to read README files and example code from template repos referenced in `copilot-instructions.md`.
-3. **Context7 MCP** — load official documentation for the chosen tech stack. Use `mcp_context7_resolve-library-id` and `mcp_context7_get-library-docs` for framework docs.
+2. **GitHub MCP** — fetch patterns from org reference repos (when available). Use the GitHub MCP server's file-contents tool to read README files and example code from template repos referenced in `copilot-instructions.md`.
+3. **Context7 MCP** — load official documentation for the chosen tech stack. Use Context7's library-id resolution and library-docs tools for framework docs.
 4. **awesome-copilot collection (GitHub)** — discover best practice patterns. Search the `instructions/` directory of the `github/awesome-copilot` repository via GitHub MCP code search or fetch to find relevant instructions for the project's tech stack.
 5. **Web research** — community patterns, comparison articles, and ecosystem guidance for libraries not covered by the above sources.
 

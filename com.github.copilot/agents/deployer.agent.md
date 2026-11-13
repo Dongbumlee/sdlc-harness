@@ -39,7 +39,7 @@ Include `Source: Deployer (Phase 8)` on your entries.
 ## Before creating infrastructure
 
 0. **Verify GitHub MCP authentication (required):**
-   - Perform a probe call: use `mcp_github_get_file_contents` to fetch `README.md` from
+   - Perform a probe call: use the GitHub MCP server's file-contents tool to fetch `README.md` from
      `the project's app template (from copilot-instructions.md)`.
    - If the call **fails or returns an auth error**, WARN and proceed (Harness
      policy — GitHub MCP is an enhancement, never a gate): fall back to patterns

@@ -62,8 +62,8 @@ the probe calls. Run each probe call exactly as written.
 | # | MCP Server | Probe Call | Required For |
 |---|---|---|---|
 | 1 | **awesome-copilot collection** | Search the collection's `instructions/` directory in the `github/awesome-copilot` repository (via GitHub MCP code search or `fetch`) for "security" | Skills loading (OWASP, Docker, Bicep, ADR best practices) |
-| 2 | **GitHub MCP** | `mcp_github_get_me()` or any lightweight GitHub API call | Repository access, PR creation, code search |
-| 3 | **Context7** | `mcp_context7_resolve-library-id(libraryName: "fastapi")` | Framework documentation |
+| 2 | **GitHub MCP** | the GitHub MCP server's current-user call, or any lightweight GitHub API call | Repository access, PR creation, code search |
+| 3 | **Context7** | Context7's library-id resolution tool, called for "fastapi" | Framework documentation |
 
 **Report results to the user as a status table — this table is required output, not optional:**
 
@@ -1415,8 +1415,8 @@ This ensures every design decision is captured as a permanent, reviewable record
 
 ## MCP integration
 
-- Use **GitHub MCP** (`mcp_github_issue_read`) to read issue details when a GitHub issue is referenced.
-- Use **GitHub MCP** (`mcp_github_get_file_contents`) to fetch reference catalog or template patterns.
+- Use **GitHub MCP** (its issue-read tool) to read issue details when a GitHub issue is referenced.
+- Use **GitHub MCP** (its file-contents tool) to fetch reference catalog or template patterns.
 - If the user's request is unclear, ask 1-2 focused clarification questions before delegating.
 
 ## GitHub MCP usage

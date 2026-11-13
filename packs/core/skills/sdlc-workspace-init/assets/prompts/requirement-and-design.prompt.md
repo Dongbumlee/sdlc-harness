@@ -49,9 +49,9 @@ argument-hint: "Describe the feature or requirement to analyze"
     `github/awesome-copilot` repository via the GitHub MCP server's file-contents tool
     or `fetch` (skip if unreachable)
     (feature decomposition into implementable steps)
- 3. **Reference catalog** — `mcp_github_get_file_contents` → fetch `reference-catalog.md`
+ 3. **Reference catalog** — the GitHub MCP server's file-contents tool → fetch `reference-catalog.md`
     from the SDLC template repo (verify cloud service choices match approved libraries)
- 4. **Template patterns** — `mcp_github_get_file_contents` → fetch project structure from
+ 4. **Template patterns** — the GitHub MCP server's file-contents tool → fetch project structure from
     the matching template repo (`the base app template repo`, `the API template repo`,
     or `the agent template repo`)
  5. **Framework docs** — Use **Context7 MCP** to get current documentation for frameworks

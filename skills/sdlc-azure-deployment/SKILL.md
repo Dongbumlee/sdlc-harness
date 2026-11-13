@@ -27,31 +27,28 @@ Load from the awesome-copilot collection on GitHub, via the GitHub MCP
 server's file-contents tool:
 
 ```
-mcp_github_get_file_contents(
-  owner: "github",
-  repo: "awesome-copilot",
+GitHub MCP server — file-contents tool, called with:
+  owner: "github"
+  repo: "awesome-copilot"
   path: "skills/azure-deployment-preflight/SKILL.md"
-)
 ```
 
 For AVM module updates:
 
 ```
-mcp_github_get_file_contents(
-  owner: "github",
-  repo: "awesome-copilot",
+GitHub MCP server — file-contents tool, called with:
+  owner: "github"
+  repo: "awesome-copilot"
   path: "skills/update-avm-modules-in-bicep/SKILL.md"
-)
 ```
 
 For Bicep coding standards:
 
 ```
-mcp_github_get_file_contents(
-  owner: "github",
-  repo: "awesome-copilot",
+GitHub MCP server — file-contents tool, called with:
+  owner: "github"
+  repo: "awesome-copilot"
   path: "instructions/bicep-code-best-practices.instructions.md"
-)
 ```
 
 ## Step 2: Load Bicep/AVM standards (public sources)

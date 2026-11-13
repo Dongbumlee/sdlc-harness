@@ -30,7 +30,7 @@ and identity management**.
 > your output: _"⚠️ GitHub MCP unavailable — review based on local patterns only."_
 
 0. **Verify GitHub MCP authentication (required):**
-   - Perform a probe call: use `mcp_github_get_file_contents` to fetch `README.md` from
+   - Perform a probe call: use the GitHub MCP server's file-contents tool to fetch `README.md` from
      `the project's Cosmos DB library repo (from copilot-instructions.md)`.
    - If the call **fails or returns an auth error**, WARN and proceed (Harness
      policy — GitHub MCP is an enhancement, never a gate): fall back to patterns
@@ -38,9 +38,9 @@ and identity management**.
      verification was not possible. Do NOT stop the workflow.
 
 1. **Fetch latest SDK APIs from GitHub MCP** (skip if GitHub MCP auth failed):
-   - Use `mcp_github_get_file_contents` to fetch `README.md` from
+   - Use the GitHub MCP server's file-contents tool to fetch `README.md` from
      `the project's Cosmos DB library repo (from copilot-instructions.md)` — verify the code follows current API patterns.
-   - Use `mcp_github_get_file_contents` to fetch `README.md` from
+   - Use the GitHub MCP server's file-contents tool to fetch `README.md` from
      `the project's Storage library repo (from copilot-instructions.md)` — verify Blob/Queue patterns.
 
 2. **Load Bicep best practices from the awesome-copilot collection** (skip if unreachable):

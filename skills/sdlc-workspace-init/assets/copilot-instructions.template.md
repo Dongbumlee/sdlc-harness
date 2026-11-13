@@ -277,7 +277,7 @@
 
  ## 8. GitHub MCP authentication & reference repo access
 
- Several agents and workflows use **GitHub MCP** (`mcp_github_get_file_contents`, `mcp_github_search_code`, etc.)
+ Several agents and workflows use **GitHub MCP** (its file-contents and code-search tools, among others)
  to fetch live patterns from private reference repositories in the `{{ORG_NAME}}` organization:
 
  - `{{ORG_NAME}}/{{COSMOSDB_LIB_REPO}}` ({{COSMOSDB_LIB_PACKAGE}})

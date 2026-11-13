@@ -26,27 +26,24 @@ Load from the awesome-copilot collection on GitHub, via the GitHub MCP
 server's file-contents tool:
 
 ```
-mcp_github_get_file_contents(
-  owner: "github",
-  repo: "awesome-copilot",
+GitHub MCP server — file-contents tool, called with:
+  owner: "github"
+  repo: "awesome-copilot"
   path: "instructions/self-explanatory-code-commenting.instructions.md"
-)
 ```
 
 ```
-mcp_github_get_file_contents(
-  owner: "github",
-  repo: "awesome-copilot",
+GitHub MCP server — file-contents tool, called with:
+  owner: "github"
+  repo: "awesome-copilot"
   path: "instructions/performance-optimization.instructions.md"
-)
 ```
 
 ```
-mcp_github_get_file_contents(
-  owner: "github",
-  repo: "awesome-copilot",
+GitHub MCP server — file-contents tool, called with:
+  owner: "github"
+  repo: "awesome-copilot"
   path: "instructions/object-calisthenics.instructions.md"
-)
 ```
 
 ## Step 2: Identify the language and load SDLC rules

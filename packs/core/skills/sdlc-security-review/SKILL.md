@@ -21,21 +21,19 @@ Load the latest OWASP security guidance from the awesome-copilot collection
 on GitHub, via the GitHub MCP server's file-contents tool:
 
 ```
-mcp_github_get_file_contents(
-  owner: "github",
-  repo: "awesome-copilot",
+GitHub MCP server — file-contents tool, called with:
+  owner: "github"
+  repo: "awesome-copilot"
   path: "instructions/security-and-owasp.instructions.md"
-)
 ```
 
 Also load the AI safety review skill if the change involves AI/LLM code:
 
 ```
-mcp_github_get_file_contents(
-  owner: "github",
-  repo: "awesome-copilot",
+GitHub MCP server — file-contents tool, called with:
+  owner: "github"
+  repo: "awesome-copilot"
   path: "skills/ai-prompt-engineering-safety-review/SKILL.md"
-)
 ```
 
 ## Step 2: OWASP Top 10 checklist

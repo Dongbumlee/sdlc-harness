@@ -48,15 +48,15 @@ Focus on **Categories 1 and 2** (UX & Accessibility, Core Functionality & State)
         (e.g., Vite → `http://localhost:5173`, Next.js → `http://localhost:3000`)
      2. Try common local dev URLs: `http://localhost:5173`, `http://localhost:3000`,
         `http://localhost:8080`
-     3. Use `mcp_playwright_browser_navigate` to attempt connection
+     3. Use the Playwright MCP server's navigate tool to attempt connection
    - **If a running app is found**, perform these live checks:
-     - **Accessibility snapshot** — `mcp_playwright_browser_snapshot` to get the page structure
-     - **Keyboard navigation** — `mcp_playwright_browser_press_key` with Tab to verify
+     - **Accessibility snapshot** — the Playwright MCP server's snapshot tool to get the page structure
+     - **Keyboard navigation** — the Playwright MCP server's key-press tool with Tab to verify
        focus traverses interactive elements
      - **Dark mode** — navigate with `colorScheme: 'dark'` and snapshot
-     - **Console errors** — `mcp_playwright_browser_console_messages` to capture JS errors
+     - **Console errors** — the Playwright MCP server's console-messages tool to capture JS errors
      - **Viewport** — verify no horizontal overflow at 1920×1080
-     - **Screenshots** — `mcp_playwright_browser_take_screenshot` for each page
+     - **Screenshots** — the Playwright MCP server's screenshot tool for each page
      - **axe-core audit** — if available, run accessibility audit
    - **Save ALL Playwright artifacts** to `.playwright-mcp/` directory:
      - Screenshots → `.playwright-mcp/screenshots/`

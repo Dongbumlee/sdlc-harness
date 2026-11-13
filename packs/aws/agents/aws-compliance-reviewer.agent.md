@@ -30,7 +30,7 @@ data-service security, and cost guardrails**.
 > your output: _"⚠️ GitHub MCP unavailable — review based on local patterns only."_
 
 0. **Verify GitHub MCP authentication (required):**
-   - Perform a probe call: use `mcp_github_get_file_contents` to fetch `README.md`
+   - Perform a probe call: use the GitHub MCP server's file-contents tool to fetch `README.md`
      from a repo named in `.github/copilot-instructions.md`.
    - If the call **fails or returns an auth error**, WARN and proceed (Harness
      policy — GitHub MCP is an enhancement, never a gate): fall back to patterns
