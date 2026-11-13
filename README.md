@@ -4,7 +4,7 @@
 [![copilot plugin install](https://img.shields.io/badge/copilot%20plugin%20install-sdlc--harness-8A2BE2)](https://github.com/Dongbumlee/sdlc-harness)
 [![VS Code](https://img.shields.io/badge/VS%20Code-1.99+-007ACC?logo=visual-studio-code&logoColor=white)](https://code.visualstudio.com/)
 [![GitHub Copilot CLI](https://img.shields.io/badge/Copilot%20CLI-supported-000?logo=github&logoColor=white)](https://docs.github.com/en/copilot/how-tos/copilot-cli)
-[![Release](https://img.shields.io/badge/release-v1.3.0-brightgreen)](https://github.com/Dongbumlee/sdlc-harness/releases/tag/v1.3.0)
+[![Release](https://img.shields.io/badge/release-v1.3.1-brightgreen)](https://github.com/Dongbumlee/sdlc-harness/releases/tag/v1.3.1)
 [![Stacks](https://img.shields.io/badge/stacks-6-informational)](#supported-stacks)
 
 > *From first commit to final release, Harness orchestrates your entire software development
