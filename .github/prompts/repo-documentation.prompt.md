@@ -31,7 +31,7 @@ argument-hint: "Describe the documentation to create or update"
 
  Before starting, load these resources for accurate documentation:
 
- 1. **ADR examples** — `mcp_github_get_file_contents` → browse `docs/` folders in existing
+ 1. **ADR examples** — the GitHub MCP server's file-contents tool → browse `docs/` folders in existing
     application repos for ADR format and style reference
  2. **Documentation templates** — read the local templates in `.design/`:
     - ADR: `.design/ADR-TEMPLATE.md`

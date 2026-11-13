@@ -26,21 +26,19 @@ the data modeling skill from the awesome-copilot collection on GitHub, via
 the GitHub MCP server's file-contents tool:
 
 ```
-mcp_github_get_file_contents(
-  owner: "github",
-  repo: "awesome-copilot",
+GitHub MCP server — file-contents tool, called with:
+  owner: "github"
+  repo: "awesome-copilot"
   path: "skills/cosmosdb-datamodeling/SKILL.md"
-)
 ```
 
 For live SDK patterns, fetch the latest from GitHub MCP:
 
 ```
-mcp_github_get_file_contents(
-  owner: "the project's GitHub org",
-  repo: "the Cosmos DB library repo",
+GitHub MCP server — file-contents tool, called with:
+  owner: "the project's GitHub org"
+  repo: "the Cosmos DB library repo"
   path: "README.md"
-)
 ```
 
 ## Step 2: Define entities

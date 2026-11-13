@@ -55,25 +55,25 @@ For API projects, fetch these key files and use them as the basis for scaffoldin
 
 ```
 # 1. Read the app entry point pattern
-mcp_github_get_file_contents(owner: "the project's GitHub org", repo: "the API template repo", path: "app/main.py")
+GitHub MCP server, file-contents tool (owner: "the project's GitHub org", repo: "the API template repo", path: "app/main.py")
 
 # 2. Read the Application class (core framework pattern)
-mcp_github_get_file_contents(owner: "the project's GitHub org", repo: "the API template repo", path: "app/application.py")
+GitHub MCP server, file-contents tool (owner: "the project's GitHub org", repo: "the API template repo", path: "app/application.py")
 
 # 3. Read the libs/ framework structure
-mcp_github_get_file_contents(owner: "the project's GitHub org", repo: "the API template repo", path: "app/libs")
+GitHub MCP server, file-contents tool (owner: "the project's GitHub org", repo: "the API template repo", path: "app/libs")
 
 # 4. Read the DI pattern with Protocol interfaces
-mcp_github_get_file_contents(owner: "the project's GitHub org", repo: "the API template repo", path: "app/services")
+GitHub MCP server, file-contents tool (owner: "the project's GitHub org", repo: "the API template repo", path: "app/services")
 
 # 5. Read the Dockerfile pattern
-mcp_github_get_file_contents(owner: "the project's GitHub org", repo: "the API template repo", path: "Dockerfile")
+GitHub MCP server, file-contents tool (owner: "the project's GitHub org", repo: "the API template repo", path: "Dockerfile")
 
 # 6. Read the pyproject.toml pattern
-mcp_github_get_file_contents(owner: "the project's GitHub org", repo: "the API template repo", path: "pyproject.toml")
+GitHub MCP server, file-contents tool (owner: "the project's GitHub org", repo: "the API template repo", path: "pyproject.toml")
 
 # 7. Read the health probes router
-mcp_github_get_file_contents(owner: "the project's GitHub org", repo: "the API template repo", path: "app/routers/http_probes.py")
+GitHub MCP server, file-contents tool (owner: "the project's GitHub org", repo: "the API template repo", path: "app/routers/http_probes.py")
 ```
 
 **Read each file's content, then adapt it for the new project.** Do not skip this step.
@@ -244,11 +244,10 @@ Also load containerization best practices from the awesome-copilot collection
 on GitHub, via the GitHub MCP server's file-contents tool:
 
 ```
-mcp_github_get_file_contents(
-  owner: "github",
-  repo: "awesome-copilot",
+GitHub MCP server — file-contents tool, called with:
+  owner: "github"
+  repo: "awesome-copilot"
   path: "instructions/containerization-docker-best-practices.instructions.md"
-)
 ```
 
 ## Step 4: Create the project structure

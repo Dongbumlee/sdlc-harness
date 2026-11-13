@@ -41,10 +41,10 @@ The user will provide:
 
 Before starting, load these resources for accurate implementation:
 
-1. **Cosmos DB patterns** — `mcp_github_get_file_contents` → fetch `README.md` and
+1. **Cosmos DB patterns** — the GitHub MCP server's file-contents tool → fetch `README.md` and
    `HANDS_ON_GUIDE.md` from `the project's Cosmos DB library repo (from copilot-instructions.md)`
    (Repository Pattern, entity definitions, query patterns)
-2. **Blob/Queue patterns** — `mcp_github_get_file_contents` → fetch `README.md` from
+2. **Blob/Queue patterns** — the GitHub MCP server's file-contents tool → fetch `README.md` from
    `the project's Storage library repo (from copilot-instructions.md)`
    (AsyncStorageBlobHelper, context manager usage)
 3. **Framework docs** — Use **Context7 MCP** to load current documentation for:

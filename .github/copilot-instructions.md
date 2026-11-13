@@ -248,7 +248,7 @@
 
  <!-- TEMPLATE: Replace {{ORG_NAME}} with your GitHub organization name -->
 
- Several agents and workflows use **GitHub MCP** (`mcp_github_get_file_contents`, `mcp_github_search_code`, etc.)
+ Several agents and workflows use **GitHub MCP** (its file-contents and code-search tools, among others)
  to fetch live patterns from private reference repositories in the `{{ORG_NAME}}` organization.
 
  The specific repos are listed in `.github/reference-catalog.md`. They typically include

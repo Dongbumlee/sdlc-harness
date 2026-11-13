@@ -186,7 +186,7 @@ specs as constraints, and never re-spec behavior that is already specified.
 ### Before starting design
 
 0. **Verify GitHub MCP authentication (required):**
-   - Perform a probe call: use `mcp_github_get_file_contents` to fetch `README.md` from
+   - Perform a probe call: use the GitHub MCP server's file-contents tool to fetch `README.md` from
      the project's reference library repo (from `copilot-instructions.md`).
    - If the call **fails or returns an auth error**, WARN and proceed (Harness
      policy — GitHub MCP is an enhancement, never a gate): fall back to patterns
@@ -220,7 +220,7 @@ specs as constraints, and never re-spec behavior that is already specified.
    - Load "task-implementation" from the awesome-copilot collection on GitHub (file `instructions/task-implementation.instructions.md` in the `github/awesome-copilot` repository, via the GitHub MCP server's file-contents tool or `fetch`).
 
 2. **Fetch reference catalog from GitHub MCP:**
-   - Use `mcp_github_get_file_contents` to fetch `reference-catalog.md` from the SDLC template repo.
+   - Use the GitHub MCP server's file-contents tool to fetch `reference-catalog.md` from the SDLC template repo.
    - Verify the proposed services match approved libraries listed in `copilot-instructions.md`.
 
 3. **Fetch existing patterns from reference template repos:**

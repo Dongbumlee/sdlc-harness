@@ -167,7 +167,7 @@ Include `Source: Implementer (Phase 4)` on your entries.
    is a Critical finding even when the logic is correct.
 
 1. **Verify GitHub MCP authentication (required):**
-   - Perform a probe call: use `mcp_github_get_file_contents` to fetch `README.md` from
+   - Perform a probe call: use the GitHub MCP server's file-contents tool to fetch `README.md` from
      `the project's reference library repo (from copilot-instructions.md)`.
    - If the call **fails or returns an auth error**, WARN and proceed (Harness
      policy — GitHub MCP is an enhancement, never a gate): fall back to patterns
@@ -183,7 +183,7 @@ Include `Source: Implementer (Phase 4)` on your entries.
 2. **Fetch live patterns for the project's data libraries from GitHub MCP:**
    - For each data library named in `copilot-instructions.md` (e.g., the project's
      document-store library, its object-storage/queue library), use
-     `mcp_github_get_file_contents` to fetch its `README.md` and `HANDS_ON_GUIDE.md`
+     the GitHub MCP server's file-contents tool to fetch its `README.md` and `HANDS_ON_GUIDE.md`
      and follow its prescribed patterns exactly.
    - Your implementation MUST follow these patterns. Do NOT create raw SDK
      clients where an approved library exists.
@@ -195,7 +195,7 @@ Include `Source: Implementer (Phase 4)` on your entries.
    - If the feature involves AI chat, LLM calls, agents, or chatbots, fetch patterns from
      `the project's agent template (from copilot-instructions.md)` via GitHub MCP:
      ```
-     mcp_github_get_file_contents(owner: "the project's GitHub org",
+     GitHub MCP server, file-contents tool (owner: "the project's GitHub org",
        repo: "the agent template repo",
        path: "src/libs/agent_framework")
      ```

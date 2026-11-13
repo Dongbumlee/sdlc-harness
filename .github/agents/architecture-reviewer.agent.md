@@ -24,7 +24,7 @@ You review code through the lens of **architecture and design consistency**.
 ## Before reviewing
 
 0. **Verify GitHub MCP authentication (required):**
-   - Perform a probe call: use `mcp_github_get_file_contents` to fetch `README.md` from
+   - Perform a probe call: use the GitHub MCP server's file-contents tool to fetch `README.md` from
      `the project's reference library repo (from copilot-instructions.md)`.
    - If the call **fails or returns an auth error**, WARN and proceed (Harness
      policy — GitHub MCP is an enhancement, never a gate): fall back to patterns
@@ -32,7 +32,7 @@ You review code through the lens of **architecture and design consistency**.
      pattern verification was not possible. Do NOT stop the workflow.
 
 1. **Search for pattern consistency across org repos via GitHub MCP:**
-   - Use `mcp_github_search_code` to search for the base types and shared
+   - Use the GitHub MCP server's code-search tool to search for the base types and shared
      patterns the project's data library prescribes (e.g., `RepositoryBase`
      and `RootEntityBase` where the project uses that library) across
      `the project's GitHub org` org repos.

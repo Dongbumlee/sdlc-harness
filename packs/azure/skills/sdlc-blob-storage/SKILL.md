@@ -25,11 +25,10 @@ user-invocable: false
 Fetch the latest patterns from GitHub MCP:
 
 ```
-mcp_github_get_file_contents(
-  owner: "the project's GitHub org",
-  repo: "the Storage library repo",
+GitHub MCP server — file-contents tool, called with:
+  owner: "the project's GitHub org"
+  repo: "the Storage library repo"
   path: "README.md"
-)
 ```
 
 ## Step 2: Blob operations

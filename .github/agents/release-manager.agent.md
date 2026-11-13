@@ -27,7 +27,7 @@ A phase the ledger records any other way is treated as not done — report it
 to the Harness instead of releasing.
 
 0. **Check GitHub MCP connectivity:**
-   - Perform a probe call: use `mcp_github_list_commits` or `mcp_github_get_file_contents`.
+   - Perform a probe call: use the GitHub MCP server's commit-listing or file-contents tool.
    - If the call **fails or returns an auth error**, WARN and proceed with local
      fallbacks: gather commit history from local `git log` and prepare the
      changelog and release checklist offline. Only the PR-creation step itself
@@ -42,11 +42,11 @@ to the Harness instead of releasing.
    third time.
 
 1. **Gather commit history via GitHub MCP:**
-   - Use `mcp_github_list_commits` to get recent changes since last release.
+   - Use the GitHub MCP server's commit-listing tool to get recent changes since last release.
    - Categorize commits by SDLC Phase and type (feature, fix, docs, infra).
 
 2. **Create PR via GitHub MCP:**
-   - Use `mcp_github_create_pull_request` with a body that follows the PR template.
+   - Use the GitHub MCP server's pull-request creation tool, with a body that follows the PR template.
    - The PR body MUST include: Description, SDLC Phase, Copilot Prompts Used,
      Changes, Cloud Resources Affected, Testing, Quality Checklist, Documentation.
 

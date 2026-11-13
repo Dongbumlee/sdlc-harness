@@ -29,7 +29,7 @@ collection used by reviewers is reachable, and check GitHub MCP availability
 | # | Source | Probe Call | Used By |
 |---|---|---|---|
 | 1 | **awesome-copilot collection** | Search the collection's `instructions/` directory in the `github/awesome-copilot` repository (via GitHub MCP code search or `fetch`) for "security" | Code Quality, Security, Test Coverage, RAI, Cloud Compliance Reviewers (skill loading) |
-| 2 | **GitHub MCP** | `mcp_github_get_me()` or any lightweight GitHub API call | QA Coordinator (bug filing in Step 3) |
+| 2 | **GitHub MCP** | the GitHub MCP server's current-user call, or any lightweight GitHub API call | QA Coordinator (bug filing in Step 3) |
 
 **Run both probes in parallel.**
 
@@ -514,7 +514,7 @@ When the user confirms:
    the user which one to use.
 
 2. **Check for duplicates** before creating each bug:
-   Use `mcp_github_search_issues` to search for existing issues with similar titles.
+   Use the GitHub MCP server's issue-search tool to search for existing issues with similar titles.
 
    For each confirmed bug:
    - Search with the key terms from the bug title (e.g., `"XSS innerHTML ChatMessage"`)
@@ -529,7 +529,7 @@ When the user confirms:
 
    - If no match is found, proceed to create the bug.
 
-3. **Create Bug issues** using `mcp_github_create_issue` for each
+3. **Create Bug issues** using the GitHub MCP server's issue-creation tool for each
    confirmed item that is NOT a duplicate, with these fields:
 
    - **Title**: `[QA-Checklist] <descriptive title>`

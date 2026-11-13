@@ -77,7 +77,7 @@ is.
 ## Before writing documentation
 
 0. **Verify GitHub MCP authentication (required):**
-   - Perform a probe call: use `mcp_github_get_file_contents` to fetch `README.md` from
+   - Perform a probe call: use the GitHub MCP server's file-contents tool to fetch `README.md` from
      `the project's reference library repo (from copilot-instructions.md)`.
    - If the call **fails or returns an auth error**, WARN and proceed (Harness
      policy — GitHub MCP is an enhancement, never a gate): fall back to local
@@ -90,7 +90,7 @@ is.
    - For README: read `.design/README.template.md`.
 
 2. **Fetch ADR examples from existing application repos via GitHub MCP:**
-   - Use `mcp_github_get_file_contents` to browse `docs/` folders in existing applications
+   - Use the GitHub MCP server's file-contents tool to browse `docs/` folders in existing applications
      for ADR format and style reference.
 
 3. **Check Microsoft Learn for service-specific docs:**

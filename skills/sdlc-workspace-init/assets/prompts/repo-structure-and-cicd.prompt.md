@@ -48,7 +48,7 @@ If any of these are unclear, ask 1–2 focused questions before proceeding.
 
 Before starting, load these resources for authoritative patterns:
 
-1. **Template structure** — `mcp_github_get_file_contents` → fetch the directory structure
+1. **Template structure** — the GitHub MCP server's file-contents tool → fetch the directory structure
    from the matching template repo (`the base app template repo`, `the API template repo`,
    or `the agent template repo`)
 2. **Docker best practices** — fetch `instructions/containerization-docker-best-practices.instructions.md`
