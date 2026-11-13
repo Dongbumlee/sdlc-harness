@@ -1,0 +1,91 @@
+# Canary: .NET CLI Scaffolding
+id: scf-007-dotnet-cli
+version: "1.0"
+phase: scaffold
+title: ".NET CLI Scaffolding"
+description: >
+  Tests the AI agent's ability to scaffold a command-line tool
+  with the harness dotnet profile structure: System.CommandLine
+  parsing, the noun-verb command shape, the stdout/stderr and
+  exit-code contract, golden-file tests, and single-file publish.
+
+prompt: |
+  You are a senior .NET engineer. Scaffold a command-line tool
+  ("textkit": text utilities such as slugify and truncate) with
+  the following specifications:
+
+  Project Requirements:
+  - .NET 10, System.CommandLine as the argument parser
+  - Solution layout: the CLI host project, a Core library project
+    holding the logic, and a test project, under `src/`
+  - The interface is the contract: commands follow
+    `tool <noun> <verb>`, data goes to stdout and diagnostics to
+    stderr, and exit codes are a documented map (0 success,
+    1 runtime failure, 2 usage error)
+
+  Expected Project Structure:
+  1. A solution (.sln) with `src/<Name>.Cli`, `src/<Name>.Cli.Core`,
+     and `src/<Name>.Cli.Tests`
+  2. Commands defined in the host project over Core logic — the
+     host parses and dispatches; it contains no business logic
+  3. A `--format plain|json` option on data commands; secrets come
+     from the environment, never from command-line flags
+  4. Tests: golden-file tests for help text and command output
+     (plain and JSON), plus exit-code contract tests for success,
+     runtime failure, and usage error paths
+  5. Distribution: single-file publish and a NuGet tool package;
+     the release workflow publishes both on tag, in the same
+     artefact shape as the other stacks
+  6. No Dockerfile — a CLI ships as a binary/package, not a
+     container
+  7. A GitHub Actions CI workflow that restores, builds, and tests
+     the solution
+
+  For each file generated, include appropriate comments explaining
+  the purpose. Ensure `dotnet test` passes out of the box.
+
+expected:
+  keywords:
+    - System.CommandLine
+    - golden
+    - exit code
+    - stdout
+    - dotnet test
+    - NuGet tool
+  graders:
+    - type: keyword
+      weight: 0.3
+      config:
+        required:
+          - System.CommandLine
+          - golden
+          - exit code
+          - stdout
+          - stderr
+          - dotnet test
+        forbidden: ["TODO", "placeholder"]
+    - type: structural
+      weight: 0.3
+      config:
+        required_sections:
+          - project structure
+          - commands
+          - configuration
+          - testing
+          - distribution
+    - type: llm-judge
+      weight: 0.4
+      config:
+        criteria:
+          - completeness
+          - technical_accuracy
+          - clarity
+          - production_readiness
+          - best_practices
+
+timeout_seconds: 120
+tags:
+  - scaffold
+  - dotnet
+  - cli
+  - project-structure

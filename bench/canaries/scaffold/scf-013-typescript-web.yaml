@@ -1,0 +1,93 @@
+# Canary: Next.js Web Scaffolding
+id: scf-013-typescript-web
+version: "1.0"
+phase: scaffold
+title: "Next.js Web Scaffolding"
+description: >
+  Tests the AI agent's ability to scaffold a server-rendered
+  Next.js web app with the harness typescript profile structure:
+  the app router, the structural public/server configuration
+  split, a health page, and component/page tests.
+
+prompt: |
+  You are a senior TypeScript engineer. Scaffold a server-rendered
+  web application (an item catalog) with the following
+  specifications:
+
+  Project Requirements:
+  - Next.js (app router) with React and TypeScript, pnpm as the
+    package manager; the app lives in `src/<Name>Web`
+  - Server-side rendering first; forms follow post/redirect/get
+  - The browser is untrusted: configuration is split structurally
+    into public (browser-safe, NEXT_PUBLIC_*) and server-only
+    values
+
+  Expected Project Structure:
+  1. The app project: package.json, next.config.ts, a Dockerfile
+  2. App router layout: `src/app/layout.tsx`, the items page
+     (`src/app/page.tsx`, list + add form), and a health page at
+     `src/app/health/page.tsx`
+  3. Components and services separated: `src/Components` for UI
+     (an ItemsPanel), `src/Services` for data access behind a
+     service seam (an ItemsService)
+  4. Configuration in `src/lib/config.ts`: public values separated
+     from server-only secrets — a server secret must never reach
+     rendered output (a config test with a sentinel secret proves
+     the boundary)
+  5. Tests: vitest page and component tests (the items page
+     renders, the panel interacts), service tests, the config
+     boundary test, and accessibility-floor assertions on the
+     rendered markup
+  6. A GitHub Actions CI workflow that installs with pnpm, builds
+     the Next.js app, and tests
+
+  For each file generated, include appropriate comments explaining
+  the purpose. Ensure the build and tests pass out of the box.
+
+expected:
+  keywords:
+    - Next.js
+    - package.json
+    - Dockerfile
+    - app router
+    - health
+    - vitest
+    - NEXT_PUBLIC
+  graders:
+    - type: keyword
+      weight: 0.3
+      config:
+        required:
+          - Next.js
+          - package.json
+          - Dockerfile
+          - health
+          - vitest
+          - configuration
+        forbidden: ["TODO", "placeholder"]
+    - type: structural
+      weight: 0.3
+      config:
+        required_sections:
+          - project structure
+          - configuration
+          - entry point
+          - testing
+          - containerization
+    - type: llm-judge
+      weight: 0.4
+      config:
+        criteria:
+          - completeness
+          - technical_accuracy
+          - clarity
+          - production_readiness
+          - best_practices
+
+timeout_seconds: 120
+tags:
+  - scaffold
+  - typescript
+  - web
+  - nextjs
+  - project-structure

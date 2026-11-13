@@ -1,0 +1,92 @@
+# Canary: TypeScript Library Scaffolding
+id: scf-010-typescript-library
+version: "1.0"
+phase: scaffold
+title: "TypeScript Library Scaffolding"
+description: >
+  Tests the AI agent's ability to scaffold a publishable
+  TypeScript library with the harness typescript profile
+  structure: an explicit entry point, an API report that tracks
+  the public surface, black-box tests, and package hygiene.
+
+prompt: |
+  You are a senior TypeScript engineer. Scaffold a publishable
+  TypeScript library for text manipulation utilities ("textkit")
+  with the following specifications:
+
+  Project Requirements:
+  - TypeScript with pnpm as the package manager, tsc as the build
+  - The library's public surface is explicit and machine-checked:
+    consumers see only what the entry point exports
+  - Package version ranges in package.json — a library does not
+    commit a lock file its consumers would inherit
+
+  Expected Project Structure:
+  1. package.json with the package metadata, `main`/`types`
+     pointing at the built output, and scripts for build, test,
+     and lint
+  2. `src/index.ts` as the single public entry point, re-exporting
+     the library's API (a sample text-transforms module: slugify,
+     truncate)
+  3. The public surface tracked by an API Extractor report
+     (`etc/<package>.api.md`), regenerated on build — a surface
+     change that is not reflected in the report fails the build
+  4. ESLint and Prettier configurations as the pinned lint/format
+     pair
+  5. Tests: vitest behavior tests against the public surface only
+     (black-box — tests import from `src/index.ts`, never from
+     internal modules)
+  6. An examples folder with a runnable quickstart that consumes
+     the built package the way an external user would
+  7. No Dockerfile — a library is consumed as a package, never
+     deployed as a container
+  8. A GitHub Actions CI workflow that installs with pnpm, builds,
+     and tests
+
+  For each file generated, include appropriate comments explaining
+  the purpose. Ensure the build and tests pass out of the box.
+
+expected:
+  keywords:
+    - package.json
+    - index.ts
+    - API Extractor
+    - vitest
+    - pnpm
+    - public surface
+  graders:
+    - type: keyword
+      weight: 0.3
+      config:
+        required:
+          - package.json
+          - index.ts
+          - API Extractor
+          - vitest
+          - pnpm
+          - black-box
+        forbidden: ["TODO", "placeholder"]
+    - type: structural
+      weight: 0.3
+      config:
+        required_sections:
+          - project structure
+          - public surface
+          - testing
+          - packaging
+    - type: llm-judge
+      weight: 0.4
+      config:
+        criteria:
+          - completeness
+          - technical_accuracy
+          - clarity
+          - production_readiness
+          - best_practices
+
+timeout_seconds: 120
+tags:
+  - scaffold
+  - typescript
+  - library
+  - project-structure

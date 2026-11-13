@@ -1,0 +1,92 @@
+# Canary: TypeScript CLI Scaffolding
+id: scf-011-typescript-cli
+version: "1.0"
+phase: scaffold
+title: "TypeScript CLI Scaffolding"
+description: >
+  Tests the AI agent's ability to scaffold a command-line tool
+  with the harness typescript profile structure: a canonical
+  parser, the noun-verb command shape, the stdout/stderr and
+  exit-code contract, and golden-file tests.
+
+prompt: |
+  You are a senior TypeScript engineer. Scaffold a command-line
+  tool ("textkit": text utilities such as slugify and truncate)
+  with the following specifications:
+
+  Project Requirements:
+  - TypeScript with pnpm as the package manager, tsc as the build,
+    a `bin` entry in package.json
+  - The interface is the contract: commands follow
+    `tool <noun> <verb>`, data goes to stdout and diagnostics to
+    stderr, and exit codes are a documented map (0 success,
+    1 runtime failure, 2 usage error)
+
+  Expected Project Structure:
+  1. package.json (name, bin, scripts for build/test/lint) with
+     ESLint and Prettier as the pinned lint/format pair
+  2. `src/cli.ts` as the entry point: parsing and dispatch only;
+     the logic lives in library modules (`src/textkit.ts`), and
+     output formatting in its own module (`src/output.ts`)
+  3. A `--format plain|json` option on data commands; secrets come
+     from the environment, never from command-line flags
+  4. Tests: vitest golden-file tests (tests/testdata) for help
+     text and command output in plain and JSON forms, plus
+     exit-code contract tests for the success, runtime-failure,
+     and usage-error paths
+  5. Distribution: the package publishes as an npm CLI package;
+     the release workflow builds and publishes on tag, in the same
+     artefact shape as the other stacks
+  6. No Dockerfile — a CLI ships as a package, not a container
+  7. A GitHub Actions CI workflow that installs with pnpm, builds,
+     and tests
+
+  For each file generated, include appropriate comments explaining
+  the purpose. Ensure the build and tests pass out of the box.
+
+expected:
+  keywords:
+    - package.json
+    - cli.ts
+    - golden
+    - exit code
+    - stdout
+    - vitest
+  graders:
+    - type: keyword
+      weight: 0.3
+      config:
+        required:
+          - package.json
+          - cli.ts
+          - golden
+          - exit code
+          - stdout
+          - stderr
+          - vitest
+        forbidden: ["TODO", "placeholder"]
+    - type: structural
+      weight: 0.3
+      config:
+        required_sections:
+          - project structure
+          - commands
+          - configuration
+          - testing
+          - distribution
+    - type: llm-judge
+      weight: 0.4
+      config:
+        criteria:
+          - completeness
+          - technical_accuracy
+          - clarity
+          - production_readiness
+          - best_practices
+
+timeout_seconds: 120
+tags:
+  - scaffold
+  - typescript
+  - cli
+  - project-structure
