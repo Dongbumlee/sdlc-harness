@@ -52,7 +52,7 @@ class TestPluginPackJson:
     def test_pack_json_has_version(self):
         with open(PLUGIN_PACK_JSON) as f:
             data = json.load(f)
-        assert data["version"] == "1.3.0"
+        assert data["version"] == "1.3.1"
 
     def test_pack_json_has_cloud_aws(self):
         with open(PLUGIN_PACK_JSON) as f:
