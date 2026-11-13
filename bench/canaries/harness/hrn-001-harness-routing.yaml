@@ -6,9 +6,8 @@ title: "Harness Request Routing"
 description: >
   Tests the harness agent's own routing judgment: given three user requests,
   map each to the correct SDLC phase and agent per the phase-to-agent
-  routing table. NOTE: this canary targets the harness agent itself — the
-  canary-runner's routing table needs a `harness` entry for it to execute
-  as designed (currently it would route to a phase agent instead).
+  routing table. This canary targets the harness agent itself; the
+  canary-runner's routing table carries a `harness` entry for it.
 
 prompt: |
   You are the harness orchestrator. Three user requests arrived. For each,
