@@ -1,0 +1,111 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/{{ProjectName}}Lib/**"
+      - ".github/workflows/ci.yml"
+  pull_request:
+    paths:
+      - "src/{{ProjectName}}Lib/**"
+      - ".github/workflows/ci.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/{{ProjectName}}Lib
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.27"
+      - name: Verify format
+        run: test -z "$(gofmt -l .)"
+      - name: Vet
+        run: go vet ./...
+      - name: Lint (golangci-lint)
+        uses: golangci/golangci-lint-action@v8
+        with:
+          working-directory: src/{{ProjectName}}Lib
+
+  api:
+    # The public surface is machine-checked: apidiff compares the exported
+    # API against the last release tag and the job fails on incompatible
+    # changes. Skips until the first release tag exists.
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/{{ProjectName}}Lib
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.27"
+      - name: Diff public API against the last release (apidiff)
+        run: |
+          TAG="$(git describe --tags --abbrev=0 2>/dev/null || true)"
+          if [ -z "$TAG" ]; then
+            echo "No release tag yet — API check skipped."
+            exit 0
+          fi
+          go install golang.org/x/exp/cmd/apidiff@v0.0.0-20261109185158-a52e3aef5920
+          git worktree add "$RUNNER_TEMP/base" "$TAG"
+          PKG="example.com/{{project-name}}/textkit"
+          (cd "$RUNNER_TEMP/base/src/{{ProjectName}}Lib" && "$(go env GOPATH)/bin/apidiff" -w "$RUNNER_TEMP/base.api" "$PKG")
+          REPORT="$("$(go env GOPATH)/bin/apidiff" -incompatible "$RUNNER_TEMP/base.api" "$PKG")"
+          if [ -n "$REPORT" ]; then
+            echo "::error::Incompatible public API changes vs $TAG:"
+            echo "$REPORT"
+            exit 1
+          fi
+          echo "Public API compatible with $TAG."
+
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/{{ProjectName}}Lib
+    strategy:
+      matrix:
+        # The declared support range: the go.mod floor and the current
+        # release. The examples in example_test.go are the README
+        # quickstart — they run (and are verified) as part of the suite.
+        go-version: ["1.26", "1.27"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go-version }}
+      - name: Test (includes the quickstart examples)
+        run: go test ./...
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Secret scan (gitleaks)
+        run: |
+          curl -sSfL https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz | tar -xz --no-same-owner -C "$RUNNER_TEMP" gitleaks
+          "$RUNNER_TEMP/gitleaks" git --redact .
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.27"
+      - name: Dependency scan (OSV-Scanner)
+        run: |
+          # A library declares ranges in go.mod; the go.sum that the
+          # scanner reads is generated transiently here. --no-ignore
+          # keeps the scan honest if the file is ever git-ignored.
+          (cd "src/{{ProjectName}}Lib" && go mod tidy)
+          curl -sSfL -o "$RUNNER_TEMP/osv-scanner" https://github.com/google/osv-scanner/releases/download/v2.7.1/osv-scanner_linux_amd64
+          chmod +x "$RUNNER_TEMP/osv-scanner"
+          "$RUNNER_TEMP/osv-scanner" scan --recursive --no-ignore "src/{{ProjectName}}Lib"

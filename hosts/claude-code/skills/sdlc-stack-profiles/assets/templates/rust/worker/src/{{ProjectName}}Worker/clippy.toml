@@ -1,0 +1,5 @@
+# Clippy — the pinned lint baseline. CI already denies warnings
+# (`cargo clippy -- -D warnings`); this file pins the one setting
+# that must not drift with the toolchain: clippy must never suggest
+# an API newer than the crate's declared rust-version (MSRV).
+msrv = "1.99"

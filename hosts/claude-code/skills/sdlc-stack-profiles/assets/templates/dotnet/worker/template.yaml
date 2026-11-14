@@ -1,0 +1,35 @@
+# Bundled default template — dotnet / worker
+# Instantiation: copy this tree to the repository root, substitute the
+# tokens below in file names and contents, delete template.yaml, then run
+# the verify steps. The worker follows the worker standard in the
+# sdlc-stack-profiles skill ("Worker type — correctness under
+# redelivery"): at-least-once delivery assumed, an idempotency key with
+# a unique constraint applied in the same transaction as the effect, a
+# transactional outbox, classified retries with backoff and jitter, and
+# a dead-letter queue with replay from day one.
+id: dotnet/worker
+profile: dotnet
+kind: worker
+project_dirs:
+  - src/{{ProjectName}}Worker
+  - src/{{ProjectName}}Worker.Tests
+tokens:
+  - name: ProjectName
+    description: PascalCase base name of the product, e.g. TaskTracker
+    default: Sample
+  - name: project-name
+    description: kebab-case name derived from ProjectName, e.g. task-tracker
+    default: sample
+  - name: Year
+    description: Four-digit year written into the LICENSE copyright line at instantiation (use the current year)
+    default: 2026
+verify:
+  - step: install
+    cwd: .
+    command: dotnet restore {{ProjectName}}.sln
+  - step: build
+    cwd: .
+    command: dotnet build {{ProjectName}}.sln -c Release
+  - step: test
+    cwd: .
+    command: dotnet test {{ProjectName}}.sln -c Release

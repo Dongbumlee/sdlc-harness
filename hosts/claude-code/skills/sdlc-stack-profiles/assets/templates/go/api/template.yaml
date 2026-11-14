@@ -1,0 +1,32 @@
+# Bundled default template — go / api
+# Instantiation: copy this tree to the repository root, substitute the
+# tokens below in file names and contents, delete template.yaml, then run
+# the verify steps. The template uses only the Go standard library, so
+# there is nothing to download and no go.sum until the first external
+# dependency is added. See the sdlc-stack-profiles skill ("Bundled
+# default templates").
+id: go/api
+profile: go
+kind: api
+project_dirs:
+  - src/{{ProjectName}}API
+tokens:
+  - name: ProjectName
+    description: PascalCase base name of the product or service, e.g. TaskTracker
+    default: Sample
+  - name: project-name
+    description: kebab-case name derived from ProjectName, e.g. task-tracker — used for the module path and the command directory
+    default: sample
+  - name: Year
+    description: Four-digit year written into the LICENSE copyright line at instantiation (use the current year)
+    default: 2026
+verify:
+  - step: install
+    cwd: src/{{ProjectName}}API
+    command: go mod download
+  - step: build
+    cwd: src/{{ProjectName}}API
+    command: go build ./...
+  - step: test
+    cwd: src/{{ProjectName}}API
+    command: go test ./...

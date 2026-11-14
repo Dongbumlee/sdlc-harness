@@ -1,0 +1,7 @@
+# Test-project EditorConfig — inherits the solution-root baseline and
+# records the one deliberate exception: test method names use the
+# Unit_Scenario_Expectation convention (Health_Returns200), which
+# CA1707 (no underscores in member names) would forbid. CA1707 guards
+# shipped API surface; test names are documentation, not API.
+[*.cs]
+dotnet_diagnostic.CA1707.severity = none

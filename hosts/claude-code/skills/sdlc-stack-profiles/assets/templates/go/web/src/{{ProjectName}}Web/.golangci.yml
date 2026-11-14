@@ -1,0 +1,13 @@
+# golangci-lint — the pinned lint baseline for every scaffolded Go
+# project. The standard linter set (errcheck, govet, ineffassign,
+# staticcheck, unused) is the floor; CI runs this config as-is.
+# gofmt stays a separate hard check in CI.
+version: "2"
+
+linters:
+  default: standard
+
+formatters:
+  enable:
+    - gofmt
+    - goimports

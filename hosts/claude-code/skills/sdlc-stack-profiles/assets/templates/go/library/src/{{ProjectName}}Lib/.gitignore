@@ -1,0 +1,12 @@
+coverage.out
+*.test
+.idea/
+.vscode/
+.DS_Store
+
+# Secrets and local configuration — never commit real values.
+.env
+.env.*
+!.env.example
+*.pem
+*.key

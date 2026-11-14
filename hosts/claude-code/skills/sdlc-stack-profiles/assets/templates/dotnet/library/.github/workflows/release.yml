@@ -1,0 +1,127 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.0.x
+            10.0.x
+      - name: Restore
+        run: dotnet restore {{ProjectName}}.sln
+      - name: Verify format
+        run: dotnet format {{ProjectName}}.sln --verify-no-changes --no-restore
+      - name: Build
+        run: dotnet build {{ProjectName}}.sln -c Release --no-restore
+      - name: Test
+        run: dotnet test {{ProjectName}}.sln -c Release --no-build
+
+  pack:
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+      - name: Pack with the version from the tag
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          dotnet pack src/{{ProjectName}}/{{ProjectName}}.csproj -c Release -p:Version="$VERSION" -o artifacts
+      - uses: actions/upload-artifact@v4
+        with:
+          name: packages
+          path: artifacts/
+
+  smoke:
+    # The package must work for a consumer with an empty project:
+    # restore it from the local artefact feed and call the public
+    # API before anything is published.
+    needs: pack
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: packages
+          path: artifacts/
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+      - name: Consume the package from a clean project
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          dotnet new console -o /tmp/smoke -n Smoke
+          cd /tmp/smoke
+          dotnet add package {{ProjectName}} --version "$VERSION" --source "$GITHUB_WORKSPACE/artifacts"
+          cat > Program.cs <<'EOF'
+          using {{ProjectName}};
+          var slug = TextTransforms.Slugify("Hello, World!");
+          if (slug != "hello-world") throw new Exception($"consumer smoke failed: {slug}");
+          Console.WriteLine("consumer smoke OK");
+          EOF
+          dotnet run
+
+  publish:
+    needs: smoke
+    runs-on: ubuntu-latest
+    environment: nuget
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: packages
+          path: artifacts/
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+      # Trusted publishing: nuget.org exchanges the workflow's OIDC
+      # token for a short-lived API key — no stored registry token.
+      # Set the NUGET_USER repository variable to the nuget.org
+      # account name when enabling the trusted publisher policy.
+      - name: NuGet login (OIDC)
+        id: login
+        uses: NuGet/login@v1
+        with:
+          user: ${{ vars.NUGET_USER }}
+      - name: Publish to NuGet
+        run: dotnet nuget push artifacts/*.nupkg --api-key "${{ steps.login.outputs.NUGET_API_KEY }}" --source https://www.nuget.org/api/v2/package
+
+  release:
+    needs: publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: packages
+          path: artifacts/
+      - name: Extract release notes from CHANGELOG.md
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          awk -v ver="$VERSION" '
+            $0 ~ "^## \\[" ver "\\]" { found=1; next }
+            found && /^## \[/ { exit }
+            found { print }
+          ' CHANGELOG.md > release-notes.md
+          if [ ! -s release-notes.md ]; then
+            echo "::error::No CHANGELOG.md section for version $VERSION. Move the Unreleased entries under a '## [$VERSION] - YYYY-MM-DD' heading before tagging."
+            exit 1
+          fi
+      - name: Create GitHub Release with the packages
+        run: gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --notes-file release-notes.md artifacts/*.nupkg artifacts/*.snupkg
+        env:
+          GH_TOKEN: ${{ github.token }}

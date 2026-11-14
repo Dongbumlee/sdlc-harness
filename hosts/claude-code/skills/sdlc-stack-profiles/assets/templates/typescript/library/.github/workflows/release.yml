@@ -1,0 +1,95 @@
+name: Release
+
+# Cut a release by pushing a version tag:
+#   git tag v0.2.0 && git push origin v0.2.0
+# The tag must match the package.json version and have a matching
+# CHANGELOG.md section — the release fails otherwise. Publishing
+# uses npm trusted publishing (OIDC): no stored registry token.
+# (One-time setup: the first release is published manually once so
+# the package exists, then this repository is configured as a
+# trusted publisher on npmjs.com.)
+on:
+  push:
+    tags: ["v*.*.*"]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install
+        run: pnpm install --no-frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm format:check
+      - run: pnpm test
+      - run: pnpm build
+      - run: pnpm api:check
+      - name: The tag must equal the package.json version
+        id: version
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          pkg="$(node -p "require('./package.json').version")"
+          if [ "$tag" != "$pkg" ]; then
+            echo "tag v$tag does not match package.json version $pkg"
+            exit 1
+          fi
+          echo "version=$tag" >> "$GITHUB_OUTPUT"
+
+  publish:
+    needs: verify
+    runs-on: ubuntu-latest
+    environment: npm
+    permissions:
+      contents: write # create the GitHub Release
+      id-token: write # npm trusted publishing + provenance
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: "https://registry.npmjs.org"
+      - name: Install
+        run: pnpm install --no-frozen-lockfile
+      - name: Build
+        run: pnpm build
+      - name: Smoke-test the packed tarball in a clean consumer project
+        run: |
+          pnpm pack
+          mkdir /tmp/consumer && cd /tmp/consumer
+          npm init -y > /dev/null
+          npm install "$GITHUB_WORKSPACE/{{project-name}}-${{ needs.verify.outputs.version }}.tgz"
+          node --input-type=module -e "import { slugify } from '{{project-name}}'; if (slugify('Hello World') !== 'hello-world') { console.error('smoke failed'); process.exit(1); }"
+      - name: Trusted publishing needs npm CLI 11.5.1 or later
+        run: npm install -g npm@^11.5.1
+      - name: Publish to npm (trusted publishing, with provenance)
+        run: npm publish --provenance --access public
+      - name: Extract release notes from CHANGELOG.md
+        run: |
+          version="${{ needs.verify.outputs.version }}"
+          awk -v ver="$version" '
+            $0 ~ "^## \\[" ver "\\]" { found=1; next }
+            found && /^## \[/ { exit }
+            found { print }
+          ' CHANGELOG.md > /tmp/notes.md
+          if [ ! -s /tmp/notes.md ]; then
+            echo "CHANGELOG.md has no section for $version — the release contract requires one."
+            exit 1
+          fi
+      - name: Create the GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "v${{ needs.verify.outputs.version }}" \
+            --title "v${{ needs.verify.outputs.version }}" \
+            --notes-file /tmp/notes.md \
+            "{{project-name}}-${{ needs.verify.outputs.version }}.tgz"

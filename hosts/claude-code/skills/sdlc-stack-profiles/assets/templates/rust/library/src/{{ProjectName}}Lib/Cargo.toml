@@ -1,0 +1,22 @@
+[package]
+name = "{{project-name}}"
+version = "0.1.0"
+edition = "2024"
+# The support floor (MSRV): CI tests this version and the current stable.
+# Raising it is a breaking change — it ships only in a major release.
+rust-version = "1.85"
+license = "MIT"
+description = "Sample library — replace with a one-line description of yours."
+repository = "https://example.com/{{project-name}}"
+homepage = "https://example.com/{{project-name}}"
+keywords = ["text"]
+categories = ["text-processing"]
+
+[lib]
+name = "{{CrateName}}"
+path = "src/lib.rs"
+
+# Dependencies use caret ranges (Cargo's default semantics): a library
+# declares the range it can work with; the consumer's build resolves
+# the exact versions and owns the lock file.
+[dependencies]

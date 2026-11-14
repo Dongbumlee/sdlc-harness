@@ -1,0 +1,94 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/{{ProjectName}}Lib/**"
+      - ".github/workflows/ci.yml"
+  pull_request:
+    paths:
+      - "src/{{ProjectName}}Lib/**"
+      - ".github/workflows/ci.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/{{ProjectName}}Lib
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          components: rustfmt, clippy
+      - name: Verify format
+        run: cargo fmt --check
+      - name: Lint (clippy)
+        run: cargo clippy --all-targets -- -D warnings
+
+  api:
+    # The public surface is machine-checked: cargo-semver-checks
+    # compares the crate's API against the last release tag and fails
+    # on breaking changes. Skips until the first release tag exists.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Resolve baseline tag
+        id: baseline
+        run: |
+          TAG="$(git describe --tags --abbrev=0 2>/dev/null || true)"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          if [ -z "$TAG" ]; then echo "No release tag yet — API check skipped."; fi
+      - name: Semver-check against the last release
+        if: steps.baseline.outputs.tag != ''
+        uses: obi1kenobi/cargo-semver-checks-action@v2
+        with:
+          manifest-path: src/{{ProjectName}}Lib/Cargo.toml
+          baseline-rev: ${{ steps.baseline.outputs.tag }}
+
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/{{ProjectName}}Lib
+    strategy:
+      matrix:
+        # The declared support range: the MSRV floor from Cargo.toml
+        # (rust-version) and the current stable. Doctests — the README
+        # quickstart — run as part of the suite on both.
+        toolchain: ["1.85", "stable"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: ${{ matrix.toolchain }}
+      - name: Test (unit, integration, doctests)
+        run: cargo test
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Secret scan (gitleaks)
+        run: |
+          curl -sSfL https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz | tar -xz --no-same-owner -C "$RUNNER_TEMP" gitleaks
+          "$RUNNER_TEMP/gitleaks" git --redact .
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Dependency scan (OSV-Scanner)
+        run: |
+          # The lock file is git-ignored by design for a library; it is
+          # generated transiently here, and --no-ignore makes the scan
+          # read it anyway — a scanner that respects the ignore file
+          # would silently scan nothing.
+          (cd "src/{{ProjectName}}Lib" && cargo generate-lockfile)
+          curl -sSfL -o "$RUNNER_TEMP/osv-scanner" https://github.com/google/osv-scanner/releases/download/v2.7.1/osv-scanner_linux_amd64
+          chmod +x "$RUNNER_TEMP/osv-scanner"
+          "$RUNNER_TEMP/osv-scanner" scan --recursive --no-ignore "src/{{ProjectName}}Lib"

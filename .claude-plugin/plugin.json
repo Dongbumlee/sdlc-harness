@@ -1,0 +1,46 @@
+{
+  "name": "sdlc-harness",
+  "version": "1.3.1",
+  "description": "SDLC Harness — an agent-driven multi-agent system that orchestrates your entire software development lifecycle with harness-quality QA, 21 specialized agents, and 24 domain skills.",
+  "author": {
+    "name": "SDLC Harness Contributors"
+  },
+  "license": "MIT",
+  "keywords": [
+    "sdlc",
+    "harness",
+    "azure",
+    "copilot-agents",
+    "code-quality",
+    "qa-review",
+    "multi-agent",
+    "orchestrator",
+    "agent-skills"
+  ],
+  "agents": [
+    "./hosts/claude-code/agents/analyst.md",
+    "./hosts/claude-code/agents/architecture-reviewer.md",
+    "./hosts/claude-code/agents/aws-compliance-reviewer.md",
+    "./hosts/claude-code/agents/azure-compliance-reviewer.md",
+    "./hosts/claude-code/agents/code-quality-reviewer.md",
+    "./hosts/claude-code/agents/deployer.md",
+    "./hosts/claude-code/agents/deployment-readiness-reviewer.md",
+    "./hosts/claude-code/agents/documenter.md",
+    "./hosts/claude-code/agents/gcp-compliance-reviewer.md",
+    "./hosts/claude-code/agents/harness.md",
+    "./hosts/claude-code/agents/implementer.md",
+    "./hosts/claude-code/agents/llm-behavior-reviewer.md",
+    "./hosts/claude-code/agents/qa-bug-checklist-reviewer.md",
+    "./hosts/claude-code/agents/qa-coordinator.md",
+    "./hosts/claude-code/agents/rai-reviewer.md",
+    "./hosts/claude-code/agents/release-manager.md",
+    "./hosts/claude-code/agents/requirements-completeness-reviewer.md",
+    "./hosts/claude-code/agents/scaffolder.md",
+    "./hosts/claude-code/agents/security-reviewer.md",
+    "./hosts/claude-code/agents/test-coverage-reviewer.md",
+    "./hosts/claude-code/agents/ux-and-accessibility-reviewer.md"
+  ],
+  "skills": "./hosts/claude-code/skills",
+  "commands": "./hosts/claude-code/commands",
+  "mcpServers": "./hosts/claude-code/.mcp.json"
+}

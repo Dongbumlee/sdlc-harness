@@ -1,0 +1,8 @@
+{
+  "name": "{{ProjectName}}API (Python 3.12)",
+  "image": "mcr.microsoft.com/devcontainers/python:1-3.12-bookworm",
+  "features": {
+    "ghcr.io/astral-sh/uv:uv": {}
+  },
+  "postCreateCommand": "uv sync"
+}

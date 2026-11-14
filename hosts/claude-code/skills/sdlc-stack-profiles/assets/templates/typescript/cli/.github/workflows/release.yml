@@ -1,0 +1,148 @@
+name: Release
+
+# Tag-driven: the tag must match the package.json version and have
+# a CHANGELOG section. Artefacts are the CLI shape shared by every
+# stack: one self-contained binary per platform (Node SEA), a
+# SHA-256 checksums file, generated man pages and completions, plus
+# the language channel (the npm package).
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: read
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      version: ${{ steps.check.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Tag matches package.json and CHANGELOG section exists
+        id: check
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          if [ "v$VERSION" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match package.json version $VERSION"
+            exit 1
+          fi
+          grep -q "^## \[$VERSION\]" CHANGELOG.md || {
+            echo "::error::No CHANGELOG.md section for version $VERSION"
+            exit 1
+          }
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: pnpm
+      - name: Test
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm build
+          pnpm test
+
+  binaries:
+    needs: gate
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            label: linux-x64
+          - os: ubuntu-24.04-arm
+            label: linux-arm64
+          - os: macos-13
+            label: darwin-x64
+          - os: macos-latest
+            label: darwin-arm64
+          - os: windows-latest
+            label: windows-x64
+            ext: .exe
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: pnpm
+      - name: Build the SEA binary
+        shell: bash
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm build
+          pnpm dlx esbuild@0.28.2 dist/index.js --bundle --platform=node --format=cjs --outfile=sea/main.cjs
+          printf '{ "main": "sea/main.cjs", "output": "sea/blob.blob", "useCodeCache": false }' > sea-config.json
+          node --experimental-sea-config sea-config.json
+          cp "$(command -v node)" "{{project-name}}${{ matrix.ext }}"
+          pnpm dlx postject@1.0.0-alpha.6 "{{project-name}}${{ matrix.ext }}" NODE_SEA_BLOB sea/blob.blob --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2
+          mv "{{project-name}}${{ matrix.ext }}" "{{project-name}}-${{ needs.gate.outputs.version }}-${{ matrix.label }}${{ matrix.ext }}"
+          "./{{project-name}}-${{ needs.gate.outputs.version }}-${{ matrix.label }}${{ matrix.ext }}" --version
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bin-${{ matrix.label }}
+          path: "{{project-name}}-${{ needs.gate.outputs.version }}-${{ matrix.label }}${{ matrix.ext }}"
+
+  publish:
+    needs: [gate, binaries]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: release
+          pattern: bin-*
+          merge-multiple: true
+      - name: Man page and completions from the Linux binary
+        run: |
+          sudo apt-get update && sudo apt-get install -y help2man
+          BIN="release/{{project-name}}-${{ needs.gate.outputs.version }}-linux-x64"
+          chmod +x "$BIN"
+          mkdir -p release/man release/completions
+          help2man --no-info --name "{{ProjectName}} sample command-line tool" -o release/man/{{project-name}}.1 "$BIN"
+          for shell in bash zsh fish; do
+            "$BIN" completions "$shell" > "release/completions/{{project-name}}.$shell"
+          done
+      - name: Checksums
+        working-directory: release
+        run: sha256sum {{project-name}}-* > checksums.txt
+      - name: Extract release notes from CHANGELOG.md
+        run: |
+          VERSION="${{ needs.gate.outputs.version }}"
+          awk -v ver="$VERSION" '
+            $0 ~ "^## \\[" ver "\\]" { found=1; next }
+            found && /^## \[/ { exit }
+            found { print }
+          ' CHANGELOG.md > release-notes.md
+      - name: Create the GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" release/* \
+            --title "$GITHUB_REF_NAME" --notes-file release-notes.md
+
+  npm:
+    needs: gate
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write # npm trusted publishing (OIDC) — no stored token
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          registry-url: "https://registry.npmjs.org"
+      - name: Build and publish to npm
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm build
+          npm publish --provenance --access public

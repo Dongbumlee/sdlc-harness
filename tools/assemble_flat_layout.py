@@ -7,6 +7,8 @@ compatibility flat layout that Agent Plugins / Copilot clients consume:
   com.github.copilot/agents/  <- union of every pack's resolved agents
   .github/agents/             <- same union (mirror)
   skills/                     <- union of every pack's resolved skills
+  hosts/claude-code/          <- the same union, translated to a Claude
+                                 Code plugin by tools/hosts/claude_code.py
 
 Each assembled directory gets a ``.pack-generated`` marker: do not edit the
 flat layout by hand -- change the pack source and re-run this script.
@@ -38,6 +40,10 @@ import shutil
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from hosts.claude_code import build_root_manifest as build_claude_root_manifest  # noqa: E402
+from hosts.claude_code import build_tree as build_claude_tree  # noqa: E402
+
 REPO_ROOT = Path(__file__).resolve().parent.parent
 PACKS_DIR = REPO_ROOT / "packs"
 CORE_PACK_DIR = PACKS_DIR / "core"
@@ -46,6 +52,8 @@ TEMPLATE_DIR_NAME = "_template"
 COPILOT_AGENTS = REPO_ROOT / "com.github.copilot" / "agents"
 GITHUB_AGENTS = REPO_ROOT / ".github" / "agents"
 SKILLS_DIR = REPO_ROOT / "skills"
+CLAUDE_TREE = REPO_ROOT / "hosts" / "claude-code"
+CLAUDE_ROOT_MANIFEST = REPO_ROOT / ".claude-plugin" / "plugin.json"
 
 MARKER_NAME = ".pack-generated"
 MARKER_TEXT = (
@@ -182,12 +190,98 @@ def _check_dir(dest: Path, sources: dict[str, Path]) -> None:
         fail(f"{label}: marker file content changed -- it is managed by the assembler")
 
 
+def _expand_tree(entries: dict[str, bytes | Path]) -> dict[str, tuple[str, object]]:
+    """Flatten a generated tree to relpath -> ('bytes', bytes) | ('file', Path)."""
+    files: dict[str, tuple[str, object]] = {}
+    for rel, value in entries.items():
+        if isinstance(value, bytes):
+            files[rel] = ("bytes", value)
+        else:
+            for path in sorted(value.rglob("*")):
+                if path.is_file():
+                    files[f"{rel}/{path.relative_to(value).as_posix()}"] = ("file", path)
+    files[MARKER_NAME] = ("bytes", MARKER_TEXT.encode("utf-8"))
+    return files
+
+
+def _sync_tree(dest_root: Path, entries: dict[str, bytes | Path]) -> None:
+    """Write mode: make dest_root contain exactly the generated tree."""
+    files = _expand_tree(entries)
+    if dest_root.is_dir():
+        for path in sorted(dest_root.rglob("*"), reverse=True):
+            rel = path.relative_to(dest_root).as_posix()
+            if path.is_file() and rel not in files:
+                path.unlink()
+            elif path.is_dir():
+                try:
+                    path.rmdir()
+                except OSError:
+                    pass
+    for rel, (kind, value) in files.items():
+        target = dest_root / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if kind == "bytes":
+            if not (target.is_file() and target.read_bytes() == value):
+                target.write_bytes(value)  # type: ignore[arg-type]
+        elif not (target.is_file() and filecmp.cmp(value, target, shallow=False)):  # type: ignore[arg-type]
+            shutil.copy2(value, target)  # type: ignore[arg-type]
+
+
+def _check_tree(dest_root: Path, entries: dict[str, bytes | Path]) -> None:
+    """Check mode: fail on anything the assembler would change."""
+    files = _expand_tree(entries)
+    label = _rel(dest_root)
+    actual: dict[str, Path] = {}
+    if dest_root.is_dir():
+        for path in dest_root.rglob("*"):
+            if path.is_file():
+                actual[path.relative_to(dest_root).as_posix()] = path
+    for rel in sorted(set(files) - set(actual)):
+        fail(f"{label}: missing '{rel}' -- run tools/assemble_flat_layout.py")
+    for rel in sorted(set(actual) - set(files)):
+        fail(f"{label}: unexpected '{rel}' -- not produced from packs/*/")
+    for rel, (kind, value) in files.items():
+        target = actual.get(rel)
+        if target is None:
+            continue
+        if kind == "bytes":
+            if target.read_bytes() != value:
+                fail(f"{label}: '{rel}' differs from the generated tree -- edit packs/, not hosts/")
+        elif not filecmp.cmp(value, target, shallow=False):  # type: ignore[arg-type]
+            fail(f"{label}: '{rel}' differs from pack source -- edit packs/, not hosts/")
+
+
+def _sync_file(dest: Path, content: bytes) -> None:
+    if not (dest.is_file() and dest.read_bytes() == content):
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        dest.write_bytes(content)
+
+
+def _check_file(dest: Path, content: bytes) -> None:
+    label = _rel(dest)
+    if not dest.is_file():
+        fail(f"{label}: missing -- run tools/assemble_flat_layout.py")
+    elif dest.read_bytes() != content:
+        fail(f"{label}: differs from the generated content -- it is managed by the assembler")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Assemble the flat layout from packs/*/.")
     parser.add_argument("--check", action="store_true", help="fail if the flat layout is stale")
     args = parser.parse_args()
 
     agents, skills = collect()
+    claude_entries = None
+    claude_root_manifest = None
+    if not failures:
+        try:
+            claude_entries = build_claude_tree(REPO_ROOT, PACKS_DIR, agents, skills)
+            slugs = sorted(
+                Path(rel).stem for rel in claude_entries if rel.startswith("agents/")
+            )
+            claude_root_manifest = build_claude_root_manifest(REPO_ROOT, slugs)
+        except ValueError as exc:
+            fail(f"claude-code target: {exc}")
     if failures:
         print(f"\n{len(failures)} assembly error(s).")
         return 1
@@ -197,10 +291,14 @@ def main() -> int:
     if args.check:
         for dest, sources in targets:
             _check_dir(dest, sources)
+        _check_tree(CLAUDE_TREE, claude_entries)
+        _check_file(CLAUDE_ROOT_MANIFEST, claude_root_manifest)
     else:
         for dest, sources in targets:
             _sync_dir(dest, sources)
-        print("Flat layout regenerated.")
+        _sync_tree(CLAUDE_TREE, claude_entries)
+        _sync_file(CLAUDE_ROOT_MANIFEST, claude_root_manifest)
+        print("Flat layout and Claude Code tree regenerated.")
 
     if failures:
         print(f"\n{len(failures)} problem(s) found.")

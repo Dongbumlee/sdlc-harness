@@ -1,0 +1,106 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - name: The tag must match the version in pyproject.toml
+        run: |
+          VERSION=$(python3 -c "import tomllib; print(tomllib.load(open('pyproject.toml', 'rb'))['project']['version'])")
+          if [ "v$VERSION" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match pyproject.toml version $VERSION. Bump the version (and the changelog) before tagging."
+            exit 1
+          fi
+      - name: Install dependencies
+        run: uv sync
+      - name: Lint (ruff)
+        run: uv run ruff check .
+      - name: Verify format (ruff)
+        run: uv run ruff format --check .
+      - name: Test
+        run: uv run pytest --cov
+
+  build:
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - name: Build sdist and wheel
+        run: uv build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  smoke:
+    # The artefact must work for a consumer who has nothing but
+    # Python: install the wheel into a clean environment and use
+    # the public API before anything is published.
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Install the wheel clean and exercise the public API
+        run: |
+          python -m venv /tmp/smoke
+          /tmp/smoke/bin/pip install dist/*.whl
+          /tmp/smoke/bin/python -c "from {{project_name}} import slugify, truncate; assert slugify('Hello, World!') == 'hello-world'; assert truncate('hello world', 8) == 'hello w…'; print('consumer smoke OK')"
+
+  publish:
+    needs: smoke
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - name: Publish to PyPI (trusted publishing — no stored token)
+        uses: pypa/gh-action-pypi-publish@release/v1
+
+  release:
+    needs: publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - name: Extract release notes from CHANGELOG.md
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          awk -v ver="$VERSION" '
+            $0 ~ "^## \\[" ver "\\]" { found=1; next }
+            found && /^## \[/ { exit }
+            found { print }
+          ' CHANGELOG.md > release-notes.md
+          if [ ! -s release-notes.md ]; then
+            echo "::error::No CHANGELOG.md section for version $VERSION. Move the Unreleased entries under a '## [$VERSION] - YYYY-MM-DD' heading before tagging."
+            exit 1
+          fi
+      - name: Create GitHub Release with the artefacts
+        run: gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --notes-file release-notes.md dist/*
+        env:
+          GH_TOKEN: ${{ github.token }}

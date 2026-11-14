@@ -1,0 +1,26 @@
+{
+    "servers": {
+        "github": {
+            "type": "http",
+            "url": "https://api.githubcopilot.com/mcp/"
+        },
+        "context7": {
+            "type": "stdio",
+            "command": "npx",
+            "args": [
+                "-y",
+                "@upstash/context7-mcp@latest"
+            ]
+        },
+        "playwright": {
+            "type": "stdio",
+            "command": "npx",
+            "args": [
+                "@playwright/mcp@latest",
+                "--headless",
+                "--caps=testing",
+                "--output-dir=.playwright-mcp"
+            ]
+        }
+    }
+}

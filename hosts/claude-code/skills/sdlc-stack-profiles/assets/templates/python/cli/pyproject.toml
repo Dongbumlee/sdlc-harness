@@ -1,0 +1,43 @@
+[build-system]
+requires = ["uv_build>=0.9.0,<0.10.0"]
+build-backend = "uv_build"
+
+[project]
+name = "{{project-name}}"
+version = "0.1.0"
+description = "{{ProjectName}} sample command-line tool"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = ["click>=8.1,<9"]
+
+[project.scripts]
+{{project-name}} = "{{project_name}}.cli:cli"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.0",
+    "pytest-cov>=6.2.1",
+    "ruff>=0.8.0",
+]
+
+# Ruff is the pinned formatter + linter for every Python project.
+# CI runs `ruff check` and `ruff format --check`; there is no second
+# formatter and no per-project rule shopping. The target version is
+# the lowest supported Python — lint must reject syntax the oldest
+# supported runtime cannot run.
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+# The package's docstring examples are executable documentation:
+# pytest runs them (--doctest-modules) so the quickstart can never
+# silently rot.
+[tool.pytest.ini_options]
+addopts = ["--import-mode=importlib", "--doctest-modules"]
+testpaths = ["tests", "src"]
+
+[tool.coverage.run]
+source = ["{{project_name}}"]

@@ -1,0 +1,14 @@
+/target
+# A library does not commit its lock file: consumers resolve their own.
+# CI generates it transiently for the dependency scan.
+/Cargo.lock
+.idea/
+.vscode/
+.DS_Store
+
+# Secrets and local configuration — never commit real values.
+.env
+.env.*
+!.env.example
+*.pem
+*.key

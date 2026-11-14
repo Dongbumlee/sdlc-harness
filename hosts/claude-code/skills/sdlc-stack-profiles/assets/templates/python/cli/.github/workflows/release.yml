@@ -1,0 +1,130 @@
+name: Release
+
+# Tag-driven: the tag must match the pyproject version and have a
+# CHANGELOG section. Artefacts are the CLI shape shared by every
+# stack: one self-contained binary per platform (PyInstaller), a
+# SHA-256 checksums file, generated man pages and completions, plus
+# the language channel (PyPI, for pipx/uv tool installs).
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: read
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Tag matches pyproject and CHANGELOG section exists
+        run: |
+          VERSION=$(grep -m1 '^version = ' pyproject.toml | sed 's/.*"\(.*\)"/\1/')
+          if [ "v$VERSION" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match pyproject version $VERSION"
+            exit 1
+          fi
+          grep -q "^## \[$VERSION\]" CHANGELOG.md || {
+            echo "::error::No CHANGELOG.md section for version $VERSION"
+            exit 1
+          }
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+        id: check
+      - uses: astral-sh/setup-uv@v4
+      - name: Test
+        run: |
+          uv sync
+          uv run pytest
+    outputs:
+      version: ${{ steps.check.outputs.version }}
+
+  binaries:
+    needs: gate
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            label: linux-x86_64
+          - os: ubuntu-24.04-arm
+            label: linux-arm64
+          - os: macos-13
+            label: darwin-x86_64
+          - os: macos-latest
+            label: darwin-arm64
+          - os: windows-latest
+            label: windows-x86_64
+            ext: .exe
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v4
+      - name: Build the frozen binary
+        run: |
+          uv sync
+          uv run --with pyinstaller==6.22.3 pyinstaller --onefile --copy-metadata {{project-name}} --name {{project-name}} src/{{project_name}}/__main__.py
+      - name: Name the artefact by platform and smoke-test it
+        shell: bash
+        run: |
+          mv "dist/{{project-name}}${{ matrix.ext }}" "{{project-name}}-${{ needs.gate.outputs.version }}-${{ matrix.label }}${{ matrix.ext }}"
+          "./{{project-name}}-${{ needs.gate.outputs.version }}-${{ matrix.label }}${{ matrix.ext }}" --version
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bin-${{ matrix.label }}
+          path: "{{project-name}}-${{ needs.gate.outputs.version }}-${{ matrix.label }}${{ matrix.ext }}"
+
+  publish:
+    needs: [gate, binaries]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: release
+          pattern: bin-*
+          merge-multiple: true
+      - name: Man pages and completions from the Linux binary
+        run: |
+          sudo apt-get update && sudo apt-get install -y help2man
+          BIN="release/{{project-name}}-${{ needs.gate.outputs.version }}-linux-x86_64"
+          chmod +x "$BIN"
+          mkdir -p release/man release/completions
+          help2man --no-info --name "{{ProjectName}} sample command-line tool" -o release/man/{{project-name}}.1 "$BIN"
+          for shell in bash zsh fish; do
+            "$BIN" completions "$shell" > "release/completions/{{project-name}}.$shell"
+          done
+      - name: Checksums
+        working-directory: release
+        run: sha256sum {{project-name}}-* > checksums.txt
+      - name: Extract release notes from CHANGELOG.md
+        run: |
+          VERSION="${{ needs.gate.outputs.version }}"
+          awk -v ver="$VERSION" '
+            $0 ~ "^## \\[" ver "\\]" { found=1; next }
+            found && /^## \[/ { exit }
+            found { print }
+          ' CHANGELOG.md > release-notes.md
+      - name: Create the GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" release/* \
+            --title "$GITHUB_REF_NAME" --notes-file release-notes.md
+
+  pypi:
+    needs: gate
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write # PyPI trusted publishing (OIDC) — no stored token
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v4
+      - name: Build and publish to PyPI
+        run: |
+          uv build
+          uv publish

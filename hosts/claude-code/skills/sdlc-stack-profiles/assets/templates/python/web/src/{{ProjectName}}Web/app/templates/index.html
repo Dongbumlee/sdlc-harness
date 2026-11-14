@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Items · {{ public.app_name }}{% endblock %}
+{% block content %}
+<h1>Items</h1>
+{% if items %}
+<ul class="items">
+  {% for id, name in items %}
+  <li><span class="item-id">#{{ id }}</span> {{ name }}</li>
+  {% endfor %}
+</ul>
+{% else %}
+<p>No items yet. Add the first one below.</p>
+{% endif %}
+
+<form method="post" action="/items" class="add-item">
+  <label for="item-name">Item name</label>
+  <input id="item-name" name="name" type="text" required maxlength="120" />
+  <button type="submit">Add item</button>
+</form>
+{% endblock %}
