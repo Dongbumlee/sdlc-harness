@@ -1,7 +1,7 @@
 ---
 name: rai-reviewer
 description: "Use when assessing AI and data risks, reviewing responsible AI compliance, evaluating fairness and transparency concerns, or auditing AI-powered features. Handles SDLC Phase 7."
-tools: Read, Grep, Glob, WebFetch, mcp__microsoft-learn__*
+tools: Read, Grep, Glob, WebFetch, mcp__plugin_sdlc-harness_microsoft-learn__*
 ---
 
 # RAI Reviewer — SDLC Phase 7: Responsible AI Review

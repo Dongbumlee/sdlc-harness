@@ -90,7 +90,7 @@ class TestGeneratedAgents:
                 path.read_text(encoding="utf-8"), str(path)
             )
             slug = next(
-                line.split("|")[1].strip().strip("`")
+                line.split("|")[1].strip().strip("`").rsplit(":", 1)[-1]
                 for line in index.splitlines()
                 if line.startswith("| `") and fields["name"] in line
             )
@@ -99,14 +99,67 @@ class TestGeneratedAgents:
             ), f"body differs for {name}"
 
     def test_allowlist_targets_exist(self):
-        """Every slug inside an Agent(...) allowlist is a generated agent."""
+        """Every Agent(...) entry is a plugin-namespaced type whose slug is
+        a generated agent (Claude Code registers plugin subagents as
+        <plugin>:<slug>; a bare slug matches nothing)."""
+        plugin_name = json.loads(
+            (REPO_ROOT / "plugin.json").read_text(encoding="utf-8")
+        )["name"]
         generated = _generated_agents()
         for slug, text in generated.items():
             for allowlist in re.findall(r"Agent\(([^)]*)\)", text.split("---")[1]):
                 for target in allowlist.split(","):
-                    assert target.strip() in generated, (
+                    target = target.strip()
+                    assert target.startswith(plugin_name + ":"), (
+                        f"{slug}: allowlist target {target} is not namespaced"
+                    )
+                    assert target.split(":", 1)[1] in generated, (
                         f"{slug}: allowlist target {target} not generated"
                     )
+
+    def test_root_allowlist_is_graph_closure(self):
+        """The delegation graph's root carries the transitive closure in
+        its Agent(...) list: Claude Code scopes the session's spawnable
+        registry to the main agent's allowlist, so a reviewer the
+        coordinator delegates to must appear in the root's list even
+        though the root never delegates to it directly."""
+        index = (TREE / "NAME-INDEX.md").read_text(encoding="utf-8")
+        slug_by_name = {}
+        for line in index.splitlines():
+            if line.startswith("| `"):
+                cells = [c.strip() for c in line.split("|")]
+                slug_by_name[cells[2]] = cells[1].strip("`").rsplit(":", 1)[-1]
+        generated = _generated_agents()
+        direct: dict[str, list[str]] = {}
+        for name, path in _pack_agents().items():
+            fields, _raw, _b = parse_frontmatter(
+                path.read_text(encoding="utf-8"), str(path)
+            )
+            direct[fields["name"]] = list(fields.get("agents") or [])
+        delegated = {n for names in direct.values() for n in names}
+
+        def closure(start: str) -> set[str]:
+            seen: set[str] = set()
+            stack = list(direct[start])
+            while stack:
+                current = stack.pop()
+                if current == start or current in seen:
+                    continue
+                seen.add(current)
+                stack.extend(direct.get(current) or [])
+            return seen
+
+        candidates = [n for n in direct if n not in delegated]
+        entry = max(candidates, key=lambda n: len(closure(n)))
+        assert delegated <= closure(entry)
+        root_slug = slug_by_name[entry]
+        frontmatter = generated[root_slug].split("---")[1]
+        allowlist = re.findall(r"Agent\(([^)]*)\)", frontmatter)[0]
+        root_targets = {t.strip().rsplit(":", 1)[-1] for t in allowlist.split(",")}
+        # Every direct delegate of every agent is reachable from the root.
+        for names in direct.values():
+            for name in names:
+                assert slug_by_name[name] in root_targets, name
 
     def test_no_copilot_only_fields(self):
         """user-invocable has no Claude Code equivalent and is dropped;
@@ -121,12 +174,23 @@ class TestMcpConfig:
     """The generated .mcp.json backs every MCP wildcard the agents use."""
 
     def test_prefixes_backed_by_servers(self):
-        """Each mcp__<server>__* in a tools list is a declared server."""
+        """Each MCP wildcard in a tools list carries the plugin namespace
+        (mcp__plugin_<plugin>_<server>__*, the form Claude Code registers
+        for plugin-provided servers) and names a declared server."""
+        plugin_name = json.loads(
+            (REPO_ROOT / "plugin.json").read_text(encoding="utf-8")
+        )["name"]
         config = json.loads((TREE / ".mcp.json").read_text(encoding="utf-8"))
         servers = set(config["mcpServers"])
         used = set()
         for text in _generated_agents().values():
-            used.update(re.findall(r"mcp__([a-z0-9-]+)__\*", text))
+            for wildcard in re.findall(r"mcp__[a-z0-9_-]+__\*", text):
+                match = re.fullmatch(
+                    r"mcp__plugin_" + re.escape(plugin_name) + r"_([a-z0-9-]+)__\*",
+                    wildcard,
+                )
+                assert match, f"MCP wildcard not plugin-namespaced: {wildcard}"
+                used.add(match.group(1))
         assert used <= servers, f"undeclared MCP servers used: {used - servers}"
         assert MCP_SERVERS <= servers
 

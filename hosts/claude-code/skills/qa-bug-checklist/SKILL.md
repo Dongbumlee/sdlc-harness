@@ -7,8 +7,8 @@ description: "Run the QA Bug Checklist Reviewer against the current change, on d
      Claude Code has no user-invocable flag for subagents, so this skill is
      the on-demand entry point for the qa-bug-checklist-reviewer agent. -->
 
-Use the Agent tool to invoke the `qa-bug-checklist-reviewer` subagent with
-the user's request. Default scope is the current change (the working-tree
-diff, or the branch diff against its base if the tree is clean); if the
-user names files, a directory, or a past change, pass that scope instead.
-Relay the reviewer's findings to the user when it returns.
+Use the Agent tool to invoke the `sdlc-harness:qa-bug-checklist-reviewer`
+subagent with the user's request. Default scope is the current change (the
+working-tree diff, or the branch diff against its base if the tree is
+clean); if the user names files, a directory, or a past change, pass that
+scope instead. Relay the reviewer's findings to the user when it returns.

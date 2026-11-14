@@ -2,30 +2,32 @@
 
 # Agent name index
 
-Copilot agent names and their Claude Code slugs. Both forms name the
-same agent; the body of every generated agent file is byte-identical
-to its pack source.
+Copilot agent names and their Claude Code agent types. Claude Code
+registers plugin subagents under plugin-namespaced types
+(`<plugin>:<slug>`), so the type below is the exact string the Agent
+tool accepts. The body of every generated agent file is
+byte-identical to its pack source.
 
-| Claude Code name | Copilot name | Pack source |
+| Claude Code agent type | Copilot name | Pack source |
 | --- | --- | --- |
-| `analyst` | Analyst | `packs/core/agents/analyst.agent.md` |
-| `architecture-reviewer` | Architecture Reviewer | `packs/core/agents/architecture-reviewer.agent.md` |
-| `aws-compliance-reviewer` | AWS Compliance Reviewer | `packs/aws/agents/aws-compliance-reviewer.agent.md` |
-| `azure-compliance-reviewer` | Azure Compliance Reviewer | `packs/azure/agents/azure-compliance-reviewer.agent.md` |
-| `code-quality-reviewer` | Code Quality Reviewer | `packs/core/agents/code-quality-reviewer.agent.md` |
-| `deployer` | Deployer | `packs/core/agents/deployer.agent.md` |
-| `deployment-readiness-reviewer` | Deployment Readiness Reviewer | `packs/core/agents/deployment-readiness-reviewer.agent.md` |
-| `documenter` | Documenter | `packs/core/agents/documenter.agent.md` |
-| `gcp-compliance-reviewer` | GCP Compliance Reviewer | `packs/gcp/agents/gcp-compliance-reviewer.agent.md` |
-| `harness` | Harness | `packs/core/agents/harness.agent.md` |
-| `implementer` | Implementer | `packs/core/agents/implementer.agent.md` |
-| `llm-behavior-reviewer` | LLM Behavior Reviewer | `packs/core/agents/llm-behavior-reviewer.agent.md` |
-| `qa-bug-checklist-reviewer` | QA Bug Checklist Reviewer | `packs/azure/agents/qa-bug-checklist-reviewer.agent.md` |
-| `qa-coordinator` | QA Coordinator | `packs/core/agents/qa-coordinator.agent.md` |
-| `rai-reviewer` | RAI Reviewer | `packs/core/agents/rai-reviewer.agent.md` |
-| `release-manager` | Release Manager | `packs/core/agents/release-manager.agent.md` |
-| `requirements-completeness-reviewer` | Requirements Completeness Reviewer | `packs/core/agents/requirements-completeness-reviewer.agent.md` |
-| `scaffolder` | Scaffolder | `packs/core/agents/scaffolder.agent.md` |
-| `security-reviewer` | Security Reviewer | `packs/core/agents/security-reviewer.agent.md` |
-| `test-coverage-reviewer` | Test Coverage Reviewer | `packs/core/agents/test-coverage-reviewer.agent.md` |
-| `ux-and-accessibility-reviewer` | UX & Accessibility Reviewer | `packs/core/agents/ux-accessibility-reviewer.agent.md` |
+| `sdlc-harness:analyst` | Analyst | `packs/core/agents/analyst.agent.md` |
+| `sdlc-harness:architecture-reviewer` | Architecture Reviewer | `packs/core/agents/architecture-reviewer.agent.md` |
+| `sdlc-harness:aws-compliance-reviewer` | AWS Compliance Reviewer | `packs/aws/agents/aws-compliance-reviewer.agent.md` |
+| `sdlc-harness:azure-compliance-reviewer` | Azure Compliance Reviewer | `packs/azure/agents/azure-compliance-reviewer.agent.md` |
+| `sdlc-harness:code-quality-reviewer` | Code Quality Reviewer | `packs/core/agents/code-quality-reviewer.agent.md` |
+| `sdlc-harness:deployer` | Deployer | `packs/core/agents/deployer.agent.md` |
+| `sdlc-harness:deployment-readiness-reviewer` | Deployment Readiness Reviewer | `packs/core/agents/deployment-readiness-reviewer.agent.md` |
+| `sdlc-harness:documenter` | Documenter | `packs/core/agents/documenter.agent.md` |
+| `sdlc-harness:gcp-compliance-reviewer` | GCP Compliance Reviewer | `packs/gcp/agents/gcp-compliance-reviewer.agent.md` |
+| `sdlc-harness:harness` | Harness | `packs/core/agents/harness.agent.md` |
+| `sdlc-harness:implementer` | Implementer | `packs/core/agents/implementer.agent.md` |
+| `sdlc-harness:llm-behavior-reviewer` | LLM Behavior Reviewer | `packs/core/agents/llm-behavior-reviewer.agent.md` |
+| `sdlc-harness:qa-bug-checklist-reviewer` | QA Bug Checklist Reviewer | `packs/azure/agents/qa-bug-checklist-reviewer.agent.md` |
+| `sdlc-harness:qa-coordinator` | QA Coordinator | `packs/core/agents/qa-coordinator.agent.md` |
+| `sdlc-harness:rai-reviewer` | RAI Reviewer | `packs/core/agents/rai-reviewer.agent.md` |
+| `sdlc-harness:release-manager` | Release Manager | `packs/core/agents/release-manager.agent.md` |
+| `sdlc-harness:requirements-completeness-reviewer` | Requirements Completeness Reviewer | `packs/core/agents/requirements-completeness-reviewer.agent.md` |
+| `sdlc-harness:scaffolder` | Scaffolder | `packs/core/agents/scaffolder.agent.md` |
+| `sdlc-harness:security-reviewer` | Security Reviewer | `packs/core/agents/security-reviewer.agent.md` |
+| `sdlc-harness:test-coverage-reviewer` | Test Coverage Reviewer | `packs/core/agents/test-coverage-reviewer.agent.md` |
+| `sdlc-harness:ux-and-accessibility-reviewer` | UX & Accessibility Reviewer | `packs/core/agents/ux-accessibility-reviewer.agent.md` |

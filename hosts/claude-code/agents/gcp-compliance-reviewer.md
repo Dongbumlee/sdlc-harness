@@ -1,7 +1,7 @@
 ---
 name: gcp-compliance-reviewer
 description: "Use when reviewing Terraform usage, verifying least-privilege IAM, checking Cloud Storage/Firestore configuration, validating secrets handling, or auditing infrastructure cost guardrails on GCP."
-tools: Read, Grep, Glob, mcp__github__*
+tools: Read, Grep, Glob, mcp__plugin_sdlc-harness_github__*
 skills:
   - sdlc-reviewer-output-format
 ---

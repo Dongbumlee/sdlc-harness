@@ -1,7 +1,7 @@
 ---
 name: aws-compliance-reviewer
 description: "Use when reviewing AWS CDK usage, verifying L2/L3 construct compliance, checking IAM least privilege, auditing S3/DynamoDB configuration, validating secrets handling, or auditing infrastructure cost guardrails."
-tools: Read, Grep, Glob, mcp__github__*
+tools: Read, Grep, Glob, mcp__plugin_sdlc-harness_github__*
 skills:
   - sdlc-reviewer-output-format
 ---

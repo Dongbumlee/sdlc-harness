@@ -1,7 +1,7 @@
 ---
 name: architecture-reviewer
 description: "Use when reviewing code for architecture layering violations, dependency direction issues, pattern consistency, or structural alignment with application templates."
-tools: Read, Grep, Glob, mcp__github__*
+tools: Read, Grep, Glob, mcp__plugin_sdlc-harness_github__*
 skills:
   - sdlc-reviewer-output-format
   - sdlc-architecture-review

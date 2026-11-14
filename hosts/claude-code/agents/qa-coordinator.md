@@ -1,7 +1,7 @@
 ---
 name: qa-coordinator
 description: "Use when running code reviews, quality assurance passes, requirements validation, or pre-merge validation. Orchestrates a panel of parallel reviewer subagents selected by project applicability (architecture, security, code quality, testing, requirements completeness, UX, LLM behavior, cloud compliance (AWS/GCP/Azure), deployment readiness), all starting from a shared evidence pack under per-reviewer budgets."
-tools: Read, Agent(architecture-reviewer, azure-compliance-reviewer, aws-compliance-reviewer, gcp-compliance-reviewer, code-quality-reviewer, security-reviewer, test-coverage-reviewer, requirements-completeness-reviewer, ux-and-accessibility-reviewer, llm-behavior-reviewer, deployment-readiness-reviewer), Grep, Glob, WebFetch, WebSearch, mcp__playwright__*, mcp__context7__*, mcp__microsoft-learn__*
+tools: Read, Agent(sdlc-harness:architecture-reviewer, sdlc-harness:aws-compliance-reviewer, sdlc-harness:azure-compliance-reviewer, sdlc-harness:code-quality-reviewer, sdlc-harness:deployment-readiness-reviewer, sdlc-harness:gcp-compliance-reviewer, sdlc-harness:llm-behavior-reviewer, sdlc-harness:requirements-completeness-reviewer, sdlc-harness:security-reviewer, sdlc-harness:test-coverage-reviewer, sdlc-harness:ux-and-accessibility-reviewer), Grep, Glob, WebFetch, WebSearch, mcp__plugin_sdlc-harness_playwright__*, mcp__plugin_sdlc-harness_context7__*, mcp__plugin_sdlc-harness_microsoft-learn__*
 skills:
   - sdlc-reviewer-output-format
   - sdlc-project-qa
