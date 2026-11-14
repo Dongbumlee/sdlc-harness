@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>{{ProjectName}}.Cli</RootNamespace>
+    <AssemblyName>{{project-name}}</AssemblyName>
+    <!-- Package identity. The version here is the in-development
+         version; releases publish and pack with the version taken
+         from the git tag (see .github/workflows/release.yml). -->
+    <Version>0.1.0</Version>
+    <Description>{{ProjectName}} sample command-line tool</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <!-- The language channel: the same artefact installs as a .NET
+         tool (dotnet tool install -g {{project-name}}). -->
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>{{project-name}}</ToolCommandName>
+    <PackageId>{{project-name}}</PackageId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.CommandLine" Version="3.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\{{ProjectName}}.Cli.Core\{{ProjectName}}.Cli.Core.csproj" />
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+</Project>

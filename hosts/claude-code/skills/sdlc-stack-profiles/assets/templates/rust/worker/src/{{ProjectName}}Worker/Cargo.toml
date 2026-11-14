@@ -1,0 +1,23 @@
+# An application pins its dependency ranges tightly (a library
+# declares wider ranges instead): the shipped binary must be the
+# tested binary. The job store is SQLite via rusqlite's bundled
+# engine, so every delivery guarantee is testable with no external
+# services.
+[package]
+name = "{{project-name}}-worker"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.99"
+
+[lib]
+name = "{{CrateName}}_worker"
+path = "src/lib.rs"
+
+[[bin]]
+name = "{{project-name}}-worker"
+path = "src/main.rs"
+
+[dependencies]
+rusqlite = { version = "0.42", features = ["bundled"] }
+serde_json = "1"
+signal-hook = "0.3"

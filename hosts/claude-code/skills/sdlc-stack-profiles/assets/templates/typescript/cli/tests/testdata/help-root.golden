@@ -1,0 +1,32 @@
+Usage: {{project-name}} [options] [command]
+
+{{ProjectName}} is a sample command-line tool built from the typescript/cli
+template. It demonstrates the CLI contract: data goes to stdout,
+diagnostics go to stderr, and the command surface (flags, output
+schema, exit codes) is a tested API.
+
+Exit codes:
+  0  success
+  1  failure (the command ran but could not complete)
+  2  usage error (unknown command, bad flags, invalid arguments)
+
+Configuration precedence: flags, then environment
+(<PREFIX>_FORMAT and friends, where the prefix is the
+upper-cased tool name), then defaults. Secrets are read from
+the environment, never from flags.
+
+Options:
+  -V, --version      output the version number
+  --format <format>  Output format for data commands: plain or json. (default:
+                     "plain")
+  --json             Shorthand for --format json.
+  --no-color         Disable colour in diagnostics (NO_COLOR is also honoured).
+  --verbose          Print diagnostics about what the command is doing.
+  --quiet            Suppress diagnostics.
+  --no-input         Never prompt; fail instead of asking.
+  --dry-run          Show what would happen without writing anything.
+  -h, --help         Show help and usage information.
+
+Commands:
+  text [options]     Text transformations over the textkit core.
+  help [command]     display help for command

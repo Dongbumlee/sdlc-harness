@@ -1,0 +1,5 @@
+# Maven wrapper scripts keep the endings they ship with: LF for the
+# shell script, CRLF for the Windows batch script (cmd.exe label lookup
+# fails on LF-only batch files).
+src/*/mvnw text eol=lf
+src/*/mvnw.cmd text eol=crlf

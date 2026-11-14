@@ -1,0 +1,22 @@
+# EditorConfig — the organization's baseline for every scaffolded project.
+# Toolchain formatters (ruff format, dotnet format, Spotless, gofmt,
+# rustfmt, Prettier) are the enforcement; this file keeps every editor
+# aligned with them so diffs stay clean before CI ever runs.
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+
+[*.{js,jsx,mjs,ts,tsx,json,jsonc,yml,yaml,css,scss,html,md,xml,csproj,props,targets}]
+indent_size = 2
+
+[*.go]
+indent_style = tab
+
+[Makefile]
+indent_style = tab

@@ -1,0 +1,1 @@
+{"features":{"ghcr.io/devcontainers/features/rust:1":{"version":"1.99"}},"image":"mcr.microsoft.com/devcontainers/base:ubuntu","name":"{{ProjectName}}API (Rust 1.99)"}

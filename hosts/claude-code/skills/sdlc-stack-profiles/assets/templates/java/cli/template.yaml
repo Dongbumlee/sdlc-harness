@@ -1,0 +1,38 @@
+# Bundled default template — java / cli
+# Instantiation: copy this tree to the repository root, substitute the
+# tokens below in file names and contents, delete template.yaml, then run
+# the verify steps. The CLI follows the cli standard in the
+# sdlc-stack-profiles skill ("CLI type — the interface is the
+# contract"): picocli parsing (whose default exit codes already are
+# the contract map), data to stdout and diagnostics to stderr,
+# golden-file and exit-code tests, and a shaded executable jar +
+# jpackage app images + a Maven Central artifact in the same artefact
+# shape as every other stack.
+id: java/cli
+profile: java
+kind: cli
+project_dirs:
+  - src/{{ProjectName}}CLI
+tokens:
+  - name: ProjectName
+    description: PascalCase base name of the product, e.g. TaskTracker
+    default: Sample
+  - name: project-name
+    description: kebab-case name derived from ProjectName, e.g. task-tracker — used for the artifact and command names
+    default: sample
+  - name: PackageName
+    description: Lowercase package segment under com.example, used by java/cli
+    default: sample
+  - name: Year
+    description: Four-digit year written into the LICENSE copyright line at instantiation (use the current year)
+    default: 2026
+verify:
+  - step: install
+    cwd: src/{{ProjectName}}CLI
+    command: ./mvnw -B -q dependency:resolve
+  - step: build
+    cwd: src/{{ProjectName}}CLI
+    command: ./mvnw -B package -DskipTests
+  - step: test
+    cwd: src/{{ProjectName}}CLI
+    command: ./mvnw -B test

@@ -1,0 +1,43 @@
+{
+  "description": "{{ProjectName}} — a TypeScript library.",
+  "devDependencies": {
+    "@microsoft/api-extractor": "^7.52.0",
+    "@types/node": "^22.0.0",
+    "eslint": "^9.0.0",
+    "prettier": "^3.6.0",
+    "typescript": "^6.0.0",
+    "typescript-eslint": "^8.0.0",
+    "vitest": "^4.1.0"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "license": "MIT",
+  "name": "{{project-name}}",
+  "pnpm": {
+    "overrides": {
+      "minimatch@10": "^11.0.1"
+    }
+  },
+  "scripts": {
+    "api": "api-extractor run --local",
+    "api:check": "api-extractor run",
+    "build": "tsc -p tsconfig.json",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint .",
+    "test": "vitest run"
+  },
+  "sideEffects": false,
+  "type": "module",
+  "version": "0.1.0"
+}

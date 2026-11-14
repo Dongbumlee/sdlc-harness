@@ -1,0 +1,81 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "tests/**"
+      - "package.json"
+      - "tsconfig.json"
+      - ".github/workflows/ci.yml"
+  pull_request:
+    paths:
+      - "src/**"
+      - "tests/**"
+      - "package.json"
+      - "tsconfig.json"
+      - ".github/workflows/ci.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: pnpm
+      - name: Install (frozen)
+        run: pnpm install --frozen-lockfile
+      - name: Lint
+        run: pnpm lint
+      - name: Format check
+        run: pnpm format:check
+      - name: Build
+        run: pnpm build
+      - name: Test (golden outputs + exit codes pin the CLI contract)
+        run: pnpm test
+
+  sea-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: pnpm
+      - name: SEA smoke build (the release binary's shape)
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm build
+          pnpm dlx esbuild@0.28.2 dist/index.js --bundle --platform=node --format=cjs --outfile=sea/main.cjs
+          cat > sea-config.json <<'JSON'
+          { "main": "sea/main.cjs", "output": "sea/blob.blob", "useCodeCache": false }
+          JSON
+          node --experimental-sea-config sea-config.json
+          cp "$(command -v node)" {{project-name}}
+          pnpm dlx postject@1.0.0-alpha.6 {{project-name}} NODE_SEA_BLOB sea/blob.blob --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2
+          ./{{project-name}} --version
+          ./{{project-name}} text slugify "Hello, World!"
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Secret scan (gitleaks)
+        run: |
+          curl -sSfL https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz | tar -xz --no-same-owner -C "$RUNNER_TEMP" gitleaks
+          "$RUNNER_TEMP/gitleaks" git --redact .
+      - name: Dependency scan (OSV-Scanner)
+        run: |
+          curl -sSfL -o "$RUNNER_TEMP/osv-scanner" https://github.com/google/osv-scanner/releases/download/v2.7.1/osv-scanner_linux_amd64
+          chmod +x "$RUNNER_TEMP/osv-scanner"
+          "$RUNNER_TEMP/osv-scanner" scan --recursive ./

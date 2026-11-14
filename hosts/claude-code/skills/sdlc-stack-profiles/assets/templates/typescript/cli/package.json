@@ -1,0 +1,39 @@
+{
+  "bin": {
+    "sample": "./dist/index.js"
+  },
+  "dependencies": {
+    "commander": "^15.1.0"
+  },
+  "description": "Sample sample command-line tool",
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "eslint": "^9.0.0",
+    "prettier": "^3.6.0",
+    "typescript": "^6.0.0",
+    "typescript-eslint": "^8.0.0",
+    "vitest": "^4.1.0"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "files": [
+    "dist"
+  ],
+  "license": "MIT",
+  "name": "sample",
+  "pnpm": {
+    "overrides": {
+      "minimatch@10": "^11.0.1"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint .",
+    "test": "vitest run"
+  },
+  "type": "module",
+  "version": "0.1.0"
+}

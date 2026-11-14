@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.example</groupId>
+    <artifactId>{{project-name}}</artifactId>
+    <version>0.1.0</version>
+    <packaging>jar</packaging>
+    <name>{{ProjectName}}Lib</name>
+    <description>{{ProjectName}} — a Java library</description>
+    <!-- Maven Central requires this metadata in the published POM;
+         replace the example URLs with the project's real ones. -->
+    <url>https://example.com/{{project-name}}</url>
+    <licenses>
+        <license>
+            <name>MIT</name>
+            <url>https://opensource.org/license/mit</url>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <name>{{ProjectName}} maintainers</name>
+        </developer>
+    </developers>
+    <scm>
+        <connection>scm:git:https://example.com/{{project-name}}.git</connection>
+        <developerConnection>scm:git:https://example.com/{{project-name}}.git</developerConnection>
+        <url>https://example.com/{{project-name}}</url>
+    </scm>
+
+    <properties>
+        <maven.compiler.release>21</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <junit.version>5.13.4</junit.version>
+    </properties>
+
+    <!--
+      Dependency policy for a library: declare version RANGES, never
+      exact pins — a consumer must be able to resolve newer compatible
+      versions in their own build. The sample library has no runtime
+      dependencies; a ranged entry looks like:
+      <dependency>
+        <groupId>com.example</groupId>
+        <artifactId>some-lib</artifactId>
+        <version>[1.2,2.0)</version>
+      </dependency>
+    -->
+    <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.5.2</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.3.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.10.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.13</version>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <version>2.44.4</version>
+                <configuration>
+                    <java>
+                        <googleJavaFormat>
+                            <version>1.28.0</version>
+                        </googleJavaFormat>
+                    </java>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>check</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <!-- Release-only: signing and Maven Central publishing. Maven
+             Central has no trusted-publishing (OIDC) exchange, so this
+             profile consumes a dedicated Central Portal token and a
+             dedicated GPG key from CI environment secrets — the one
+             ecosystem where the library standard cannot go tokenless.
+             Credentials arrive as MAVEN_CENTRAL_USERNAME /
+             MAVEN_CENTRAL_PASSWORD; the GPG key is imported by the
+             release workflow before this profile runs. -->
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>3.2.7</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>0.8.0</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <publishingServerId>central</publishingServerId>
+                            <autoPublish>true</autoPublish>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <!-- Releases are deployed by the central-publishing plugin in the
+         release profile above, not through a distribution repository. -->
+    <distributionManagement>
+        <snapshotRepository>
+            <id>central</id>
+            <url>https://central.sonatype.com/repository/maven-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+</project>

@@ -1,0 +1,16 @@
+node_modules
+dist
+coverage
+*.tsbuildinfo
+temp
+# A library does not commit a lock file: consumers must resolve the
+# declared ranges against their own dependency set. The lock file
+# exists only as a local/CI working artifact.
+pnpm-lock.yaml
+
+# Secrets — never commit real values (see SECURITY.md)
+.env
+.env.*
+!.env.example
+*.pem
+*.key

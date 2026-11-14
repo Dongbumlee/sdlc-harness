@@ -1,0 +1,35 @@
+# Bundled default template — java / library
+# Instantiation: copy this tree to the repository root, substitute the
+# tokens below in file names and contents, delete template.yaml, then run
+# the verify steps. The Maven wrapper pins the build tool; there is no
+# lock file to generate — and none to commit: a library declares
+# version ranges, it does not impose a lock file on its consumers.
+# See the sdlc-stack-profiles skill ("Bundled default templates").
+id: java/library
+profile: java
+kind: library
+project_dirs:
+  - src/{{ProjectName}}Lib
+tokens:
+  - name: ProjectName
+    description: PascalCase base name of the product, e.g. TextKit
+    default: Sample
+  - name: project-name
+    description: kebab-case distribution (Maven artifactId) name derived from ProjectName, e.g. text-kit
+    default: sample
+  - name: PackageName
+    description: Java base package segment derived from ProjectName — lowercase, alphanumerics only, e.g. textkit
+    default: sample
+  - name: Year
+    description: Four-digit year written into the LICENSE copyright line at instantiation (use the current year)
+    default: 2026
+verify:
+  - step: install
+    cwd: src/{{ProjectName}}Lib
+    command: ./mvnw -B -q dependency:resolve
+  - step: build
+    cwd: src/{{ProjectName}}Lib
+    command: ./mvnw -B package -DskipTests
+  - step: test
+    cwd: src/{{ProjectName}}Lib
+    command: ./mvnw -B test

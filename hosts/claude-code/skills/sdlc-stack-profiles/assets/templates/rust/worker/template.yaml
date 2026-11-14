@@ -1,0 +1,37 @@
+# Bundled default template — rust / worker
+# Instantiation: copy this tree to the repository root, substitute the
+# tokens below in file names and contents, delete template.yaml, then run
+# the verify steps. The worker follows the worker standard in the
+# sdlc-stack-profiles skill ("Worker type — correctness under
+# redelivery"): at-least-once delivery assumed, an idempotency key with
+# a unique constraint applied in the same transaction as the effect, a
+# transactional outbox, classified retries with backoff and jitter, and
+# a dead-letter queue with replay from day one.
+id: rust/worker
+profile: rust
+kind: worker
+project_dirs:
+  - src/{{ProjectName}}Worker
+tokens:
+  - name: ProjectName
+    description: PascalCase base name of the product, e.g. TaskTracker
+    default: Sample
+  - name: project-name
+    description: kebab-case name derived from ProjectName, e.g. task-tracker — used for the package and binary names
+    default: sample
+  - name: CrateName
+    description: snake_case crate name derived from ProjectName, used by rust/worker
+    default: sample
+  - name: Year
+    description: Four-digit year written into the LICENSE copyright line at instantiation (use the current year)
+    default: 2026
+verify:
+  - step: install
+    cwd: src/{{ProjectName}}Worker
+    command: cargo fetch
+  - step: build
+    cwd: src/{{ProjectName}}Worker
+    command: cargo build
+  - step: test
+    cwd: src/{{ProjectName}}Worker
+    command: cargo test

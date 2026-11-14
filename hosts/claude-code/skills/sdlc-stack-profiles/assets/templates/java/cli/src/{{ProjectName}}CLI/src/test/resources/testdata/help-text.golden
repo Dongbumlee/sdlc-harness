@@ -1,0 +1,16 @@
+Usage: {{project-name}} text [-hV] [--dry-run] [--json] [--no-color] [--no-input]
+                   [--quiet] [--verbose] [--format=<format>] [COMMAND]
+Text transformations over the library core.
+      --dry-run           Show what would happen without writing anything.
+      --format=<format>   Output format for data commands: plain or json.
+  -h, --help              Show this help message and exit.
+      --json              Shorthand for --format json.
+      --no-color          Disable colour in diagnostics (NO_COLOR is also
+                            honoured).
+      --no-input          Never prompt; fail instead of asking.
+      --quiet             Suppress diagnostics.
+  -V, --version           Print version information and exit.
+      --verbose           Print diagnostics about what the command is doing.
+Commands:
+  slugify   Slugify text.
+  truncate  Truncate text.

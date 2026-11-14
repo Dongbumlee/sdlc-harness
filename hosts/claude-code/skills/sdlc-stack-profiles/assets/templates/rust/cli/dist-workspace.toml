@@ -1,0 +1,31 @@
+# cargo-dist configuration — the release is driven by the git tag
+# and produces the same artefact shape as every other stack's CLI:
+# binaries for linux/darwin/windows on amd64/arm64, archives with a
+# SHA-256 checksums file, and the install channels users actually
+# use (shell/PowerShell installers and a Homebrew cask via the tap).
+# The version comes from Cargo.toml; the release workflow refuses a
+# tag that does not match it. Regenerate .github/workflows/release.yml
+# with `dist generate` after changing this file.
+[workspace]
+members = ["cargo:src/{{ProjectName}}CLI"]
+
+[dist]
+cargo-dist-version = "0.34.0"
+ci = ["github"]
+installers = ["shell", "powershell", "homebrew"]
+tap = "example/homebrew-{{project-name}}"
+publish-jobs = ["homebrew"]
+# The generated release workflow carries a hand-added gate job
+# (tag/version/CHANGELOG checks), so dist must not treat its
+# divergence from a fresh `dist generate` as drift.
+allow-dirty = ["ci"]
+targets = [
+  "x86_64-unknown-linux-gnu",
+  "aarch64-unknown-linux-gnu",
+  "x86_64-apple-darwin",
+  "aarch64-apple-darwin",
+  "x86_64-pc-windows-msvc",
+  "aarch64-pc-windows-msvc",
+]
+install-path = "CARGO_HOME"
+install-updater = false

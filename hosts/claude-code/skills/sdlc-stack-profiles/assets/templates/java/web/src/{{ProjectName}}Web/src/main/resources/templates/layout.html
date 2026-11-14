@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:fragment="layout(title, content)">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title th:replace="${title}">App</title>
+    <link rel="stylesheet" href="/site.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to main content</a>
+    <header>
+      <p class="app-name" th:text="${appName}">App</p>
+      <nav aria-label="Primary">
+        <ul>
+          <li><a href="/">Items</a></li>
+          <li><a href="/health">Health</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main id="main">
+      <div th:replace="${content}"></div>
+    </main>
+    <footer>
+      <p><span th:text="${appName}">App</span> — server-rendered sample.</p>
+    </footer>
+  </body>
+</html>
