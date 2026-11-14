@@ -51,7 +51,10 @@ Measured 2026-11-14 with Claude Code 2.1.325 and a Haiku 5.5 seat:
 
 - Plugin validation passes on the repository root and on the generated
   tree.
-- Marketplace add and install succeed from a clean profile.
+- Marketplace add and install succeed from a clean profile — including
+  the current tree: the installed copy carries the registration and
+  report-persistence fixes and passed a two-level delegation smoke
+  probe (Harness → QA Coordinator → Security Reviewer).
 - Delegation runs two levels deep from the Harness main agent
   (Harness → QA Coordinator → reviewer) under plugin-namespaced agent
   registration.
@@ -68,9 +71,6 @@ Not yet measured:
   prompts.
 - The GitHub MCP server with a real token (the measured run recorded
   GitHub-dependent steps as deferred).
-- Marketplace install of the current tree — the install measured above
-  predates the registration fixes it motivated; `--plugin-dir` loads of
-  the current tree are measured.
 
 ## Differences on Claude Code
 
