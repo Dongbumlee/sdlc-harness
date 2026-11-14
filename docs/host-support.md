@@ -16,7 +16,7 @@ anything not yet measured is labelled as such.
 | Skills | 24 | 24, plus a `qa-bug-checklist` entry-point skill (see deltas) |
 | Prompt files / commands | 6 prompt files | 6 commands generated from the same prompt files |
 | MCP servers | 3 core (GitHub, Context7, Playwright) plus the vendor servers in your cloud pack | The same set, delivered as the plugin's `.mcp.json` |
-| Verification | Canary battery 57/57 (seat-graded), live end-to-end runs | `claude plugin validate` passes; contract tests pin the translation; live end-to-end runs not yet measured |
+| Verification | Canary battery 57/57 (seat-graded), live end-to-end runs | `claude plugin validate` passes; contract tests pin the translation; live probes and one Small end-to-end run measured 2026-11-14 (see "Measured scope on Claude Code") |
 
 ## Installing on Claude Code
 
@@ -45,6 +45,33 @@ subagent spawn depth must be at least 2. Claude Code's default (3) is
 sufficient; if you have set `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH` to 1,
 raise it before running a QA panel.
 
+## Measured scope on Claude Code
+
+Measured 2026-11-14 with Claude Code 2.1.325 and a Haiku 5.5 seat:
+
+- Plugin validation passes on the repository root and on the generated
+  tree.
+- Marketplace add and install succeed from a clean profile.
+- Delegation runs two levels deep from the Harness main agent
+  (Harness → QA Coordinator → reviewer) under plugin-namespaced agent
+  registration.
+- Plugin MCP tool wildcards are honored in subagent allowlists — a
+  subagent called Context7 live during the run.
+- One Small end-to-end run completed Phases 1–4 and convened the QA
+  panel, which returned a failing verdict; the run stopped and
+  escalated inside its budget instead of proceeding.
+
+Not yet measured:
+
+- A run that passes the QA panel and completes Phases 5 and 8–9.
+- Interactive (non-headless) sessions, including the MCP permission
+  prompts.
+- The GitHub MCP server with a real token (the measured run recorded
+  GitHub-dependent steps as deferred).
+- Marketplace install of the current tree — the install measured above
+  predates the registration fixes it motivated; `--plugin-dir` loads of
+  the current tree are measured.
+
 ## Differences on Claude Code
 
 These are recorded deltas of the generated target, not defects to discover
@@ -61,7 +88,8 @@ later:
 - **Azure tool granularity collapses.** Copilot grants the Deployer
   individual Azure MCP tools (`azure/keyvault`, `azure/storage`, …).
   Claude Code allowlists MCP access per server, so the generated agents
-  carry the whole-server wildcard `mcp__azure__*`.
+  carry the whole-server wildcard in its plugin-namespaced form,
+  `mcp__plugin_sdlc-harness_azure__*`.
 - **Editor-extension tools are substituted.** The VS Code Python
   extension tools in the Implementer's list have no Claude Code
   equivalent; shell access (`Bash`, already in its list) covers the same
