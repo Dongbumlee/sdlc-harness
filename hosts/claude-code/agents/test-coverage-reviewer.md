@@ -1,7 +1,7 @@
 ---
 name: test-coverage-reviewer
 description: "Use when reviewing test quality, coverage gaps, assertion effectiveness, mocking patterns, edge case coverage, or running Playwright e2e tests."
-tools: Read, Grep, Glob, WebFetch, Bash, mcp__playwright__*
+tools: Read, Grep, Glob, WebFetch, Bash, mcp__plugin_sdlc-harness_playwright__*
 skills:
   - sdlc-reviewer-output-format
   - sdlc-project-qa

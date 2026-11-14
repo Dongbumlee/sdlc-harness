@@ -1,7 +1,7 @@
 ---
 name: azure-compliance-reviewer
 description: "Use when reviewing Azure SDK usage, verifying the approved Cosmos DB library/the approved Storage library patterns, checking Bicep/AVM compliance, validating identity management, or auditing infrastructure configuration."
-tools: Read, Grep, Glob, mcp__github__*, mcp__microsoft-learn__*
+tools: Read, Grep, Glob, mcp__plugin_sdlc-harness_github__*, mcp__plugin_sdlc-harness_microsoft-learn__*
 skills:
   - sdlc-reviewer-output-format
 ---

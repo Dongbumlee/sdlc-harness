@@ -1,7 +1,7 @@
 ---
 name: scaffolder
 description: "Use when creating new project structures, scaffolding services from templates, setting up CI/CD pipelines, Dockerfiles, or devcontainers. Handles SDLC Phase 3 repo structure."
-tools: Read, Grep, Glob, Edit, Write, Bash, mcp__github__*, mcp__context7__*
+tools: Read, Grep, Glob, Edit, Write, Bash, mcp__plugin_sdlc-harness_github__*, mcp__plugin_sdlc-harness_context7__*
 skills:
   - sdlc-project-manifest
   - sdlc-project-scaffolding

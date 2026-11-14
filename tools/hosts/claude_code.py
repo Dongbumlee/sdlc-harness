@@ -13,6 +13,28 @@ Rules the build enforces:
   token raises, failing the build -- a tool is never dropped silently.
 - Agent names are slugified to Claude Code's ``[a-z0-9-]`` form; a slug
   collision fails the build.
+- Claude Code registers plugin subagents under plugin-namespaced types
+  (``<plugin>:<slug>``; measured live 2026-11-14 on Claude Code 2.1.325 --
+  a bare slug matches no registered type and an allowlist of bare slugs
+  leaves the Agent tool with no spawnable types). ``Agent(...)`` allowlist
+  entries and the QA checklist shim therefore carry the namespaced form,
+  using the plugin name from the root ``plugin.json``.
+- The spawnable registry for a whole session is scoped by the MAIN
+  agent's ``Agent(...)`` allowlist, not by each subagent's own list
+  (measured live 2026-11-14: a coordinator spawned by the harness saw
+  exactly the harness's nine allowlist types as its available agents, and
+  its own eleven-reviewer list had no effect). The delegation graph's
+  root agent (the one no other agent delegates to -- the supported
+  main-thread entry) therefore carries the transitive closure of the
+  graph in its allowlist; every other agent keeps its direct list, which
+  is the correct registry when that agent itself is the entry point.
+- MCP servers shipped by a plugin surface under plugin-namespaced tool
+  names, ``mcp__plugin_<plugin>_<server>__<tool>`` (measured live
+  2026-11-14: the session's Context7 tool was
+  ``mcp__plugin_sdlc-harness_context7__resolve-library-id``, and a
+  subagent whose allowlist carried the plain ``mcp__context7__*`` form
+  received no MCP tools at all). Emitted wildcards therefore carry the
+  plugin namespace; the server names inside ``.mcp.json`` stay plain.
 - Known semantic deltas are recorded, not hidden: granular ``azure/<tool>``
   tokens collapse to the server wildcard, and the ``ms-python.python/*``
   editor tools are substituted by ``Bash`` (see CAPABILITY_SUBSTITUTIONS).
@@ -109,21 +131,39 @@ def parse_frontmatter(text: str, source: str) -> tuple[dict, dict, str]:
     return fields, raw, text[match.end():]
 
 
+_MCP_WILDCARD_RE = re.compile(r"\Amcp__([a-z0-9-]+)__\*\Z")
+
+
+def _namespaced_mcp(tool: str, plugin_name: str) -> str:
+    """Plugin-provided MCP servers surface as
+    mcp__plugin_<plugin>_<server>__*; rewrite a plain wildcard to that
+    form. Non-wildcard and non-MCP tools pass through unchanged."""
+    match = _MCP_WILDCARD_RE.match(tool)
+    if match:
+        return f"mcp__plugin_{plugin_name}_{match.group(1)}__*"
+    return tool
+
+
 def translate_tools(
-    tokens: list[str], allowlist_slugs: list[str], source: str
+    tokens: list[str], allowlist_slugs: list[str], source: str, plugin_name: str
 ) -> tuple[list[str], list[str]]:
     """Return (claude_tools, substitutions_used). Raises on unmapped tokens."""
     out: list[str] = []
     substitutions: list[str] = []
 
     def add(tool: str) -> None:
+        tool = _namespaced_mcp(tool, plugin_name)
         if tool not in out:
             out.append(tool)
 
     for token in tokens:
         if token == "agent":
             if allowlist_slugs:
-                add("Agent(" + ", ".join(allowlist_slugs) + ")")
+                add(
+                    "Agent("
+                    + ", ".join(f"{plugin_name}:{slug}" for slug in allowlist_slugs)
+                    + ")"
+                )
             else:
                 add("Agent")
         elif token in TOOL_MAP:
@@ -144,7 +184,13 @@ def translate_tools(
     return out, substitutions
 
 
-def build_agent(text: str, source: str, slug_by_name: dict[str, str]) -> tuple[str, str, list[str]]:
+def build_agent(
+    text: str,
+    source: str,
+    slug_by_name: dict[str, str],
+    plugin_name: str,
+    allowlist_slugs: list[str],
+) -> tuple[str, str, list[str]]:
     """Return (slug, claude_file_text, substitutions_used)."""
     fields, raw, body = parse_frontmatter(text, source)
     name = fields.get("name")
@@ -153,8 +199,9 @@ def build_agent(text: str, source: str, slug_by_name: dict[str, str]) -> tuple[s
     slug = slug_by_name[name]
     if "description" not in raw:
         raise ValueError(f"{source}: agent has no description")
-    allowlist = [slug_by_name[a] for a in fields.get("agents") or []]
-    tools, substitutions = translate_tools(fields.get("tools") or [], allowlist, source)
+    tools, substitutions = translate_tools(
+        fields.get("tools") or [], allowlist_slugs, source, plugin_name
+    )
     lines = ["---", f"name: {slug}", f"description: {raw['description']}"]
     if tools:
         lines.append("tools: " + ", ".join(tools))
@@ -260,7 +307,8 @@ def build_root_manifest(repo_root: Path, agent_slugs: list[str]) -> bytes:
     return (json.dumps(manifest, indent=2, ensure_ascii=False) + "\n").encode("utf-8")
 
 
-QA_CHECKLIST_SHIM = """---
+def qa_checklist_shim(plugin_name: str) -> str:
+    return f"""---
 name: qa-bug-checklist
 description: "Run the QA Bug Checklist Reviewer against the current change, on demand: 338 known-bug patterns checked by a dedicated reviewer agent."
 ---
@@ -269,11 +317,11 @@ description: "Run the QA Bug Checklist Reviewer against the current change, on d
      Claude Code has no user-invocable flag for subagents, so this skill is
      the on-demand entry point for the qa-bug-checklist-reviewer agent. -->
 
-Use the Agent tool to invoke the `qa-bug-checklist-reviewer` subagent with
-the user's request. Default scope is the current change (the working-tree
-diff, or the branch diff against its base if the tree is clean); if the
-user names files, a directory, or a past change, pass that scope instead.
-Relay the reviewer's findings to the user when it returns.
+Use the Agent tool to invoke the `{plugin_name}:qa-bug-checklist-reviewer`
+subagent with the user's request. Default scope is the current change (the
+working-tree diff, or the branch diff against its base if the tree is
+clean); if the user names files, a directory, or a past change, pass that
+scope instead. Relay the reviewer's findings to the user when it returns.
 """
 
 
@@ -286,6 +334,9 @@ def build_tree(
     """Return the Claude Code plugin tree: relative path -> file bytes, or
     a source directory to copy (skills). Raises on any unmapped token,
     slug collision, or MCP inconsistency."""
+    root_manifest = json.loads((repo_root / "plugin.json").read_text(encoding="utf-8"))
+    plugin_name = root_manifest["name"]
+
     # First pass: name -> slug, with collision detection.
     parsed: dict[str, tuple[dict, dict, str, Path]] = {}
     slug_by_name: dict[str, str] = {}
@@ -303,17 +354,62 @@ def build_tree(
         slug_by_name[name] = slug
         parsed[filename] = (fields, raw, body, src)
 
+    # Delegation graph: name -> direct delegates (from the agents: field).
+    # The main-thread entry point is the agent nobody delegates to whose
+    # closure reaches every delegated agent (standalone agents are also
+    # delegated by nobody, but their closures reach nothing beyond their
+    # own lists). The entry's allowlist is its transitive closure, because
+    # Claude Code scopes the session's spawnable registry to the main
+    # agent's list; every other agent keeps its direct list, which is the
+    # correct registry when that agent itself is the entry point.
+    direct: dict[str, list[str]] = {
+        fields["name"]: list(fields.get("agents") or [])
+        for fields, _raw, _body, _src in parsed.values()
+    }
+    delegated = {name for names in direct.values() for name in names}
+
+    def closure(start: str) -> list[str]:
+        seen: list[str] = []
+        stack = list(direct[start])
+        while stack:
+            current = stack.pop()
+            if current == start or current in seen:
+                continue
+            seen.append(current)
+            stack.extend(direct.get(current) or [])
+        return seen
+
+    candidates = [name for name in direct if name not in delegated]
+    closures = {name: closure(name) for name in candidates}
+    entry = max(candidates, key=lambda name: len(closures[name]))
+    if not delegated <= set(closures[entry]):
+        raise ValueError(
+            f"no entry agent reaches every delegated agent: entry {entry!r} "
+            f"misses {sorted(delegated - set(closures[entry]))}"
+        )
+    if sum(1 for names in closures.values() if len(names) == len(closures[entry])) > 1:
+        raise ValueError(f"delegation graph entry is ambiguous among {candidates}")
+
+    allowlists: dict[str, list[str]] = {}
+    for name, names in direct.items():
+        effective = closures[name] if name == entry else names
+        allowlists[name] = sorted(slug_by_name[a] for a in effective)
+
     entries: dict[str, bytes | Path] = {}
     index_rows = []
     for filename, (fields, raw, body, src) in sorted(parsed.items()):
         text = src.read_text(encoding="utf-8")
-        slug, emitted, _subs = build_agent(text, str(src), slug_by_name)
+        slug, emitted, _subs = build_agent(
+            text, str(src), slug_by_name, plugin_name, allowlists[fields["name"]]
+        )
         entries[f"agents/{slug}.md"] = emitted.encode("utf-8")
         index_rows.append((slug, fields["name"], src.relative_to(repo_root)))
 
     for skill_name, skill_dir in sorted(skills.items()):
         entries[f"skills/{skill_name}"] = skill_dir
-    entries["skills/qa-bug-checklist/SKILL.md"] = QA_CHECKLIST_SHIM.encode("utf-8")
+    entries["skills/qa-bug-checklist/SKILL.md"] = qa_checklist_shim(plugin_name).encode(
+        "utf-8"
+    )
 
     init_skill_dir = skills.get("sdlc-workspace-init")
     if init_skill_dir is None:
@@ -330,7 +426,6 @@ def build_tree(
         json.dumps({"mcpServers": servers}, indent=2, ensure_ascii=False) + "\n"
     ).encode("utf-8")
 
-    root_manifest = json.loads((repo_root / "plugin.json").read_text(encoding="utf-8"))
     plugin_manifest = {
         key: root_manifest[key]
         for key in ("name", "version", "description", "author", "license", "keywords")
@@ -345,14 +440,16 @@ def build_tree(
         "",
         "# Agent name index",
         "",
-        "Copilot agent names and their Claude Code slugs. Both forms name the",
-        "same agent; the body of every generated agent file is byte-identical",
-        "to its pack source.",
+        "Copilot agent names and their Claude Code agent types. Claude Code",
+        "registers plugin subagents under plugin-namespaced types",
+        "(`<plugin>:<slug>`), so the type below is the exact string the Agent",
+        "tool accepts. The body of every generated agent file is",
+        "byte-identical to its pack source.",
         "",
-        "| Claude Code name | Copilot name | Pack source |",
+        "| Claude Code agent type | Copilot name | Pack source |",
         "| --- | --- | --- |",
     ]
     for slug, name, rel in sorted(index_rows):
-        index_lines.append(f"| `{slug}` | {name} | `{rel}` |")
+        index_lines.append(f"| `{plugin_name}:{slug}` | {name} | `{rel}` |")
     entries["NAME-INDEX.md"] = ("\n".join(index_lines) + "\n").encode("utf-8")
     return entries

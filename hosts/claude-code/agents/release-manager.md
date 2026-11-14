@@ -1,7 +1,7 @@
 ---
 name: release-manager
 description: "Use when preparing release scripts, creating pull requests, generating changelogs, or publishing to GitHub. Handles SDLC Phases 8-9."
-tools: Read, Grep, Glob, Edit, Write, mcp__github__*
+tools: Read, Grep, Glob, Edit, Write, mcp__plugin_sdlc-harness_github__*
 ---
 
 # Release Manager — SDLC Phase 8-9: Release & Publish

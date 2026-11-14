@@ -1,7 +1,7 @@
 ---
 name: ux-and-accessibility-reviewer
 description: "Use when reviewing frontend code for ARIA labels, keyboard navigation, color contrast, responsive layout, error boundaries, dark mode support, or screen reader compatibility."
-tools: Read, Grep, Glob, mcp__playwright__*
+tools: Read, Grep, Glob, mcp__plugin_sdlc-harness_playwright__*
 skills:
   - sdlc-project-qa
   - sdlc-reviewer-output-format

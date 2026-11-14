@@ -1,7 +1,7 @@
 ---
 name: implementer
 description: "Use when writing production code, implementing features, adding API endpoints, creating data models, or writing unit and integration tests. Follows SDLC Phase 4 with test-driven implementation."
-tools: Bash, Read, Agent, Edit, Write, Grep, Glob, WebFetch, WebSearch, mcp__playwright__*, mcp__context7__*, mcp__github__*, mcp__azure__*, mcp__microsoft-learn__*, TodoWrite
+tools: Bash, Read, Agent, Edit, Write, Grep, Glob, WebFetch, WebSearch, mcp__plugin_sdlc-harness_playwright__*, mcp__plugin_sdlc-harness_context7__*, mcp__plugin_sdlc-harness_github__*, mcp__plugin_sdlc-harness_azure__*, mcp__plugin_sdlc-harness_microsoft-learn__*, TodoWrite
 skills:
   - sdlc-project-manifest
   - sdlc-reference-catalog

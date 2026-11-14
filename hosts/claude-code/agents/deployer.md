@@ -1,7 +1,7 @@
 ---
 name: deployer
 description: "Use when creating Azure infrastructure with Bicep/AVM, configuring azd orchestration, managing deployment lifecycle, or preparing release automation. Handles SDLC Phases 3 and 8."
-tools: Read, Grep, Glob, Edit, Write, Bash, mcp__github__*, mcp__azure__*, mcp__microsoft-learn__*
+tools: Read, Grep, Glob, Edit, Write, Bash, mcp__plugin_sdlc-harness_github__*, mcp__plugin_sdlc-harness_azure__*, mcp__plugin_sdlc-harness_microsoft-learn__*
 skills:
   - sdlc-azure-deployment
   - sdlc-reference-catalog

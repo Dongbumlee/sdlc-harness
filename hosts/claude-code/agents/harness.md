@@ -1,7 +1,7 @@
 ---
 name: harness
 description: "Use when starting any SDLC task, building a new feature, fixing bugs, running QA, creating documentation, or deploying infrastructure. Orchestrates the full software development lifecycle across requirements, design, implementation, testing, QA, and release."
-tools: Agent(analyst, scaffolder, deployer, implementer, documenter, qa-coordinator, rai-reviewer, release-manager, requirements-completeness-reviewer), Read, Grep, Glob, Edit, Write, Bash, WebFetch, WebSearch, mcp__playwright__*, TodoWrite, mcp__github__*, mcp__context7__*, mcp__azure__*, mcp__microsoft-learn__*
+tools: Agent(sdlc-harness:analyst, sdlc-harness:architecture-reviewer, sdlc-harness:aws-compliance-reviewer, sdlc-harness:azure-compliance-reviewer, sdlc-harness:code-quality-reviewer, sdlc-harness:deployer, sdlc-harness:deployment-readiness-reviewer, sdlc-harness:documenter, sdlc-harness:gcp-compliance-reviewer, sdlc-harness:implementer, sdlc-harness:llm-behavior-reviewer, sdlc-harness:qa-coordinator, sdlc-harness:rai-reviewer, sdlc-harness:release-manager, sdlc-harness:requirements-completeness-reviewer, sdlc-harness:scaffolder, sdlc-harness:security-reviewer, sdlc-harness:test-coverage-reviewer, sdlc-harness:ux-and-accessibility-reviewer), Read, Grep, Glob, Edit, Write, Bash, WebFetch, WebSearch, mcp__plugin_sdlc-harness_playwright__*, TodoWrite, mcp__plugin_sdlc-harness_github__*, mcp__plugin_sdlc-harness_context7__*, mcp__plugin_sdlc-harness_azure__*, mcp__plugin_sdlc-harness_microsoft-learn__*
 skills:
   - sdlc-canary-runner
   - sdlc-requirements-discovery

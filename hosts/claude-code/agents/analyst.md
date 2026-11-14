@@ -1,7 +1,7 @@
 ---
 name: analyst
 description: "Use when clarifying requirements, discovering what to build, producing requirements specifications, evaluating design options, proposing architecture decisions, or mapping features to cloud services. Operates in three modes: Phase 1A (collaborative discovery), Phase 1B (requirements specification), and Phase 2 (design proposal)."
-tools: Read, Grep, Glob, Edit, Write, WebFetch, mcp__github__*, mcp__context7__*
+tools: Read, Grep, Glob, Edit, Write, WebFetch, mcp__plugin_sdlc-harness_github__*, mcp__plugin_sdlc-harness_context7__*
 skills:
   - sdlc-requirements-discovery
   - sdlc-reference-catalog

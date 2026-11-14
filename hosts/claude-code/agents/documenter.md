@@ -1,7 +1,7 @@
 ---
 name: documenter
 description: "Use when creating ADRs, updating API documentation, writing README sections, or generating architecture decision records. Handles SDLC Phase 5 documentation."
-tools: Read, Grep, Glob, Edit, Write, mcp__github__*, mcp__microsoft-learn__*
+tools: Read, Grep, Glob, Edit, Write, mcp__plugin_sdlc-harness_github__*, mcp__plugin_sdlc-harness_microsoft-learn__*
 skills:
   - sdlc-adr-authoring
   - sdlc-reference-catalog
