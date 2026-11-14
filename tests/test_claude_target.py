@@ -10,8 +10,11 @@ from __future__ import annotations
 
 import json
 import re
+import subprocess
 import sys
 from pathlib import Path
+
+import pytest
 
 REPO_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(REPO_ROOT / "tools"))
@@ -258,3 +261,51 @@ class TestCommands:
             fields, _raw, _b = parse_frontmatter(text, path.name)
             assert "description" in fields, path.name
             assert "agent" not in fields, path.name
+
+
+class TestGeneratedFilesShip:
+    """A generated file git cannot see does not ship.
+
+    The Claude tree's .mcp.json spent its first release untracked: a
+    bare `.mcp.json` pattern in .gitignore (meant for a developer's
+    local config at the repo root) matched at any depth, so the file
+    existed in every working tree and passed every local check while
+    marketplace installs received a plugin with no MCP servers at all.
+    Measured 2026-11-14: an installed plugin reported "MCP servers
+    (0)" and an interactive session found no Context7 tool, while
+    --plugin-dir runs from a working tree worked.
+    """
+
+    GENERATED_ROOTS = (
+        "hosts/claude-code",
+        ".claude-plugin",
+        ".github/agents",
+        ".github/skills",
+        "com.github.copilot",
+        "skills",
+    )
+
+    def test_no_generated_file_is_git_ignored(self):
+        if not (REPO_ROOT / ".git").exists():
+            pytest.skip("not a git checkout")
+        paths: list[str] = []
+        for root in self.GENERATED_ROOTS:
+            base = REPO_ROOT / root
+            if not base.exists():
+                continue
+            for path in sorted(base.rglob("*")):
+                if path.is_file() and "__pycache__" not in path.parts:
+                    paths.append(path.relative_to(REPO_ROOT).as_posix())
+        assert paths, "no generated files found — tree missing?"
+        result = subprocess.run(
+            ["git", "check-ignore", "--stdin"],
+            input="\n".join(paths),
+            capture_output=True,
+            text=True,
+            cwd=REPO_ROOT,
+        )
+        ignored = [line for line in result.stdout.splitlines() if line.strip()]
+        assert ignored == [], (
+            "generated files matched by .gitignore would not ship: "
+            + ", ".join(ignored)
+        )

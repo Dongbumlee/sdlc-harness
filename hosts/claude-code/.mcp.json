@@ -1,0 +1,72 @@
+{
+  "mcpServers": {
+    "github": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/"
+    },
+    "context7": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@upstash/context7-mcp@latest"
+      ]
+    },
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "@playwright/mcp@latest",
+        "--headless",
+        "--caps=testing",
+        "--output-dir=.playwright-mcp"
+      ]
+    },
+    "aws": {
+      "command": "uvx",
+      "args": [
+        "mcp-proxy-for-aws==1.6.0",
+        "https://aws-mcp.us-west-2.api.aws/mcp",
+        "--metadata",
+        "AWS_REGION=us-west-2"
+      ],
+      "env": {
+        "AWS_REGION": "us-west-2"
+      }
+    },
+    "azure": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@azure/mcp@latest",
+        "server",
+        "start",
+        "--namespace",
+        "deploy",
+        "--namespace",
+        "bicepschema",
+        "--namespace",
+        "group",
+        "--namespace",
+        "keyvault",
+        "--namespace",
+        "storage",
+        "--namespace",
+        "cosmos"
+      ]
+    },
+    "microsoft-learn": {
+      "type": "http",
+      "url": "https://learn.microsoft.com/api/mcp"
+    },
+    "google-developer-knowledge": {
+      "type": "http",
+      "url": "https://developerknowledge.googleapis.com/mcp",
+      "headers": {
+        "X-Goog-Api-Key": "${GCP_DEVELOPER_KNOWLEDGE_API_KEY}"
+      }
+    },
+    "gcp-firestore": {
+      "type": "http",
+      "url": "https://firestore.googleapis.com/mcp"
+    }
+  }
+}
