@@ -1215,6 +1215,24 @@ documentation refresh (Phase 6 loop, step 6) remains mandatory before
 release. (Measured: a serial Documenter queue cost ~25 minutes of wall
 time in one run, ~20 of them in a single save pass.)
 
+**Overlap is parallel execution, not deferral.** Phase 5 starts no
+later than the panel convenes: a Phase 6 delegation issued while the
+Phase 5 ledger row reads Not started is a sequencing violation,
+recorded in the ledger. When the envelope cannot start both, the run
+stops at that transition for a user decision (the budget-stop rule in
+the Counting rule) — rationing by silently postponing a phase's start
+is not a sequencing choice the run may make on its own. The Phase 6
+delegation states Phase 5's state (Phase 6 entry, step 5); a reviewer
+finding whose substance is documentation Phase 5 has in flight
+(delegated, not yet returned) is recorded in the synthesis as an
+in-flight item and re-checked at the post-QA documentation refresh —
+it is not scored as a product defect. Documentation Phase 5 has
+completed is fully in scope for findings: a stub README after Phase 5
+closes is a defect like any other. (Origin: 2026-11-14 live run —
+Phase 5 was postponed for budget and never started, and the panel
+then scored the template-stub README as an Important product
+finding: a defect the run's own sequencing manufactured.)
+
 After the Documenter produces artifacts:
 
 1. Verify all template sections are filled (no placeholders left).
@@ -1260,10 +1278,12 @@ facts instead of re-deriving them:
    section to the pack: workflow name, conclusion, and run URL. This CI
    citation is the gate's primary test evidence; the local run in step 2 is
    supporting evidence and the fallback when no CI run exists.
-5. Delegate Phase 6 to the QA Coordinator naming the pack path. The
-   Coordinator selects the active panel from the manifest/requirements
-   signals (Step 0.5 applicability) and launches every reviewer with the
-   pack as shared starting evidence.
+5. Delegate Phase 6 to the QA Coordinator naming the pack path and the
+   round's report file, `.SDLC/qa-review-phase6-round<N>.md`, and stating
+   Phase 5's state (Complete, or in flight with the Documenter delegated —
+   see the Phase 5 overlap rule). The Coordinator selects the active panel
+   from the manifest/requirements signals (Step 0.5 applicability) and
+   launches every reviewer with the pack as shared starting evidence.
 6. **For a re-review round**, append a **Changes since round N−1**
    section to the pack before delegating: the files changed since
    the previous round (repository mode: `git diff --name-only
@@ -1271,6 +1291,25 @@ facts instead of re-deriving them:
    contents changed) and the previous round's Critical/Important
    findings verbatim. The delta pass confines itself to those
    ranges and findings (QA Coordinator, "Re-review rounds").
+7. **Persist the round's report before recording its verdict
+   (mandatory).** The QA Coordinator never edits files — it returns
+   its synthesis and the formal QA Report content inline, by design.
+   On its return, before the manifest records the round or any tier
+   routing begins, save both verbatim yourself: the synthesis to the
+   report file named in the delegation (step 5), and the QA Report
+   to `docs/QA-Review-Report.md`. This is mechanical record upkeep
+   under the no-direct-edits exception — the same standing as the
+   ledger rows — and it is the Deliverable transport rule applied by
+   design rather than by accident. Verify both files exist on disk;
+   the Phase 6 ledger row cites the report file. A round whose
+   verdict is recorded without its report file is a ledger violation
+   of the same standing as a phase recorded Complete in advance:
+   the verdict then exists only in conversation, and a later phase —
+   or the Phase 9 retrospective — finds a summary where the evidence
+   should be. (Origin: 2026-11-14 live run on the Claude Code host —
+   the Coordinator's full panel report stayed in conversation and
+   the failure ledger received a summary only, while the Phase 1–2
+   review files, written by their reviewer, were on disk.)
 
 #### Phase 6: QA feedback loop (QA Coordinator → Implementer)
 
