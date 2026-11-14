@@ -462,8 +462,11 @@ and report your results.
 
 #### Step 2: Generate QA Report for human QA team
 
-After synthesizing all active reviewer findings, **generate a formal QA Report markdown file**
-and save it before presenting the manual checklist. The report should include:
+After synthesizing all active reviewer findings, **generate a formal QA Report**
+and return it to the Harness before presenting the manual checklist. You never
+edit files (see "What you must NOT do"): the Harness saves the returned report
+verbatim — the save is the Harness's mechanical record transport, and a return
+without the report content in it is incomplete. The report should include:
 
 1. Executive summary (total items, pass/fail/not-checked counts)
 2. All findings mapped to the `sdlc-project-qa` checklist categories (1-10)
@@ -472,8 +475,8 @@ and save it before presenting the manual checklist. The report should include:
 5. Manual QA checklist (items requiring human testing)
 6. SDLC exit criteria table
 
-**Save the report** to `docs/QA-Review-Report.md` (or the project's docs folder).
-Tell the user: _"QA Report generated at `docs/QA-Review-Report.md`. Please hand this to your QA team."_
+**The Harness saves the report** to `docs/QA-Review-Report.md` (or the project's docs folder) from your return.
+Tell the user: _"QA Report generated — the Harness saves it at `docs/QA-Review-Report.md`. Please hand this to your QA team."_
 
 #### Step 3: Present manual QA checklist and collect results
 
@@ -481,7 +484,7 @@ When the user replies with their manual QA results:
 
 1. Parse each category result (pass / fail with details / n/a).
 2. Update the overall verdict to reflect both automated AND manual findings.
-3. Update the QA Report file with manual test results appended.
+3. Return the updated QA Report content (manual test results appended) to the Harness, which saves it over the same file.
 4. If ANY category has failures, proceed to Step 4.
 
 #### Step 4: Offer to create GitHub Bug issues
