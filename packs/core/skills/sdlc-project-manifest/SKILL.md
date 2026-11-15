@@ -93,7 +93,7 @@ python defaults.
 - Location: `app/domain/` or `app/business_component/`
 
 **Dockerfile pattern:**
-- Base: `mcr.microsoft.com/azurelinux/base/python:3.12`
+- Base: `python:3.12-slim`
 - UV: `COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/`
 - Install: `uv sync --frozen --no-cache`
 - Run: `.venv/bin/uvicorn app.main:app --port 80 --host 0.0.0.0 --workers 4`

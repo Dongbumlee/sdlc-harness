@@ -10,12 +10,14 @@
 > *From first commit to final release, Harness orchestrates your entire software development
 > lifecycle — so you can focus on building what matters.*
 
-**SDLC Harness** is a multi-agent orchestration system for GitHub Copilot that drives
-software projects through 9 SDLC phases using 21 specialized AI agents. It combines
+**SDLC Harness** is a multi-agent orchestration system that drives
+software projects through 9 SDLC phases using 21 specialized AI agents.
+It runs on GitHub Copilot (VS Code and Copilot CLI) and on Claude Code,
+generated from the same pack sources for both hosts. It combines
 adversarial QA evaluation, live MCP-powered context, and iterative feedback loops to
 deliver production-quality code with enforced development standards.
 
-Distributed as an [Agent Plugin](#quick-start) for VS Code and GitHub Copilot CLI.
+Distributed as an [Agent Plugin](#quick-start) for both hosts.
 Install once — get all 22 agents, 25 skills, and the full SDLC workflow instantly.
 
 ### Why it holds up
@@ -251,6 +253,74 @@ stack claims against the template it will actually be built from.
 
 ## How It Works
 
+You say what to build, approve the plan, and make the final call on shipping.
+One coordinator plans the work, hands each step to a specialist, and checks
+every result against the actual files. Six patterns hold the system together —
+the map shows where each one sits, and the patterns below it are numbered to
+match.
+
+<img src="docs/assets/how-it-works-map.svg" alt="Map of the whole system with numbered badges showing where each of the six patterns sits" width="880">
+
+### The six patterns
+
+#### 1 · Agree first, build second
+
+<img src="docs/assets/pattern-1-agree-first.svg" alt="You and the coordinator talk, then write the brief down; work starts after you approve it" width="540">
+
+Before anything is built, the job is talked through and written down: what
+will be built, what will not, and the limits. Nothing starts until you approve
+that brief.
+
+#### 2 · One coordinator, many specialists
+
+<img src="docs/assets/pattern-2-one-coordinator.svg" alt="The coordinator hands each step to a specialist and takes the result back" width="540">
+
+The coordinator does none of the work itself. Each step goes to a specialist,
+and what comes back is checked against the actual files before anything moves
+on.
+
+#### 3 · Builders never grade their own work
+
+<img src="docs/assets/pattern-3-independent-review.svg" alt="Independent reviewers check the finished product and deliver a verdict" width="540">
+
+The finished work is checked by reviewers who took no part in building it —
+several angles at once, plus a checklist of 338 known problem patterns. One
+serious problem stops the release.
+
+#### 4 · Fix it, then check again
+
+<img src="docs/assets/pattern-4-fix-and-recheck.svg" alt="Review findings go back to the builder, and the changed parts are checked again" width="540">
+
+Problems found in review go back to the builder. Only the changed parts are
+re-checked, not the whole job — and a retry has to change something, never
+repeat the same attempt. If it still fails after a few rounds, the decision is
+yours.
+
+#### 5 · Trouble is spotted by counting
+
+<img src="docs/assets/pattern-5-counting.svg" alt="Warning signs are tallied as the work goes; a tripped tally stops the run to rethink" width="540">
+
+Warning signs are counted as the work goes: the same mistake repeating, work
+that stalls, results that don't match the files. When a count trips, the run
+stops and rethinks instead of pushing on. Feelings don't trigger stops —
+tallies do.
+
+#### 6 · Everything is written down
+
+<img src="docs/assets/pattern-6-written-down.svg" alt="The brief, the state of the work, and every problem live in files, so a new session can pick the run up" width="540">
+
+The brief, the state of the work, every problem and its evidence live in
+files. If a session crashes or is closed, the next one resumes from the
+record — proven in practice on 2026-11-14, when a second session picked up a
+stopped run and finished it.
+
+**Built on proven parts.** The same playbooks, standards and templates on
+every job — a new project starts from a tested shape, not a blank page. Tools
+for documentation, code hosting and testing plug in. And it runs on more than
+one AI assistant, with your choice of model — no lock-in.
+
+### A run, in practice
+
 ```
 /agent harness
 Implement the order history API from ADR-012.
@@ -313,7 +383,7 @@ SDLC Harness includes an E2E test framework for validating the harness itself.
 Canary specs define expected agent behavior for each SDLC phase, including
 separate release-preparation (Phase 8) and publish (Phase 9) checks.
 
-- **30 canary specs** across `bench/canaries/` (phase coverage + catalog + QA gate and negative-path tests)
+- **57 canary specs** across `bench/canaries/` (phase coverage + catalog + QA gate and negative-path tests)
 - **2 JSON schemas** in `schemas/` for validation (canary specs, cloud packs)
 - **CI integration** — `canary-test.yml` validates spec schema on PRs touching agents/skills
 - Results stored as structured JSON in `bench/results/`
@@ -416,6 +486,7 @@ python tools/validate_canaries.py
 | [Workflow Guide](docs/workflow-guide.md) | Step-by-step: how engineers and agents work together, with a sequence diagram |
 | [Orchestrator States](docs/orchestrator-states.md) | The Harness state model: dispatch, validation, fix loops, QA gate, blocked states |
 | [Agent Inventory](docs/agent-inventory.md) | Generated inventory of all 22 agents and 25 skills |
+| [Transparency FAQ](TRANSPARENCY_FAQ.md) | Plain-terms answers: what the harness is, which models it uses, where human oversight stays, the limitations, and what data leaves your machine |
 | [MCP Troubleshooting](docs/mcp-troubleshooting.md) | MCP server setup issues and fixes |
 | [ADR-0001](docs/adr/ADR-0001-pack-separation.md) · [ADR-0002](docs/adr/ADR-0002-bundled-default-templates.md) · [ADR-0003](docs/adr/ADR-0003-github-native-operations.md) | Pack separation · bundled default templates · GitHub-native operations |
 

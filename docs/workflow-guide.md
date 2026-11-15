@@ -6,7 +6,8 @@ while agents handle the heavy lifting.
 ## Step 1: Engineer opens a task
 
 An engineer receives a GitHub issue, a feature request, or identifies a bug. They open
-VS Code, switch to the **Harness** agent in Copilot Chat, and describe the task:
+their client (VS Code with Copilot Chat, Copilot CLI, or Claude Code), switch to the
+**Harness** agent, and describe the task:
 
 ```text
 /agent harness
