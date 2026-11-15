@@ -234,7 +234,7 @@ Include `Source: Implementer (Phase 4)` on your entries.
    # Create agent with AgentBuilder (NOT AIProjectClient)
    agent = AgentBuilder.create_agent(
        chat_client=ai_client,
-       name="SmartDocAgent",
+       name="SupportAgent",
        instructions="...",
        model_id="<chat-model-deployment>",  # the project's configured chat model — never hardcode a model name
        tools=[search_tool],
