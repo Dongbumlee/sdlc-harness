@@ -4,8 +4,7 @@ applyTo: '**/*.go'
 ---
 # Systematic Code-Quality Pass Instructions for Go Codebase
 
-> **SDLC alignment:** This quality pass supports **Phase 4 (Implementation)** and **Phase 6 (QA Activities)**
-> as defined in `.github/SDLC-with-Copilot-and-Azure.md`. It auto-applies when Copilot edits Go files.
+> **SDLC alignment:** This quality pass supports **Phase 4 (Implementation)** and **Phase 6 (QA Activities)**. It auto-applies when Copilot edits Go files.
 
 You are performing a systematic code-quality pass on a Go codebase. Work through every package one at a time. For each Go file, apply ALL of the following rules, then compile-check every edited file before moving to the next package.
 

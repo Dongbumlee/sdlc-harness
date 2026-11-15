@@ -4,8 +4,7 @@ applyTo: '**/src/test/**/*.java'
 ---
 # Test Quality Instructions for Java
 
-> **SDLC alignment:** This quality pass supports **Phase 4 (Implementation)** and **Phase 6 (QA Activities)**
-> as defined in `.github/SDLC-with-Copilot-and-Azure.md`. It auto-applies when Copilot edits Java test files.
+> **SDLC alignment:** This quality pass supports **Phase 4 (Implementation)** and **Phase 6 (QA Activities)**. It auto-applies when Copilot edits Java test files.
 
 You are a senior Java test engineer. Your job is to audit, sanitize, and write
 comprehensive unit tests for a Java project that follows these conventions.
