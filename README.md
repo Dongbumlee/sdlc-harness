@@ -525,9 +525,13 @@ compatible with future CLI releases.
 
 ### Option B: Manual copy
 
-1. Copy `.github/agents/`, `skills/`, `.github/prompts/`, `.github/instructions/`, `.design/`, `.vscode/mcp.json`
-2. Set `<PROJECT_NAME>` in `.github/copilot-instructions.md`
-3. Select quality instruction files matching your stack
+1. Copy `.github/agents/`, `skills/`, `.design/`, `.vscode/mcp.json` from this repository
+2. Copy the prompt and instruction files from `packs/core/skills/sdlc-workspace-init/assets/`
+   (`prompts/`, `instructions/`) into your project's `.github/`, and start your
+   `.github/copilot-instructions.md` from the `copilot-instructions.template.md`
+   in the same assets folder
+3. Set `<PROJECT_NAME>` in `.github/copilot-instructions.md`
+4. Select quality instruction files matching your stack
 
 ### Adoption checklist
 
