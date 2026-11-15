@@ -380,7 +380,7 @@ SDLC Harness includes an E2E test framework for validating the harness itself.
 Canary specs define expected agent behavior for each SDLC phase, including
 separate release-preparation (Phase 8) and publish (Phase 9) checks.
 
-- **30 canary specs** across `bench/canaries/` (phase coverage + catalog + QA gate and negative-path tests)
+- **57 canary specs** across `bench/canaries/` (phase coverage + catalog + QA gate and negative-path tests)
 - **2 JSON schemas** in `schemas/` for validation (canary specs, cloud packs)
 - **CI integration** — `canary-test.yml` validates spec schema on PRs touching agents/skills
 - Results stored as structured JSON in `bench/results/`
