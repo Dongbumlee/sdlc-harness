@@ -162,6 +162,27 @@ hooks:
     run: scripts/postprovision.sh
 ```
 
+## Step 6: Validate with the Azure tooling
+
+- **AVM registry is authoritative.** Fetch the Bicep resource-module
+  index (`https://azure.github.io/Azure-Verified-Modules/indexes/bicep/bicep-resource-modules/`)
+  and cross-reference every `br/public:avm/res/...` path and version
+  against it before use.
+- **Use the Azure MCP Bicep tools** to list available AVM modules, get
+  the JSON schema for the resource types being provisioned, validate
+  Bicep files (diagnostics), and pull the `bestpractices` guidance for
+  the deployment.
+- **Validate the target subscription** via Azure MCP: resource naming,
+  quota availability, and configuration checks before deploying.
+- **Microsoft Learn MCP** (Step 2) is the documentation source for AVM
+  module parameters and `azd` configuration.
+- **Also load from the same collection** when the task calls for them:
+  `containerization-docker-best-practices`,
+  `github-actions-ci-cd-best-practices`,
+  `kubernetes-deployment-best-practices` (AKS targets), and the
+  collection prompts `az-cost-optimize` and
+  `azure-resource-health-diagnose`.
+
 ## Gotchas
 
 - **Omit `name:` on Bicep module declarations at resource-group scope** —
@@ -299,3 +320,41 @@ infra/
     ├── monitoring.bicep
     └── ai-foundry.bicep          # If AI features present
 ```
+
+## Infrastructure quality checklist (self-evaluation)
+
+Run this on top of the Deployer's generic self-review before
+reporting Azure infrastructure as complete:
+
+1. **AVM module versions** — Are all `br/public:avm/res/...`
+   references using versions that actually exist in the AVM registry?
+   Cross-check against the fetched registry data.
+2. **Compilation check** — Would this Bicep compile? Look for missing
+   parameter declarations referenced in resources, circular
+   dependencies between modules, incorrect property names for
+   resource types.
+3. **No hardcoded values** — Are subscription IDs, resource group
+   names, regions, SKUs, and secrets all parameterized?
+4. **Diagnostics on every resource** — Does every Azure resource have
+   diagnostic settings sending logs to Log Analytics?
+5. **Tags on every resource** — Do all resources include
+   `azd-env-name`, `TemplateName`, `CreatedBy` tags?
+6. **Identity model** — Is Managed Identity + RBAC used everywhere?
+   No connection strings?
+7. **Parameter file** — Does `main.parameters.json` exist, and do its
+   values match the design?
+8. **azd up repeatability** — Would `azd up` succeed on a clean
+   subscription? Check for missing role assignments, quota-sensitive
+   SKUs, and region availability.
+
+## Exit criteria (Azure targets)
+
+Include these rows in the Deployer's SDLC Exit Criteria Check for an
+Azure target:
+
+- Bicep templates use AVM modules from `br/public:avm/res/...`: ✅/⚠️/⛔
+- Parameter file created (`main.parameters.json`): ✅/⚠️/⛔
+- `azure.yaml` configured for `azd` orchestration: ✅/⚠️/⛔
+- Diagnostic settings and standard tags on all resources: ✅/⚠️/⛔
+- Managed Identity + RBAC used (no connection strings): ✅/⚠️/⛔
+- Deployment is repeatable via `azd up`: ✅/⚠️/⛔

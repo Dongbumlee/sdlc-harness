@@ -403,7 +403,7 @@ python tools/validate_canaries.py
 | **Harness** | Orchestrator — routes all SDLC work |
 | **Analyst** | Phase 1-2: Requirements & design |
 | **Scaffolder** | Phase 3: Repo structure from templates |
-| **Deployer** | Phase 3+8: Azure infrastructure (Bicep/AVM) |
+| **Deployer** | Phase 3+8: Deployment infrastructure for the recorded target (cloud pack tooling) |
 | **Implementer** | Phase 4: Production code + tests |
 | **Documenter** | Phase 5: ADRs, API docs |
 | **QA Coordinator** | Phase 6: Dispatches 9 parallel reviewers |
