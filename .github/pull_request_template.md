@@ -18,11 +18,25 @@ Fixes #
 - [ ] Documentation only
 - [ ] Refactor / internal change (no behavior change)
 
+## SDLC phase
+
+<!-- Which SDLC phase(s) does this change fall under? Check all that apply. -->
+
+- [ ] Phase 1–2: Requirement Analysis & Design
+- [ ] Phase 3: Repo Structure & CI/CD
+- [ ] Phase 3+8: Deployment & Infrastructure
+- [ ] Phase 4: Implementation & Tests
+- [ ] Phase 5: Repository Documentation
+- [ ] Phase 6: QA Activities
+- [ ] Phase 7: RAI Review
+- [ ] Phase 8: Release Preparation
+- [ ] Phase 9: Publish
+
 ## How has this been tested?
 
 <!-- Describe the tests you ran to verify your changes and the results, so a reviewer can reproduce them. -->
 
-- [ ] Existing test suite passes
+- [ ] Verification battery passes (`tools/assemble_flat_layout.py --check`, `python3 -m pytest tests/ -q`, `tools/check_pack_contracts.py`, `tools/generate_agent_inventory.py --check`, `tools/validate_canaries.py`)
 - [ ] New tests added for this change
 - [ ] Manual verification (describe above)
 
@@ -35,7 +49,6 @@ Fixes #
 - [ ] I have performed a self-review of my changes
 - [ ] My changes follow the project's style guidelines
 - [ ] I have updated the documentation where needed
-- [ ] My changes generate no new warnings
-- [ ] All new and existing tests pass locally with my changes
-- [ ] The manifest Phase-State Ledger is updated (harness-run projects)
-- [ ] An ADR was added or updated if this change records a decision (harness-run projects)
+- [ ] Canary specs updated, if agent or skill behavior changed
+- [ ] No secrets or credentials in code
+- [ ] An ADR was added or updated, if this change records a decision
