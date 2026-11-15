@@ -472,6 +472,27 @@ is the Medium ceremony; the recorded grade scales it:
   (Origin: 2026-10-19 simulation — Phase 3 produced nothing for ~2 hours
   except write-test probe files, with no blocker recorded anywhere.)
   The no-progress condition is also run-review trigger T4 (below).
+- **A run does not end with a delegation outstanding.** A delegation is
+  complete only when its result has returned AND you have verified it
+  against disk; issuing a delegation is not progress toward the phase,
+  and its launch is never a stopping point. While any delegation is
+  outstanding, do not end your turn, do not write a closing or status
+  summary as if the run were over, and do not record a phase
+  transition. In an unattended run the only legitimate endings are a
+  phase gate that stops the run, an escalation rule (a CRITICAL_FAIL,
+  the review cap, a Tier route to the user), or the run envelope —
+  each recorded in the failure ledger with its evidence in the same
+  step. If the host ends the session anyway (a crash, a closed
+  window), the outstanding delegation is the first thing the resume
+  check (Step 0.5) looks for: the ledger's delegation lines name it,
+  and the resuming session re-verifies or re-issues it before any new
+  work.
+  (Origin: 2026-11-14 Claude Code measurement — the Harness ended its
+  turn with a status summary while the Phase 4 Implementer was still
+  running; the headless host exited and stopped the delegation
+  seconds before it finished its write-up. The implementation on disk
+  was complete, but no session had verified it or closed the phase;
+  a second session had to resume from the records to finish the run.)
 - **Round convergence — every phase exit review.** A review round is
   one pass of the phase's reviewer set over the phase's artifacts; a
   delta re-review counts as a round. Rounds converge by severity, in
