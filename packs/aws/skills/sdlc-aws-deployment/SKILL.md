@@ -120,6 +120,7 @@ own; MCP servers are accelerators, not prerequisites.
 ## Step 2: L2/L3 constructs — MANDATORY
 
 **⛔ NEVER write raw CloudFormation or L1 (`Cfn*`) constructs.**
+
 **✅ ALWAYS use L2/L3 CDK constructs.** L2 constructs encode security defaults,
 sane naming, and grant helpers — the same role AVM modules play on Azure.
 

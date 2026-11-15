@@ -40,6 +40,7 @@ resource "google_storage_bucket" "reports" {
 ```
 
 **⛔ NEVER `public_access_prevention = "inherited"` on a new bucket.**
+
 **⛔ NEVER legacy bucket ACLs.** Uniform access + IAM only.
 
 ## Step 2: Signed URLs for external access

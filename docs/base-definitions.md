@@ -5,9 +5,11 @@ D1–D5 (§11) adopted as recommended. The conformance sweep accompanying this
 document makes every pack file agree with the definitions here; where a pack
 file and this document disagree, this document is the standard and the pack
 file is the defect.
+
 **Scope of the scan behind it:** all 67 pack markdown files (17,700 lines),
 the `.design/` templates, and the workspace-init assets (instructions, prompts,
 templates) in `Dongbumlee/sdlc-harness` at main `c4f1659`.
+
 **Amendments since adoption** (definition changes, each shipped and
 verified): 2026-11-10 — Go and Rust stacks completed (§9.4; PRs #65–#66,
 with the python template repairs of PRs #67–#69). 2026-11-11 — the
@@ -19,6 +21,7 @@ defect). 2026-11-12 — the pre-run design conversation and its records
 (§2.1, §8.2, §8.4): the design brief, the change path with total
 propagation, the living ADR set, approval posture, and run envelope
 (intake design D1–D16, approved by Dongbum 2026-11-12).
+
 **How each definition was chosen:** where the harness already defined a term
 in one place — usually the most recent deliberate change (PRs #31–#54) — that
 definition is canonical. Where no definition existed anywhere, this document
@@ -576,6 +579,7 @@ them silently — it stops and surfaces the gap. (The Python profile's
 template-source line, which substitutes ".github/reference-catalog.md
 patterns" for step 4, diverges from this chain and is listed for
 alignment.)
+
 **Supported set (as of v1.3.0):** Python, .NET, TypeScript, Java
 (Spring Boot template, PR #64), Go (stdlib template, PR #65), Rust
 (axum template, PR #66) — each with profile, instruction pair, bundled
