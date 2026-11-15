@@ -60,7 +60,12 @@ the same feature, stop and consolidate.
 
 ## Step 3: Write the ADR
 
-Follow the SDLC ADR template structure (from `.design/ADR-TEMPLATE.md`):
+Follow the SDLC ADR template structure (from `.design/ADR-TEMPLATE.md`).
+
+The worked example below is an Azure order system — its services
+(Cosmos DB, Blob Storage), entity base class (`RootEntityBase`), and
+tooling (pytest, Bicep) are that project's recorded patterns, not
+defaults. Substitute the project's own catalog and patterns.
 
 ```markdown
 # ADR-XXX: <Title>

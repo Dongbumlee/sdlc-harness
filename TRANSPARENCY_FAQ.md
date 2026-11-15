@@ -2,15 +2,17 @@
 
 ## What is SDLC Harness, in plain terms?
 
-A set of agent definitions, skills, and instructions for GitHub
-Copilot (VS Code and Copilot CLI). It drives a software project
+A set of agent definitions, skills, and instructions for AI
+coding assistants — GitHub Copilot (VS Code and Copilot CLI) and
+Claude Code. It drives a software project
 through 9 SDLC phases with specialized agents and scored,
 adversarial QA review. It is prompts and process — not a hosted
 service, and it does not phone home.
 
 ## Which AI models does it use?
 
-Whichever models your Copilot seat provides. The harness never names
+Whichever models your seat provides, on the host you run —
+Copilot or Claude Code. The harness never names
 a model: agents declare a *capability tier* (the judgment the seat
 needs), and the platform resolves tiers to models. Runs work with a
 single model for all seats or with different models per seat.
@@ -42,7 +44,7 @@ gates check artifacts on disk rather than trusting any seat's claims.
 
 ## What data leaves my machine?
 
-Only what your Copilot client sends to its model provider under
+Only what your client sends to its model provider under
 your own account, plus the MCP servers you configure (each is under
 your control and listed in the workspace MCP template). The harness
 itself collects no telemetry.

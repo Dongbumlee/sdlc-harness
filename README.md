@@ -10,12 +10,14 @@
 > *From first commit to final release, Harness orchestrates your entire software development
 > lifecycle — so you can focus on building what matters.*
 
-**SDLC Harness** is a multi-agent orchestration system for GitHub Copilot that drives
-software projects through 9 SDLC phases using 21 specialized AI agents. It combines
+**SDLC Harness** is a multi-agent orchestration system that drives
+software projects through 9 SDLC phases using 21 specialized AI agents.
+It runs on GitHub Copilot (VS Code and Copilot CLI) and on Claude Code,
+generated from the same pack sources for both hosts. It combines
 adversarial QA evaluation, live MCP-powered context, and iterative feedback loops to
 deliver production-quality code with enforced development standards.
 
-Distributed as an [Agent Plugin](#quick-start) for VS Code and GitHub Copilot CLI.
+Distributed as an [Agent Plugin](#quick-start) for both hosts.
 Install once — get all 21 agents, 24 skills, and the full SDLC workflow instantly.
 
 ### Why it holds up

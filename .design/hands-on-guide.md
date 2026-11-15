@@ -25,6 +25,12 @@ application.
 > Harness agent) and the **manual prompt** approach (using the prompt files directly).
 > Both produce the same result — choose whichever fits your workflow.
 
+> **Scope of this walkthrough:** the sample run deploys to **Azure** — the
+> screenshots and terminal output are from that run. The same flow runs on
+> AWS and GCP with their cloud packs (the deployment tooling differs; the
+> phases and gates are the same), and on either host — GitHub Copilot or
+> Claude Code.
+
 The walkthrough builds three services, so the run is graded **Large**: the full
 ceremony applies, including a three-round QA re-review budget.
 
@@ -56,7 +62,7 @@ patterns are adopted.
 ## Prerequisites
 
 - The **SDLC Harness plugin** installed — see the [README](../README.md) Quick Start
-  (VS Code or Copilot CLI)
+  (VS Code, Copilot CLI, or Claude Code)
 - [Git](https://git-scm.com/) and a GitHub account
 - [Python 3.12+](https://www.python.org/downloads/) with the
   [uv](https://docs.astral.sh/uv/) package manager

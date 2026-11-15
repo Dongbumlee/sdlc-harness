@@ -1,7 +1,7 @@
 # Support
 
 - **Questions and bug reports:** open a repository issue. Include
-  the harness version, your client (VS Code or Copilot CLI), the
+  the harness version, your client (VS Code, Copilot CLI, or Claude Code), the
   phase you were in, and the relevant manifest or ledger excerpt —
   the run's records are the fastest route to a diagnosis.
 - **MCP setup problems:** see
