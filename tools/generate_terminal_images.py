@@ -198,9 +198,37 @@ def generate_marketplace():
     print("  ✓ install-marketplace.png")
 
 
+def generate_claude_code():
+    """Generate Claude Code install screenshot."""
+    lines = [
+        [("── ", DIM), ("Inside a Claude Code session", DIM), (" ──", DIM)],
+        [("❯ ", BLUE), ("/plugin marketplace add Dongbumlee/sdlc-harness", TEXT)],
+        [("  ✓ ", GREEN), ("Marketplace \"sdlc-harness\" added", GREEN)],
+        "",
+        [("❯ ", BLUE), ("/plugin install sdlc-harness@sdlc-harness", TEXT)],
+        [("  ✓ ", GREEN), ("Plugin \"sdlc-harness\" installed successfully", GREEN)],
+        "",
+        "---",
+        "",
+        [("── ", DIM), ("Start with the Harness as the main agent", DIM), (" ──", DIM)],
+        [("❯ ", BLUE), ("claude --agent sdlc-harness:harness", TEXT)],
+        "",
+        [("  ✓ ", GREEN), ("Loaded 22 agents", GREEN)],
+        [("  ✓ ", GREEN), ("Loaded 25 skills (14 core + 4 Azure + 3 AWS + 3 GCP + 1 On-Prem)", GREEN)],
+        "",
+        [("  Harness ", TEXT), ("sdlc-harness:harness", YELLOW), (" is the main agent.", TEXT)],
+        "",
+        [("❯ ", BLUE), ("█", DIM)],
+    ]
+    img = create_terminal(620, lines, "Terminal — Claude Code")
+    img.save(f"{OUTPUT_DIR}/install-claude-code.png", "PNG")
+    print("  ✓ install-claude-code.png")
+
+
 if __name__ == "__main__":
     print("Generating terminal screenshots with JetBrains Mono...")
     generate_vscode()
     generate_cli()
     generate_marketplace()
+    generate_claude_code()
     print("Done.")

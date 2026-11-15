@@ -65,12 +65,7 @@ Install once — get all 22 agents, 25 skills, and the full SDLC workflow instan
 
 **Claude Code**
 
-Inside a Claude Code session:
-
-```
-/plugin marketplace add Dongbumlee/sdlc-harness
-/plugin install sdlc-harness@sdlc-harness
-```
+<img src="docs/assets/install-claude-code.png" alt="Claude Code plugin installation" width="620">
 
 Then start with Harness as the main agent: `claude --agent sdlc-harness:harness`.
 The Claude Code plugin is generated from the same pack sources as the Copilot
