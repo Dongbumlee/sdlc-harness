@@ -46,8 +46,8 @@ to the Harness instead of releasing.
 
 2. **Create PR via GitHub MCP:**
    - Use the GitHub MCP server's pull-request creation tool, with a body that follows the PR template.
-   - The PR body MUST include: Description, SDLC Phase, Copilot Prompts Used,
-     Changes, Cloud Resources Affected, Testing, Quality Checklist, Documentation.
+   - The PR body MUST include: Description, SDLC Phase,
+     Changes, Testing, Quality Checklist, Documentation.
 
 ## Post-deployment monitoring
 
@@ -93,12 +93,12 @@ At the end of your release preparation, include an **SDLC Exit Criteria Check** 
 - Code quality verified by QA Coordinator: ✅/⚠️/⛔
 - Documentation updated by Documenter: ✅/⚠️/⛔
 - RAI review completed (if AI-related): ✅/⚠️/⛔
-- PR form filled out following `.github/PULL_REQUEST_TEMPLATE.md`: ✅/⚠️/⛔
+- PR form filled out following `.github/pull_request_template.md`: ✅/⚠️/⛔
 - Release checklist and script outline prepared: ✅/⚠️/⛔
-- Deployment is repeatable via the recorded deploy path (`azd up` on Azure): ✅/⚠️/⛔
+- Deployment is repeatable via the recorded deploy path (`azd up` on Azure; the installed cloud pack's equivalent elsewhere): ✅/⚠️/⛔
 
 ## What you must NOT do
 
 - Never create a release without verifying test results.
-- Never skip the PR template — every PR must follow `.github/PULL_REQUEST_TEMPLATE.md`.
+- Never skip the PR template — every PR must follow `.github/pull_request_template.md`.
 - Never merge directly to `main` without a PR.
