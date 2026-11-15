@@ -4,7 +4,7 @@
 > Regenerate with `python3 tools/generate_agent_inventory.py`.
 
 **Version:** 1.3.1  
-**Generated:** 2026-11-13  
+**Generated:** 2026-11-14  
 **Total agents:** 21 (21 agent files)  
 **Total skills:** 24
 
@@ -17,7 +17,7 @@
 | 3 | `aws-compliance-reviewer.agent.md` | AWS Compliance Reviewer | QA Reviewer | 6 (sub) | No | `sdlc-reviewer-output-format` |
 | 4 | `azure-compliance-reviewer.agent.md` | Azure Compliance Reviewer | QA Reviewer | 6 (sub) | No | `sdlc-reviewer-output-format` |
 | 5 | `code-quality-reviewer.agent.md` | Code Quality Reviewer | QA Reviewer | 6 (sub) | No | `sdlc-reviewer-output-format`, `sdlc-code-quality` |
-| 6 | `deployer.agent.md` | Deployer | Phase Worker | 3+8 | No | `sdlc-azure-deployment`, `sdlc-reference-catalog` |
+| 6 | `deployer.agent.md` | Deployer | Phase Worker | 3+8 | No | `sdlc-azure-deployment`, `sdlc-aws-deployment`, `sdlc-gcp-deployment`, `sdlc-reference-catalog` |
 | 7 | `deployment-readiness-reviewer.agent.md` | Deployment Readiness Reviewer | QA Reviewer | 6 (sub) | No | `sdlc-project-qa`, `sdlc-reviewer-output-format` |
 | 8 | `documenter.agent.md` | Documenter | Phase Worker | 5 | No | `sdlc-adr-authoring`, `sdlc-reference-catalog` |
 | 9 | `gcp-compliance-reviewer.agent.md` | GCP Compliance Reviewer | QA Reviewer | 6 (sub) | No | `sdlc-reviewer-output-format` |
@@ -50,7 +50,7 @@
 |---|---|---|---|---|
 | 1 | `sdlc-adr-authoring` | sdlc-adr-authoring | Create Architecture Decision Records following SDLC standards and application templates. Use when documenting design decisions, architect... | Documenter |
 | 2 | `sdlc-architecture-review` | sdlc-architecture-review | Review code for architecture and design consistency following SDLC layering rules and application project patterns. Use when reviewing PR... | Architecture Reviewer |
-| 3 | `sdlc-aws-deployment` | sdlc-aws-deployment | Create AWS infrastructure with CDK (TypeScript) using L2/L3 constructs, deploy containerized APIs to Lambda (container image + Function U... | — |
+| 3 | `sdlc-aws-deployment` | sdlc-aws-deployment | Create AWS infrastructure with CDK (TypeScript) using L2/L3 constructs, deploy containerized APIs to Lambda (container image + Function U... | Deployer |
 | 4 | `sdlc-azure-deployment` | sdlc-azure-deployment | Create Azure infrastructure with Bicep using Azure Verified Modules (AVM), configure azd orchestration, and manage deployment lifecycle. ... | Deployer, QA Bug Checklist Reviewer |
 | 5 | `sdlc-blob-storage` | sdlc-blob-storage | Implement Azure Blob Storage and Queue operations using the approved Storage library. Use when uploading, downloading, listing, or managi... | — |
 | 6 | `sdlc-canary-runner` | sdlc-canary-runner | Instructs the Harness agent how to run E2E canary tests against SDLC phase agents. Canary mode validates that the harness orchestration i... | Harness |
@@ -58,7 +58,7 @@
 | 8 | `sdlc-cosmos-repository` | sdlc-cosmos-repository | Implement Azure Cosmos DB data access using the approved Cosmos DB library with Repository Pattern. Use when creating entities, repositor... | — |
 | 9 | `sdlc-dynamodb-repository` | sdlc-dynamodb-repository | Implement DynamoDB data access with single-table design and the Repository Pattern over boto3. Use when creating entities, repositories, ... | — |
 | 10 | `sdlc-firestore-repository` | sdlc-firestore-repository | Implement Firestore data access with an explicit collection design and the Repository Pattern over the google-cloud-firestore client. Use... | — |
-| 11 | `sdlc-gcp-deployment` | sdlc-gcp-deployment | Create GCP infrastructure with Terraform using the google provider, deploy containerized APIs to Cloud Run (HTTPS, scale-to-zero) and lon... | — |
+| 11 | `sdlc-gcp-deployment` | sdlc-gcp-deployment | Create GCP infrastructure with Terraform using the google provider, deploy containerized APIs to Cloud Run (HTTPS, scale-to-zero) and lon... | Deployer |
 | 12 | `sdlc-gcs-storage` | sdlc-gcs-storage | Implement Cloud Storage with private buckets, uniform bucket-level access, and V4 signed URLs. Use when creating buckets, generating sign... | — |
 | 13 | `sdlc-harness` | sdlc-harness | Start or continue an SDLC workflow using the sdlc-harness plugin. Use for any feature development, bug fix, or project task that should g... | — |
 | 14 | `sdlc-project-manifest` | sdlc-project-manifest | Generate and read the project manifest that records which templates and patterns were chosen during scaffolding. This manifest is the sin... | Implementer, Scaffolder |
