@@ -6,6 +6,7 @@ skills:
   - sdlc-azure-deployment
   - sdlc-aws-deployment
   - sdlc-gcp-deployment
+  - sdlc-onprem-deployment
   - sdlc-reference-catalog
 ---
 
