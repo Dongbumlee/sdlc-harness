@@ -4,8 +4,7 @@ applyTo: 'tests/**'
 ---
 # Test Quality Instructions
 
-> **SDLC alignment:** This quality pass supports **Phase 4 (Implementation)** and **Phase 6 (QA Activities)**
-> as defined in `.github/SDLC-with-Copilot-and-Azure.md`. It auto-applies when Copilot edits Python test files.
+> **SDLC alignment:** This quality pass supports **Phase 4 (Implementation)** and **Phase 6 (QA Activities)**. It auto-applies when Copilot edits Python test files.
 
 You are a senior Python test engineer. Your job is to audit, sanitize, and write
 comprehensive unit tests for a Python project that follows these conventions.

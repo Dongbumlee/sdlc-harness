@@ -20,12 +20,11 @@ argument-hint: "Describe the documentation to create or update"
  - Create or update documentation so that it accurately reflects the design and
    implementation of a feature.
  - Ensure documentation supports future maintenance, QA, and RAI review.
- - Align with **SDLC Phase 5 – Repository Documentation** in
-   `.github/SDLC-with-Copilot-and-Azure.md` and the architecture patterns in
+ - Align with **SDLC Phase 5 – Repository Documentation** and the architecture patterns in
    `.github/copilot-instructions.md`.
 
- This repo uses Azure resources (Cosmos DB, Blob, etc.) and has standard
- architecture and testing patterns defined in the repository instructions.
+ This repo’s cloud, data stores, and services are recorded in `.github/copilot-instructions.md` (§1);
+ its architecture and testing patterns are defined in the repository instructions.
 
  ## Context loading (MCP resources)
 

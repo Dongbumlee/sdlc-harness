@@ -4,8 +4,7 @@ applyTo: '**/*.test.ts'
 ---
 # Test Quality Instructions for TypeScript
 
-> **SDLC alignment:** This quality pass supports **Phase 4 (Implementation)** and **Phase 6 (QA Activities)**
-> as defined in `.github/SDLC-with-Copilot-and-Azure.md`. It auto-applies when Copilot edits TypeScript test files.
+> **SDLC alignment:** This quality pass supports **Phase 4 (Implementation)** and **Phase 6 (QA Activities)**. It auto-applies when Copilot edits TypeScript test files.
 
 You are a senior TypeScript test engineer. Your job is to audit, sanitize, and write
 comprehensive unit tests for a TypeScript project that follows these conventions.

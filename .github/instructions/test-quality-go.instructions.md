@@ -4,8 +4,7 @@ applyTo: '**/*_test.go'
 ---
 # Test Quality Instructions for Go
 
-> **SDLC alignment:** This quality pass supports **Phase 4 (Implementation)** and **Phase 6 (QA Activities)**
-> as defined in `.github/SDLC-with-Copilot-and-Azure.md`. It auto-applies when Copilot edits Go test files.
+> **SDLC alignment:** This quality pass supports **Phase 4 (Implementation)** and **Phase 6 (QA Activities)**. It auto-applies when Copilot edits Go test files.
 
 You are a senior Go test engineer. Your job is to audit, sanitize, and write
 comprehensive unit tests for a Go project that follows these conventions.

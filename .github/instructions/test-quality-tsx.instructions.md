@@ -4,8 +4,7 @@ applyTo: '**/*.test.tsx'
 ---
 # Test Quality Instructions for React Components (TSX)
 
-> **SDLC alignment:** This quality pass supports **Phase 4 (Implementation)** and **Phase 6 (QA Activities)**
-> as defined in `.github/SDLC-with-Copilot-and-Azure.md`. It auto-applies when Copilot edits React test files.
+> **SDLC alignment:** This quality pass supports **Phase 4 (Implementation)** and **Phase 6 (QA Activities)**. It auto-applies when Copilot edits React test files.
 
 You are a senior React test engineer. Your job is to audit, sanitize, and write
 comprehensive component tests for a React TypeScript project using Vitest and

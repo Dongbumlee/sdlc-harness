@@ -4,8 +4,7 @@ applyTo: '**/*.java'
 ---
 # Systematic Code-Quality Pass Instructions for Java Codebase
 
-> **SDLC alignment:** This quality pass supports **Phase 4 (Implementation)** and **Phase 6 (QA Activities)**
-> as defined in `.github/SDLC-with-Copilot-and-Azure.md`. It auto-applies when Copilot edits Java files.
+> **SDLC alignment:** This quality pass supports **Phase 4 (Implementation)** and **Phase 6 (QA Activities)**. It auto-applies when Copilot edits Java files.
 
 You are performing a systematic code-quality pass on a Java codebase. Work through every package one at a time. For each Java file, apply ALL of the following rules, then compile-check every edited file before moving to the next package.
 

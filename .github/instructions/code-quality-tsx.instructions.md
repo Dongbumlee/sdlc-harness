@@ -4,8 +4,7 @@ applyTo: '**/*.tsx'
 ---
 # Systematic Code-Quality Pass Instructions for React (TSX) Codebase
 
-> **SDLC alignment:** This quality pass supports **Phase 4 (Implementation)** and **Phase 6 (QA Activities)**
-> as defined in `.github/SDLC-with-Copilot-and-Azure.md`. It auto-applies when Copilot edits React component files.
+> **SDLC alignment:** This quality pass supports **Phase 4 (Implementation)** and **Phase 6 (QA Activities)**. It auto-applies when Copilot edits React component files.
 
 You are performing a systematic code-quality pass on a React TypeScript codebase. Work through every folder one at a time. For each `.tsx` file, apply ALL of the following rules, then type-check every edited file before moving to the next folder.
 
