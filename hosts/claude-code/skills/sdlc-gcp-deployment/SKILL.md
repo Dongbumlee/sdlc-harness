@@ -494,3 +494,45 @@ must stand on its own; MCP servers are accelerators, not prerequisites.
 | Container images | Artifact Registry (created by Terraform) |
 | API service code | `src/<Name>API/` (Flask/WSGI) |
 | Worker job code | `src/<Name>Worker/` (run-to-completion entrypoint) |
+
+## Infrastructure quality checklist (self-evaluation)
+
+Run this on top of the Deployer's generic self-review before
+reporting GCP infrastructure as complete:
+
+1. **Module versions** — Do all Terraform module and provider
+   references use versions that exist in the registry, pinned in the
+   lock file?
+2. **Plan check** — Does `terraform validate` pass and `terraform
+   plan` produce exactly the intended change set? No surprise
+   destroys, no drift from unmanaged changes.
+3. **No hardcoded values** — Are project IDs, regions, machine
+   types, and secrets all variables or Secret Manager references?
+   No secret values in plan output or state.
+4. **Diagnostics on every resource** — Does every service emit logs
+   and metrics to Cloud Logging / Cloud Monitoring?
+5. **Labels on every resource** — Do all resources carry the
+   project's standard labels?
+6. **Identity model** — One service account per compute target
+   (Step 3), permissions via `google_*_iam_member` with
+   least-privilege roles only? No primitive roles where a predefined
+   role fits?
+7. **Configuration matches the design** — Do the tfvars, the API
+   enablement list (Step 1), and the cost guardrails (Step 6) match
+   what the design recorded?
+8. **Deploy repeatability** — Would `terraform apply` succeed on a
+   clean project? The image pipeline order holds (registry → images
+   → deploy, Step 2), APIs are enabled, and quota-sensitive choices
+   are checked.
+
+## Exit criteria (GCP targets)
+
+Include these rows in the Deployer's SDLC Exit Criteria Check for a
+GCP target:
+
+- Terraform uses registry modules and pinned providers: ✅/⚠️/⛔
+- `terraform validate` passes and the plan matches the design: ✅/⚠️/⛔
+- Least-privilege IAM via `google_*_iam_member` (one SA per target): ✅/⚠️/⛔
+- Secrets in Secret Manager, mounted at runtime — never in config or state: ✅/⚠️/⛔
+- Cost guardrails (Step 6) applied: ✅/⚠️/⛔
+- Deployment is repeatable via `terraform apply`: ✅/⚠️/⛔

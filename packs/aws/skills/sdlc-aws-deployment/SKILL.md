@@ -512,3 +512,43 @@ with the comment from Step 2.
 | Container images | ECR repository — one repo, `api-<tag>`/`worker-<tag>` images; repo created outside the compute stack (see "ECR image pipeline") |
 | API service code | `src/<Name>API/` |
 | Worker service code | `src/<Name>Worker/` |
+
+## Infrastructure quality checklist (self-evaluation)
+
+Run this on top of the Deployer's generic self-review before
+reporting AWS infrastructure as complete:
+
+1. **Construct versions** — Do all L2/L3 construct references use
+   versions that exist in the CDK library? No L1 (`Cfn*`) escapes
+   where an L2/L3 construct exists (Step 2).
+2. **Synth check** — Does `cdk synth` succeed cleanly? Missing context
+   values, circular stack dependencies, and incorrect property names
+   surface here, not at deploy time.
+3. **No hardcoded values** — Are account IDs, regions, instance
+   sizes, and secrets all parameterized (context, environment, or
+   Secrets Manager references)?
+4. **Diagnostics on every resource** — Does every service emit logs
+   and metrics to CloudWatch, with retention set deliberately?
+5. **Tags on every resource** — Do all resources carry the project's
+   standard tags (the CDK tag aspects applied at app scope)?
+6. **Identity model** — Is every permission granted via IAM grant
+   methods (Step 3)? No inline policy JSON, no wildcard actions where
+   a grant exists?
+7. **Configuration matches the design** — Do the stack props, context
+   values, and cost guardrails (Step 5) match what the design
+   recorded?
+8. **Deploy repeatability** — Would `cdk deploy` succeed on a clean
+   account in the target region? The Step 0 region probe passed,
+   bootstrap is in place, and quota-sensitive choices are checked.
+
+## Exit criteria (AWS targets)
+
+Include these rows in the Deployer's SDLC Exit Criteria Check for an
+AWS target:
+
+- CDK uses L2/L3 constructs (no raw `Cfn*` where a construct exists): ✅/⚠️/⛔
+- `cdk synth` is clean and the region probe (Step 0) passed: ✅/⚠️/⛔
+- IAM permissions granted via grant methods (no inline policies): ✅/⚠️/⛔
+- Secrets in Secrets Manager, referenced — never plaintext: ✅/⚠️/⛔
+- Cost guardrails (Step 5) applied: ✅/⚠️/⛔
+- Deployment is repeatable via `cdk deploy`: ✅/⚠️/⛔
