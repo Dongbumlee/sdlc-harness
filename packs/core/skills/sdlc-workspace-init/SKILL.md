@@ -103,7 +103,7 @@ Step 0.75) has already answered these questions — take the values from
 the brief and do NOT re-ask them.** Ask the user only for a value the
 brief leaves open:
 
-1. **Project name** (required) — e.g., "SmartDoc Analyzer"
+1. **Project name** (required) — e.g., "Task Tracker"
 2. **Business domain** (required) — the brief's "Problem and users" field
 3. **Tech stack** (required) — the brief's "Stack" field, e.g., "Python, FastAPI, React, TypeScript"
 4. **Primary language(s)** (derived from tech stack) — used to filter instruction files (e.g., `code-quality-py.md` vs `code-quality-ts.md`)
