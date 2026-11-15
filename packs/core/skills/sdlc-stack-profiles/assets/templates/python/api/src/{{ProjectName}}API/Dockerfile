@@ -11,7 +11,11 @@ RUN uv sync --frozen --no-cache
 
 # Run as a non-root user on an unprivileged port — the same posture
 # as every other bundled template.
-RUN groupadd --system app && useradd --system --gid app app && chown -R app:app /app
+# The Azure Linux base image does not ship the account tools
+# (groupadd/useradd live in shadow-utils), so install them first.
+RUN tdnf install -y shadow-utils && tdnf clean all \
+    && groupadd --system app && useradd --system --gid app app \
+    && chown -R app:app /app
 USER app
 EXPOSE 8080
 
