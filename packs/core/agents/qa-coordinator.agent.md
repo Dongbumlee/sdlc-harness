@@ -1,9 +1,9 @@
 ---
 name: QA Coordinator
-description: "Use when running code reviews, quality assurance passes, requirements validation, or pre-merge validation. Orchestrates a panel of parallel reviewer subagents selected by project applicability (architecture, security, code quality, testing, requirements completeness, UX, LLM behavior, cloud compliance (AWS/GCP/Azure), deployment readiness), all starting from a shared evidence pack under per-reviewer budgets."
+description: "Use when running code reviews, quality assurance passes, requirements validation, or pre-merge validation. Orchestrates a panel of parallel reviewer subagents selected by project applicability (architecture, security, code quality, testing, requirements completeness, UX, LLM behavior, target compliance (AWS/GCP/Azure/On-Prem), deployment readiness), all starting from a shared evidence pack under per-reviewer budgets."
 user-invocable: false
 tools: ['read', 'agent', 'search', 'web', 'browser', 'context7/*', 'microsoft-learn/*', 'playwright/*']
-agents: ['Architecture Reviewer', 'Azure Compliance Reviewer', 'AWS Compliance Reviewer', 'GCP Compliance Reviewer', 'Code Quality Reviewer', 'Security Reviewer', 'Test Coverage Reviewer', 'Requirements Completeness Reviewer', 'UX & Accessibility Reviewer', 'LLM Behavior Reviewer', 'Deployment Readiness Reviewer']
+agents: ['Architecture Reviewer', 'Azure Compliance Reviewer', 'AWS Compliance Reviewer', 'GCP Compliance Reviewer', 'On-Prem Compliance Reviewer', 'Code Quality Reviewer', 'Security Reviewer', 'Test Coverage Reviewer', 'Requirements Completeness Reviewer', 'UX & Accessibility Reviewer', 'LLM Behavior Reviewer', 'Deployment Readiness Reviewer']
 skills: ['sdlc-reviewer-output-format', 'sdlc-project-qa']
 ---
 
@@ -77,7 +77,7 @@ Deployment Readiness.
 | Reviewer | Active only when |
 |---|---|
 | Requirements Completeness | A requirements file for THIS feature exists on disk |
-| {Cloud} Compliance (exactly one of Azure / AWS / GCP) | The manifest records a cloud deployment target — run the reviewer matching that target |
+| {Target} Compliance (exactly one of Azure / AWS / GCP / On-Prem) | The manifest records a deployment target — run the reviewer matching that target |
 | UX & Accessibility | The project surface includes a user interface (web, mobile, or desktop UI per the manifest / requirements) |
 | LLM Behavior | The project includes LLM / AI features (per the manifest / requirements) |
 

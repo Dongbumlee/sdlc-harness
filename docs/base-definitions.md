@@ -591,7 +591,7 @@ default:
 
 | Key | Writer | Readers | Default | Meaning |
 |---|---|---|---|---|
-| `cloud.provider` | Analyst (Step 0c: derive from `copilot-instructions.md` §1 Cloud field and write back; if neither source has it, ask the user — never assume) | QA Coordinator Step 0.5 (cloud slot), Deployer | none | The run's cloud target. The manifest's Stack section records the resolved value; if the two disagree, the config is the source and the manifest is corrected. |
+| `cloud.provider` | Analyst (Step 0c: derive from `copilot-instructions.md` §1 Cloud field and write back; if neither source has it, ask the user — never assume) | QA Coordinator Step 0.5 (cloud slot), Deployer | none | The run's deployment target (`azure` | `aws` | `gcp` | `onprem`). The manifest's Stack section records the resolved value; if the two disagree, the config is the source and the manifest is corrected. |
 | `catalog_review` | User / workspace-init | Harness (catalog checkpoint) | `true` (review) | `true`: the Harness presents the populated catalog and waits; dismissal without a response counts as approval. `false`: auto-proceed. Either way, append-only activates at that point. |
 
 ### 10.2 MCP readiness posture
@@ -701,5 +701,6 @@ per row, then regenerates the mirrors and runs the full battery
 | 28 | Copilot-instructions template §5 prescribes Moq + FluentAssertions for C# — libraries the bundled .NET template deliberately excludes (the exact divergence that poisoned the 2026-11-10 live run's spec) | §9.2: template/profile wins | copilot-instructions.template.md |
 | 29 | Reference-catalog skill says the catalog is created "during Step 0" of workspace-init; the creation step is Step 6 | factual fix | sdlc-reference-catalog/SKILL.md |
 | 30 | Coverage 80% exists only in a reviewer checklist line, owned by no criterion and enforced by no template | §10.4 (+D3) | test-coverage-reviewer.agent.md, sdlc-stack-profiles/SKILL.md (profile target field) |
+| 31 | Core Deployer was the Azure deployer (Bicep/AVM body, Azure-only description) and on-premises existed as no target at all — no pack, no deployment skill, no compliance reviewer | §3 (Phase 3B/8 exits), Deployer pattern | deployer.agent.md, packs/ | **Resolved 2026-11-14 (deployment split P1–P4): the Deployer is target-neutral and routes by the recorded target; per-target procedures live in the packs' deployment skills; `packs/onprem` adds the fourth target (deployment skill + compliance reviewer); the pack schema's `cloud` enum gains `onprem`.** |
 
 *End of document.*

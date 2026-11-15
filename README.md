@@ -18,7 +18,7 @@ adversarial QA evaluation, live MCP-powered context, and iterative feedback loop
 deliver production-quality code with enforced development standards.
 
 Distributed as an [Agent Plugin](#quick-start) for both hosts.
-Install once — get all 21 agents, 24 skills, and the full SDLC workflow instantly.
+Install once — get all 22 agents, 25 skills, and the full SDLC workflow instantly.
 
 ### Why it holds up
 
@@ -125,7 +125,7 @@ source and re-run `tools/assemble_flat_layout.py`.
 
 ## Architecture
 
-### Agent system (21 agents)
+### Agent system (22 agents)
 
 A single user-facing agent — **Harness** — orchestrates specialized workers,
 each scoped to a specific SDLC phase with least-privilege tool access.
@@ -358,14 +358,15 @@ See [docs/workflow-guide.md](docs/workflow-guide.md) for the full step-by-step w
 
 ## Cloud Packs
 
-Cloud Packs are modular skill sets for specific cloud platforms. Each pack adds
-deployment, data access, and storage skills tailored to that provider.
+Cloud Packs are modular skill sets for specific platforms. Each pack adds
+deployment, data access, and storage skills tailored to that target.
 
 | Pack | Skills | Status |
 |------|--------|--------|
 | **Azure** | `sdlc-azure-deployment`, `sdlc-cosmos-repository`, `sdlc-blob-storage` | Included |
 | **AWS** | `sdlc-aws-deployment`, `sdlc-dynamodb-repository`, `sdlc-s3-storage` | Included |
 | **GCP** | `sdlc-gcp-deployment`, `sdlc-firestore-repository`, `sdlc-gcs-storage` | Included |
+| **On-Premises** | `sdlc-onprem-deployment` | Included |
 
 Each pack's metadata lives at `packs/<cloud>/pack.json`; skills are also
 published in the root `skills/` directory so current Agent Plugins clients discover them.
@@ -484,7 +485,7 @@ python tools/validate_canaries.py
 | [Harness Design](docs/harness-design.md) | Why the QA system is built this way (generator–evaluator research → implementation) |
 | [Workflow Guide](docs/workflow-guide.md) | Step-by-step: how engineers and agents work together, with a sequence diagram |
 | [Orchestrator States](docs/orchestrator-states.md) | The Harness state model: dispatch, validation, fix loops, QA gate, blocked states |
-| [Agent Inventory](docs/agent-inventory.md) | Generated inventory of all 21 agents and 24 skills |
+| [Agent Inventory](docs/agent-inventory.md) | Generated inventory of all 22 agents and 25 skills |
 | [Transparency FAQ](TRANSPARENCY_FAQ.md) | Plain-terms answers: what the harness is, which models it uses, where human oversight stays, the limitations, and what data leaves your machine |
 | [MCP Troubleshooting](docs/mcp-troubleshooting.md) | MCP server setup issues and fixes |
 | [ADR-0001](docs/adr/ADR-0001-pack-separation.md) · [ADR-0002](docs/adr/ADR-0002-bundled-default-templates.md) · [ADR-0003](docs/adr/ADR-0003-github-native-operations.md) | Pack separation · bundled default templates · GitHub-native operations |
