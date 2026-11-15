@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/azurelinux/base/python:3.12
+FROM python:3.12-slim
 
 WORKDIR /app
 
@@ -13,10 +13,7 @@ RUN uv sync --frozen --no-cache
 # template. The job database lives on a mounted volume in production
 # (the <PREFIX>_DB_PATH variable points at it, where the prefix is
 # the upper-cased tool name); the default path is for local runs.
-# The Azure Linux base image does not ship the account tools
-# (groupadd/useradd live in shadow-utils), so install them first.
-RUN tdnf install -y shadow-utils && tdnf clean all \
-    && groupadd --system app && useradd --system --gid app app \
+RUN groupadd --system app && useradd --system --gid app app \
     && chown -R app:app /app
 USER app
 

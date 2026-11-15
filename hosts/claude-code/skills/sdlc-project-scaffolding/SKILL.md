@@ -176,7 +176,7 @@ self.application_context.add_singleton(IFeedbackService, FeedbackService)
 ### Dockerfile — Template pattern (NOT generic Python)
 
 ```dockerfile
-FROM mcr.microsoft.com/azurelinux/base/python:3.12
+FROM python:3.12-slim
 
 WORKDIR /app
 
