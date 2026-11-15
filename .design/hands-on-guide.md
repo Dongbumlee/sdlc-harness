@@ -16,7 +16,7 @@ and the project's .github/reference-catalog.md) — NOT from this hands-on guide
 > design decisions, or as a reference for real implementations.
 
 This guide walks you through one complete delivery with the **SDLC Harness** plugin —
-21 agents and 24 skills that run a nine-phase SDLC with enforced quality gates.
+22 agents and 25 skills that run a nine-phase SDLC with enforced quality gates.
 By following every step, you'll see how the **Harness** orchestrator, its phase
 agents, and the **prompt files** work together to deliver a production-ready
 application.
