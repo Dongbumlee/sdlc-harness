@@ -22,6 +22,7 @@ byte-identical to its pack source.
 | `sdlc-harness:harness` | Harness | `packs/core/agents/harness.agent.md` |
 | `sdlc-harness:implementer` | Implementer | `packs/core/agents/implementer.agent.md` |
 | `sdlc-harness:llm-behavior-reviewer` | LLM Behavior Reviewer | `packs/core/agents/llm-behavior-reviewer.agent.md` |
+| `sdlc-harness:on-prem-compliance-reviewer` | On-Prem Compliance Reviewer | `packs/onprem/agents/onprem-compliance-reviewer.agent.md` |
 | `sdlc-harness:qa-bug-checklist-reviewer` | QA Bug Checklist Reviewer | `packs/azure/agents/qa-bug-checklist-reviewer.agent.md` |
 | `sdlc-harness:qa-coordinator` | QA Coordinator | `packs/core/agents/qa-coordinator.agent.md` |
 | `sdlc-harness:rai-reviewer` | RAI Reviewer | `packs/core/agents/rai-reviewer.agent.md` |

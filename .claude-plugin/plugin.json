@@ -30,6 +30,7 @@
     "./hosts/claude-code/agents/harness.md",
     "./hosts/claude-code/agents/implementer.md",
     "./hosts/claude-code/agents/llm-behavior-reviewer.md",
+    "./hosts/claude-code/agents/on-prem-compliance-reviewer.md",
     "./hosts/claude-code/agents/qa-bug-checklist-reviewer.md",
     "./hosts/claude-code/agents/qa-coordinator.md",
     "./hosts/claude-code/agents/rai-reviewer.md",

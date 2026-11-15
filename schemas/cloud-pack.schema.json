@@ -22,8 +22,8 @@
     },
     "cloud": {
       "type": "string",
-      "description": "Target cloud provider, or \"core\" for the cloud-agnostic pack",
-      "enum": ["azure", "aws", "gcp", "core"]
+      "description": "Target cloud provider, \"onprem\" for the on-premises pack, or \"core\" for the cloud-agnostic pack",
+      "enum": ["azure", "aws", "gcp", "onprem", "core"]
     },
     "agents": {
       "type": "object",

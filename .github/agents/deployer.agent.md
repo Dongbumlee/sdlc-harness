@@ -3,7 +3,7 @@ name: Deployer
 description: "Use when creating deployment infrastructure, configuring deployment orchestration, managing the deployment lifecycle, or preparing release automation for the project's recorded deployment target (Azure, AWS, GCP, or on-premises). Handles SDLC Phases 3 and 8."
 user-invocable: false
 tools: ['read', 'search', 'edit', 'terminal', 'github/*', 'azure/deploy', 'azure/bicepschema', 'azure/group', 'microsoft-learn/*']
-skills: ['sdlc-azure-deployment', 'sdlc-aws-deployment', 'sdlc-gcp-deployment', 'sdlc-reference-catalog']
+skills: ['sdlc-azure-deployment', 'sdlc-aws-deployment', 'sdlc-gcp-deployment', 'sdlc-onprem-deployment', 'sdlc-reference-catalog']
 ---
 
 # Deployer — SDLC Phase 3+8: Deployment & Infrastructure
