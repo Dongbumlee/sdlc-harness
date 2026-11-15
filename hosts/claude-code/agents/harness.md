@@ -560,6 +560,7 @@ is the Medium ceremony; the recorded grade scales it:
     worker's result reports that the worker did not record — and
     one `delegation` line for every delegation you issue, written
     when you issue it (the T5 evidence, below).
+
   **Counting rule.** The count is a named step of every phase
   transition, performed by you before the phase's ledger row is set
   to Complete — and the phase's exit gate verifies it happened (see
@@ -616,6 +617,7 @@ is the Medium ceremony; the recorded grade scales it:
   the user for a decision. (Scheduled reviews
   were tested and rejected: reviewing on a clock interrupts healthy runs
   and costs more than it saves — evidence, not time, opens a review.)
+
   **Delegation-repeat rule (T5).** A run that is going wrong also
   repeats its delegations: the same brief, to the same agent, for
   the same work item, returning the same result. T1 counts failures
@@ -880,6 +882,7 @@ ls docs/adr/ADR-*.md            # a NEW ADR (or dated addendum) exists for THIS 
       requirements overrode the bundled .NET 10 template that excludes
       both, unchecked by any gate, and propagated into the manifest
       and the test project.)
+
       **Mechanical check (stacks with an extractor — dotnet):** the
       version comparison is run, not read. Run
       `python3 <sdlc-stack-profiles skill dir>/scripts/check_stack_conformance.py --stack <stack> --docs <REQ> <ADR>`
@@ -958,6 +961,7 @@ or explicitly waived by the user:
    `repository_decision_source` (asked at intake | explicit user
    instruction) — a mode recorded without a decision source is an intake
    violation; treat the intake as not done.
+
    **In the same step, ensure `.SDLC/failure-ledger.md` exists** (Step
    0.75 creates it for greenfield runs) with its title
    line and the event-line format from "Run review — the pit stop" as a

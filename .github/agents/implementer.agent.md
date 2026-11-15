@@ -202,6 +202,7 @@ Include `Source: Implementer (Phase 4)` on your entries.
    - If GitHub MCP is unavailable, follow these **mandatory patterns** from the template:
 
    **Required SDK**: Microsoft Agent Framework (`agent_framework` package)
+
    **Key imports and patterns:**
    ```python
    # Agent creation — use AgentBuilder, NOT AIProjectClient.agents.create_agent()
