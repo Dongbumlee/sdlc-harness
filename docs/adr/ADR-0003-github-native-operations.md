@@ -1,9 +1,11 @@
 # ADR-0003: GitHub-Native Operations — Repository First, Work Tracked in Issues/PRs, Test Evidence from CI
 
-- **Status:** Accepted (amended 2026-11-12 — D6, D7 added)
-- **Date:** 2026-10-19
-- **Deciders:** Dongbum Lee (product owner, harness maintainer)
-- **Related:** ADR-0002 (bundled default templates), manifest Phase-State Ledger, QA evidence pack
+> **Status:** Accepted (amended 2026-11-12 — D6, D7 added)  
+> **Date:** 2026-10-19  
+> **Author:** Dongbum(DB) Lee (product owner, harness maintainer)  
+> **Related:** ADR-0002 (bundled default templates), manifest Phase-State Ledger, QA evidence pack
+
+---
 
 ## Context
 
