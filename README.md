@@ -219,7 +219,7 @@ server.
 > **Setup:** Working from a clone of this repository? Run `tools/check-mcp.ps1`
 > (Windows) or `tools/check-mcp.sh` (Linux/macOS) to auto-configure MCP servers
 > for VS Code, Copilot CLI, and Claude Code.
-> See [MCP Troubleshooting](docs/mcp-troubleshooting.md) for common issues.
+> See [Troubleshooting](docs/troubleshooting.md#mcp-servers) for common issues.
 
 ---
 
@@ -500,7 +500,7 @@ there rather than reading it cover to cover.
 | Document | What it covers |
 |----------|---------------|
 | [Host Support](docs/host-support.md) | The two hosts side by side: install, entry points, differences, and what has actually been measured on each |
-| [MCP Troubleshooting](docs/mcp-troubleshooting.md) | MCP server setup issues and fixes |
+| [Troubleshooting](docs/troubleshooting.md) | Start from the symptom: VS Code approval settings, Claude Code spawn depth, and MCP server setup issues and fixes |
 
 **Concepts**
 

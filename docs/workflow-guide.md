@@ -3,6 +3,30 @@
 SDLC Harness is designed for **human-AI collaboration** — engineers stay in control
 while agents handle the heavy lifting.
 
+## Step 0: The first run — set up, agree the design, grade the task
+
+Before the first task, three things happen once:
+
+1. **Initialize the workspace.** The engineer opens the project, starts the
+   **Harness** agent, and says `initialize workspace`. Harness asks for the
+   project details (name, domain, stack) and deploys the instructions, MCP
+   configuration, and prompt files the host uses.
+2. **Agree the design before anything is built.** Harness runs a short
+   design conversation — what is being built, which kind of thing it is
+   (library, CLI, worker, web app, API), the stack, the constraints — and
+   writes the agreed answers into the project's **design brief**. The key
+   fields must be confirmed before the first phase starts; nothing is
+   built on an unconfirmed brief.
+3. **Grade the task.** Harness sizes the work as **Small**, **Medium**, or
+   **Large**. The grade sets the ceremony for everything after: how many
+   fix-and-recheck rounds are allowed, how wide the QA panel runs, and the
+   run's time and spend envelope (see the
+   [Quick Reference](quick-reference.md)).
+
+Every later task skips the setup and starts at Step 1 — and when a session
+resumes mid-run, Harness picks up from the records the earlier steps left
+behind rather than from memory.
+
 ## Step 1: Engineer opens a task
 
 An engineer receives a GitHub issue, a feature request, or identifies a bug. They open

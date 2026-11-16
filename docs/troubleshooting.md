@@ -1,8 +1,20 @@
-# MCP Setup Troubleshooting
+# Troubleshooting
+
+Start from the symptom:
+
+- **Every tool call asks for approval (VS Code)** — two settings must be
+  set first; see [First use](../README.md#first-use).
+- **The QA panel cannot spawn reviewers (Claude Code)** — the run must
+  start with the Harness as the main agent, and the subagent spawn depth
+  must be at least 2; see [Host Support](host-support.md).
+- **MCP servers will not load, or authentication fails** — the MCP
+  sections below.
+
+## MCP servers
 
 Common issues when setting up MCP servers for sdlc-harness.
 
-## Quick Start
+### Quick Start
 
 Run the auto-setup script (no prompts, configures all tools):
 
@@ -23,9 +35,9 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Dongbumlee/sdlc-harnes
 .\check-mcp.ps1
 ```
 
-## Issues
+### Issues
 
-### 1. MCP servers not loaded after config
+#### 1. MCP servers not loaded after config
 
 **Symptom:** Step 0 reports servers as "Not configured" even though config files exist.
 
@@ -33,7 +45,7 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Dongbumlee/sdlc-harnes
 
 **Fix:** Completely close and reopen your terminal/VSCode, then re-run.
 
-### 2. GitHub MCP authentication fails
+#### 2. GitHub MCP authentication fails
 
 **Symptom:** Twirp error "not_found" when probing GitHub MCP.
 
@@ -45,7 +57,7 @@ gh auth login
 ```
 Then restart your session.
 
-### 3. Claude Code config invalid JSON warning
+#### 3. Claude Code config invalid JSON warning
 
 **Symptom:** Script reports "existing config is invalid JSON" for `.claude.json`.
 
@@ -56,7 +68,7 @@ Then restart your session.
 Get-Content "$env:USERPROFILE\.claude.json" -Raw | ConvertFrom-Json
 ```
 
-### 4. Step 0 skipped by model
+#### 4. Step 0 skipped by model
 
 **Symptom:** Model says "let me try a simpler approach" and skips MCP checks.
 
@@ -64,7 +76,7 @@ Get-Content "$env:USERPROFILE\.claude.json" -Raw | ConvertFrom-Json
 
 **Fix:** Step 0 is a hard gate with mandatory status table output in current releases.
 
-### 5. Non-interactive mode (`-p`) limitations
+#### 5. Non-interactive mode (`-p`) limitations
 
 **Symptom:** Shell commands fail with "Permission denied because no interactive user response was available."
 
@@ -74,7 +86,7 @@ Get-Content "$env:USERPROFILE\.claude.json" -Raw | ConvertFrom-Json
 
 **Workaround:** Use interactive mode for full SDLC runs. Use `-p` only for read-only checks.
 
-## Config Locations
+### Config Locations
 
 | Tool | Windows | Linux/macOS |
 |------|---------|-------------|
