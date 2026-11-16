@@ -486,17 +486,35 @@ to end — then the **Workflow Guide** for the day-to-day loop. **Base
 Definitions** is the reference the other documents point to: look rulings up
 there rather than reading it cover to cover.
 
+**Start here**
+
 | Document | What it covers |
 |----------|---------------|
 | [Hands-On Guide](.design/hands-on-guide.md) | End-to-end walkthrough: one complete delivery with a fictional sample application — every phase, gate, and prompt file, on both hosts |
-| [Base Definitions](docs/base-definitions.md) | The canonical standard: phases, gates, severities, round caps, records — where a pack file and this document disagree, this document wins |
-| [Harness Design](docs/harness-design.md) | Why the QA system is built this way (generator–evaluator research → implementation) |
 | [Workflow Guide](docs/workflow-guide.md) | Step-by-step: how engineers and agents work together, with a sequence diagram |
-| [Orchestrator States](docs/orchestrator-states.md) | The Harness state model: dispatch, validation, fix loops, QA gate, blocked states |
-| [Agent Inventory](docs/agent-inventory.md) | Generated inventory of all 22 agents and 25 skills |
+| [Quick Reference](docs/quick-reference.md) | The numbers on one page: QA thresholds, round caps, the scoring formula, pit-stop triggers, run envelopes, and the records a run leaves |
 | [Transparency FAQ](TRANSPARENCY_FAQ.md) | Plain-terms answers: what the harness is, which models it uses, where human oversight stays, the limitations, and what data leaves your machine |
+
+**Guides**
+
+| Document | What it covers |
+|----------|---------------|
+| [Host Support](docs/host-support.md) | The two hosts side by side: install, entry points, differences, and what has actually been measured on each |
 | [MCP Troubleshooting](docs/mcp-troubleshooting.md) | MCP server setup issues and fixes |
-| [ADR-0001](docs/adr/ADR-0001-pack-separation.md) · [ADR-0002](docs/adr/ADR-0002-bundled-default-templates.md) · [ADR-0003](docs/adr/ADR-0003-github-native-operations.md) | Pack separation · bundled default templates · GitHub-native operations |
+
+**Concepts**
+
+| Document | What it covers |
+|----------|---------------|
+| [Harness Design](docs/harness-design.md) | Why the QA system is built this way (generator–evaluator research → implementation) |
+| [Orchestrator States](docs/orchestrator-states.md) | The Harness state model: dispatch, validation, fix loops, QA gate, blocked states |
+
+**Reference**
+
+| Document | What it covers |
+|----------|---------------|
+| [Base Definitions](docs/base-definitions.md) | The canonical standard: phases, gates, severities, round caps, records — where a pack file and this document disagree, this document wins |
+| [Agent Inventory](docs/agent-inventory.md) | Generated inventory of all 22 agents and 25 skills |
 
 ---
 
@@ -562,6 +580,14 @@ change runs the verification battery locally before it is proposed:
 `tools/assemble_flat_layout.py --check`, `tools/verify_templates.py`,
 `tools/check_pack_contracts.py`, `tools/generate_agent_inventory.py --check`,
 and `python3 -m pytest tests/ -q`.
+
+Settled design decisions are recorded as ADRs in
+[`docs/adr/`](docs/adr/) — [ADR-0001](docs/adr/ADR-0001-pack-separation.md)
+(pack separation), [ADR-0002](docs/adr/ADR-0002-bundled-default-templates.md)
+(bundled default templates),
+[ADR-0003](docs/adr/ADR-0003-github-native-operations.md) (GitHub-native
+operations). Read the relevant ADR before proposing a change to a settled
+design.
 
 ### Repository structure
 

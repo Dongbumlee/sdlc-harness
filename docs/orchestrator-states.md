@@ -99,8 +99,8 @@ Large 3).
   (e.g., "QA completed in 2 rounds. Composite: 6.4 → 8.2").
 
 ### BLOCKED
-- Reached on `CRITICAL_FAIL`, 3 exhausted fix/QA rounds, or an unrecoverable
-  worker error. Harness presents the full results and requires a user decision.
+- Reached on `CRITICAL_FAIL`, the grade's fix/QA round cap exhausted, or an
+  unrecoverable worker error. Harness presents the full results and requires a user decision.
   Blockers are filed as GitHub issues for tracking. The run resumes only on
   explicit user direction.
 
