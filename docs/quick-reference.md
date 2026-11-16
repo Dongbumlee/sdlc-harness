@@ -36,9 +36,10 @@ Canon: [§6](base-definitions.md#6-rounds-convergence-and-escalation)
 | Phase-exit fix loops | 1 full + 1 delta | 2 | 3 |
 
 On a FAIL verdict the escalation runs: **tier 1** auto-route the fixes and
-re-review the failed domains only → **tier 2** retry with the user's
-confirmation → **tier 3** the user decides (override, manual fix, or
-abandon). A CRITICAL_FAIL stops the run for a user decision immediately.
+re-review the failed domains only (tier 1 requires at least one Critical
+or Important finding — a fail on composite alone goes straight to the
+user) → **tier 2** retry with the user's confirmation → **tier 3** the
+user decides (override, manual fix, or abandon). A CRITICAL_FAIL stops the run for a user decision immediately.
 Suggestions never consume a round.
 
 ## Pit-stops — when a run stops itself

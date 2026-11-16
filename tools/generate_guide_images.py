@@ -1,6 +1,6 @@
 # Copyright (c) 2026 SDLC Harness Contributors
 # Licensed under MIT
-"""Generate the hands-on guide's step images (.design/images/guide/).
+"""Generate the hands-on guide's step images (docs/assets/guide/).
 
 Stylized cards in the same visual language as generate_terminal_images.py —
 VS Code explorer trees, chat responses, terminal output, editor code, a
@@ -15,7 +15,7 @@ from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-OUTPUT_DIR = REPO_ROOT / ".design" / "images" / "guide"
+OUTPUT_DIR = REPO_ROOT / "docs" / "assets" / "guide"
 
 _FONT_DIRS = [
     Path(os.environ["SDLC_JBMONO_DIR"]) if os.environ.get("SDLC_JBMONO_DIR") else None,
@@ -146,7 +146,7 @@ def gen_01():
         (2, "▾ prompts", TEXT, "6 prompt files"),
         (2, "▾ workflows", TEXT, ""),
         (1, "▾ .vscode", TEXT, ""),
-        (2, "mcp.json", TEAL, "7 MCP servers"),
+        (2, "mcp.json", TEAL, "5 MCP servers"),
         (1, "▾ .SDLC", TEXT, ""),
         (2, "project-manifest.md", TEXT, ""),
         (1, "▸ src", TEXT, ""),
