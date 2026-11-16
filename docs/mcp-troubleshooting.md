@@ -7,12 +7,12 @@ Common issues when setting up MCP servers for sdlc-harness.
 Run the auto-setup script (no prompts, configures all tools):
 
 ```powershell
-# Windows
+## Windows
 .\tools\check-mcp.ps1
 ```
 
 ```bash
-# Linux/macOS
+## Linux/macOS
 ./tools/check-mcp.sh
 ```
 

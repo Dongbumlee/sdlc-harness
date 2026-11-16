@@ -31,6 +31,21 @@ than being silently picked.
 
 ---
 
+## Contents
+
+1. [Core vocabulary](#1-core-vocabulary)
+2. [Phase model](#2-phase-model)
+3. [Exit definitions — one per phase](#3-exit-definitions--one-per-phase)
+4. [Severity — one scale, explicit translations](#4-severity--one-scale-explicit-translations)
+5. [Gate classes](#5-gate-classes)
+6. [Rounds, convergence, and escalation](#6-rounds-convergence-and-escalation)
+7. [Pit-stop counting (failure ledger)](#7-pit-stop-counting-failure-ledger)
+8. [Records and contracts](#8-records-and-contracts)
+9. [Precedence and resolution — four chains, four questions](#9-precedence-and-resolution--four-chains-four-questions)
+10. [Operational definitions](#10-operational-definitions)
+11. [Decisions (2026-11-10 — all adopted as recommended)](#11-decisions-2026-11-10--all-adopted-as-recommended)
+12. [Divergence register — the conformance sweep worklist](#12-divergence-register--the-conformance-sweep-worklist)
+
 ## 1. Core vocabulary
 
 Every term below has exactly one meaning in the harness. Files that use a
