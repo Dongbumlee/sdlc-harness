@@ -40,7 +40,7 @@ Large 3).
   documentation-only changes go straight to the Documenter.
 
 ### INITIALIZE (first run only)
-- **MCP server readiness check** — verifies the 7 configured MCP servers.
+- **MCP server readiness check** — verifies the configured MCP servers (3 core, plus the vendor servers in the project's cloud pack).
 - **Bootstrap workspace files** if missing (templates, checklists, reference catalog).
 - **Fill placeholders** in bootstrapped files. Never blocks the pipeline on a
   single MCP failure — workers degrade gracefully to local reads.
@@ -71,8 +71,8 @@ Large 3).
   phases need all reviewers; `implement` and `qa` phases get the full set.
 - The Coordinator dispatches reviewers **in parallel**, each in its own context
   window, and aggregates their structured YAML output:
-  - **Scoring:** composite = `(security × 1.5 + Σ others) / 9.5`
-  - **Hard-fail rules:** composite < 7, security < 8, or any Critical finding
+  - **Scoring:** composite = `(security × 1.5 + Σ others) / (1.5 + active domains)` — the denominator follows the active panel; 9.5 is only the full-panel value
+  - **Hard-fail rules** (canonical list: `docs/base-definitions.md` §4.3): any reviewer CRITICAL_FAIL, security < 8, any domain < 5, composite < 7, any Critical finding, or two or more Important findings within a single reviewer domain
   - **Finding scoping:** only requirement-tied findings affect score/verdict;
     out-of-scope hardening is recorded as suggestions, never as failures
 - On `FAIL` verdict, the 3-tier escalation applies:

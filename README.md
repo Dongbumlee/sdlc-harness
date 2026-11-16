@@ -481,8 +481,14 @@ python tools/validate_canaries.py
 
 ## Documentation
 
+New here? Start with the **Hands-On Guide** — it walks one full delivery end
+to end — then the **Workflow Guide** for the day-to-day loop. **Base
+Definitions** is the reference the other documents point to: look rulings up
+there rather than reading it cover to cover.
+
 | Document | What it covers |
 |----------|---------------|
+| [Hands-On Guide](.design/hands-on-guide.md) | End-to-end walkthrough: one complete delivery with a fictional sample application — every phase, gate, and prompt file, on both hosts |
 | [Base Definitions](docs/base-definitions.md) | The canonical standard: phases, gates, severities, round caps, records — where a pack file and this document disagree, this document wins |
 | [Harness Design](docs/harness-design.md) | Why the QA system is built this way (generator–evaluator research → implementation) |
 | [Workflow Guide](docs/workflow-guide.md) | Step-by-step: how engineers and agents work together, with a sequence diagram |

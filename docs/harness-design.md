@@ -22,8 +22,8 @@ to be skeptical — dramatically improves output quality.
 |---|---|---|---|
 | **Analyst** | Design completeness, testability, scope control, NFR coverage | — (produces criteria for others) | Design revision loop via Harness |
 | **Scaffolder** | Template fidelity, file existence, dependency correctness | Required files checklist | Structure validation via Harness |
-| **Deployer** | AVM versions, compilation, no hardcoded values, diagnostics | Infrastructure quality checklist | Bicep fix loop via Harness |
-| **Implementer** | Acceptance criteria coverage table | Sprint contract before coding | QA re-review loop (up to 3 rounds) |
+| **Deployer** | Module and template versions, compilation, no hardcoded values, diagnostics | Infrastructure quality checklist | Infrastructure fix loop via Harness |
+| **Implementer** | Acceptance criteria coverage table | Sprint contract before coding | QA re-review loop (round cap scales with the task grade) |
 | **Documenter** | Template compliance, code accuracy, no placeholders, link integrity | — | Revision loop via Harness |
 | **QA Reviewers** | — (they ARE the evaluators) | — | Adversarial scoring with thresholds |
 
