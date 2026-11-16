@@ -499,6 +499,7 @@ there rather than reading it cover to cover.
 
 | Document | What it covers |
 |----------|---------------|
+| [Adopting the Harness](docs/adopting.md) | Making the standards yours: where the standard files live in your project, how to change them organization-wide or per project, and what is not a customization surface |
 | [Host Support](docs/host-support.md) | The two hosts side by side: install, entry points, differences, and what has actually been measured on each |
 | [Troubleshooting](docs/troubleshooting.md) | Start from the symptom: VS Code approval settings, Claude Code spawn depth, and MCP server setup issues and fixes |
 
@@ -570,6 +571,12 @@ compatible with future CLI releases.
 - [ ] Review `.github/copilot-instructions.md`
 - [ ] Start MCP servers; on VS Code, open a new chat session
 - [ ] Enable branch protection on `main`
+
+Once it runs, make the standards yours — the quality instructions,
+reference catalog, and templates the harness deploys are your files to
+edit, and the gates enforce your text. See
+[Adopting the Harness](docs/adopting.md) for where each standard lives
+and how a change takes effect.
 
 ---
 
