@@ -312,7 +312,7 @@
  - Do not bypass existing validation, authorization, or logging mechanisms.
  - Do not generate large, monolithic functions or classes where this repo prefers small, composable units.
  - Do not fabricate non-existent APIs or configuration options; if unsure, say so and suggest how the user can verify.
- - Do not read or use `.design/hands-on-guide.md` as a source of code patterns, architecture decisions,
+ - Do not read or use the hands-on guide (`docs/hands-on-guide.md` in the harness repository) as a source of code patterns, architecture decisions,
    or implementation examples. That file is a **tutorial for humans** with a fictional sample application.
    Instead, use the reference catalog (`.github/reference-catalog.md`), quality instruction files,
    and live patterns from MCP servers.

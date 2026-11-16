@@ -112,7 +112,7 @@ services at infrastructure time. You never edit placeholders by hand.
 
 ### 0.3 Verify the setup
 
-| ![VS Code with the initialized workspace](./images/guide/01-repo-structure.png) |
+| ![VS Code with the initialized workspace](assets/guide/01-repo-structure.png) |
 | ------------------------------------------------------------------------------ |
 | *VS Code showing the initialized workspace: .github/ with instructions and prompts, .vscode/mcp.json, and the project manifest under .SDLC/* |
 
@@ -177,7 +177,7 @@ Constraints:
 
 ### Expected output
 
-| ![Copilot requirement and design output](./images/guide/02-requirement-design.png) |
+| ![Copilot requirement and design output](assets/guide/02-requirement-design.png) |
 | ---------------------------------------------------------------------------------- |
 | *The Analyst's design proposal: clarified requirements, the recommended design, and the Phase 1–2 exit check* |
 
@@ -247,7 +247,7 @@ Follow the design in docs/adr/ADR-001-document-manager-design.md.
 - ✅ `.SDLC/project-manifest.md` updated with the chosen templates
 - ✅ Exit Criteria Check (Phase 3)
 
-| ![Scaffolded project structure](./images/guide/03-scaffolded-structure.png) |
+| ![Scaffolded project structure](assets/guide/03-scaffolded-structure.png) |
 | ---------------------------------------------------------------------------- |
 | *VS Code explorer showing the scaffolded layout: three services under src/, infra/, workflows, and the project manifest* |
 
@@ -344,11 +344,11 @@ azd auth login
 azd up
 ```
 
-| ![azd up terminal output](./images/guide/04-azd-up-output.png) |
+| ![azd up terminal output](assets/guide/04-azd-up-output.png) |
 | ------------------------------------------------------------------------------- |
 | *Terminal showing azd up provisioning the Azure resources and deploying the three Container Apps* |
 
-| ![Azure Portal resources](./images/guide/05-azure-resources.png) |
+| ![Azure Portal resources](assets/guide/05-azure-resources.png) |
 | ----------------------------------------------------------------- |
 | *The deployed resource group: Cosmos DB, Storage, the three Container Apps, AI Foundry, Key Vault, and monitoring* |
 
@@ -401,7 +401,7 @@ Copilot generates the layered implementation, each layer with its tests. The
 service layer shows the shape of the whole design — metadata and file
 operations orchestrated behind two approved libraries:
 
-| ![Copilot generating implementation code](./images/guide/06-implementation.png) |
+| ![Copilot generating implementation code](assets/guide/06-implementation.png) |
 | -------------------------------------------------------------------------------- |
 | *The generated DocumentService: Blob Storage upload and Cosmos DB metadata save behind the repository pattern* |
 
@@ -427,7 +427,7 @@ uv run pytest tests/ -v --cov=app --cov-report=term-missing
 cd ../..
 ```
 
-| ![pytest output with coverage](./images/guide/07-test-results.png) |
+| ![pytest output with coverage](assets/guide/07-test-results.png) |
 | ------------------------------------------------------------------ |
 | *pytest: the API suite green with the coverage report*            |
 
@@ -465,7 +465,7 @@ Ground every answer in the retrieved document content and cite the source.
 - ✅ `src/agent/src/tools/` — MCP tools wrapping Blob reads
 - ✅ Unit tests with the AI client and MCP context mocked
 
-| ![Agent implementation](./images/guide/11-agent-implementation.png) |
+| ![Agent implementation](assets/guide/11-agent-implementation.png) |
 | --------------------------------------------------------------------- |
 | *The DocumentAnalyzerAgent: read via MCP tool, summarize and tag with AI Foundry, save the analysis* |
 
@@ -515,7 +515,7 @@ pnpm build
 cd ../..
 ```
 
-| ![Web app running in browser](./images/guide/08-web-app.png) |
+| ![Web app running in browser](assets/guide/08-web-app.png) |
 | -------------------------------------------------------------- |
 | *The Document Manager web app: document list with upload, search, and download — and the Q&A chat panel* |
 
@@ -556,7 +556,7 @@ Scores combine into a weighted composite (Security counts ×1.5). The verdict
 fails automatically on: any **Critical** finding, Security below 8, any domain
 below 5, or a composite below 7.
 
-| ![QA review summary](./images/guide/09-quality-pass.png) |
+| ![QA review summary](assets/guide/09-quality-pass.png) |
 | ---------------------------------------------------------- |
 | *The Phase 6 panel result for the walkthrough: all nine reviewers pass, composite 8.7* |
 
@@ -719,7 +719,7 @@ git push origin feature/document-manager
 
 ### Create the PR on GitHub
 
-| ![GitHub PR with SDLC template](./images/guide/10-pull-request.png) |
+| ![GitHub PR with SDLC template](assets/guide/10-pull-request.png) |
 | -------------------------------------------------------------------- |
 | *The pull request: CI and security checks green, the QA panel verdict attached, phases 1–9 checked off* |
 
