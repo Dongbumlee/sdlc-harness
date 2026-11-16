@@ -331,6 +331,14 @@ Implement the order history API from ADR-012.
 Engineers stay in control — agents propose, engineers decide. Every subagent call is
 visible in the session as a collapsible tool call.
 
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/harness-run-dark.gif">
+    <source media="(prefers-color-scheme: light)" srcset="docs/assets/harness-run-light.gif">
+    <img alt="One run looping the phase ring: the QA panel scores the work, a domain below the gate sends it back to Build, the fix passes a second test round, and the re-check passes" src="docs/assets/harness-run-dark.gif" width="900">
+  </picture>
+</p>
+
 ### Sized to the task
 
 Every run is graded at intake and fixed at design — **Small** (≤10 user-facing
