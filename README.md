@@ -531,6 +531,8 @@ copilot plugin install sdlc-harness@sdlc-harness
 marks direct repository installs as deprecated. Use the marketplace form to remain
 compatible with future CLI releases.
 
+![Copilot CLI: browsing the marketplace and installing the plugin by name](docs/assets/install-marketplace.png)
+
 ### Option B: Manual copy
 
 1. Copy `.github/agents/`, `skills/`, `.github/prompts/`, `.github/instructions/`, `.design/`, `.vscode/mcp.json`
