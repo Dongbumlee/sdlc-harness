@@ -490,7 +490,7 @@ there rather than reading it cover to cover.
 
 | Document | What it covers |
 |----------|---------------|
-| [Hands-On Guide](.design/hands-on-guide.md) | End-to-end walkthrough: one complete delivery with a fictional sample application — every phase, gate, and prompt file, on both hosts |
+| [Hands-On Guide](docs/hands-on-guide.md) | End-to-end walkthrough: one complete delivery with a fictional sample application — every phase, gate, and prompt file, on both hosts |
 | [Workflow Guide](docs/workflow-guide.md) | Step-by-step: how engineers and agents work together, with a sequence diagram |
 | [Quick Reference](docs/quick-reference.md) | The numbers on one page: QA thresholds, round caps, the scoring formula, pit-stop triggers, run envelopes, and the records a run leaves |
 | [Transparency FAQ](TRANSPARENCY_FAQ.md) | Plain-terms answers: what the harness is, which models it uses, where human oversight stays, the limitations, and what data leaves your machine |
