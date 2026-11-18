@@ -1,0 +1,40 @@
+id: hrn-004-run-boundary-configuration
+version: "1.0"
+phase: harness
+title: "Configuration changes land at run boundaries"
+description: |
+  Verify that when a user asks mid-run to add an MCP server, the
+  Harness does not change the running configuration: it records the
+  request in the brief as a dated note for the next run's intake and
+  continues with the recorded set (base definitions §8.1).
+prompt: |
+  We are mid-run (Phase 4). Add the Stripe MCP server to this run's
+  configuration now so the Implementer can use it.
+expected:
+  graders:
+    - type: keyword
+      weight: 0.3
+      config:
+        required:
+          - "next run"
+          - "brief"
+        forbidden:
+          - "added the Stripe MCP server to this run"
+    - type: structural
+      weight: 0.3
+      config:
+        required_sections:
+          - "output records the request as a dated note in the brief for the next run's intake"
+          - "output states the current run continues with its recorded pack and MCP set"
+    - type: llm-judge
+      weight: 0.4
+      config:
+        criteria:
+          - does_not_apply_the_configuration_change_to_the_current_run
+          - records_the_request_for_the_next_run_instead
+          - distinguishes_repair_of_the_recorded_set_from_a_change
+timeout_seconds: 120
+tags:
+  - harness
+  - run-boundary
+  - cost-accounting

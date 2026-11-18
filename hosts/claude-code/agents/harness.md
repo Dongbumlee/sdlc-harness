@@ -397,6 +397,16 @@ is the Medium ceremony; the recorded grade scales it:
   the approval — not at phase transitions. Approvals happen in conversation
   and otherwise leave no trace on disk; this block is that trace, and
   Step 0.5 verifies it before any resume.
+- **Record the run configuration.** The Run basis block also carries one
+  line naming the run's configuration at intake: the pack set and the MCP
+  server set. That set does not change mid-run (base definitions §8.1):
+  a request to add, remove, or swap a pack or MCP server is recorded in
+  the brief as a dated note for the next run's intake, never applied to
+  this run. Restoring the recorded set — repairing or restarting a server
+  that is in it — is repair, not a change. The one exception is a
+  frame-moving change through the change path with the user's approval;
+  it amends this line by dated frame revision, and the transition count
+  marks the phase where the configuration changed.
 - **Maintain the design brief — yourself, by dated revision.** The brief
   (`.SDLC/design-brief.md`) is created by you in Step 0.75 and amended
   only by appended, dated frame revisions — never silently rewritten.
@@ -586,7 +596,13 @@ is the Medium ceremony; the recorded grade scales it:
      When the run basis records a budget, the line also carries
      `spend: <cumulative> / <budget>`; cumulative spend crossing the
      budget stops the run for a user decision at this transition —
-     budget overrun is never discovered in a final report.
+     budget overrun is never discovered in a final report. The
+     cumulative figure counts every model call issued under the run —
+     your own gate, review, and counting calls, all delegates, the QA
+     panel and its re-reviews, and repair loops — as billed by the
+     host. If the host reports credits or tokens instead of currency,
+     record that unit verbatim and mark the comparison
+     `not convertible`; never estimate an exchange rate into the line.
   The same count runs before the first delegation after any failure
   surfaces mid-phase. On resume (Step 0.5), read the failure ledger
   with the manifest — counts survive interruption the way everything
