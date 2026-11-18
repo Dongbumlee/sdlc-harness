@@ -85,6 +85,7 @@ Canon: [§8](base-definitions.md#8-records-and-contracts)
 | Project manifest | `.SDLC/project-manifest.md` |
 | Design brief | `.SDLC/design-brief.md` |
 | Failure ledger | `.SDLC/failure-ledger.md` |
+| Pattern register | `.SDLC/pattern-register.md` |
 | Run guidance | `.SDLC/run-guidance.md` |
 | Reference catalog | `.github/reference-catalog.md` |
 | Requirements spec (REQ) | project docs, from the Analyst |

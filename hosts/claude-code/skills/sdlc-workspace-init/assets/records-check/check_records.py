@@ -22,6 +22,11 @@ histories. This checker verifies, mechanically:
 3. ADR index — `docs/adr/README.md` lists every `ADR-*.md` file
    exactly once, with the status the file's own Status line carries,
    and lists no ADR that has no file.
+4. Pattern register — every signature a pit-stop review spent in
+   `.SDLC/failure-ledger.md` (a `REVIEW <n> — <signature> spent`
+   line) has a row in `.SDLC/pattern-register.md` (base definitions
+   section 7, pattern lifecycle). A fired signature with no register
+   row is a record gap.
 
 Exit code 0 means every structural check passed. The check is
 read-only and uses only the standard library, so the copy deployed
@@ -243,6 +248,40 @@ def check_adr_index(adr_dir: Path) -> None:
         ok(f"{adr_dir}: ADR index matches all {len(files)} ADR file(s)")
 
 
+SPENT_RE = re.compile(r"REVIEW\s+\d+\s+—\s+(.+?)\s+spent")
+
+
+def check_pattern_register(root: Path) -> None:
+    ledger = root / ".SDLC" / "failure-ledger.md"
+    if not ledger.exists():
+        skip(f"{ledger}: no failure ledger — nothing to register-check")
+        return
+    spent = set()
+    for line in ledger.read_text(encoding="utf-8").splitlines():
+        match = SPENT_RE.search(line)
+        if match:
+            spent.add(match.group(1).strip())
+    if not spent:
+        ok("pattern register: no spent signatures in the failure ledger")
+        return
+    register = root / ".SDLC" / "pattern-register.md"
+    if not register.exists():
+        fail(
+            f"{register}: pattern register missing, but the failure "
+            f"ledger has {len(spent)} spent signature(s) with no rows"
+        )
+        return
+    register_text = register.read_text(encoding="utf-8")
+    for signature in sorted(spent):
+        if signature in register_text:
+            ok(f"pattern register: row present for '{signature}'")
+        else:
+            fail(
+                f"{register}: no row for spent signature '{signature}' "
+                "(pattern lifecycle, base definitions section 7)"
+            )
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", default=".", help="project root (default: .)")
@@ -278,6 +317,8 @@ def main() -> int:
         check_adr_index(adr_dir)
     else:
         skip(f"{adr_dir}: no ADR directory — nothing to index-check")
+
+    check_pattern_register(root)
 
     if _failures:
         print(f"records check: FAIL ({len(_failures)} failure(s))")

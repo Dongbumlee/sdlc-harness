@@ -482,6 +482,26 @@ domain pulls that domain into the round.
   records the host's unit verbatim and marks the envelope comparison
   **not convertible**; an exchange rate is never estimated into a
   record.
+- **Pattern lifecycle (cross-run).** A failure signature's life does
+  not end with its run. The project keeps a **pattern register**
+  (`.SDLC/pattern-register.md`, §8.2) — one row per signature:
+  `signature | first seen (run, date) | confirmations | state |
+  note`. States: **proposed** (the signature fired a pit-stop trigger
+  in a run; entered at that run's Phase 9); **confirmed** (the same
+  signature has fired in **3 separate runs** — confirmations count
+  runs, not occurrences); **standing** (a confirmed pattern the
+  retrospective promotes into the project's standing guidance: later
+  runs in this project read it at intake and it joins the run basis —
+  project scope only, it never overrides shipped rules under §9.1);
+  **contested / retired** (a pit-stop review in a later run explicitly
+  marks the pattern contradicted — following it caused a failure, or
+  the failure it predicts did not occur where the pattern says it
+  must: one mark contests it, a second retires it; absence alone is
+  never a contradiction). Rows are never deleted; retirement is a
+  state. Promotion from confirmed to a **shipped** rule change follows
+  the standing path — a retrospective candidate carried into a
+  reviewed change to the shipped definitions — with the register row
+  as its counted evidence.
 
 ## 8. Records and contracts
 
@@ -517,6 +537,7 @@ phase where the configuration changed.
 | Record | Creator | Writers | Verifier / consumer |
 |---|---|---|---|
 | Failure ledger (`.SDLC/failure-ledger.md`) | Harness at intake | Workers (own events), QA Coordinator, Harness (delegation lines, transition counts) | Transition procedure (§7); read on resume |
+| Pattern register (`.SDLC/pattern-register.md`) | Harness at intake, if the project has none (persists across runs; never re-created) | Harness (Phase 9 lifecycle updates; a pit-stop review's contradiction marks) | Read at intake — standing patterns join the run basis; records check (§8.4): every spent signature in the ledger has a register row |
 | Run guidance (`.SDLC/run-guidance.md`) | Pit-stop review | Pit-stop review only | Read on resume; included in later delegations; run-scoped — never overrides shipped rules, promotion is offline via PR only |
 | Reference catalog (`.github/reference-catalog.md`) | Workspace-init (empty template, 5 fixed sections) | Analyst populates in Phases 1–2; any agent may **append** after approval | Harness review checkpoint (§10.1); append-only after approval (or auto-approval); entries carry `Source: [agent] (Phase [N])` |
 | Design brief (`.SDLC/design-brief.md`) | Harness, in the Step 0.75 design conversation | Harness only — amendments are appended, dated frame revisions, never silent rewrites | The intake completeness gate (Class 1, §5) before the Phase 1A delegation: the minimum set (fields 1–5) is `confirmed` and every other field carries an explicit status. Consumers: workspace-init (project name, domain, stack), the Analyst (1A/1B work inside the frame), the provisional Task Grade (fields 5 and 7 are its inputs), the Scaffolder (Phase 3 template selection must match the brief's type and stack; a mismatch is a gate finding) |
@@ -527,7 +548,7 @@ phase where the configuration changed.
 | QA findings (GitHub) | QA Coordinator | Coordinator | The ledger is the local source of truth; GitHub sync is one-way, ledger → GitHub (ADR-0003) |
 | Run tracking Issue (GitHub) | Harness, at GitHub intake | Harness (comments) | One Issue per run (`sdlc:run`), linking the brief; frame revisions, phase completions, and gate outcomes are posted as comments. Local records stay canonical; the sync is one-way (§8.4) |
 | Change Issues (GitHub) | Harness, on the change path (§8.4) | Harness | One Issue per change, labeled `change:add` / `change:modify` / `change:remove` (plus `frame-moving`); the propagation list is the Issue's task list; closure is verified at the next gate |
-| Run retrospective (`.SDLC/run-retrospective.md`) | Harness, at Phase 9, from the run's records | Harness only | The maintainer; candidate rule changes take effect only via a reviewed change to the shipped definitions |
+| Run retrospective (`.SDLC/run-retrospective.md`) | Harness, at Phase 9, from the run's records | Harness only | The maintainer; candidate rule changes take effect only via a reviewed change to the shipped definitions; pattern candidates cite their pattern-register row (§7) as counted evidence |
 
 **Run envelope bands (operational defaults).** Small: spend ≤ $20,
 active run time ≤ 4 hours. Medium: spend ≤ $75, ≤ 2 days. Large:

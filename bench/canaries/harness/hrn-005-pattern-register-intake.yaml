@@ -1,0 +1,42 @@
+id: hrn-005-pattern-register-intake
+version: "1.0"
+phase: harness
+title: "Standing patterns from the register join the next run's basis"
+description: |
+  Verify the cross-run pattern lifecycle (base definitions section 7):
+  a project whose pattern register holds a standing pattern sees that
+  pattern read at intake and cited in the new run's basis, and a
+  signature that fired a pit-stop trigger in the closing run is
+  entered in the register at Phase 9.
+prompt: |
+  This project has run the harness before. Its .SDLC/pattern-register.md
+  holds one standing pattern: "edit-tool: old_str mismatch — read the
+  target region from disk before every edit". Start a new run for a
+  small change to this project.
+expected:
+  graders:
+    - type: keyword
+      weight: 0.3
+      config:
+        required:
+          - "pattern-register"
+          - "standing"
+        forbidden: []
+    - type: structural
+      weight: 0.3
+      config:
+        required_sections:
+          - "output reads the pattern register at intake"
+          - "output carries the standing pattern into the new run's basis or briefs"
+    - type: llm-judge
+      weight: 0.4
+      config:
+        criteria:
+          - reads_pattern_register_before_delegating
+          - treats_standing_pattern_as_part_of_the_run_basis
+          - does_not_recreate_or_reset_the_register
+timeout_seconds: 120
+tags:
+  - harness
+  - pattern-lifecycle
+  - cross-run
