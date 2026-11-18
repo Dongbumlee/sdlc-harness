@@ -473,6 +473,15 @@ domain pulls that domain into the round.
   the transition count's spend line reports against it, and a breach is
   surfaced at the next checkpoint with the run's options (continue /
   re-grade / stop) — never a silent overrun, never a mid-phase kill.
+  The spend line counts **every model call issued under the run** —
+  the Harness's own gate, review, and counting calls, all delegates,
+  the QA panel and its re-reviews, and repair loops — counted as
+  billed by the host (cache-aware where the host's accounting is).
+  A line that counts only delegate spend understates the run. Where
+  the host reports credits or tokens instead of currency, the line
+  records the host's unit verbatim and marks the envelope comparison
+  **not convertible**; an exchange rate is never estimated into a
+  record.
 
 ## 8. Records and contracts
 
@@ -488,6 +497,20 @@ domain pulls that domain into the round.
 | Ledger rows | Exactly the rows of §2.1, in order. |
 | Task Grade | Two-axis record (size × complexity) with its basis, per the approved sizing criteria: provisional at intake (size axis), fixed at design; upgrades are free, downgrades require the user's approval; personal/payment/health data raises one step — counted once per fact: payment data already priced by the complexity axis's strong-consistency (money) signal does not raise the grade a second time (the correction's non-stacking rule, Harness "Task grade"). **Counting rule (PR #70):** the size axis counts *user-facing operations* (an endpoint doing a distinct job, a screen, a command) — never requirements, however many FRs describe one operation; cross-cutting concerns (validation, error handling, persistence, tests, API documentation) are never units. Calibration anchors recorded in the grading text: Task Tracker API ≈ 5–8 units, URL shortener = 5 units, both Small. |
 | Verifier | The phase gates (§3). A record no gate checks is treated as unwritten — the standing lesson of PRs #52/#54. |
+
+**Run configuration.** The run basis also records the run's
+configuration at intake: the **pack set and the MCP server set** the
+run starts with. That set is part of the measured system — changing it
+mid-run invalidates prompt caches and makes the run's own records
+incomparable across the change — so adding, removing, or swapping a
+pack or an MCP server **takes effect from the next run**. A mid-run
+request is recorded in the brief as a dated note for the next run's
+intake. Restoring the recorded set (repairing or restarting a server
+that is in it) is repair, not a change, and is always allowed. A
+change that cannot wait goes through the change path (§8.4) as a
+frame-moving change with the user's approval; the run basis is then
+amended by a dated frame revision, and the transition count marks the
+phase where the configuration changed.
 
 ### 8.2 The other records
 
@@ -511,7 +534,9 @@ active run time ≤ 4 hours. Medium: spend ≤ $75, ≤ 2 days. Large:
 spend ≤ $250, ≤ 5 days. The user may set a different envelope at
 intake; the recorded value is the run's. The bands are management
 defaults for the run's owner — starting values, to be calibrated by
-run retrospectives — not product claims.
+run retrospectives — not product claims. What the spend figure must
+count, and the rule that configuration changes land at run
+boundaries, are defined in §7 and §8.1 respectively.
 
 ### 8.3 Document transport
 
