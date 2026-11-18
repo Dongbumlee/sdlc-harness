@@ -1,0 +1,24 @@
+skill: sdlc-stack-profiles
+description: >-
+  Stack profiles must fire when scaffolding or building in a supported
+  stack, stay quiet for unrelated coding help, and answer from the
+  profile's pinned values rather than inventing commands.
+cases:
+  - name: scaffold-python-api
+    category: trigger
+    prompt: "Scaffold a new Python API project for me."
+    expect:
+      skill_invoked: true
+  - name: plain-coding-help-is-not-a-profile-task
+    category: trigger
+    prompt: "Write a Python function that reverses a string."
+    expect:
+      skill_invoked: false
+  - name: pinned-test-command
+    category: capability
+    prompt: >-
+      For a Python API project, what is the exact test command the
+      stack profile pins?
+    expect:
+      output_must_contain:
+        - "uv run pytest"
