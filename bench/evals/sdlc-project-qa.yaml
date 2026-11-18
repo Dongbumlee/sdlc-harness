@@ -1,0 +1,25 @@
+skill: sdlc-project-qa
+description: >-
+  Product QA must fire on full product QA and release-readiness
+  requests, stay quiet for bug-pattern reviews (that is the QA bug
+  checklist's ground), and produce checklists spanning its declared
+  categories.
+cases:
+  - name: full-product-qa
+    category: trigger
+    prompt: "Run a full product QA pass on this app before we release it."
+    expect:
+      skill_invoked: true
+  - name: bug-pattern-review-belongs-to-the-checklist
+    category: trigger
+    prompt: >-
+      Review this pull request against the known production bug
+      patterns and Azure error codes.
+    expect:
+      skill_invoked: false
+  - name: checklist-spans-declared-categories
+    category: capability
+    prompt: "Generate the manual QA checklist for this release."
+    expect:
+      output_must_contain:
+        - "accessibility"
