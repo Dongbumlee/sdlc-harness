@@ -240,7 +240,7 @@ class TestManifestAndDeterminism:
         )
         assemble = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(assemble)
-        agents, skills = assemble.collect()
+        agents, skills, _hooks = assemble.collect()
         first = build_tree(REPO_ROOT, REPO_ROOT / "packs", agents, skills)
         second = build_tree(REPO_ROOT, REPO_ROOT / "packs", agents, skills)
         assert {k: v for k, v in first.items() if isinstance(v, bytes)} == {
