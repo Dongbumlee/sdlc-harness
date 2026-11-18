@@ -179,3 +179,57 @@ def test_deployed_asset_matches_tool():
     from the plugin's own checker."""
     assert ASSET.exists(), "workspace-init records-check asset is missing"
     assert ASSET.read_bytes() == TOOL.read_bytes()
+
+
+LEDGER_SPENT = (
+    "# Failure Ledger\n\n"
+    "2026-11-12 | 4 | implementer | tool-failure | edit-tool: old_str mismatch\n"
+    "2026-11-12 | 4 | harness | delegation | REVIEW 1 — edit-tool: old_str mismatch spent\n"
+)
+
+
+def write_ledger_project(root: Path, ledger=None, register=None):
+    (root / ".SDLC").mkdir(parents=True, exist_ok=True)
+    if ledger is not None:
+        (root / ".SDLC" / "failure-ledger.md").write_text(ledger, encoding="utf-8")
+    if register is not None:
+        (root / ".SDLC" / "pattern-register.md").write_text(register, encoding="utf-8")
+
+
+def test_spent_signature_without_register_fails(tmp_path):
+    write_ledger_project(tmp_path, ledger=LEDGER_SPENT)
+    result = run_checker(tmp_path)
+    assert result.returncode == 1
+    assert "pattern register missing" in result.stdout
+
+
+def test_spent_signature_with_register_row_passes(tmp_path):
+    register = (
+        "# Pattern Register\n\n"
+        "| signature | first seen | confirmations | state | note |\n"
+        "|---|---|---|---|---|\n"
+        "| edit-tool: old_str mismatch | run 2026-11-12 | 1 | proposed | fired T1 |\n"
+    )
+    write_ledger_project(tmp_path, ledger=LEDGER_SPENT, register=register)
+    result = run_checker(tmp_path)
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert "row present for 'edit-tool: old_str mismatch'" in result.stdout
+
+
+def test_register_missing_one_of_two_signatures_fails(tmp_path):
+    ledger = LEDGER_SPENT + (
+        "2026-11-13 | 6 | qa | rework | REVIEW 2 — missing-env-var spent\n"
+    )
+    register = "# Pattern Register\n\n| edit-tool: old_str mismatch | 1 | proposed |\n"
+    write_ledger_project(tmp_path, ledger=ledger, register=register)
+    result = run_checker(tmp_path)
+    assert result.returncode == 1
+    assert "no row for spent signature 'missing-env-var'" in result.stdout
+
+
+def test_ledger_without_spent_signatures_passes_without_register(tmp_path):
+    ledger = "# Failure Ledger\n\n2026-11-12 | 4 | implementer | tool-failure | flaky-test\n"
+    write_ledger_project(tmp_path, ledger=ledger)
+    result = run_checker(tmp_path)
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert "no spent signatures" in result.stdout

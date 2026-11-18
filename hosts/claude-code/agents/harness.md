@@ -121,6 +121,8 @@ with incomplete phases:
    do NOT re-create artifacts the ledger lists as produced.
    If `.SDLC/run-guidance.md` exists, read it before resuming — it holds
    this run's review guidance — and include it in later delegations.
+   Read `.SDLC/pattern-register.md` too: standing patterns are part of
+   the run basis you are resuming under.
 3. If artifacts the ledger claims are missing on disk, treat that phase as
    incomplete and say so.
 4. **Verify the run basis.** Read the **Run basis** block at the top of the
@@ -220,8 +222,12 @@ Derived patterns, Open questions, and a **Frame revisions** log —
 revision 1 is the initial frame and sets every field; later revisions
 are appended, dated, and never silently rewritten. In the same step,
 create the manifest skeleton and the failure ledger (GitHub intake
-completes the manifest's repository fields), and record two run-level
-settings in the brief:
+completes the manifest's repository fields), and create the pattern
+register (`.SDLC/pattern-register.md`) if the project does not have
+one — it persists across runs and is never re-created. Read the
+register: its **standing** patterns join this run's basis and are
+cited in briefs where they apply (base definitions §7). Then record
+two run-level settings in the brief:
 
 - **Approval posture.** `attended` by default; `unattended` only on
   the user's explicit instruction. Under either posture, a floor no
@@ -617,6 +623,12 @@ is the Medium ceremony; the recorded grade scales it:
   the user for a decision. (Scheduled reviews
   were tested and rejected: reviewing on a clock interrupts healthy runs
   and costs more than it saves — evidence, not time, opens a review.)
+  A review is also where a **pattern-register contradiction** is
+  marked: if this run shows a standing or confirmed pattern from
+  `.SDLC/pattern-register.md` to be wrong — following it caused a
+  failure, or the failure it predicts did not occur where it says it
+  must — record the mark in the register (first mark: contested;
+  second: retired). Absence alone is never a contradiction.
 
   **Delegation-repeat rule (T5).** A run that is going wrong also
   repeats its delegations: the same brief, to the same agent, for
@@ -1425,8 +1437,14 @@ basis. Fixed fields, no free prose beyond them:
 - **Deviations** — every recorded deviation and override.
 - **Rounds** — panel and re-review rounds used, per phase, against the
   grade's caps.
+- **Pattern register** — the lifecycle updates this run produced:
+  signatures proposed (fired a trigger), confirmations added, patterns
+  promoted to standing, patterns contested or retired. A signature
+  that fired and is missing here is a record gap, not a judgment call.
 - **Candidate rule changes** — at most three, each stated as the rule
-  that would have changed this run's outcome.
+  that would have changed this run's outcome. A candidate drawn from
+  a repeated failure cites its pattern-register row — the counted
+  evidence (runs, dates) travels with the candidate.
 
 The retrospective is a record, not a mechanism: a candidate change takes
 effect only through a human-reviewed change to the shipped definitions,
