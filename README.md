@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/assets/logo.png" alt="SDLC Harness" width="560">
+</p>
+
 # SDLC Harness
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
