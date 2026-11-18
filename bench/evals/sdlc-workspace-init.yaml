@@ -1,0 +1,30 @@
+skill: sdlc-workspace-init
+description: >-
+  Workspace initialization must fire on setup/bootstrap requests for the
+  SDLC workspace files, stay quiet for plain git or project scaffolding
+  requests, and deploy the full file set when it runs.
+cases:
+  - name: setup-new-repo
+    category: trigger
+    prompt: "Set up the SDLC harness in this new repository."
+    expect:
+      skill_invoked: true
+  - name: bootstrap-workspace-files
+    category: trigger
+    prompt: "Bootstrap the SDLC workspace files for this project."
+    expect:
+      skill_invoked: true
+  - name: plain-git-init-is-not-workspace-init
+    category: trigger
+    prompt: "Initialize a git repository here and make the first commit."
+    expect:
+      skill_invoked: false
+  - name: deploys-the-full-file-set
+    category: capability
+    prompt: >-
+      Initialize the SDLC workspace in this empty repository and list
+      what you created.
+    expect:
+      output_must_contain:
+        - "copilot-instructions.md"
+        - "mcp.json"

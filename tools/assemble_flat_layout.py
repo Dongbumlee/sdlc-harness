@@ -50,6 +50,7 @@ CORE_PACK_DIR = PACKS_DIR / "core"
 TEMPLATE_DIR_NAME = "_template"
 
 COPILOT_AGENTS = REPO_ROOT / "com.github.copilot" / "agents"
+COPILOT_HOOKS = REPO_ROOT / "com.github.copilot" / "hooks"
 GITHUB_AGENTS = REPO_ROOT / ".github" / "agents"
 SKILLS_DIR = REPO_ROOT / "skills"
 CLAUDE_TREE = REPO_ROOT / "hosts" / "claude-code"
@@ -95,10 +96,17 @@ def _resolve_skill(pack_dir: Path, ref: str) -> Path | None:
     return candidate if candidate.is_dir() else None
 
 
-def collect() -> tuple[dict[str, Path], dict[str, Path]]:
-    """Return (agents, skills): flat entry name -> source path."""
+def collect() -> tuple[dict[str, Path], dict[str, Path], dict[str, Path]]:
+    """Return (agents, skills, hooks): flat entry name -> source path.
+
+    Hooks are collected by directory convention — every entry of a
+    pack's hooks/ directory ships — because a hook is a whole tree
+    (definition, checker, rule files, vendored runtime), not a single
+    manifest-referenced file like an agent or a skill.
+    """
     agents: dict[str, Path] = {}
     skills: dict[str, Path] = {}
+    hooks: dict[str, Path] = {}
     for pack_dir in sorted(p for p in PACKS_DIR.iterdir() if p.is_dir()):
         if pack_dir.name == TEMPLATE_DIR_NAME:
             continue
@@ -131,7 +139,16 @@ def collect() -> tuple[dict[str, Path], dict[str, Path]]:
                     f"{_rel(skills[src.name])} vs {_rel(src)}"
                 )
             skills[src.name] = src
-    return agents, skills
+        hooks_dir = pack_dir / "hooks"
+        if hooks_dir.is_dir():
+            for entry in sorted(hooks_dir.iterdir()):
+                if entry.name in hooks and hooks[entry.name] != entry:
+                    fail(
+                        f"hook entry conflict for '{entry.name}': "
+                        f"{_rel(hooks[entry.name])} vs {_rel(entry)}"
+                    )
+                hooks[entry.name] = entry
+    return agents, skills, hooks
 
 
 def _dir_trees_identical(left: Path, right: Path) -> bool:
@@ -270,7 +287,7 @@ def main() -> int:
     parser.add_argument("--check", action="store_true", help="fail if the flat layout is stale")
     args = parser.parse_args()
 
-    agents, skills = collect()
+    agents, skills, hooks = collect()
     claude_entries = None
     claude_root_manifest = None
     if not failures:
@@ -285,9 +302,17 @@ def main() -> int:
     if failures:
         print(f"\n{len(failures)} assembly error(s).")
         return 1
-    print(f"Collected {len(agents)} agents and {len(skills)} skills from packs/*/.")
+    print(
+        f"Collected {len(agents)} agents, {len(skills)} skills and "
+        f"{len(hooks)} hook entries from packs/*/."
+    )
 
-    targets = [(COPILOT_AGENTS, agents), (GITHUB_AGENTS, agents), (SKILLS_DIR, skills)]
+    targets = [
+        (COPILOT_AGENTS, agents),
+        (GITHUB_AGENTS, agents),
+        (SKILLS_DIR, skills),
+        (COPILOT_HOOKS, hooks),
+    ]
     if args.check:
         for dest, sources in targets:
             _check_dir(dest, sources)

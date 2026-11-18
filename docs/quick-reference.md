@@ -69,7 +69,12 @@ Canon: [§8](base-definitions.md#8-records-and-contracts)
 | Large | ≤ $250 | ≤ 5 days |
 
 Operational defaults, set at intake — the user may set a different
-envelope for a run, and the recorded value is the run's.
+envelope for a run, and the recorded value is the run's. The spend
+figure counts every model call issued under the run, the Harness's
+own included (§7); a host that reports credits or tokens is recorded
+in that unit, never converted by estimate. The pack and MCP set
+recorded at intake is the run's configuration — changes take effect
+from the next run (§8.1).
 
 ## Records a run leaves behind
 

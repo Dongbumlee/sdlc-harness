@@ -1,0 +1,27 @@
+skill: sdlc-azure-deployment
+description: >-
+  Azure deployment must fire on Bicep/azd work, stay quiet for other
+  clouds' deployments (each cloud pack owns its own), and drive the
+  deployment through the azd orchestration files.
+cases:
+  - name: bicep-container-apps
+    category: trigger
+    prompt: "Write the Bicep for a Container Apps environment."
+    expect:
+      skill_invoked: true
+  - name: aws-belongs-to-the-aws-pack
+    category: trigger
+    prompt: "Deploy this service to AWS Lambda."
+    expect:
+      skill_invoked: false
+  - name: gcp-belongs-to-the-gcp-pack
+    category: trigger
+    prompt: "Deploy this service to Google Cloud Run."
+    expect:
+      skill_invoked: false
+  - name: azd-orchestration-file
+    category: capability
+    prompt: "Set up the azd deployment for this API."
+    expect:
+      output_must_contain:
+        - "azure.yaml"

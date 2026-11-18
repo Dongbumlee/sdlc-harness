@@ -1,0 +1,42 @@
+name: Skill Eval Spec Lint
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'bench/evals/**'
+      - 'schemas/skill-eval-spec.schema.json'
+      - 'tools/validate_evals.py'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'bench/evals/**'
+      - 'schemas/skill-eval-spec.schema.json'
+      - 'tools/validate_evals.py'
+
+permissions:
+  contents: read
+
+jobs:
+  validate-evals:
+    name: Validate skill eval specs (schema + semantics, no model spend)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install validation dependencies
+        run: pip install jsonschema pyyaml
+
+      - name: Validate eval specs
+        run: |
+          echo "=== Validating skill eval specs ==="
+          python tools/validate_evals.py

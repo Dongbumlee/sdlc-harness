@@ -1,0 +1,28 @@
+skill: sdlc-qa-bug-checklist
+description: >-
+  The bug checklist must fire on reviews against known production bug
+  patterns, stay quiet for general product QA (that is the project QA
+  skill's ground), and answer with the anchored pattern's own
+  verification step.
+cases:
+  - name: pre-deployment-bug-pattern-check
+    category: trigger
+    prompt: >-
+      Check this deployment against the known Azure bug patterns
+      before we ship.
+    expect:
+      skill_invoked: true
+  - name: product-qa-belongs-to-project-qa
+    category: trigger
+    prompt: "Do a full product QA review of the user experience and accessibility."
+    expect:
+      skill_invoked: false
+  - name: anchored-verification-step
+    category: capability
+    prompt: >-
+      Our Cognitive Services account deployment failed last time.
+      Check this deployment for that failure pattern and tell me how
+      to verify it.
+    expect:
+      output_must_contain:
+        - "provisioningState"
