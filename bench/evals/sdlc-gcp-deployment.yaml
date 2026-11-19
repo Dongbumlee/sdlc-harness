@@ -1,0 +1,84 @@
+skill: sdlc-gcp-deployment
+description: >-
+  GCP deployment must fire on Terraform, Cloud Run, Pub/Sub, Secret Manager, and Artifact Registry work, and on deployment work in a GCP project; stay quiet for other targets and for deployment requests naming no target.
+cases:
+  - name: cdk-lambda-api
+    category: trigger
+    prompt: "Write the CDK stack for a containerized API on Lambda with a Function URL."
+    expect:
+      skill_invoked: false
+  - name: terraform-cloud-run
+    category: trigger
+    prompt: "Create the Terraform for a Cloud Run service with scale-to-zero."
+    expect:
+      skill_invoked: true
+  - name: bicep-container-apps
+    category: trigger
+    prompt: "Write Bicep with AVM for the Container Apps environment and set up azd."
+    expect:
+      skill_invoked: false
+  - name: onprem-kubernetes-helm
+    category: trigger
+    prompt: "Deploy to our own Kubernetes cluster with Helm — the target is on-premises."
+    expect:
+      skill_invoked: false
+  - name: compose-self-hosted
+    category: trigger
+    prompt: "Deploy this with Docker Compose on our self-hosted server."
+    expect:
+      skill_invoked: false
+  - name: generic-deploy-api
+    category: trigger
+    prompt: "Deploy this API."
+    expect:
+      skill_invoked: false
+  - name: generic-infrastructure-setup
+    category: trigger
+    prompt: "Set up the infrastructure for the new service."
+    expect:
+      skill_invoked: false
+  - name: aws-project-deploy-worker
+    category: trigger
+    prompt: "This is an AWS project — deploy the worker service."
+    expect:
+      skill_invoked: false
+  - name: gcp-project-deploy-api
+    category: trigger
+    prompt: "We're on GCP — deploy the API."
+    expect:
+      skill_invoked: true
+  - name: azure-project-deploy-api
+    category: trigger
+    prompt: "For the Azure project, deploy the API."
+    expect:
+      skill_invoked: false
+  - name: terraform-networking
+    category: trigger
+    prompt: "Write Terraform for the networking layer."
+    expect:
+      skill_invoked: true
+  - name: kubernetes-deploy-bare
+    category: trigger
+    prompt: "Deploy this to Kubernetes."
+    expect:
+      skill_invoked: false
+  - name: pubsub-secret-manager-setup
+    category: trigger
+    prompt: "Set up Pub/Sub topics and Secret Manager for the worker."
+    expect:
+      skill_invoked: true
+  - name: push-to-production
+    category: trigger
+    prompt: "Push this to production."
+    expect:
+      skill_invoked: false
+  - name: lambda-to-cloud-run-migration
+    category: trigger
+    prompt: "Move this service from Lambda to Cloud Run."
+    expect:
+      skill_invoked: true
+  - name: worker-code-change
+    category: trigger
+    prompt: "Add a retry to the worker's message handler."
+    expect:
+      skill_invoked: false
