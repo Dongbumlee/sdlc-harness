@@ -1,0 +1,107 @@
+# Canary: On-Prem Compose Deploy with Real-World Gotchas
+id: dep-004-onprem-compose
+version: "1.0"
+phase: deploy
+title: "On-Prem Compose Deploy with Real-World Gotchas"
+description: >
+  Tests the deployer's knowledge of two on-premises rules from the
+  on-premises deployment skill: images carry immutable tags served from
+  the project's own registry (never `latest`, never built on the
+  production host), and Compose `depends_on` is not readiness — services
+  need healthchecks with `condition: service_healthy` or they race
+  their dependencies on every host reboot.
+
+prompt: |
+  You are an on-premises deployment specialist. Review the following
+  Compose deployment design for an API plus its database on a single
+  self-hosted host:
+
+  ```yaml
+  # infra/compose.yaml
+  services:
+    api:
+      build: ./src/AppAPI
+      image: appapi:latest
+      depends_on:
+        - db
+      ports:
+        - "8080:8080"
+    db:
+      image: postgres:16
+      volumes:
+        - dbdata:/var/lib/postgresql/data
+  volumes:
+    dbdata:
+  ```
+
+  ```bash
+  # infra/scripts/deploy.sh — run on the production host
+  docker compose -f infra/compose.yaml up -d --build
+  ```
+
+  Problems deliberately planted:
+  1. The API image is tagged `latest` and built on the production host
+     by the deploy itself (`--build`). On-premises image discipline:
+     images are pushed to the project's own registry before the deploy
+     references them, tagged immutably (commit SHA or version) — never
+     `latest` — and hosts pull, never build. Rollback is "redeploy the
+     previous tag," which a moving `latest` makes impossible.
+  2. `depends_on` only orders container starts; it is not readiness.
+     With no healthcheck and no `condition: service_healthy`, the API
+     races the database on every host reboot and crashes until Postgres
+     accepts connections.
+
+  Deliverables:
+  1. Findings list — each with severity (Critical / High / Medium / Low)
+     and the on-premises rule violated
+  2. Corrected compose service definitions and corrected deploy command
+  3. A deployment-readiness verdict: GO / NO-GO
+
+expected:
+  keywords:
+    - immutable
+    - registry
+    - latest
+    - healthcheck
+    - service_healthy
+    - rollback
+  graders:
+    - type: keyword
+      weight: 0.3
+      config:
+        required:
+          - immutable
+          - registry
+          - healthcheck
+          - service_healthy
+          - severity
+          - verdict
+        forbidden: ["TODO", "placeholder"]
+    - type: structural
+      weight: 0.3
+      config:
+        required_sections:
+          - findings
+          - immutable
+          - healthcheck
+          - corrected
+          - verdict
+    - type: llm-judge
+      weight: 0.4
+      config:
+        criteria:
+          - completeness
+          - technical_accuracy
+          - severity_assessment
+          - remediation_quality
+          - actionability
+
+timeout_seconds: 120
+requires_mcp:
+  - github
+tags:
+  - deploy
+  - onprem
+  - compose
+  - docker
+  - readiness
