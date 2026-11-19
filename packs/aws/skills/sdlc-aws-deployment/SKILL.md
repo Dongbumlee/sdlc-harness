@@ -5,8 +5,10 @@ description: >-
   containerized APIs to Lambda (container image + Function URL) and long-running
   workers to ECS Fargate Spot, and manage deployment lifecycle. Use when writing
   CDK stacks, configuring Lambda container functions, setting up Fargate
-  services, or preparing deployments. Triggers on CDK, Lambda, Function URL,
-  Fargate, ECS, infrastructure, or deployment requests. Never use raw
+  services, or preparing deployments. Triggers on CDK, Lambda, Function
+  URL, Fargate, or ECS requests, and on infrastructure or deployment
+  requests in an AWS project. Deployment requests naming another target,
+  or no target, do not trigger this skill. Never use raw
   CloudFormation or L1 (Cfn*) constructs — always use L2/L3 CDK constructs.
   Never use App Runner for new work — it is closed to new customers since
   2026-04-30.
