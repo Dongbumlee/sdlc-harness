@@ -1,0 +1,104 @@
+skill: sdlc-dynamodb-repository
+description: >-
+  DynamoDB repository must fire on DynamoDB work, and on entity/repository work in an AWS project; stay quiet for other clouds' databases and for prompts naming no product and no cloud.
+cases:
+  - name: cosmos-crud-entities
+    category: trigger
+    prompt: "Implement the Cosmos DB repository for the Order entity with CRUD operations."
+    expect:
+      skill_invoked: false
+  - name: dynamodb-single-table-design
+    category: trigger
+    prompt: "Design the DynamoDB single-table keys and implement the repository for our access patterns."
+    expect:
+      skill_invoked: true
+  - name: firestore-collection-layout
+    category: trigger
+    prompt: "Create the Firestore collection layout and repository for user profiles."
+    expect:
+      skill_invoked: false
+  - name: blob-upload-and-queue
+    category: trigger
+    prompt: "Upload files to Azure Blob Storage and enqueue a processing message."
+    expect:
+      skill_invoked: false
+  - name: s3-presigned-upload
+    category: trigger
+    prompt: "Implement S3 uploads with presigned URLs for the media bucket."
+    expect:
+      skill_invoked: false
+  - name: gcs-lifecycle-buckets
+    category: trigger
+    prompt: "Set up Cloud Storage buckets with lifecycle rules for archived exports."
+    expect:
+      skill_invoked: false
+  - name: generic-entity-repository
+    category: trigger
+    prompt: "Implement a repository for the Order entity with create, read, update, and delete."
+    expect:
+      skill_invoked: false
+  - name: generic-file-upload
+    category: trigger
+    prompt: "Add file upload so users can attach documents to a ticket."
+    expect:
+      skill_invoked: false
+  - name: generic-data-model
+    category: trigger
+    prompt: "Design the data model and data access layer for the new billing module."
+    expect:
+      skill_invoked: false
+  - name: azure-project-repository
+    category: trigger
+    prompt: "On our Azure project, implement the repository and entity classes for the catalog."
+    expect:
+      skill_invoked: false
+  - name: aws-project-repository
+    category: trigger
+    prompt: "This is an AWS project — build the entity repository for products."
+    expect:
+      skill_invoked: true
+  - name: gcp-project-upload-storage
+    category: trigger
+    prompt: "We're on GCP; add object storage for user uploads."
+    expect:
+      skill_invoked: false
+  - name: azure-project-file-storage
+    category: trigger
+    prompt: "For the Azure app, add file storage with an upload endpoint."
+    expect:
+      skill_invoked: false
+  - name: cosmos-to-dynamodb-migration
+    category: trigger
+    prompt: "Migrate our data access layer from Cosmos DB to DynamoDB."
+    expect:
+      skill_invoked: true
+  - name: deploy-container-apps
+    category: trigger
+    prompt: "Deploy the app to Azure Container Apps with Bicep."
+    expect:
+      skill_invoked: false
+  - name: scaffold-new-service
+    category: trigger
+    prompt: "Scaffold a new service with CI/CD and a Dockerfile."
+    expect:
+      skill_invoked: false
+  - name: review-repository-class-layering
+    category: trigger
+    prompt: "Review this repository class for layering violations."
+    expect:
+      skill_invoked: false
+  - name: postgres-sql-migration
+    category: trigger
+    prompt: "Write the SQL migration for the Postgres orders table."
+    expect:
+      skill_invoked: false
+  - name: azure-queue-storage
+    category: trigger
+    prompt: "Add an Azure Queue Storage queue for the import jobs."
+    expect:
+      skill_invoked: false
+  - name: presigned-url-download
+    category: trigger
+    prompt: "Generate a presigned URL so a customer can download their invoice file."
+    expect:
+      skill_invoked: false
