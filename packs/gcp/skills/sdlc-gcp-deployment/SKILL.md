@@ -5,9 +5,11 @@ description: >-
   containerized APIs to Cloud Run (HTTPS, scale-to-zero) and long-running
   workers to Cloud Run Jobs, and manage deployment lifecycle. Use when writing
   Terraform configs, configuring Cloud Run services/jobs, setting up Pub/Sub
-  queues, Secret Manager, Artifact Registry, or preparing deployments. Triggers
-  on Terraform, Cloud Run, Pub/Sub, Secret Manager, Artifact Registry,
-  infrastructure, or deployment requests. Never use raw REST/gcloud
+  queues, Secret Manager, Artifact Registry, or preparing deployments.
+  Triggers on Terraform, Cloud Run, Pub/Sub, Secret Manager, or Artifact
+  Registry requests, and on infrastructure or deployment requests in a
+  GCP project. Deployment requests naming another target, or no target,
+  do not trigger this skill. Never use raw REST/gcloud
   imperative commands for infrastructure — always declare it in Terraform.
 version: "1.0"
 author: sdlc-harness
