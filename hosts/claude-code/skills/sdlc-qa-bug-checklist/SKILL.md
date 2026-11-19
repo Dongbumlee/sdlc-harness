@@ -3,8 +3,11 @@ name: sdlc-qa-bug-checklist
 description: >-
   Bug-driven QA checklist distilled from 338 real bugs across 9 production Azure DevOps
   projects with detailed error patterns, Azure error codes, and verification
-  commands. Use when reviewing code, PRs, deployments, or running QA checks.
-  Triggers on any QA review, pre-deployment validation, or bug-prevention audit.
+  commands. Use when reviewing code, PRs, or deployments against known bug
+  patterns, Azure error codes, or past production failures. Triggers on
+  bug-pattern reviews, pre-deployment pattern checks, and bug-prevention
+  audits. Product-level QA — the product's behavior, UX, accessibility, and
+  release readiness — belongs to sdlc-project-qa, not this skill.
 version: "1.0"
 author: sdlc-harness
 user-invocable: false
