@@ -1,0 +1,20 @@
+skill: sdlc-reference-catalog
+description: >-
+  The reference catalog is a context skill activated by agents: the Analyst populates it, implementers consult it before building, entries follow its format under its section structure. Judged on those obligations.
+cases:
+  - name: consult-catalog-before-implementing
+    category: trigger
+    prompt: "Check the reference catalog for an approved charting library before implementing."
+    expect:
+      skill_invoked: true
+  - name: catalog-approved-libraries-section
+    category: capability
+    prompt: "Add this library to the reference catalog's approved libraries."
+    expect:
+      output_must_contain:
+        - "Approved Libraries"
+  - name: unrelated-poem
+    category: trigger
+    prompt: "Write a poem about autumn."
+    expect:
+      skill_invoked: false

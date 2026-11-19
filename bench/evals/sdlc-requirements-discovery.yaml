@@ -1,0 +1,35 @@
+skill: sdlc-requirements-discovery
+description: >-
+  Requirements discovery must fire when discovery itself is the work — clarifying a vague idea, eliciting and restating requirements — and stay quiet when a feature or a full run is started (that is the harness's front door; discovery then happens inside the run by delegation).
+cases:
+  - name: build-from-scratch-full-process
+    category: trigger
+    prompt: "Build a new task tracker app from scratch, full process."
+    expect:
+      skill_invoked: false
+  - name: vague-idea-requirements
+    category: trigger
+    prompt: "I have a vague idea for an app — help me figure out the requirements."
+    expect:
+      skill_invoked: true
+  - name: start-full-sdlc-run
+    category: trigger
+    prompt: "Start the full SDLC run for the payments feature."
+    expect:
+      skill_invoked: false
+  - name: scaffold-typescript-service
+    category: trigger
+    prompt: "Scaffold a new TypeScript service with CI and a Dockerfile."
+    expect:
+      skill_invoked: false
+  - name: adr-postgres-decision
+    category: trigger
+    prompt: "Document the decision to use Postgres over MongoDB as an ADR."
+    expect:
+      skill_invoked: false
+  - name: discovery-restates-understanding
+    category: capability
+    prompt: "Run requirements discovery with me for this app idea."
+    expect:
+      output_must_contain:
+        - "Is that right?"

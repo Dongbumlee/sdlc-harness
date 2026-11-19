@@ -1,0 +1,40 @@
+skill: sdlc-project-scaffolding
+description: >-
+  Scaffolding must fire when scaffolding itself is the ask — a new service structure, a restructure to the standard layout, CI/CD setup — and stay quiet when the ask is the full lifecycle (the harness owns it; scaffolding is its Phase 3) or another phase's work.
+cases:
+  - name: build-from-scratch-full-process
+    category: trigger
+    prompt: "Build a new task tracker app from scratch, full process."
+    expect:
+      skill_invoked: false
+  - name: scaffold-typescript-service
+    category: trigger
+    prompt: "Scaffold a new TypeScript service with CI and a Dockerfile."
+    expect:
+      skill_invoked: true
+  - name: restructure-existing-project
+    category: trigger
+    prompt: "Restructure this existing project to the standard layout and add CI."
+    expect:
+      skill_invoked: true
+  - name: scaffold-then-lifecycle
+    category: trigger
+    prompt: "Create the project scaffolding and then run the whole lifecycle end to end."
+    expect:
+      skill_invoked: false
+  - name: vague-idea-requirements
+    category: trigger
+    prompt: "I have a vague idea for an app — help me figure out the requirements."
+    expect:
+      skill_invoked: false
+  - name: write-login-endpoint
+    category: trigger
+    prompt: "Write the code for the login endpoint."
+    expect:
+      skill_invoked: false
+  - name: scaffold-produces-dockerfile
+    category: capability
+    prompt: "Scaffold a new Python API project with the standard layout."
+    expect:
+      output_must_contain:
+        - "Dockerfile"

@@ -1,0 +1,21 @@
+skill: sdlc-reviewer-output-format
+description: >-
+  The reviewer output format is a context skill: a review emitted under it carries the structured block whose verdict follows its rules — any critical finding forces CRITICAL_FAIL regardless of score. Judged on those obligations.
+cases:
+  - name: critical-finding-forces-critical-fail
+    category: capability
+    prompt: "Emit the structured reviewer output block for a security review scoring 6 with one critical finding."
+    expect:
+      output_must_contain:
+        - "CRITICAL_FAIL"
+  - name: clean-review-passes
+    category: capability
+    prompt: "Emit the structured reviewer output block for a review scoring 9 with no critical findings."
+    expect:
+      output_must_contain:
+        - "verdict: PASS"
+  - name: unrelated-poem
+    category: trigger
+    prompt: "Write a poem about autumn."
+    expect:
+      skill_invoked: false
