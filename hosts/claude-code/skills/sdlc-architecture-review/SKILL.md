@@ -2,9 +2,11 @@
 name: sdlc-architecture-review
 description: >-
   Review code for architecture and design consistency following SDLC layering rules
-  and application project patterns. Use when reviewing PRs, checking dependency
-  boundaries, or validating pattern reuse. Triggers on architecture review,
-  layering check, design review, or pattern compliance requests.
+  and application project patterns. Use when reviewing code or PRs for
+  layering, checking dependency boundaries, or validating pattern reuse.
+  Triggers on architecture review of code, layering check, design review,
+  or pattern compliance requests. Reviewing an architecture decision
+  record is sdlc-adr-authoring's work, not this skill's.
 version: "1.0"
 author: sdlc-harness
 user-invocable: false

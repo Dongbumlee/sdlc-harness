@@ -4,8 +4,10 @@ description: >-
   Review and enforce code quality standards for Python, TypeScript, React,
   Java, C#, Go, and Rust following SDLC quality instruction files. Use when
   performing code quality reviews, cleaning up code, or enforcing naming and
-  documentation standards. Triggers on code quality, code review, naming,
-  docstring, dead code, or comment cleanup requests.
+  documentation standards. Triggers on code quality, naming, docstring,
+  dead code, or comment cleanup requests — reviews that name a quality
+  concern. A review that names another domain (layering, security, bug
+  patterns) does not trigger this skill.
 version: "1.0"
 author: sdlc-harness
 user-invocable: false

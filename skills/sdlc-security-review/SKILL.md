@@ -3,8 +3,10 @@ name: sdlc-security-review
 description: >-
   Perform SDLC-aligned security review combining OWASP Top 10 with project-specific
   Azure patterns. Use when reviewing code for security vulnerabilities, secrets
-  exposure, auth issues, injection risks, or OWASP compliance. Triggers on any
-  code review, PR review, or security audit request. Loads fresh OWASP checklist
+  exposure, auth issues, injection risks, or OWASP compliance. Triggers on
+  security review or security audit requests that name a security concern.
+  A code or PR review that names no security concern does not trigger this
+  skill. Loads fresh OWASP checklist
   from the awesome-copilot collection on GitHub on every review.
 version: "1.0"
 author: sdlc-harness
