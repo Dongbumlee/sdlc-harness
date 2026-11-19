@@ -1,0 +1,99 @@
+skill: sdlc-code-quality
+description: >-
+  Code quality must fire when a prompt names quality standards work — naming, documentation, dead code, comment cleanup, duplication — and stay quiet for architecture, security, product QA, and implementation work.
+cases:
+  - name: layering-violation-pr
+    category: trigger
+    prompt: "Check whether this PR keeps the layering rules — the API layer imports the repository directly, skipping the service layer."
+    expect:
+      skill_invoked: false
+  - name: pattern-reuse-review
+    category: trigger
+    prompt: "Review this design for pattern compliance: every module invented its own error handling instead of reusing the shared pattern."
+    expect:
+      skill_invoked: false
+  - name: dependency-boundary-validation
+    category: trigger
+    prompt: "Validate the dependency boundaries in this codebase before we merge."
+    expect:
+      skill_invoked: false
+  - name: injection-and-secrets-audit
+    category: trigger
+    prompt: "Audit this code for SQL injection and secrets exposure before release."
+    expect:
+      skill_invoked: false
+  - name: owasp-top-ten-check
+    category: trigger
+    prompt: "Check this PR against the OWASP Top 10."
+    expect:
+      skill_invoked: false
+  - name: auth-storage-security-opinion
+    category: trigger
+    prompt: "Review the auth flow: tokens are stored in localStorage and I want a security opinion."
+    expect:
+      skill_invoked: false
+  - name: dead-code-and-naming-cleanup
+    category: trigger
+    prompt: "Clean up this module: dead code, bad naming, missing docstrings."
+    expect:
+      skill_invoked: true
+  - name: naming-documentation-standards
+    category: trigger
+    prompt: "Enforce our naming and documentation standards on this file."
+    expect:
+      skill_invoked: true
+  - name: long-function-quality-review
+    category: trigger
+    prompt: "This function is 300 lines with copy-pasted blocks — review it for code quality."
+    expect:
+      skill_invoked: true
+  - name: bare-pr-review
+    category: trigger
+    prompt: "Review this PR."
+    expect:
+      skill_invoked: false
+  - name: pr-security-review
+    category: trigger
+    prompt: "Review this PR for security issues."
+    expect:
+      skill_invoked: false
+  - name: pr-layering-review
+    category: trigger
+    prompt: "Review this PR for layering violations."
+    expect:
+      skill_invoked: false
+  - name: pr-naming-cleanup-review
+    category: trigger
+    prompt: "Review this PR — mostly naming and comment cleanup."
+    expect:
+      skill_invoked: true
+  - name: full-product-qa-pass
+    category: trigger
+    prompt: "Do a full product QA pass before release — behavior, UX, accessibility."
+    expect:
+      skill_invoked: false
+  - name: known-bug-pattern-check
+    category: trigger
+    prompt: "Check this code against known bug patterns and Azure error codes from past incidents."
+    expect:
+      skill_invoked: false
+  - name: secure-and-well-structured
+    category: trigger
+    prompt: "Is this code secure and well-structured?"
+    expect:
+      skill_invoked: false
+  - name: write-new-endpoint
+    category: trigger
+    prompt: "Write a new endpoint for the orders API."
+    expect:
+      skill_invoked: false
+  - name: adr-document-review
+    category: trigger
+    prompt: "Review the architecture decision record for the caching choice."
+    expect:
+      skill_invoked: false
+  - name: pipeline-config-security-scan
+    category: trigger
+    prompt: "Security-scan the deployment pipeline configuration."
+    expect:
+      skill_invoked: false
