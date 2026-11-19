@@ -3,8 +3,8 @@
 > **Generated file — do not edit by hand.**
 > Regenerate with `python3 tools/generate_agent_inventory.py`.
 
-**Version:** 1.3.3  
-**Generated:** 2026-11-17  
+**Version:** 1.3.4  
+**Generated:** 2026-11-19  
 **Total agents:** 22 (22 agent files)  
 **Total skills:** 25
 
@@ -50,7 +50,7 @@
 | # | Skill Directory | Name | Description | Used By (frontmatter) |
 |---|---|---|---|---|
 | 1 | `sdlc-adr-authoring` | sdlc-adr-authoring | Create Architecture Decision Records following SDLC standards and application templates. Use when documenting design decisions, architect... | Documenter |
-| 2 | `sdlc-architecture-review` | sdlc-architecture-review | Review code for architecture and design consistency following SDLC layering rules and application project patterns. Use when reviewing PR... | Architecture Reviewer |
+| 2 | `sdlc-architecture-review` | sdlc-architecture-review | Review code for architecture and design consistency following SDLC layering rules and application project patterns. Use when reviewing co... | Architecture Reviewer |
 | 3 | `sdlc-aws-deployment` | sdlc-aws-deployment | Create AWS infrastructure with CDK (TypeScript) using L2/L3 constructs, deploy containerized APIs to Lambda (container image + Function U... | Deployer |
 | 4 | `sdlc-azure-deployment` | sdlc-azure-deployment | Create Azure infrastructure with Bicep using Azure Verified Modules (AVM), configure azd orchestration, and manage deployment lifecycle. ... | Deployer, QA Bug Checklist Reviewer |
 | 5 | `sdlc-blob-storage` | sdlc-blob-storage | Implement Azure Blob Storage and Queue operations using the approved Storage library. Use when uploading, downloading, listing, or managi... | — |
