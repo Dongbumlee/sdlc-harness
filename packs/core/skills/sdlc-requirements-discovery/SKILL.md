@@ -3,8 +3,11 @@ name: sdlc-requirements-discovery
 description: >-
   Guides the Analyst agent through collaborative requirements discovery with the user.
   Covers elicitation patterns, question strategies, restatement techniques, and the
-  explicit approval checkpoint. Use when starting a new feature, clarifying requirements,
-  or when Harness delegates Phase 1A discovery to the Analyst.
+  explicit approval checkpoint. Use when clarifying requirements — a
+  discovery conversation in its own right — or when Harness delegates
+  Phase 1A discovery to the Analyst. Starting a feature or a full SDLC
+  run is sdlc-harness's ground; this skill fires when discovery itself
+  is the work.
 version: "1.0"
 author: sdlc-harness
 user-invocable: false
