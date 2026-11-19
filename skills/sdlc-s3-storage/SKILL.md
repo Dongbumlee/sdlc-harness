@@ -3,8 +3,9 @@ name: sdlc-s3-storage
 description: >-
   Implement Amazon S3 object storage with private buckets, presigned URLs, and
   lifecycle rules. Use when uploading, downloading, listing, or managing objects.
-  Triggers on S3, storage, file upload, object storage, presigned URL, or bucket
-  requests. Never create public buckets or public bucket policies — always
+  Triggers on S3 or presigned URL requests, and on storage, file upload,
+  object storage, or bucket requests in an AWS project. Storage requests
+  naming another cloud, or no cloud, do not trigger this skill. Never create public buckets or public bucket policies — always
   BlockPublicAccess with presigned URLs for external access.
 version: "1.0"
 author: sdlc-harness

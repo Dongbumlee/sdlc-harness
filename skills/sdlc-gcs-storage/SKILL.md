@@ -3,8 +3,10 @@ name: sdlc-gcs-storage
 description: >-
   Implement Cloud Storage with private buckets, uniform bucket-level access,
   and V4 signed URLs. Use when creating buckets, generating signed URLs,
-  configuring lifecycle rules, or reviewing storage code. Triggers on Cloud
-  Storage, GCS, bucket, signed URL, or object storage requests. Buckets are
+  configuring lifecycle rules, or reviewing storage code. Triggers on
+  Cloud Storage or GCS requests, and on bucket, signed URL, or object
+  storage requests in a GCP project. Storage requests naming another
+  cloud, or no cloud, do not trigger this skill. Buckets are
   always private with uniform bucket-level access — access only via
   short-lived signed URLs, never public reads or legacy ACLs.
 version: "1.0"

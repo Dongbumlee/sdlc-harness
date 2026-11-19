@@ -4,8 +4,10 @@ description: >-
   Implement Firestore data access with an explicit collection design and the
   Repository Pattern over the google-cloud-firestore client. Use when creating
   collections, repositories, document layouts, or any Firestore CRUD
-  operations. Triggers on Firestore, database, collection, document, data
-  model, or data access requests. Never substitute client-side filtering for
+  operations. Triggers on Firestore requests, and on database,
+  collection, document, data model, or data access requests in a GCP
+  project. Data requests naming another cloud's database, or no
+  product and no cloud, do not trigger this skill. Never substitute client-side filtering for
   document/index design — always model access patterns as documents,
   subcollections, and composite indexes first.
 version: "1.0"

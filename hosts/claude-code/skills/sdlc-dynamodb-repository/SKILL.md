@@ -3,8 +3,10 @@ name: sdlc-dynamodb-repository
 description: >-
   Implement DynamoDB data access with single-table design and the Repository
   Pattern over boto3. Use when creating entities, repositories, key designs, or
-  any DynamoDB CRUD operations. Triggers on DynamoDB, database, entity,
-  repository, data model, or data access requests. Never use Scan on hot paths
+  any DynamoDB CRUD operations. Triggers on DynamoDB requests, and on
+  database, entity, repository, data model, or data access requests in
+  an AWS project. Data requests naming another cloud's database, or no
+  product and no cloud, do not trigger this skill. Never use Scan on hot paths
   and never substitute FilterExpression for key design — always model access
   patterns as keys and sparse GSIs first.
 version: "1.1"
