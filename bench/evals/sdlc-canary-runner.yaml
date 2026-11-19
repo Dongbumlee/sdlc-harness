@@ -1,0 +1,20 @@
+skill: sdlc-canary-runner
+description: >-
+  The canary runner must fire when canary tests against the phase agents are requested, stay quiet for ordinary test runs, and report results in its composite-score format.
+cases:
+  - name: run-canary-tests
+    category: trigger
+    prompt: "Run the E2E canary tests against the SDLC phase agents."
+    expect:
+      skill_invoked: true
+  - name: unit-tests-quiet
+    category: trigger
+    prompt: "Run the unit tests for this module."
+    expect:
+      skill_invoked: false
+  - name: canary-report-composite-score
+    category: capability
+    prompt: "Run the canary for the QA phase and report the result."
+    expect:
+      output_must_contain:
+        - "composite_score"

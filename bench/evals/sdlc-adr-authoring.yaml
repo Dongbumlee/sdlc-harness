@@ -1,0 +1,30 @@
+skill: sdlc-adr-authoring
+description: >-
+  ADR authoring must fire when an architecture decision is to be documented as a record, and stay quiet for code reviews, builds, and discovery conversations.
+cases:
+  - name: adr-postgres-decision
+    category: trigger
+    prompt: "Document the decision to use Postgres over MongoDB as an ADR."
+    expect:
+      skill_invoked: true
+  - name: architecture-code-review
+    category: trigger
+    prompt: "Review this code for architecture consistency."
+    expect:
+      skill_invoked: false
+  - name: build-from-scratch-full-process
+    category: trigger
+    prompt: "Build a new task tracker app from scratch, full process."
+    expect:
+      skill_invoked: false
+  - name: vague-idea-requirements
+    category: trigger
+    prompt: "I have a vague idea for an app — help me figure out the requirements."
+    expect:
+      skill_invoked: false
+  - name: adr-considers-alternatives
+    category: capability
+    prompt: "Write an ADR for choosing Postgres over MongoDB."
+    expect:
+      output_must_contain:
+        - "Alternatives Considered"

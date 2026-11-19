@@ -1,0 +1,26 @@
+skill: sdlc-project-manifest
+description: >-
+  The manifest is a context skill: it is completed during scaffolding from the Harness skeleton, preserving the provisional Task Grade verbatim and recording the template patterns chosen. Judged on those obligations, not on user-prompt routing.
+cases:
+  - name: complete-manifest-during-scaffolding
+    category: trigger
+    prompt: "Complete the project manifest for this scaffold."
+    expect:
+      skill_invoked: true
+  - name: manifest-records-template-patterns
+    category: capability
+    prompt: "Complete the project manifest for this scaffold, recording the templates and patterns chosen."
+    expect:
+      output_must_contain:
+        - "Template Patterns"
+  - name: manifest-preserves-task-grade
+    category: capability
+    prompt: "Complete the manifest the Harness skeleton started, keeping its provisional grade."
+    expect:
+      output_must_contain:
+        - "Task Grade"
+  - name: unrelated-poem
+    category: trigger
+    prompt: "Write a poem about autumn."
+    expect:
+      skill_invoked: false
