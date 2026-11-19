@@ -26,3 +26,98 @@ cases:
     expect:
       output_must_contain:
         - "provisioningState"
+  - name: pr-bug-pattern-review
+    category: trigger
+    prompt: "Review this pull request against the known production bug patterns and Azure error codes."
+    expect:
+      skill_invoked: true
+  - name: anchored-failure-pattern
+    category: trigger
+    prompt: "Our Cognitive Services deployment failed last time — check for that failure pattern."
+    expect:
+      skill_invoked: true
+  - name: past-incident-pattern-audit
+    category: trigger
+    prompt: "Audit this code for the bug patterns that caused our past production incidents."
+    expect:
+      skill_invoked: true
+  - name: known-bugs-pr-check
+    category: trigger
+    prompt: "Does this PR repeat any of the 338 known bugs? Check it."
+    expect:
+      skill_invoked: true
+  - name: azure-error-codes-question
+    category: trigger
+    prompt: "Which Azure error codes should I watch for when this provisioning runs?"
+    expect:
+      skill_invoked: true
+  - name: provisioning-state-pattern-review
+    category: trigger
+    prompt: "Review this PR for the provisioningState failure we hit in March."
+    expect:
+      skill_invoked: true
+  - name: known-failure-patterns-before-ship
+    category: trigger
+    prompt: "Before we ship, check the deployment against every known failure pattern from past projects."
+    expect:
+      skill_invoked: true
+  - name: known-bug-database-scan
+    category: trigger
+    prompt: "QA the release: scan for any defects matching the known bug database first."
+    expect:
+      skill_invoked: true
+  - name: full-product-qa
+    category: trigger
+    prompt: "Run a full product QA pass on this app before we release it."
+    expect:
+      skill_invoked: false
+  - name: manual-checklist-generation
+    category: trigger
+    prompt: "Generate the manual QA checklist for this release."
+    expect:
+      skill_invoked: false
+  - name: release-readiness-review
+    category: trigger
+    prompt: "Is this app ready to ship? Do a release readiness review."
+    expect:
+      skill_invoked: false
+  - name: checkout-flow-comprehensive-qa
+    category: trigger
+    prompt: "We need a comprehensive QA review of the checkout flow — functionality, error handling, the lot."
+    expect:
+      skill_invoked: false
+  - name: llm-behavior-testing
+    category: trigger
+    prompt: "Test the AI agent's behavior: does it handle refusals, PII, and prompt injection the way the spec says?"
+    expect:
+      skill_invoked: false
+  - name: pre-release-walkthrough
+    category: trigger
+    prompt: "Pre-release validation: walk the whole product and tell me what to fix before launch."
+    expect:
+      skill_invoked: false
+  - name: error-resilience-qa
+    category: trigger
+    prompt: "How does the app behave on slow networks and when the API times out? QA that for me."
+    expect:
+      skill_invoked: false
+  - name: tenant-onboarding-checklist
+    category: trigger
+    prompt: "Give me a QA checklist for onboarding a new enterprise customer tenant."
+    expect:
+      skill_invoked: false
+  - name: observability-review
+    category: trigger
+    prompt: "Check the observability story before release — logging, metrics, alerts. Full review."
+    expect:
+      skill_invoked: false
+  - name: mobile-product-qa
+    category: trigger
+    prompt: "Do a product QA review of the mobile app: UX, performance, data handling."
+    expect:
+      skill_invoked: false
+  - name: friday-release-project-qa
+    category: trigger
+    prompt: "The release is Friday. Run project QA on the whole thing and give me the checklist results."
+    expect:
+      skill_invoked: false
