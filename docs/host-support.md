@@ -16,7 +16,7 @@ anything not yet measured is labelled as such.
 | Skills | 25 | 25, plus a `qa-bug-checklist` entry-point skill (see deltas) |
 | Prompt files / commands | 6 prompt files | 6 commands generated from the same prompt files |
 | MCP servers | 3 core (GitHub, Context7, Playwright) plus the vendor servers in your cloud pack | The same set, delivered as the plugin's `.mcp.json` |
-| Verification | Canary battery 57/57 (seat-graded), live end-to-end runs | `claude plugin validate` passes; contract tests pin the translation; live probes and one Small end-to-end run measured 2026-11-14 (see "Measured scope on Claude Code") |
+| Verification | Canary battery 60/60 (seat-graded), live end-to-end runs | `claude plugin validate` passes; contract tests pin the translation; live probes and one Small end-to-end run measured 2026-11-14 (see "Measured scope on Claude Code") |
 
 ## Installing on Claude Code
 

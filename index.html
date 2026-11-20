@@ -865,7 +865,7 @@
       <div class="metric"><b>22</b><span>specialized agents</span></div>
       <div class="metric"><b>25</b><span>portable skills</span></div>
       <div class="metric"><b>30</b><span>bundled templates</span></div>
-      <div class="metric"><b>57</b><span>canary specs on the harness itself</span></div>
+      <div class="metric"><b>60</b><span>canary specs on the harness itself</span></div>
       <div class="metric"><b>9</b><span>independent QA domains</span></div>
     </div>
 
@@ -895,7 +895,7 @@
           <article class="feature-small">
             <div class="feature-label">ONE FORGE</div><div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg></div>
             <h3>GitHub is the only forge</h3>
-            <p>Issues, pull requests, and QA findings live in one place. Twenty-four skills and structured prompts make the standards portable.</p>
+            <p>Issues, pull requests, and QA findings live in one place. Twenty-five skills and structured prompts make the standards portable.</p>
           </article>
         </div>
       </div>
@@ -916,7 +916,7 @@
             <li>Every job is tracked in one place from the start</li>
             <li>Unattended jobs skip the conversation — and record that they did</li>
           </ul>
-          <div class="envelope-note">Sized before work starts — <b>Small ≤ 4 hours · Medium ≤ 2 days · Large ≤ 5 days</b> — each with a budget agreed up front.</div>
+          <div class="envelope-note">Sized before work starts — <b>Small ≤ $20 · Medium ≤ $75 · Large ≤ $250</b> in model spend, each with an active-time cap agreed up front. How fast a run finishes depends on the model seat it runs on.</div>
         </div>
         <div class="brief-card" role="img" aria-label="Illustration of a design brief with fields for goal, users, constraints, out-of-scope, and success criteria, each marked confirmed">
           <div class="brief-card-head"><span class="path">DESIGN BRIEF</span><span>AGREED BEFORE BUILD</span></div>
@@ -967,8 +967,8 @@
             <div class="agent-tags"><span>Analyst</span><span>Scaffolder</span><span>Deployer</span><span>Implementer</span><span>Documenter</span><span>RAI Reviewer</span><span>Release Manager</span></div>
           </div>
           <div class="agent-group">
-            <h3><span class="group-count">11 AGENTS</span>Reviewers</h3>
-            <div class="agent-tags"><span>Architecture</span><span>Code quality</span><span>Security</span><span>Test coverage</span><span>Requirements</span><span>UX &amp; accessibility</span><span>LLM behavior</span><span>Deployment readiness</span><span>Azure compliance</span><span>AWS compliance</span><span>GCP compliance</span></div>
+            <h3><span class="group-count">12 AGENTS</span>Reviewers</h3>
+            <div class="agent-tags"><span>Architecture</span><span>Code quality</span><span>Security</span><span>Test coverage</span><span>Requirements</span><span>UX &amp; accessibility</span><span>LLM behavior</span><span>Deployment readiness</span><span>Azure compliance</span><span>AWS compliance</span><span>GCP compliance</span><span>On-prem compliance</span></div>
           </div>
           <div class="agent-group">
             <h3><span class="group-count">01 AGENT</span>Standalone</h3>
@@ -1001,9 +1001,9 @@
             <h3>Find. Fix. Re-review the part that failed.</h3>
             <p>Nine review domains work in parallel without seeing one another’s findings. A miss does not restart everything: targeted fixes go back first, and the full panel reconvenes only when that is not enough.</p>
             <div class="qa-rule"><div class="rule-num">01</div><div><h4>Independent contexts</h4><p>Reviewers do not inherit the generator’s rationale or anchor on one another’s verdicts.</p></div></div>
-            <div class="qa-rule"><div class="rule-num">02</div><div><h4>Hard-fail thresholds</h4><p>Security below 8, any domain below 7, composite below 7, or a single Critical finding stops the release.</p></div></div>
+            <div class="qa-rule"><div class="rule-num">02</div><div><h4>Hard-fail thresholds</h4><p>Security below 8, any domain below 5, composite below 7, a reviewer's critical fail, or a single Critical finding stops the release.</p></div></div>
             <div class="qa-rule"><div class="rule-num">03</div><div><h4>Escalation with limits</h4><p>Failed domains are re-reviewed alone first. If that is not enough — or three or more are down — the full panel reconvenes. Rounds are capped by the size of the job.</p></div></div>
-            <div class="formula"><b>weighted composite</b> = (security × 1.5 + sum of other reviewers) / 9.5</div>
+            <div class="formula"><b>weighted composite</b> = (security × 1.5 + sum of other reviewers) / (1.5 + active domains)</div>
           </div>
         </div>
 

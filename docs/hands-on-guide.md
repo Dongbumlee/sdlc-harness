@@ -25,8 +25,10 @@ application.
 > Harness agent) and the **manual prompt** approach (using the prompt files directly).
 > Both produce the same result — choose whichever fits your workflow.
 
-> **Scope of this walkthrough:** the sample run deploys to **Azure** — the
-> screenshots and terminal output are from that run. The same flow runs on
+> **Scope of this walkthrough:** the sample run deploys to **Azure**. The
+> application is fictional, and the screenshots are illustrations drawn
+> for this guide showing what each step produces — not captures of a
+> real run. The same flow runs on
 > AWS and GCP with their cloud packs (the deployment tooling differs; the
 > phases and gates are the same), and on either host — GitHub Copilot or
 > Claude Code.
@@ -99,7 +101,7 @@ On first run, Harness detects the missing workspace files and deploys them
 
 | File | What it is |
 | ---- | ---------- |
-| `.vscode/mcp.json` | MCP server configuration — 7 servers: **GitHub**, **Azure**, **Azure DevOps**, **Microsoft Learn**, **Context7**, **Playwright**, **awesome-copilot** |
+| `.vscode/mcp.json` | MCP server configuration — 5 servers for this Azure walkthrough: **GitHub**, **Context7**, **Playwright** (core) plus **Azure** and **Microsoft Learn** (Azure pack) |
 | `.github/copilot-instructions.md` | Project instructions, customized with your project name, domain, stack, and cloud |
 | `.github/instructions/` | The 14 quality instruction files (code quality + test quality per language) |
 | `.github/prompts/` | The 6 SDLC prompt files used by the manual approach |
@@ -119,7 +121,7 @@ services at infrastructure time. You never edit placeholders by hand.
 Check that:
 
 - Copilot Chat's agent dropdown lists **Harness**
-- `.vscode/mcp.json` lists the 7 MCP servers above
+- `.vscode/mcp.json` lists the 5 MCP servers above
 - `.github/copilot-instructions.md` names your project with no blocking
   placeholders left
 
@@ -553,8 +555,9 @@ The compliance slot follows the project's cloud pack — this walkthrough runs
 the Azure reviewer; an AWS or GCP project gets its own in the same slot.
 
 Scores combine into a weighted composite (Security counts ×1.5). The verdict
-fails automatically on: any **Critical** finding, Security below 8, any domain
-below 5, or a composite below 7.
+fails automatically on: any reviewer returning a critical fail, any
+**Critical** finding, Security below 8, any domain below 5, a composite
+below 7, or two or more Important findings within a single domain.
 
 | ![QA review summary](assets/guide/09-quality-pass.png) |
 | ---------------------------------------------------------- |
