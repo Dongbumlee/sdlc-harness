@@ -1,29 +1,11 @@
 # SDLC Harness — Base Definitions
 
-**Status:** CANONICAL. Adopted on 2026-11-10, with decisions
-D1–D5 (§11) taken as recommended. The conformance sweep accompanying this
-document makes every pack file agree with the definitions here; where a pack
-file and this document disagree, this document is the standard and the pack
-file is the defect.
-
-**Scope of the scan behind it:** all 67 pack markdown files (17,700 lines),
-the `.design/` templates, and the workspace-init assets (instructions, prompts,
-templates) in `Dongbumlee/sdlc-harness` at main `c4f1659`.
-
-**Amendments since adoption** (definition changes, each shipped and
-verified): 2026-11-10 — Go and Rust stacks completed (§9.4; PRs #65–#66,
-with the python template repairs of PRs #67–#69). 2026-11-11 — the
-functional-unit counting rule (§8.1; PR #70, verified by a live grade
-probe), the Small-grade consolidated Phase 1–2 flow (§2.4, §6.5;
-PR #71, validated live), and the mechanical stack-conformance check
-(§3 Phase 2; PR #72, verified against the live run that exposed the
-defect). 2026-11-12 — the pre-run design conversation and its records
-(§2.1, §8.2, §8.4): the design brief, the change path with total
-propagation, the living ADR set, approval posture, and run envelope
-(intake design D1–D16, adopted 2026-11-12).
+**Status:** CANONICAL. The decisions behind it (D1–D5) are recorded
+in §11. Where a pack file and this document disagree, this document is
+the standard and the pack file is the defect.
 
 **How each definition was chosen:** where the harness already defined a term
-in one place — usually the most recent deliberate change (PRs #31–#54) — that
+in one place — usually the most recent deliberate change — that
 definition is canonical. Where no definition existed anywhere, this document
 supplied one (marked **[NEW]** where the gap mattered). Where two live
 definitions genuinely conflicted, the item went to §11 as a decision rather
@@ -69,15 +51,15 @@ a different word.
 | **Design brief** | The run's framing of record (`.SDLC/design-brief.md`): problem and users, capabilities and boundary, project type, stack, data and sensitivity, integrations and target, scale signals — each field carrying a status (`confirmed` / `proposed` / `open`) — plus the derived patterns, the approval posture, and the run envelope. Written by the Harness in the Step 0.75 design conversation; amended only by dated frame revisions. Its **Current frame** section is the effective reading (§8.4). |
 | **Approval posture** | The run's recorded autonomy grant: `attended` (default) or `unattended`. Under either posture, frame-moving changes, removals of user-visible capabilities, and the Phase 8 release decision require an explicit human approval. |
 | **Run envelope** | The grade-derived cost/time band recorded in the brief at intake (§8.2) and carried into the run basis as the run's budget; consumption is reported at phase transitions (§7). |
-| **Consistency** | Conformance to recorded standards, per PR #34: an artifact is consistent when it follows the precedence chain in §9.2. Consistency is measured within one project against its own records, never by comparison with another project's code. |
+| **Consistency** | Conformance to recorded standards: an artifact is consistent when it follows the precedence chain in §9.2. Consistency is measured within one project against its own records, never by comparison with another project's code. |
 | **Deviation** | A recorded departure from a standard. Class 2 deviations (§5) are written into the ledger with the record they break; an unrecorded departure is a defect, not a deviation. |
 | **Environment limitation** | The named exit condition defined in §10.3. It is a classification of a failure, never a pass. |
 | **Precedence tier** | A level of the instruction-authority chain (§9.1). Always written with the qualifier "precedence" — see the collision note below. |
 | **Escalation tier** | A level of the QA escalation ladder (§6.3): Tier 1 automatic loop, Tier 2 user-guided retry, Tier 3 user decision. Always written with the qualifier "escalation" in new text. |
 
 > **Known term collision — "tier".** The harness uses "Tier 1/2/3" for two
-> different ladders: instruction precedence (PR #31) and QA escalation
-> (PRs #48–#49). Both are entrenched. The base resolves the collision by
+> different ladders: instruction precedence and QA escalation.
+> Both are entrenched. The base resolves the collision by
 > qualifier, not by renaming history: in prose, write "precedence tier" or
 > "escalation tier" on first use in each file; bare "Tier N" is acceptable
 > only inside the section that defines that ladder.
@@ -130,11 +112,11 @@ A phase row moves through exactly these states:
 
 A transition to Complete requires the phase's exit gate (§3) to have been
 checked by the Harness and the `TRANSITION COUNT` line for that phase to
-exist in the failure ledger (PR #54). On resume, the ledger is the state:
+exist in the failure ledger. On resume, the ledger is the state:
 the first non-Complete row is where the run continues, after the run-basis
 hash check.
 
-### 2.3 Phase 7 — RAI Review (flow defined 2026-11-10)
+### 2.3 Phase 7 — RAI Review
 
 Phase 7 previously existed as a ledger row, an agent, and a release
 criterion, but no flow step ever ran it. The base defines it **[NEW]**:
@@ -162,7 +144,7 @@ Documenter on the Harness's delegation from the Analyst's design proposal —
 and it must exist before the Phase 1–2 exit gate can pass, even though the
 Documenter is the Phase 5 owner. The set then stays alive for the whole
 run: later decision-bearing changes amend or extend it in the same
-change (§8.4). **Small-grade exception (PR #71):** on
+change (§8.4). **Small-grade exception:** on
 Small tasks the Analyst authors the ADR inside the Phase 2 session — the
 artifact and the gate are unchanged; only the authoring session
 consolidates. The same rule resolves every "which phase is this document"
@@ -202,8 +184,8 @@ references or carry a scheduled scrub pass in a named later pass.
   in the manifest instead); where the stack has a mechanical extractor
   (dotnet), the conformance claim is verified by running the
   stack-profiles skill's `check_stack_conformance.py` against the REQ
-  and ADR and quoting its output — the comparison is executed, not read
-  (PR #72); Phase 1 and Phase 2 `TRANSITION COUNT` lines exist.
+  and ADR and quoting its output — the comparison is executed, not read;
+  Phase 1 and Phase 2 `TRANSITION COUNT` lines exist.
 - **Phase 3 — Scaffold.** The Harness's Phase 3 gate passes verbatim:
   `src/` layout per the Scaffolder's RULE #1 and the bundled template
   (verbatim copy including the sample slice and its tests), LICENSE from
@@ -308,7 +290,7 @@ restatement of it:
 4. Composite < 7.
 5. Any Critical finding exists.
 6. Two or more Important findings within a single reviewer domain.
-   (Adopted 2026-11-10, decision D1.)
+   (Decision D1, §11.)
 
 A domain whose reviewer did not return is scored ⛔ "not returned" and the
 verdict cannot be ✅; a `status: partial` return synthesizes normally with
@@ -334,8 +316,7 @@ smoke) quoted.
   classification & minimization, access control & attribution, exposure
   surface, retention & durability, human oversight of high-stakes
   operations, transparency of data handling). When both triggers apply,
-  both branches run. (Branch B added 2026-11-10, from the grade
-  exercise's Large retrospective candidate.)
+  both branches run.
 - **Bug-checklist reviewer** (Azure pack) reports in its own terms
   (🔴/🟠/🟡/✅), translated by the table in §4.2 wherever its findings
   enter synthesis. It is a supplementary Phase 6 input for Azure
@@ -431,7 +412,7 @@ domain pulls that domain into the round.
   only the first-listed (primary) reviewer per phase — **Phase 6 on
   Small keeps the always-active panel** (the grade cuts rounds, not
   perspectives); on Large, `implement` and `qa` run the full panel.
-- **Small consolidation of Phases 1–2 (PR #71):** on Small, the Phase 1
+- **Small consolidation of Phases 1–2:** on Small, the Phase 1
   step-6 review is deferred and the two phases exit through **one
   combined review** — one reviewer applying the requirements checklist
   to the REQ and the architecture checklist to the proposal and ADR —
@@ -441,7 +422,7 @@ domain pulls that domain into the round.
 ## 7. Pit-stop counting (failure ledger)
 
 - The failure ledger (`.SDLC/failure-ledger.md`) is created by the
-  Harness at intake, beside the manifest skeleton (PR #54).
+  Harness at intake, beside the manifest skeleton.
 - Line format: `date | phase | agent | kind | signature`, where kind ∈
   `tool-failure | rework | claim-contradiction | no-progress |
   delegation`. The Harness appends one `delegation` line per
@@ -456,8 +437,7 @@ domain pulls that domain into the round.
   `TRANSITION COUNT` line — including when the counts are zero.
 - Triggers: **T1** the same failure signature reaches its 3rd line;
   **T2** the same rework reason-class reaches its 2nd line; **T3** a
-  claim contradicted by disk; **T4** no progress (T1–T4 unchanged from
-  PR #33); **T5** a delegation signature would be issued a 3rd time —
+  claim contradicted by disk; **T4** no progress; **T5** a delegation signature would be issued a 3rd time —
   the first repeat may be issued only with a redirect recorded in the
   brief and the delegation line, and the second repeat is not issued
   at all: T5 fires the review first, the signature is spent, and the
@@ -511,12 +491,11 @@ domain pulls that domain into the round.
 |---|---|
 | Creator | The **Harness**, at intake: skeleton + run basis + provisional Task Grade section + the failure ledger created in the same step. No other agent creates a manifest. A missing manifest is reported to the Harness, never generated by the reader. |
 | Body completion | The **Scaffolder** completes the manifest body during Phase 3, preserving the Task Grade section verbatim. |
-| Writers | The Harness maintains the Phase-State Ledger, run-basis lines, and Task Grade fields mechanically — this is record upkeep under the no-direct-edits exception, never a Documenter delegation (PR #51). The Analyst fixes the final Task Grade and its basis at Phase 2 and verifies the size counts in 1B. |
-| Ledger format | `Phase \| Status \| Artifacts \| Updated \| Notes` — five columns. (The manifest skill's four-column format predates live use; the five-column form, which carries the Notes the gates cite, is canonical. (Adopted
-2026-11-10, decision D5.) |
+| Writers | The Harness maintains the Phase-State Ledger, run-basis lines, and Task Grade fields mechanically — this is record upkeep under the no-direct-edits exception, never a Documenter delegation. The Analyst fixes the final Task Grade and its basis at Phase 2 and verifies the size counts in 1B. |
+| Ledger format | `Phase \| Status \| Artifacts \| Updated \| Notes` — five columns. (The manifest skill's four-column format predates live use; the five-column form, which carries the Notes the gates cite, is canonical (decision D5, §11). |
 | Ledger rows | Exactly the rows of §2.1, in order. |
-| Task Grade | Two-axis record (size × complexity) with its basis, per the approved sizing criteria: provisional at intake (size axis), fixed at design; upgrades are free, downgrades require the user's approval; personal/payment/health data raises one step — counted once per fact: payment data already priced by the complexity axis's strong-consistency (money) signal does not raise the grade a second time (the correction's non-stacking rule, Harness "Task grade"). **Counting rule (PR #70):** the size axis counts *user-facing operations* (an endpoint doing a distinct job, a screen, a command) — never requirements, however many FRs describe one operation; cross-cutting concerns (validation, error handling, persistence, tests, API documentation) are never units. Calibration anchors recorded in the grading text: Task Tracker API ≈ 5–8 units, URL shortener = 5 units, both Small. |
-| Verifier | The phase gates (§3). A record no gate checks is treated as unwritten — the standing lesson of PRs #52/#54. |
+| Task Grade | Two-axis record (size × complexity) with its basis, per the approved sizing criteria: provisional at intake (size axis), fixed at design; upgrades are free, downgrades require the user's approval; personal/payment/health data raises one step — counted once per fact: payment data already priced by the complexity axis's strong-consistency (money) signal does not raise the grade a second time (the correction's non-stacking rule, Harness "Task grade"). **Counting rule:** the size axis counts *user-facing operations* (an endpoint doing a distinct job, a screen, a command) — never requirements, however many FRs describe one operation; cross-cutting concerns (validation, error handling, persistence, tests, API documentation) are never units. Calibration anchors recorded in the grading text: Task Tracker API ≈ 5–8 units, URL shortener = 5 units, both Small. |
+| Verifier | The phase gates (§3). A record no gate checks is treated as unwritten — the standing lesson. |
 
 **Run configuration.** The run basis also records the run's
 configuration at intake: the **pack set and the MCP server set** the
@@ -542,7 +521,7 @@ phase where the configuration changed.
 | Reference catalog (`.github/reference-catalog.md`) | Workspace-init (empty template, 5 fixed sections) | Analyst populates in Phases 1–2; any agent may **append** after approval | Harness review checkpoint (§10.1); append-only after approval (or auto-approval); entries carry `Source: [agent] (Phase [N])` |
 | Design brief (`.SDLC/design-brief.md`) | Harness, in the Step 0.75 design conversation | Harness only — amendments are appended, dated frame revisions, never silent rewrites | The intake completeness gate (Class 1, §5) before the Phase 1A delegation: the minimum set (fields 1–5) is `confirmed` and every other field carries an explicit status. Consumers: workspace-init (project name, domain, stack), the Analyst (1A/1B work inside the frame), the provisional Task Grade (fields 5 and 7 are its inputs), the Scaffolder (Phase 3 template selection must match the brief's type and stack; a mismatch is a gate finding) |
 | REQ document | Analyst (1B) from the approved discovery summary | Analyst | Phase 1 gate; status lifecycle `Draft → Under Review → Approved → Superseded` (template) |
-| ADR set (`docs/adr/`) | Documenter, from the Analyst's design proposal, one ADR per proposal by default (PR-era granularity rule); on Small, the Analyst in the Phase 2 session (§2.4, PR #71) | Documenter (or the Analyst, on Small). After Phase 2, any phase's decision-bearing change appends a **dated addendum** to its governing ADR or **adds a new ADR** in the same change; original text is never rewritten; a reversal supersedes — lifecycle `Proposed → Accepted → Superseded`, the superseded ADR pointing forward to its replacement | Phase 1–2 exit gate; status starts `Proposed`. The **ADR index** (`docs/adr/README.md`) lists every ADR with its status, is updated in the same change as any ADR delta, and exactly the Accepted set is in force; the records check (§8.4) verifies the index against the files |
+| ADR set (`docs/adr/`) | Documenter, from the Analyst's design proposal, one ADR per proposal by default; on Small, the Analyst in the Phase 2 session (§2.4) | Documenter (or the Analyst, on Small). After Phase 2, any phase's decision-bearing change appends a **dated addendum** to its governing ADR or **adds a new ADR** in the same change; original text is never rewritten; a reversal supersedes — lifecycle `Proposed → Accepted → Superseded`, the superseded ADR pointing forward to its replacement | Phase 1–2 exit gate; status starts `Proposed`. The **ADR index** (`docs/adr/README.md`) lists every ADR with its status, is updated in the same change as any ADR delta, and exactly the Accepted set is in force; the records check (§8.4) verifies the index against the files |
 | Design proposal (`.SDLC/design-proposal-<topic>.md`) | Analyst — sketch first, expanded section by section; saved as a file by the Analyst, or verbatim by the Documenter if the Analyst cannot save | Analyst | Phase 2 gate input |
 | Evidence pack (`.SDLC/qa-evidence/`) | Harness (collector script + full test run to `test-run.txt` + CI Evidence section) | Harness | QA Coordinator consumes; a verdict without it is not a Phase 6 verdict |
 | QA findings (GitHub) | QA Coordinator | Coordinator | The ledger is the local source of truth; GitHub sync is one-way, ledger → GitHub (ADR-0003) |
@@ -596,7 +575,7 @@ history is read on demand.
 The harness has four different "orders". They answer different questions
 and must never be substituted for one another.
 
-### 9.1 Instruction authority — *who may direct the work* (PR #31)
+### 9.1 Instruction authority — *who may direct the work*
 
 1. The user's session instructions.
 2. The harness's shipped rules.
@@ -606,7 +585,7 @@ and must never be substituted for one another.
 Work starts, changes scope, or stops only on level 1, or on a level-3
 artifact that records a level-1 decision.
 
-### 9.2 Pattern conformance — *what artifacts must match* (PR #34)
+### 9.2 Pattern conformance — *what artifacts must match*
 
 1. The patterns recorded in the project's manifest.
 2. The stack profile's pinned values and bundled templates.
@@ -641,10 +620,10 @@ template-source line, which substitutes ".github/reference-catalog.md
 patterns" for step 4, diverges from this chain and is listed for
 alignment.)
 
-**Supported set (as of v1.3.0):** Python, .NET, TypeScript, Java
-(Spring Boot template, PR #64), Go (stdlib template, PR #65), Rust
-(axum template, PR #66) — each with profile, instruction pair, bundled
-template, and a verified greenfield instantiation of that template.
+**Supported set:** Python, .NET, TypeScript, Java (Spring Boot
+template), Go (stdlib template), Rust (axum template) — each with
+profile, instruction pair, bundled template, and a verified greenfield
+instantiation of that template.
 
 ## 10. Operational definitions
 
@@ -668,8 +647,8 @@ default:
 
 The run-start column governs full harness runs; the QA column governs a
 coordinator invoked standalone. The asymmetry is deliberate and is
-recorded here so neither file "fixes" the other. (Kept and
-documented 2026-11-10, decision D4.) Canary mode is stricter than
+recorded here so neither file "fixes" the other. (Decision D4, §11.)
+Canary mode is stricter than
 production by design.
 
 ### 10.3 Environment limitation (the named exit condition)
@@ -685,9 +664,9 @@ Consumers: Phase 4 exit (§3), Phase 6 test-evidence exception (§4.3).
 
 The 80% figure lives in exactly one place — a Test Coverage Reviewer
 checklist line, "target: 80%+" — and in no exit criterion. (Verified
-during the sweep: no bundled template sets a coverage threshold; an
+against the shipped tree: no bundled template sets a coverage threshold; an
 earlier scan note claiming the TypeScript template hardcoded 80% did
-not survive re-checking the shipped `vitest.config.ts`.) Canonical status (adopted 2026-11-10, decision D3): a **stack-profile quality target**, Class 2 — falling short is
+not survive re-checking the shipped `vitest.config.ts`.) Canonical status (decision D3, §11): a **stack-profile quality target**, Class 2 — falling short is
 a recorded deviation, never a gate failure — stated once per profile
 instead of being hardcoded per template.
 
