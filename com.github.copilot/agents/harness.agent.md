@@ -1455,6 +1455,8 @@ basis. Fixed fields, no free prose beyond them:
   signatures proposed (fired a trigger), confirmations added, patterns
   promoted to standing, patterns contested or retired. A signature
   that fired and is missing here is a record gap, not a judgment call.
+  Each spent signature also carries its bench disposition (§7): the
+  canary or evaluation case it became, or why no case fits.
 - **Candidate rule changes** — at most three, each stated as the rule
   that would have changed this run's outcome. A candidate drawn from
   a repeated failure cites its pattern-register row — the counted
