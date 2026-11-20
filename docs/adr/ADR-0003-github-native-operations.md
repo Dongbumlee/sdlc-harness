@@ -1,6 +1,6 @@
 # ADR-0003: GitHub-Native Operations — Repository First, Work Tracked in Issues/PRs, Test Evidence from CI
 
-> **Status:** Accepted (amended 2026-11-12 — D6, D7 added; amended 2026-11-20 — D3 placement superseded)  
+> **Status:** Accepted (amended 2026-11-12 — D6, D7 added; amended 2026-11-20 — D3 placement superseded, root community files and workflow composition moved to the root)  
 > **Date:** 2026-10-19  
 > **Author:** Dongbum(DB) Lee (product owner, harness maintainer)  
 > **Related:** ADR-0002 (bundled default templates), manifest Phase-State Ledger, QA evidence pack
@@ -207,6 +207,30 @@ a project's existing root template, which is the project's own standard.
 The stack templates no longer carry a copy. D3's requirement itself
 stands: harness-opened PRs follow the template, and the Phase 3 exit
 gate still verifies the root file exists.
+
+### Amendment (2026-11-20): the root community files ship with initialization; workflows are composed at the root
+
+The same placement lesson, one layer wider. The Scaffolder's compliance
+tree has always required `SECURITY.md`, `SUPPORT.md`, and `LICENSE` at
+the repository root, but the supply was per-template copies — which land
+under `src/<project>/` in a multi-service scaffold, where GitHub does
+not surface them — and `SUPPORT.md` was in no template at all: the
+2026-11-19 walkthrough run finished with that checklist line unmet and
+no file. A checklist line is not a file (Context, item 1).
+
+The root community set — `LICENSE`, `SECURITY.md`, `SUPPORT.md`,
+`CODE_OF_CONDUCT.md`, `CONTRIBUTING.md`, `renovate.json` — now ships
+once, as assets of the workspace-init skill, deployed to the repository
+root at initialization, keeping any file the project already has. The
+stack templates no longer carry `LICENSE`, `SECURITY.md`, or
+`renovate.json`.
+
+Workflows get the same treatment. GitHub Actions reads only the root
+`.github/workflows/`, so a template's workflows are composed at the
+root, never copied under `src/`: one build job per project in a single
+`ci.yml`, one repository-wide security job, one release workflow per
+project, and deployment in a root `deploy.yml` composed from the cloud
+pack's deployment skill. The Scaffolder carries the composition rule.
 
 ## Consequences
 
