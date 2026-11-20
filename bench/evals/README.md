@@ -39,7 +39,11 @@ judged like this:
 3. **Score mechanically.** Judgment against the pinned key, no
    judgment calls. The change's PR records the before/after score
    and **every flipped case**, each flip attributed to the specific
-   textual difference that caused it.
+   textual difference that caused it. When the change grows the
+   shipped instruction surface (agent and skill text), the PR also
+   records the surface delta in characters and names what the
+   growth displaces — or states that the addition is deliberate
+   with nothing displaced (base definitions §8.1).
 4. **Verdict.** The change merges when the after-pass shows no
    regression against the key — or when a regression is named in
    the PR and accepted as the stated price of a stated gain. An

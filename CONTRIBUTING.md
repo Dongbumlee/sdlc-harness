@@ -35,6 +35,9 @@ python3 -m pytest tests/ -q
   platform resolve it.
 - Measured claims carry their scope: what was run, on which stack,
   in which form (desk exercise, canary, live run).
+- Always-on instruction text is the most expensive form a rule can
+  take: a change that grows the shipped instruction surface names
+  what it displaces (base definitions §8.1).
 - Releases are cut with a written scope freeze (an IN list and an
   OUT list) recorded before the tag; release notes describe IN only.
 - VSIX distribution is retired — do not recreate `vscode-extension/`,
