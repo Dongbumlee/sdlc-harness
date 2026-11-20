@@ -42,12 +42,11 @@ Install once — get all 22 agents, 25 skills, and the full SDLC workflow instan
 ## Table of Contents
 
 - [Quick Start](#quick-start)
+- [How It Works](#how-it-works)
 - [Architecture](#architecture)
 - [Supported Stacks](#supported-stacks)
-- [How It Works](#how-it-works)
 - [Cloud Packs](#cloud-packs)
-- [Canary Testing](#canary-testing)
-- [What's Included](#whats-included)
+- [What's in the Box](#whats-in-the-box)
 - [Documentation](#documentation)
 - [Prerequisites](#prerequisites)
 - [Adopting in Your Repo](#adopting-in-your-repo)
@@ -85,13 +84,11 @@ uses. How you start the Harness depends on the host:
 
 **VS Code**
 
-> [!CAUTION]
-> **Two VS Code settings are required first:**
->
-> | Setting | Value | Why |
-> |---------|-------|-----|
-> | `chat.agent.defaultApproval` | `autopilot` | Without this, every tool call requires manual approval. |
-> | `github.copilot.chat.virtualTools.threshold` | `0` | Harness uses 3 core MCP servers, plus the vendor servers in your cloud pack. The default limit hides tools. |
+> **Two settings first:** `chat.agent.defaultApproval` set to `autopilot`
+> (otherwise every tool call asks for manual approval) and
+> `github.copilot.chat.virtualTools.threshold` set to `0` (the default
+> limit hides MCP tools). [Troubleshooting](docs/troubleshooting.md)
+> covers both, and what to do when they are missing.
 
 ```
 # Recommended: explicit invocation
@@ -116,135 +113,6 @@ Start with the Harness as the main agent, then say `initialize workspace`:
 ```bash
 claude --agent sdlc-harness:harness
 ```
-
----
-
-## Architecture
-
-### Agent system (22 agents)
-
-A single user-facing agent — **Harness** — orchestrates specialized workers,
-each scoped to a specific SDLC phase with least-privilege tool access.
-
-```mermaid
-flowchart TD
-    Request["Engineer Request"] --> H["Harness"]
-
-    H --> A["Analyst<br/>Phase 1-2"]
-    H --> S["Scaffolder<br/>Phase 3"]
-    H --> Dep["Deployer<br/>Phase 3+8"]
-    H --> I["Implementer<br/>Phase 4"]
-    H --> Doc["Documenter<br/>Phase 5"]
-    H --> QA["QA Coordinator<br/>Phase 6"]
-    H --> RAI["RAI Reviewer<br/>Phase 7"]
-    H --> R["Release Manager<br/>Phase 8-9"]
-
-    QA -->|parallel| R1["Architecture"]
-    QA -->|parallel| R2["{Target} Compliance<br/>AWS/GCP/Azure/On-Prem"]
-    QA -->|parallel| R3["Code Quality"]
-    QA -->|parallel| R4["Security"]
-    QA -->|parallel| R5["Test Coverage"]
-    QA -->|parallel| R6["Req. Completeness"]
-    QA -->|parallel| R7["UX & A11y"]
-    QA -->|parallel| R8["LLM Behavior"]
-    QA -->|parallel| R9["Deploy Readiness"]
-
-    style H fill:#4A90D9,color:#fff
-    style QA fill:#E67E22,color:#fff
-```
-
-| Role | Agents | Phase |
-|------|--------|-------|
-| **Orchestrator** | Harness | Routes all work |
-| **Phase workers** | Analyst, Scaffolder, Deployer, Implementer, Documenter, QA Coordinator, RAI Reviewer, Release Manager | 1–9 |
-| **QA reviewers** (9 domains) | Architecture, Target Compliance (Azure / AWS / GCP / On-Prem — one runs, matching the project's deployment target), Code Quality, Security, Test Coverage, Requirements Completeness, UX/A11y, LLM Behavior, Deployment Readiness | Phase 6 |
-| **Azure pack extra** | QA Bug Checklist Reviewer (338 production bug patterns; user-invocable, not a panel member) | Cross-cutting |
-
-### 9-phase SDLC workflow
-
-| Phase | Name | Agent |
-|-------|------|-------|
-| 1 | Requirement Analysis | Analyst |
-| 2 | Design | Analyst |
-| 3 | Repo Structure & CI/CD | Scaffolder |
-| 4 | Implementation & Tests | Implementer |
-| 5 | Documentation | Documenter |
-| 6 | QA Activities | QA Coordinator → 9 reviewers |
-| 7 | Responsible AI Review | RAI Reviewer |
-| 8 | Release Preparation | Release Manager |
-| 9 | Publish | Release Manager |
-
-```mermaid
-flowchart LR
-    P1["1 · Requirements"] --> P2["2 · Design"] --> P3["3 · Scaffold"]
-    P3 --> P4["4 · Implementation"] --> P5["5 · Documentation"]
-    P5 --> P6["6 · QA"] --> P7["7 · RAI Review"] --> P8["8 · Release"]
-    P8 --> P9["9 · Publish"]
-```
-
-Phase 0 (workspace init) runs once before a project's first run, and Phase 3B
-is an infrastructure-validation checkpoint inside the deploy path — neither
-inflates the 9-phase count. Every phase exit is a gate: the Harness checks
-the artifacts on disk, and the phase's row in the manifest ledger moves to
-Complete only when the gate passes.
-
-### QA evaluation engine
-
-Inspired by [Anthropic's harness design research](https://www.anthropic.com/engineering/harness-design-long-running-apps):
-
-- **Generator-evaluator separation** — 9 independent reviewers run in parallel, each in its own context window with no anchoring bias.
-- **Adversarial posture** — every reviewer has explicit anti-leniency instructions.
-- **Numeric scoring** — each reviewer scores 1-10. Security requires ≥8, others ≥7. Any Critical finding = automatic fail.
-- **Iterative loops** — QA → fix → delta re-review of the changed ranges only. Round caps scale with the task grade (Small 2, Medium 3, Large 3 in Phase 6).
-- **Weighted composite** — `(security × 1.5 + sum of other active domains) / (1.5 + active domains)`. Composite < 7 = fail.
-
-See [docs/harness-design.md](docs/harness-design.md) for the full research-to-implementation mapping.
-
-### MCP integration
-
-Agents fetch live context from external tools — no stale training data.
-Three servers are core to every workspace; each cloud pack adds its
-vendor's servers:
-
-| Server | Purpose | Used by |
-|--------|---------|---------|
-| **GitHub MCP** | SDK patterns, reference repos, code search; also fetches best-practice instructions and collections (OWASP Top 10, Bicep best practices, Python standards) from the `github/awesome-copilot` repository — a discovery-time source, not a configured server | Implementer, Scaffolder, Analyst, Security Reviewer, Deployer |
-| **Context7** | Current framework docs (FastAPI, React, etc.) | Implementer, Analyst |
-| **Playwright** | Browser automation for E2E testing | QA Coordinator |
-| **Azure MCP Server** | Validate Azure resources, manage subscriptions (Azure pack) | Deployer, Azure Compliance Reviewer |
-| **Microsoft Learn MCP** | AVM module docs, Azure service documentation (Azure pack) | Deployer, Documenter |
-| **AWS MCP Server** | The one managed AWS MCP Server, via the pinned MCP Proxy for AWS (AWS pack) | Deployer, AWS Compliance Reviewer |
-| **Google Developer Knowledge MCP** | Google Cloud documentation (GCP pack) | Deployer, GCP Compliance Reviewer |
-| **Firestore MCP** | Firestore managed endpoint (GCP pack) | Implementer, GCP Compliance Reviewer |
-
-GitHub is the only forge — there is no Azure DevOps (or other tracker)
-server.
-
-> **Setup:** Working from a clone of this repository? Run `tools/check-mcp.ps1`
-> (Windows) or `tools/check-mcp.sh` (Linux/macOS) to auto-configure MCP servers
-> for VS Code, Copilot CLI, and Claude Code.
-> See [Troubleshooting](docs/troubleshooting.md#mcp-servers) for common issues.
-
----
-
-## Supported Stacks
-
-A stack is supported when it ships all four of: a stack profile (pinned
-values and rules), a language instruction pair, a bundled project template,
-and a verified greenfield run of that template. Six stacks qualify:
-
-| Stack | Bundled default | Template stack |
-|-------|-----------------|----------------|
-| **Python** | FastAPI API | FastAPI + pytest, layered web/service/data layout |
-| **.NET** | ASP.NET Core API | .NET 10 (`net10.0`), xUnit + coverlet |
-| **TypeScript** | Web app | Next.js ≥ 16.2.11 on TypeScript 6 (held at 6.x — typescript-eslint does not support TS 7 yet) |
-| **Java** | Spring Boot API | Java 21 LTS, Spring Boot 3.5, Maven wrapper, JUnit + JaCoCo |
-| **Go** | HTTP API | Go 1.27, standard library `net/http` only — no web framework |
-| **Rust** | HTTP API | Rust edition 2024, axum, one crate with layered modules |
-
-Scaffolding copies the bundled template verbatim (org templates override
-when configured). The Phase 1–2 design gate mechanically checks the spec's
-stack claims against the template it will actually be built from.
 
 ---
 
@@ -347,7 +215,14 @@ visible in the session as a collapsible tool call.
 
 Every run is graded at intake and fixed at design — **Small** (≤10 user-facing
 operations, one component), **Medium**, or **Large** (multiple components,
-integrations, or strong complexity signals) — and the grade sets the ceremony:
+integrations, or strong complexity signals) — and the grade sets both the
+ceremony and the run's budget envelope:
+
+| Grade | Model spend | Wall clock |
+|-------|-------------|------------|
+| Small | ≤ $20 | ≤ 4 hours |
+| Medium | ≤ $75 | ≤ 2 days |
+| Large | ≤ $250 | ≤ 5 days |
 
 - **Small** — Phases 1–2 consolidate: one Analyst session per phase (the
   Phase 2 session also saves the ADR) and one combined requirements +
@@ -361,6 +236,127 @@ The canonical definitions — phases, gates, severities, round caps — live in
 [docs/base-definitions.md](docs/base-definitions.md).
 
 See [docs/workflow-guide.md](docs/workflow-guide.md) for the full step-by-step walkthrough with sequence diagrams.
+
+---
+
+## Architecture
+
+### Agent system (22 agents)
+
+A single user-facing agent — **Harness** — orchestrates specialized workers,
+each scoped to a specific SDLC phase with least-privilege tool access.
+
+```mermaid
+flowchart TD
+    Request["Engineer Request"] --> H["Harness"]
+
+    H --> A["Analyst<br/>Phase 1-2"]
+    H --> S["Scaffolder<br/>Phase 3"]
+    H --> Dep["Deployer<br/>Phase 3+8"]
+    H --> I["Implementer<br/>Phase 4"]
+    H --> Doc["Documenter<br/>Phase 5"]
+    H --> QA["QA Coordinator<br/>Phase 6"]
+    H --> RAI["RAI Reviewer<br/>Phase 7"]
+    H --> R["Release Manager<br/>Phase 8-9"]
+
+    QA -->|parallel| R1["Architecture"]
+    QA -->|parallel| R2["{Target} Compliance<br/>AWS/GCP/Azure/On-Prem"]
+    QA -->|parallel| R3["Code Quality"]
+    QA -->|parallel| R4["Security"]
+    QA -->|parallel| R5["Test Coverage"]
+    QA -->|parallel| R6["Req. Completeness"]
+    QA -->|parallel| R7["UX & A11y"]
+    QA -->|parallel| R8["LLM Behavior"]
+    QA -->|parallel| R9["Deploy Readiness"]
+
+    style H fill:#4A90D9,color:#fff
+    style QA fill:#E67E22,color:#fff
+```
+
+| Role | Agents | Phase |
+|------|--------|-------|
+| **Orchestrator** | Harness | Routes all work |
+| **Phase workers** | Analyst, Scaffolder, Deployer, Implementer, Documenter, QA Coordinator, RAI Reviewer, Release Manager | 1–9 |
+| **QA reviewers** (9 domains) | Architecture, Target Compliance (Azure / AWS / GCP / On-Prem — one runs, matching the project's deployment target), Code Quality, Security, Test Coverage, Requirements Completeness, UX/A11y, LLM Behavior, Deployment Readiness | Phase 6 |
+| **Azure pack extra** | QA Bug Checklist Reviewer (338 production bug patterns; user-invocable, not a panel member) | Cross-cutting |
+
+### 9-phase SDLC workflow
+
+| Phase | Name | Agent |
+|-------|------|-------|
+| 1 | Requirement Analysis | Analyst |
+| 2 | Design | Analyst |
+| 3 | Repo Structure & CI/CD | Scaffolder |
+| 4 | Implementation & Tests | Implementer |
+| 5 | Documentation | Documenter |
+| 6 | QA Activities | QA Coordinator → 9 reviewers |
+| 7 | Responsible AI Review | RAI Reviewer |
+| 8 | Release Preparation | Release Manager |
+| 9 | Publish | Release Manager |
+
+Phase 0 (workspace init) runs once before a project's first run, and Phase 3B
+is an infrastructure-validation checkpoint inside the deploy path — neither
+inflates the 9-phase count. Every phase exit is a gate: the Harness checks
+the artifacts on disk, and the phase's row in the manifest ledger moves to
+Complete only when the gate passes.
+
+### QA evaluation engine
+
+Inspired by [Anthropic's harness design research](https://www.anthropic.com/engineering/harness-design-long-running-apps):
+
+- **Generator-evaluator separation** — 9 independent reviewers run in parallel, each in its own context window with no anchoring bias.
+- **Adversarial posture** — every reviewer has explicit anti-leniency instructions.
+- **Numeric scoring** — each reviewer scores 1-10. Security requires ≥8, others ≥7. Any Critical finding = automatic fail.
+- **Iterative loops** — QA → fix → delta re-review of the changed ranges only. Round caps scale with the task grade (Small 2, Medium 3, Large 3 in Phase 6).
+- **Weighted composite** — `(security × 1.5 + sum of other active domains) / (1.5 + active domains)`. Composite < 7 = fail.
+
+See [docs/harness-design.md](docs/harness-design.md) for the full research-to-implementation mapping.
+
+### MCP integration
+
+Agents fetch live context from external tools — no stale training data.
+Three servers are core to every workspace; each cloud pack adds its
+vendor's servers:
+
+| Server | Purpose |
+|--------|---------|
+| **GitHub MCP** | SDK patterns, reference repos, code search; also fetches best-practice instructions and collections (OWASP Top 10, Bicep best practices, Python standards) from the `github/awesome-copilot` repository — a discovery-time source, not a configured server |
+| **Context7** | Current framework docs (FastAPI, React, etc.) |
+| **Playwright** | Browser automation for E2E testing |
+| **Azure MCP Server** | Validate Azure resources, manage subscriptions (Azure pack) |
+| **Microsoft Learn MCP** | AVM module docs, Azure service documentation (Azure pack) |
+| **AWS MCP Server** | The one managed AWS MCP Server, via the pinned MCP Proxy for AWS (AWS pack) |
+| **Google Developer Knowledge MCP** | Google Cloud documentation (GCP pack) |
+| **Firestore MCP** | Firestore managed endpoint (GCP pack) |
+
+GitHub is the only forge — there is no Azure DevOps (or other tracker)
+server.
+
+> **Setup:** Working from a clone of this repository? Run `tools/check-mcp.ps1`
+> (Windows) or `tools/check-mcp.sh` (Linux/macOS) to auto-configure MCP servers
+> for VS Code, Copilot CLI, and Claude Code.
+> See [Troubleshooting](docs/troubleshooting.md#mcp-servers) for common issues.
+
+---
+
+## Supported Stacks
+
+A stack is supported when it ships all four of: a stack profile (pinned
+values and rules), a language instruction pair, a bundled project template,
+and a verified greenfield run of that template. Six stacks qualify:
+
+| Stack | Bundled default | Template stack |
+|-------|-----------------|----------------|
+| **Python** | FastAPI API | FastAPI + pytest, layered web/service/data layout |
+| **.NET** | ASP.NET Core API | .NET 10 (`net10.0`), xUnit + coverlet |
+| **TypeScript** | Web app | Next.js ≥ 16.2.11 on TypeScript 6 (held at 6.x — typescript-eslint does not support TS 7 yet) |
+| **Java** | Spring Boot API | Java 21 LTS, Spring Boot 3.5, Maven wrapper, JUnit + JaCoCo |
+| **Go** | HTTP API | Go 1.27, standard library `net/http` only — no web framework |
+| **Rust** | HTTP API | Rust edition 2024, axum, one crate with layered modules |
+
+Scaffolding copies the bundled template verbatim (org templates override
+when configured). The Phase 1–2 design gate mechanically checks the spec's
+stack claims against the template it will actually be built from.
 
 ---
 
@@ -382,104 +378,23 @@ Plugins clients discover them. Pack layout and authoring a new pack
 
 ---
 
-## Canary Testing
+## What's in the Box
 
-SDLC Harness includes an E2E test framework for validating the harness itself.
-Canary specs define expected agent behavior for each SDLC phase, including
-separate release-preparation (Phase 8) and publish (Phase 9) checks.
+- **22 agents** — the Harness orchestrator, 8 phase workers, 9 QA reviewer
+  domains (with one target-compliance reviewer per cloud pack), and the
+  standalone QA Bug Checklist Reviewer carrying 338 real production bug
+  patterns (Azure pack).
+- **25 skills** — the workflow itself: workspace init, stack profiles,
+  scaffolding, the project manifest, requirements discovery, ADR authoring,
+  the review checklists, and one deployment + data pair per cloud pack.
+- **30 bundled templates** across 6 stacks and 6 project types, copied
+  verbatim at scaffolding.
+- **14 quality instruction files** (code + test standards for 7 languages),
+  **6 prompt files**, and the MCP configuration for 3 core servers plus
+  your cloud pack's vendor servers.
 
-- **57 canary specs** across `bench/canaries/` (phase coverage + catalog + QA gate and negative-path tests)
-- **2 JSON schemas** in `schemas/` for validation (canary specs, cloud packs)
-- **CI integration** — `canary-test.yml` validates spec schema on PRs touching agents/skills
-
-```bash
-# Validate canary specs locally
-python tools/validate_canaries.py
-```
-
----
-
-## What's Included
-
-### Agents (22)
-
-| Agent | Description |
-|-------|-------------|
-| **Harness** | Orchestrator — routes all SDLC work |
-| **Analyst** | Phase 1-2: Requirements & design |
-| **Scaffolder** | Phase 3: Repo structure from templates |
-| **Deployer** | Phase 3+8: Deployment infrastructure for the recorded target (cloud pack tooling) |
-| **Implementer** | Phase 4: Production code + tests |
-| **Documenter** | Phase 5: ADRs, API docs |
-| **QA Coordinator** | Phase 6: Dispatches 9 parallel reviewers |
-| **RAI Reviewer** | Phase 7: Responsible AI assessment |
-| **Release Manager** | Phase 8-9: Changelog, PR, publish |
-| **Architecture Reviewer** | QA: Layering, dependency boundaries |
-| **Azure Compliance Reviewer** | QA: SDK usage, AVM, identity (Azure pack) |
-| **AWS Compliance Reviewer** | QA: SDK usage, CDK, identity (AWS pack) |
-| **GCP Compliance Reviewer** | QA: SDK usage, Terraform, identity (GCP pack) |
-| **On-Prem Compliance Reviewer** | QA: Patching, segmentation, backup/DR, TLS (On-Premises pack) |
-| **Code Quality Reviewer** | QA: Naming, docstrings, dead code |
-| **Security Reviewer** | QA: OWASP, secrets, auth |
-| **Test Coverage Reviewer** | QA: Tests, coverage, assertions |
-| **Requirements Completeness Reviewer** | QA: All requirements addressed |
-| **UX & Accessibility Reviewer** | QA: ARIA, keyboard nav, a11y |
-| **LLM Behavior Reviewer** | QA: Prompt safety, grounding, citations |
-| **Deployment Readiness Reviewer** | QA: Error handling, perf, observability |
-| **QA Bug Checklist Reviewer** | Azure pack: 338 real bug patterns (user-invocable) |
-
-### Skills (25)
-
-| Skill | Purpose |
-|-------|---------|
-| `sdlc-harness` | Entry point: routes a request into the SDLC workflow |
-| `sdlc-workspace-init` | Bootstrap workspace (MCP config, instructions, prompts) |
-| `sdlc-stack-profiles` | Per-stack pinned values, bundled templates, mechanical stack-conformance check |
-| `sdlc-project-scaffolding` | Scaffold projects from templates |
-| `sdlc-project-manifest` | Cross-agent consistency manifest |
-| `sdlc-reference-catalog` | Living catalog of approved libraries |
-| `sdlc-adr-authoring` | Architecture Decision Records |
-| `sdlc-requirements-discovery` | Requirements elicitation |
-| `sdlc-architecture-review` | Architecture review checklist |
-| `sdlc-code-quality` | Code quality review checklist |
-| `sdlc-security-review` | OWASP + Azure security patterns |
-| `sdlc-project-qa` | Comprehensive product QA checklist |
-| `sdlc-qa-bug-checklist` | Azure Pack: 338 real production bug patterns |
-| `sdlc-reviewer-output-format` | Structured YAML output for reviewers |
-| `sdlc-canary-runner` | E2E canary test runner |
-| `sdlc-azure-deployment` | Azure Pack: Bicep/AVM deployment |
-| `sdlc-cosmos-repository` | Azure Pack: Cosmos DB Repository Pattern |
-| `sdlc-blob-storage` | Azure Pack: Blob Storage + Queue operations |
-| `sdlc-aws-deployment` | AWS Pack: CDK deployment (Lambda container + Fargate Spot) |
-| `sdlc-dynamodb-repository` | AWS Pack: DynamoDB Repository Pattern |
-| `sdlc-s3-storage` | AWS Pack: S3 + presigned URL operations |
-| `sdlc-gcp-deployment` | GCP Pack: Terraform deployment (Cloud Run + Jobs) |
-| `sdlc-firestore-repository` | GCP Pack: Firestore Repository Pattern |
-| `sdlc-gcs-storage` | GCP Pack: Cloud Storage + signed URL operations |
-| `sdlc-onprem-deployment` | On-Premises Pack: Recorded-path deployment (Kubernetes, Compose, host services) |
-
-### Quality instructions (14 files, auto-applied by file type)
-
-| Language | Code quality | Test quality |
-|----------|-------------|-------------|
-| Python | `code-quality-py` | `test-quality` |
-| TypeScript | `code-quality-ts` | `test-quality-ts` |
-| React/TSX | `code-quality-tsx` | `test-quality-tsx` |
-| C# | `code-quality-csharp` | `test-quality-csharp` |
-| Java | `code-quality-java` | `test-quality-java` |
-| Go | `code-quality-go` | `test-quality-go` |
-| Rust | `code-quality-rust` | `test-quality-rust` |
-
-### Prompt files (6)
-
-| Prompt | Phase | Routes to |
-|--------|-------|-----------|
-| `requirement-and-design` | 1-2 | Analyst |
-| `repo-structure-and-cicd` | 3 | Scaffolder |
-| `deployment` | 3+8 | Deployer |
-| `implementation-and-tests` | 4 | Implementer |
-| `repo-documentation` | 5 | Documenter |
-| `qa-rai-release` | 6-8 | Harness |
+The full generated list — every agent and skill with its file — lives in
+[docs/agent-inventory.md](docs/agent-inventory.md).
 
 ---
 
@@ -586,11 +501,11 @@ and how a change takes effect.
 
 ## Contributing
 
-SDLC Harness development happens on `main`, through pull requests. Every
-change runs the verification battery locally before it is proposed:
-`tools/assemble_flat_layout.py --check`, `tools/verify_templates.py`,
-`tools/check_pack_contracts.py`, `tools/generate_agent_inventory.py --check`,
-and `python3 -m pytest tests/ -q`.
+Development happens on `main`, through pull requests. Start with
+[CONTRIBUTING.md](CONTRIBUTING.md) — where things live, the verification
+battery every change runs before it is proposed, the repository structure
+and CI checks, and the conventions (including the written scope freeze
+every release is cut with).
 
 Settled design decisions are recorded as ADRs in
 [`docs/adr/`](docs/adr/) — [ADR-0001](docs/adr/ADR-0001-pack-separation.md)
@@ -600,49 +515,9 @@ Settled design decisions are recorded as ADRs in
 operations). Read the relevant ADR before proposing a change to a settled
 design.
 
-### Repository structure
-
-```
-packs/                ← Source of truth: core pack + Azure/AWS/GCP/On-Prem packs
-  core/                 agents, skills, prompts, instructions, MCP config
-  azure/ aws/ gcp/ onprem/  platform-specific agents and skills
-.github/agents/       ← Generated mirrors of packs/*/agents (do not edit)
-com.github.copilot/   ← Generated mirrors for the Agent Plugins layout
-skills/               ← Generated mirrors of packs/*/skills (do not edit)
-plugin.json           ← Root plugin manifest
-.claude-plugin/       ← Marketplace metadata
-bench/canaries/       ← E2E canary test specs
-schemas/              ← JSON schemas for validation
-tests/                ← Repository test suite (pytest)
-tools/                ← Assembly, verification, and inventory scripts
-docs/                 ← Architecture docs, specs, guides
-```
-
-The flat layout (`.github/`, `com.github.copilot/`, `skills/`) is generated
-from `packs/` by `tools/assemble_flat_layout.py` — edit the pack source and
-regenerate, never the mirrors.
-
-### CI checks
-
-| Workflow | Purpose |
-|----------|---------|
-| `pack-assembly.yml` | Fails when the generated flat layout drifts from `packs/` |
-| `pack-contracts.yml` | Validates pack metadata and cross-pack contracts |
-| `python-tests.yml` | Runs the repository test suite |
-| `canary-test.yml` | Validates canary spec schema on PRs touching agents/skills |
-| `bump-plugin-version.yml` | Manually bumps the plugin version and synchronizes marketplace metadata |
-
-Releases are cut from `main` with a written scope freeze (IN/OUT) recorded
-before the tag. A version bump covers the full surface — `plugin.json`,
-`.claude-plugin/marketplace.json`, all five `packs/*/pack.json` files, and
-the tests that pin the version; the Bump Plugin Version workflow updates
-only the first two, so a release bump is completed by hand.
-
-### Key rules
-
-- VSIX distribution is retired — do not recreate `vscode-extension/`, `sync-check.yml`, or `build-vsix.yml`. The repo ships as a root Agent Plugins package via `plugin.json`, `skills/`, and `com.github.copilot/`, with `.claude-plugin/marketplace.json` providing marketplace metadata.
-- Agent/skill changes require corresponding canary spec updates
-- All QA reviewers emit structured YAML output (see `sdlc-reviewer-output-format` skill)
+The harness also validates itself: 60 canary specs exercise the pipeline
+end to end and every skill carries a frozen evaluation spec — see
+[bench/](bench/README.md).
 
 ---
 
