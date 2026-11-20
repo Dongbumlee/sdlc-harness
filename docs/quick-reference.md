@@ -114,7 +114,7 @@ Canon: [§2](base-definitions.md#2-phase-model) ·
 
 ## The package, in numbers
 
-22 agents · 25 skills · 30 bundled templates · 57 canary specs ·
-6 prompt files · 3 core MCP servers (GitHub, Context7, Playwright) plus
+22 agents · 25 skills · 30 bundled templates · 60 canary specs ·
+25 skill evaluation specs · 6 prompt files · 3 core MCP servers (GitHub, Context7, Playwright) plus
 the vendor servers in your cloud pack. Full generated listing:
 [Agent Inventory](agent-inventory.md).
