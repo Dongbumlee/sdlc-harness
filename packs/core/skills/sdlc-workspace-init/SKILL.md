@@ -1,6 +1,6 @@
 ---
 name: sdlc-workspace-init
-description: "Initialize a new repository with SDLC workspace files — MCP config, copilot-instructions.md, quality instructions, prompt files, and the SDLC pull request template. Use when setting up a new project, bootstrapping SDLC, onboarding a repo, or when Harness detects missing workspace files."
+description: "Initialize a new repository with SDLC workspace files — MCP config, copilot-instructions.md, quality instructions, prompt files, the SDLC pull request template, and the root community files. Use when setting up a new project, bootstrapping SDLC, onboarding a repo, or when Harness detects missing workspace files."
 version: "1.0"
 author: sdlc-harness
 user-invocable: false
@@ -35,6 +35,12 @@ system because they require per-project customization or live outside the plugin
 | `assets/records-check/check_records.py` | `.SDLC/tools/check_records.py` | No — copied as-is (records consistency checker) |
 | `assets/records-check/sdlc-records-check.yml` | `.github/workflows/sdlc-records-check.yml` | No — copied as-is (records check on pull requests) |
 | `assets/pull_request_template.md` | `.github/pull_request_template.md` | No — copied as-is (SDLC pull request template) |
+| `assets/root-files/LICENSE` | `LICENSE` | Yes — `{{Year}}`, `{{ProjectName}}` |
+| `assets/root-files/SECURITY.md` | `SECURITY.md` | No — copied as-is |
+| `assets/root-files/SUPPORT.md` | `SUPPORT.md` | No — copied as-is |
+| `assets/root-files/CODE_OF_CONDUCT.md` | `CODE_OF_CONDUCT.md` | No — copied as-is |
+| `assets/root-files/CONTRIBUTING.md` | `CONTRIBUTING.md` | No — copied as-is |
+| `assets/root-files/renovate.json` | `renovate.json` | No — copied as-is |
 
 ## Procedure
 
@@ -243,6 +249,26 @@ not vary by stack, so the stack templates no longer carry one. If the
 project already has a root PR template, keep it: it is the project's own
 standard, and this step deploys only what is missing.
 
+### Step 8d: Deploy the root community files
+
+Copy the `assets/root-files/` set to the repository root:
+
+- [LICENSE](./assets/root-files/LICENSE) → `LICENSE` — substitute
+  `{{Year}}` (the current year) and `{{ProjectName}}` (Step 4) first
+- [SECURITY.md](./assets/root-files/SECURITY.md) → `SECURITY.md`
+- [SUPPORT.md](./assets/root-files/SUPPORT.md) → `SUPPORT.md`
+- [CODE_OF_CONDUCT.md](./assets/root-files/CODE_OF_CONDUCT.md) → `CODE_OF_CONDUCT.md`
+- [CONTRIBUTING.md](./assets/root-files/CONTRIBUTING.md) → `CONTRIBUTING.md`
+- [renovate.json](./assets/root-files/renovate.json) → `renovate.json`
+
+These files work only at the repository root — GitHub surfaces the
+license, security policy, support and conduct files from there, and
+Renovate reads its configuration from there — so they ship once, here,
+and the stack templates no longer carry copies. Deploy only what is
+missing: a file the project already has is the project's own standard,
+and an existing LICENSE is the project's recorded license choice
+(MIT by default per ADR-0003) — never overwrite one.
+
 ### Step 9: Report
 
 ```
@@ -255,6 +281,7 @@ standard, and this step deploys only what is missing.
 - ✅ `.github/reference-catalog.md` — empty catalog template created (Analyst will populate during Phase 1-2)
 - ✅ `.SDLC/tools/check_records.py` + `.github/workflows/sdlc-records-check.yml` — records check deployed
 - ✅ `.github/pull_request_template.md` — SDLC pull request template deployed
+- ✅ Root community files — `LICENSE`, `SECURITY.md`, `SUPPORT.md`, `CODE_OF_CONDUCT.md`, `CONTRIBUTING.md`, `renovate.json` deployed
 
 **Next steps:**
 1. **Start MCP servers** — open `.vscode/mcp.json` and click "Start" on each server.

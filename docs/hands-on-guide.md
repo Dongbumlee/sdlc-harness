@@ -110,6 +110,8 @@ On first run, Harness detects the missing workspace files and deploys them
 | `.github/prompts/` | The 6 SDLC prompt files used by the manual approach |
 | `.github/reference-catalog.md` | The project reference catalog — approved libraries and patterns, populated as the project adopts them |
 | `.github/pull_request_template.md` | The SDLC pull request template — one copy at the repository root, the place GitHub reads it from |
+| `.SDLC/tools/check_records.py` + workflow | The records check — verifies the project's current-state records against their histories; runs on every pull request |
+| Root community files | `LICENSE`, `SECURITY.md`, `SUPPORT.md`, `CODE_OF_CONDUCT.md`, `CONTRIBUTING.md`, `renovate.json` — the files GitHub and Renovate read at the repository root, deployed once |
 
 Harness asks for the values it cannot infer (project name, business domain,
 cloud target) and fills the rest progressively: the Analyst records the tech
@@ -287,6 +289,7 @@ document-manager/
 ├── docs/
 │   └── adr/ADR-001-document-manager-design.md
 ├── azure.yaml
+├── LICENSE                       # Root community set (deployed in Step 0): LICENSE, SECURITY.md, SUPPORT.md, CODE_OF_CONDUCT.md, CONTRIBUTING.md, renovate.json
 └── README.md
 ```
 

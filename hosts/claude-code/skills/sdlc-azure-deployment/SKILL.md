@@ -163,6 +163,46 @@ hooks:
     run: scripts/postprovision.sh
 ```
 
+## Step 5b: Deployment workflow (`.github/workflows/deploy.yml`)
+
+The root deployment workflow is OIDC + `azd` — no stored Azure
+credentials. Start from this skeleton; it is the shape the hands-on
+walkthrough run shipped and verified:
+
+```yaml
+name: Deploy
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - uses: Azure/setup-azd@v2
+      - name: Provision and deploy with azd
+        run: azd up --no-prompt
+        env:
+          AZURE_ENV_NAME: ${{ vars.AZURE_ENV_NAME }}
+          AZURE_LOCATION: <region>
+          AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+```
+
+The federated credential behind `AZURE_CLIENT_ID` is created once per
+repository (an app registration with a GitHub OIDC subject for this
+repo's `production` environment). Deploy on manual dispatch or after
+CI passes on `main` — never from a pull request.
+
 ## Step 6: Validate with the Azure tooling
 
 - **AVM registry is authoritative.** Fetch the Bicep resource-module

@@ -57,7 +57,7 @@ python3 tools/system-e2e/system_e2e.py --map system.json \
 
 ## Security
 
-See [SECURITY.md](SECURITY.md) for how to report a vulnerability.
+See the repository's root `SECURITY.md` for how to report a vulnerability.
 
 ## Changelog
 
