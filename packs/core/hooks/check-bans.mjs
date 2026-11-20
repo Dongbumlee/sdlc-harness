@@ -16,6 +16,10 @@
  * three lines above it allows that one match; the comment stays in the
  * code as the record of why.
  *
+ * A rule may carry a `fix:` line — the concrete pattern that replaces
+ * the banned one. The deny message includes it, so the denial itself
+ * teaches the compliant form instead of only naming the violation.
+ *
  * Failure posture: a rule MATCH is the only deny. Infrastructure failure
  * (no rule files, a grammar that fails to load, an unparseable event)
  * warns on stderr and allows the edit — a broken gate must not brick
@@ -62,6 +66,7 @@ function parseRuleFile(path) {
       .map((s) => s.trim())
       .filter(Boolean);
     const message = block.match(/^message:\s*(.+)$/m)?.[1]?.trim() ?? name;
+    const fix = block.match(/^fix:\s*(.+)$/m)?.[1]?.trim() ?? '';
     const minLen = Number(block.match(/^value-min-length:\s*(\d+)\s*$/m)?.[1] ?? 0);
     const queryMatch = block.match(/^query:\s*\|\s*\n((?:[ \t]+.*(?:\n|$))*)/m);
     if (!languages.length || !queryMatch) continue;
@@ -70,7 +75,7 @@ function parseRuleFile(path) {
       .map((line) => line.replace(/^[ \t]{1,4}/, ''))
       .join('\n')
       .trim();
-    if (query) rules.push({ name, languages, message, query, minLen, source: path });
+    if (query) rules.push({ name, languages, message, fix, query, minLen, source: path });
   }
   return rules;
 }
@@ -212,6 +217,7 @@ async function checkFragment(fragment, rules, warnings) {
       violations.push({
         rule: rule.name,
         message: rule.message,
+        fix: rule.fix,
         filePath: fragment.filePath,
         line: row + 1,
       });
@@ -257,7 +263,11 @@ async function main() {
   for (const warning of warnings) process.stderr.write(`${warning}\n`);
   if (violations.length) {
     const details = violations
-      .map((v) => `- **${v.rule}** in \`${v.filePath}\` line ${v.line}: ${v.message}`)
+      .map(
+        (v) =>
+          `- **${v.rule}** in \`${v.filePath}\` line ${v.line}: ${v.message}` +
+          (v.fix ? `\n  Fix: ${v.fix}` : ''),
+      )
       .join('\n');
     const hint =
       'If this usage is strictly necessary, retry the edit with a comment ' +
