@@ -183,8 +183,8 @@ tallies do.
 
 The brief, the state of the work, every problem and its evidence live in
 files. If a session crashes or is closed, the next one resumes from the
-record — proven in practice on 2026-11-14, when a second session picked up a
-stopped run and finished it.
+record — proven in practice, when a second session picked up a stopped run
+and finished it.
 
 **Built on proven parts.** The same playbooks, standards and templates on
 every job — a new project starts from a tested shape, not a blank page. Tools
