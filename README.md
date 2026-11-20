@@ -225,11 +225,16 @@ operations, one component), **Medium**, or **Large** (multiple components,
 integrations, or strong complexity signals) — and the grade sets both the
 ceremony and the run's budget envelope:
 
-| Grade | Model spend | Wall clock |
-|-------|-------------|------------|
+| Grade | Spend cap | Active-time cap |
+|-------|-----------|-----------------|
 | Small | ≤ $20 | ≤ 4 hours |
 | Medium | ≤ $75 | ≤ 2 days |
 | Large | ≤ $250 | ≤ 5 days |
+
+The envelope is a cap the run is held to, not an estimate: how long a
+run actually takes depends on the model seat it runs on — the same
+Small job finishes quickly on a fast seat and takes much longer on a
+slow one.
 
 - **Small** — Phases 1–2 consolidate: one Analyst session per phase (the
   Phase 2 session also saves the ADR) and one combined requirements +
