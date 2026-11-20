@@ -59,6 +59,12 @@ def test_a_wrong_stated_number_is_flagged(tmp_path):
     assert [(m[2], m[3], m[4]) for m in mismatches] == [("agents", 99, 22)]
 
 
+def test_shipped_surface_is_the_sum_of_its_parts():
+    surface = load_tool().shipped_surface(REPO_ROOT)
+    assert surface["total"] == surface["agents"] + surface["skills"]
+    assert surface["agents"] > 0 and surface["skills"] > 0
+
+
 def test_group_count_spans_are_subtotals_not_totals(tmp_path):
     tool = load_tool()
     (tmp_path / "index.html").write_text(
