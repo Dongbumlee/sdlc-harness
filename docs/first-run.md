@@ -47,9 +47,11 @@ Small changes the ceremony, not the standards:
 
 - Requirements and design consolidate — one Analyst session per
   phase instead of the full sequence, and one combined exit review.
-- The budget envelope is the Small one: at most $20 of model spend
-  and 4 hours of wall clock (the
-  [Quick Reference](quick-reference.md) has all three grades).
+- The budget envelope is the Small one: caps of $20 of model spend
+  and 4 hours of active run time (the
+  [Quick Reference](quick-reference.md) has all three grades). Caps,
+  not a prediction — how long the job actually takes depends on the
+  model seat you run it on.
 - The Phase 6 QA panel does **not** shrink. Small work is reviewed
   by the same nine domains as large work.
 
