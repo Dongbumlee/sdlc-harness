@@ -88,9 +88,14 @@ apply to every stack unchanged. Record the resolved stack in the manifest.
 2. Set up per-project devcontainer configurations. (Creation is yours; the
    Deployer validates them at Phase 3B and Phase 8.)
 3. Generate CI pipeline stubs for the resolved CI system (build + test + deploy
-   stages): GitHub Actions `.github/workflows/ci.yml`.
+   stages): GitHub Actions `.github/workflows/ci.yml`, composed at the
+   repository root per the workflow composition rule below.
 4. Create the stack profile's project file, `Dockerfile`, and build configurations.
-5. Set up root-level compliance files and quality instruction files.
+5. Set up root-level compliance files and quality instruction files. The
+   community set (`LICENSE`, `SECURITY.md`, `SUPPORT.md`,
+   `CODE_OF_CONDUCT.md`, `CONTRIBUTING.md`, `renovate.json`) is deployed
+   at workspace initialization from the workspace-init root-files set;
+   verify it is present at the root and repair any gap from that source.
 
 ## Reference catalog
 
@@ -301,7 +306,13 @@ src/
 ```
 
 **Rules:**
-- Each project under `src/` gets its **own** `.devcontainer/`, `.github/`, `Dockerfile`, `pyproject.toml` (or `package.json`).
+- Each project under `src/` gets its **own** `.devcontainer/`, `Dockerfile`, `pyproject.toml` (or `package.json`). A project's own `.github/` holds no workflows — workflows are composed at the root (next rule).
+- **Workflow composition (root only).** GitHub Actions reads workflows only from the root `.github/workflows/`, so a template's `.github/workflows/` is never copied under `src/<project>/` — it is consumed at the root:
+  - Root `ci.yml` carries **one build job per project** (the build job from that project's template `ci.yml`, job id = the project name, its `paths:` filter and `working-directory` kept) and **one security job** — the secret and dependency scans are repository-wide, so the security job is taken once, from any project's template, not repeated per project.
+  - The template `ci.yml`'s placeholder deploy job is **not** carried into the root `ci.yml`. Deployment lives in the root `deploy.yml`, composed by the Deployer from the target cloud pack's deployment skill.
+  - `release.yml` is composed at the root the same way: a single-project repository keeps it as `release.yml`; a multi-project repository gets one per project, named `release-<project>.yml`.
+  - A single project scaffolded at the repository root uses its template `ci.yml` at the root as-is, minus the deploy job.
+  - The system (microservices) template is the worked example of this split: its root `ci.yml` composes, and per-service CI lives in a reusable workflow the root calls.
 - A **root-level** `.devcontainer/` is also valid — it's used for azd deployment and Codespaces quickstart.
 - Use `uv` as the Python package manager — **never `pip install`**. Dockerfiles must use `uv sync --frozen`.
 - `pyproject.toml` must use `[project]` format (not `[tool.poetry]`). Include `uv.lock` when present.
@@ -357,7 +368,7 @@ scaffold), do NOT start over and do NOT trust what is there:
    `the approved Storage library`, and `pytest-asyncio`.) No raw Azure SDK packages?
 4. **No leaked business logic** — Did you accidentally generate service implementations,
    domain models, or test cases? Those belong in Phase 4.
-5. **Pipeline stubs** — Does each project have a pipeline YAML with build/test/deploy stages?
+5. **Pipeline stubs** — Does the root `.github/workflows/` hold the composed `ci.yml` (one build job per project, one security job) and `deploy.yml`, with no workflow files left under `src/<project>/.github/`?
 6. **Compliance files** — Are `TRANSPARENCY_FAQ.md`, `CODE_OF_CONDUCT.md`, `CONTRIBUTING.md`,
    `SECURITY.md`, `SUPPORT.md`, `LICENSE` all present at root?
 
@@ -376,7 +387,7 @@ At the end of your scaffolding output, include an **SDLC Exit Criteria Check** s
 - Dockerfile per project with multi-stage build: ✅/⚠️/⛔
 - Per-project devcontainer configured: ✅/⚠️/⛔
 - Root-level compliance files present: ✅/⚠️/⛔
-- `LICENSE` present at root from the resolved template (MIT by default per ADR-0003, or the recorded override), with the license recorded in the manifest next to the provenance: ✅/⚠️/⛔
+- `LICENSE` present at root (deployed at workspace initialization; MIT by default per ADR-0003, or the recorded override), with the license recorded in the manifest next to the provenance: ✅/⚠️/⛔
 - Initial commit pushed to the repository created at GitHub intake (or `repository_mode: local-only` recorded in the manifest): ✅/⚠️/⛔
 
 ## IMPORTANT: Scope boundary

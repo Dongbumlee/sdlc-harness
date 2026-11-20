@@ -105,8 +105,8 @@ resolution mirrors profile resolution:
 tree to the repository root; substitute the tokens declared in its
 `template.yaml` in file names and contents (`{{ProjectName}}` — PascalCase
 base name; `{{project-name}}` — the kebab-case name derived from it;
-`{{Year}}` — the current four-digit year, written into the `LICENSE`
-copyright line; a template may declare one more, `{{project_name}}` —
+`{{Year}}` — the current four-digit year, written into the template's
+dated lines (the `CHANGELOG.md` header); a template may declare one more, `{{project_name}}` —
 the snake_case import name, used by python/library); delete
 `template.yaml`; generate lock files with the profile's install command
 (lock files are never templated); then run the template's `verify` steps —
@@ -119,12 +119,16 @@ at its root — the editor-level baseline (charset, line endings,
 indentation) that the profile's toolchain formatters enforce in CI,
 so a contributor's editor agrees with the gate before CI ever runs.
 
-**Security baseline:** every bundled template ships `SECURITY.md`
-(private vulnerability reporting, response expectations, and the
-secret-handling rules) and a `renovate.json` — the pinned
-dependency-update policy: weekly grouped updates, a 3-day minimum
-release age, patch automerge for development-only dependencies,
-major updates always human-reviewed. Every template CI workflow
+**Security baseline:** the policy documents ship once per repository,
+deployed at workspace initialization from the workspace-init
+root-files set: `SECURITY.md` (private vulnerability reporting,
+response expectations, and the secret-handling rules) and a
+`renovate.json` — the pinned dependency-update policy: weekly grouped
+updates, a 3-day minimum release age, patch automerge for
+development-only dependencies, major updates always human-reviewed.
+GitHub surfaces the security policy and Renovate reads its
+configuration only at the repository root, so the templates no longer
+carry copies. Every template CI workflow
 declares top-level `permissions: contents: read` and a `security`
 job — a gitleaks secret scan over the git history and an
 OSV-Scanner scan of the project's dependency lock files, both
@@ -141,9 +145,9 @@ minus the Docker step) on the tagged tree, then the matching
 CHANGELOG section becomes the GitHub Release notes — a tag whose
 version has no CHANGELOG section fails the release rather than
 publishing empty notes. Every template also ships a README stub at
-its root (what it is, how to run it, links to SECURITY.md and the
-changelog); the design phase expands the stub into the full
-project README.
+its root (what it is, how to run it, a pointer to the repository's
+root SECURITY.md and the changelog); the design phase expands the
+stub into the full project README.
 
 **Library type — reversed defaults:** a library's consumers are
 other codebases' builds, so compatibility is the product and
@@ -347,12 +351,15 @@ before a system release from its own pipeline — never as a
 per-service PR gate, because contract tests are the integration
 layer.
 
-**License:** every bundled template ships an MIT `LICENSE` at its root
-(ADR-0003). An organization template or an explicit user decision overrides
-the license text; the Scaffolder records the license actually shipped next
-to the template provenance in the manifest. Never ship a project without a
-`LICENSE` file because a checklist mentioned one — the file comes from the
-template.
+**License:** every project ships an MIT `LICENSE` at its root
+(ADR-0003), deployed at workspace initialization from the
+workspace-init root-files set — the templates no longer carry a copy,
+because GitHub detects the license at the repository root. An
+organization-supplied license or an explicit user decision overrides
+the default text; the Scaffolder records the license actually shipped
+next to the template provenance in the manifest. Never ship a project
+without a `LICENSE` file because a checklist mentioned one — the file
+comes from the initialization set.
 
 **Provenance:** the Scaffolder records the template source in the project's
 manifest row: `bundled <profile>/<kind>@<harness version>`,

@@ -15,7 +15,7 @@ cargo test
 
 ## Security
 
-See [SECURITY.md](SECURITY.md) for how to report a vulnerability.
+See the repository's root `SECURITY.md` for how to report a vulnerability.
 
 ## Changelog
 

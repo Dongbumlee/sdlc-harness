@@ -39,7 +39,7 @@ release and removed no earlier than the next major version.
 
 ## Security
 
-See [SECURITY.md](SECURITY.md) for how to report a vulnerability.
+See the repository's root `SECURITY.md` for how to report a vulnerability.
 
 ## Changelog
 

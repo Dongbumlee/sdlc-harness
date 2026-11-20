@@ -178,34 +178,34 @@ Generate the GitHub Actions pipeline files (GitHub is the only supported CI syst
 
 Create files under `.github/workflows/`:
 
-**Build & Test** (`ci.yml`):
+**Build & Test** (`ci.yml`) — composed at the repository root (GitHub
+Actions reads workflows only from there):
 ```yaml
-# Triggers: push to main, pull_request
-# Steps:
+# One build job per project, taken from that project's template ci.yml
+# (job id = project name, paths filter and working-directory kept):
 #   - Checkout
 #   - Set up Python / Node.js
 #   - Install dependencies (uv sync / npm ci)
 #   - Lint / type-check
 #   - Run tests with coverage
 #   - Upload coverage report
+# Plus ONE security job for the whole repository (the scans are
+# repo-wide — never repeat it per project):
+#   - Secret scan (gitleaks)
+#   - Dependency scan (OSV-Scanner)
+# Triggers: push to main, pull_request
 ```
 
-**Security Scanning** (`security.yml`):
+**Deployment** (`deploy.yml`) — also at the root; the template ci.yml's
+placeholder deploy job is not carried into `ci.yml`:
 ```yaml
-# Triggers: push to main, pull_request, schedule (weekly)
-# Steps:
-#   - CodeQL analysis (if supported)
-#   - Dependency review (for PRs)
-#   - Secret scanning (built-in)
-```
-
-**Deployment** (`deploy.yml`):
-```yaml
+# Composed by the Deployer from the target cloud pack's deployment
+# skill (the Azure skill carries the OIDC + azd skeleton).
 # Triggers: push to main (after CI passes), manual dispatch
 # Steps:
 #   - Build container image
-#   - Push to Azure Container Registry
-#   - Deploy to Azure Container Apps
+#   - Push to the cloud container registry
+#   - Deploy to the cloud target
 #   - Run post-deploy health checks
 # Environments: staging → production (with approval gate)
 ```
