@@ -233,3 +233,59 @@ def test_ledger_without_spent_signatures_passes_without_register(tmp_path):
     result = run_checker(tmp_path)
     assert result.returncode == 0, result.stdout + result.stderr
     assert "no spent signatures" in result.stdout
+
+
+MAP_TEXT = "# Instructions\n\nBe consistent.\n"
+INSTRUCTION_TEXTS = {
+    "code-quality-py.instructions.md": "---\napplyTo: '**/*.py'\n---\n\nRules.\n",
+    "test-quality.instructions.md": "---\napplyTo: '**/tests/**'\n---\n\nMore rules.\n",
+}
+
+
+def write_census_project(root: Path, census_line):
+    (root / ".SDLC").mkdir(parents=True, exist_ok=True)
+    manifest = "# Project Manifest\n\n**Run basis** — Task: test run.\n"
+    if census_line is not None:
+        manifest += census_line + "\n"
+    (root / ".SDLC" / "project-manifest.md").write_text(manifest, encoding="utf-8")
+    github = root / ".github"
+    (github / "instructions").mkdir(parents=True, exist_ok=True)
+    (github / "copilot-instructions.md").write_text(MAP_TEXT, encoding="utf-8")
+    for name, text in INSTRUCTION_TEXTS.items():
+        (github / "instructions" / name).write_text(text, encoding="utf-8")
+
+
+def correct_census_line():
+    map_chars = len(MAP_TEXT)
+    instruction_chars = sum(len(t) for t in INSTRUCTION_TEXTS.values())
+    total = map_chars + instruction_chars
+    return (
+        f"Instruction surface: {total} chars "
+        f"(map {map_chars}, instructions {instruction_chars})"
+    )
+
+
+def test_census_matching_files_passes(tmp_path):
+    write_census_project(tmp_path, correct_census_line())
+    result = run_checker(tmp_path)
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert "instruction-surface census matches the files" in result.stdout
+
+
+def test_census_stale_number_fails(tmp_path):
+    instruction_chars = sum(len(t) for t in INSTRUCTION_TEXTS.values())
+    line = (
+        f"Instruction surface: {9 + instruction_chars} chars "
+        f"(map 9, instructions {instruction_chars})"
+    )
+    write_census_project(tmp_path, line)
+    result = run_checker(tmp_path)
+    assert result.returncode == 1
+    assert "census states map 9" in result.stdout
+
+
+def test_census_missing_line_fails(tmp_path):
+    write_census_project(tmp_path, None)
+    result = run_checker(tmp_path)
+    assert result.returncode == 1
+    assert "no instruction-surface census line" in result.stdout
