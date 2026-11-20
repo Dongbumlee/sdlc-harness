@@ -68,15 +68,7 @@ Then restart your session.
 Get-Content "$env:USERPROFILE\.claude.json" -Raw | ConvertFrom-Json
 ```
 
-#### 4. Step 0 skipped by model
-
-**Symptom:** Model says "let me try a simpler approach" and skips MCP checks.
-
-**Cause:** (Fixed) Step 0 wasn't forceful enough.
-
-**Fix:** Step 0 is a hard gate with mandatory status table output in current releases.
-
-#### 5. Non-interactive mode (`-p`) limitations
+#### 4. Non-interactive mode (`-p`) limitations
 
 **Symptom:** Shell commands fail with "Permission denied because no interactive user response was available."
 
@@ -93,7 +85,6 @@ Get-Content "$env:USERPROFILE\.claude.json" -Raw | ConvertFrom-Json
 | VSCode | `.vscode\mcp.json` | `.vscode/mcp.json` |
 | Copilot CLI | `%USERPROFILE%\.copilot\mcp.json` | `~/.copilot/mcp.json` |
 | Claude Code | `%USERPROFILE%\.claude.json` | `~/.claude.json` |
-| Claude Desktop | `%APPDATA%\Claude\claude_desktop_config.json` | `~/Library/Application Support/Claude/claude_desktop_config.json` |
 
 Note: Claude tools use `"mcpServers"` key; VSCode/Copilot use `"servers"` key.
 
@@ -136,5 +127,5 @@ Azure DevOps server — GitHub is the only forge (ADR-0003 D6).
 
 Run Step 0 in isolation to diagnose:
 ```powershell
-copilot --model claude-haiku-4.5 -p "Using the sdlc-harness plugin, run ONLY Step 0 (MCP server readiness check) of the Harness agent. Show me the status table and stop. Do not proceed to Phase 1."
+copilot -p "Using the sdlc-harness plugin, run ONLY Step 0 (MCP server readiness check) of the Harness agent. Show me the status table and stop. Do not proceed to Phase 1."
 ```

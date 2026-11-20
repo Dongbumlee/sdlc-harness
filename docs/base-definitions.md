@@ -1,7 +1,7 @@
 # SDLC Harness — Base Definitions
 
-**Status:** CANONICAL. Approved by Dongbum on 2026-11-10, with decisions
-D1–D5 (§11) adopted as recommended. The conformance sweep accompanying this
+**Status:** CANONICAL. Adopted on 2026-11-10, with decisions
+D1–D5 (§11) taken as recommended. The conformance sweep accompanying this
 document makes every pack file agree with the definitions here; where a pack
 file and this document disagree, this document is the standard and the pack
 file is the defect.
@@ -20,7 +20,7 @@ PR #71, validated live), and the mechanical stack-conformance check
 defect). 2026-11-12 — the pre-run design conversation and its records
 (§2.1, §8.2, §8.4): the design brief, the change path with total
 propagation, the living ADR set, approval posture, and run envelope
-(intake design D1–D16, approved by Dongbum 2026-11-12).
+(intake design D1–D16, adopted 2026-11-12).
 
 **How each definition was chosen:** where the harness already defined a term
 in one place — usually the most recent deliberate change (PRs #31–#54) — that
@@ -717,8 +717,8 @@ are not ablation candidates on that evidence alone.
 
 ## 11. Decisions (2026-11-10 — all adopted as recommended)
 
-Five items were genuine choices rather than evidenced readings. Dongbum
-approved the recommended option for all five on 2026-11-10:
+Five items were genuine choices rather than evidenced readings. I adopted
+the recommended option for all five on 2026-11-10:
 
 - **D1 — adopted.** "Two or more Important findings in one domain = ⛔" is
   rule 6 of §4.3.
