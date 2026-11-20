@@ -220,21 +220,11 @@ visible in the session as a collapsible tool call.
 
 ### Sized to the task
 
-Every run is graded at intake and fixed at design — **Small** (≤10 user-facing
-operations, one component), **Medium**, or **Large** (multiple components,
-integrations, or strong complexity signals) — and the grade sets both the
-ceremony and the run's budget envelope:
-
-| Grade | Spend cap | Active-time cap |
-|-------|-----------|-----------------|
-| Small | ≤ $20 | ≤ 4 hours |
-| Medium | ≤ $75 | ≤ 2 days |
-| Large | ≤ $250 | ≤ 5 days |
-
-The envelope is a cap the run is held to, not an estimate: how long a
-run actually takes depends on the model seat it runs on — the same
-Small job finishes quickly on a fast seat and takes much longer on a
-slow one.
+Every run is graded at intake — **Small**, **Medium**, or **Large** — and
+the grade sets how much ceremony the run carries: a one-component fix
+does not get a multi-service project's process. Each grade also carries
+a spend and active-time envelope, set as caps at intake; the exact
+values are in the [Quick Reference](docs/quick-reference.md).
 
 - **Small** — Phases 1–2 consolidate: one Analyst session per phase (the
   Phase 2 session also saves the ADR) and one combined requirements +
