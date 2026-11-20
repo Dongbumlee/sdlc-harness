@@ -26,12 +26,15 @@ application.
 > Both produce the same result — choose whichever fits your workflow.
 
 > **Scope of this walkthrough:** the sample run deploys to **Azure**. The
-> application is fictional, and the screenshots are illustrations drawn
-> for this guide showing what each step produces — not captures of a
-> real run. The same flow runs on
-> AWS and GCP with their cloud packs (the deployment tooling differs; the
-> phases and gates are the same), and on either host — GitHub Copilot or
-> Claude Code.
+> walkthrough was executed end to end for real for this guide, and the
+> screenshots are captures from that run — the initialized workspace, the
+> code, the test output, the deployed resources, the running web app,
+> the QA report, and the pull request. One substitution: the
+> resource-group shot is a terminal listing (`az resource list`), not
+> the Azure Portal. File names in the step text are representative; a
+> run names its own files. The same flow runs on AWS and GCP with their
+> cloud packs (the deployment tooling differs; the phases and gates are
+> the same), and on either host — GitHub Copilot or Claude Code.
 
 The walkthrough builds three services, so the run is graded **Large**: the full
 ceremony applies, including a three-round QA re-review budget.
@@ -103,7 +106,7 @@ On first run, Harness detects the missing workspace files and deploys them
 | ---- | ---------- |
 | `.vscode/mcp.json` | MCP server configuration — 5 servers for this Azure walkthrough: **GitHub**, **Context7**, **Playwright** (core) plus **Azure** and **Microsoft Learn** (Azure pack) |
 | `.github/copilot-instructions.md` | Project instructions, customized with your project name, domain, stack, and cloud |
-| `.github/instructions/` | The 14 quality instruction files (code quality + test quality per language) |
+| `.github/instructions/` | The quality instruction files for the project's stacks — 6 files for this walkthrough (code quality and test quality for Python and TypeScript); the plugin ships 14 across all stacks |
 | `.github/prompts/` | The 6 SDLC prompt files used by the manual approach |
 | `.github/reference-catalog.md` | The project reference catalog — approved libraries and patterns, populated as the project adopts them |
 
@@ -181,7 +184,7 @@ Constraints:
 
 | ![Copilot requirement and design output](assets/guide/02-requirement-design.png) |
 | ---------------------------------------------------------------------------------- |
-| *The Analyst's design proposal: clarified requirements, the recommended design, and the Phase 1–2 exit check* |
+| *REQ-001: the approved requirements specification — problem statement, functional requirements, and non-functional requirements* |
 
 Copilot should return:
 
@@ -251,7 +254,7 @@ Follow the design in docs/adr/ADR-001-document-manager-design.md.
 
 | ![Scaffolded project structure](assets/guide/03-scaffolded-structure.png) |
 | ---------------------------------------------------------------------------- |
-| *VS Code explorer showing the scaffolded layout: three services under src/, infra/, workflows, and the project manifest* |
+| *VS Code explorer showing the project layout: three services under src/, infra/, docs/, and the root files (azure.yaml, README)* |
 
 ```
 document-manager/
@@ -350,9 +353,9 @@ azd up
 | ------------------------------------------------------------------------------- |
 | *Terminal showing azd up provisioning the Azure resources and deploying the three Container Apps* |
 
-| ![Azure Portal resources](assets/guide/05-azure-resources.png) |
+| ![Deployed Azure resources listed in the terminal](assets/guide/05-azure-resources.png) |
 | ----------------------------------------------------------------- |
-| *The deployed resource group: Cosmos DB, Storage, the three Container Apps, AI Foundry, Key Vault, and monitoring* |
+| *The deployed resource group, listed with az resource list: Cosmos DB, Storage, the three Container Apps, AI Foundry, Key Vault, and monitoring (14 resources)* |
 
 ---
 
@@ -431,7 +434,7 @@ cd ../..
 
 | ![pytest output with coverage](assets/guide/07-test-results.png) |
 | ------------------------------------------------------------------ |
-| *pytest: the API suite green with the coverage report*            |
+| *pytest: the API and agent suites green with their coverage reports*            |
 
 ---
 
@@ -469,7 +472,7 @@ Ground every answer in the retrieved document content and cite the source.
 
 | ![Agent implementation](assets/guide/11-agent-implementation.png) |
 | --------------------------------------------------------------------- |
-| *The DocumentAnalyzerAgent: read via MCP tool, summarize and tag with AI Foundry, save the analysis* |
+| *The DocumentAnalyzerAgent: summarize and tag on upload, answer questions with a citation — the document is treated as data, never as instructions* |
 
 ### Verify
 
@@ -519,7 +522,7 @@ cd ../..
 
 | ![Web app running in browser](assets/guide/08-web-app.png) |
 | -------------------------------------------------------------- |
-| *The Document Manager web app: document list with upload, search, and download — and the Q&A chat panel* |
+| *The Document Manager web app: an uploaded document with its generated summary and tags, and a question answered with its source citation* |
 
 ---
 
@@ -561,7 +564,7 @@ below 7, or two or more Important findings within a single domain.
 
 | ![QA review summary](assets/guide/09-quality-pass.png) |
 | ---------------------------------------------------------- |
-| *The Phase 6 panel result for the walkthrough: all nine reviewers pass, composite 8.7* |
+| *The Phase 6 panel result for the walkthrough run: ten domains scored, composite 7.5 — PASS with findings* |
 
 ### When the verdict fails
 
