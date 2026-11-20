@@ -109,6 +109,7 @@ On first run, Harness detects the missing workspace files and deploys them
 | `.github/instructions/` | The quality instruction files for the project's stacks — 6 files for this walkthrough (code quality and test quality for Python and TypeScript); the plugin ships 14 across all stacks |
 | `.github/prompts/` | The 6 SDLC prompt files used by the manual approach |
 | `.github/reference-catalog.md` | The project reference catalog — approved libraries and patterns, populated as the project adopts them |
+| `.github/pull_request_template.md` | The SDLC pull request template — one copy at the repository root, the place GitHub reads it from |
 
 Harness asks for the values it cannot infer (project name, business domain,
 cloud target) and fills the rest progressively: the Analyst records the tech

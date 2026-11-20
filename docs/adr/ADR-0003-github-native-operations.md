@@ -1,6 +1,6 @@
 # ADR-0003: GitHub-Native Operations — Repository First, Work Tracked in Issues/PRs, Test Evidence from CI
 
-> **Status:** Accepted (amended 2026-11-12 — D6, D7 added)  
+> **Status:** Accepted (amended 2026-11-12 — D6, D7 added; amended 2026-11-20 — D3 placement superseded)  
 > **Date:** 2026-10-19  
 > **Author:** Dongbum(DB) Lee (product owner, harness maintainer)  
 > **Related:** ADR-0002 (bundled default templates), manifest Phase-State Ledger, QA evidence pack
@@ -187,6 +187,26 @@ late-2026 MCP/forge landscape, and implemented the next day.
   server's file-contents tool"), never a client-rendered tool
   name (`mcp_<server>_<tool>` display strings, including truncated
   ones, differ per client and rot silently).
+
+### Amendment (2026-11-20): D3 placement superseded — one template, at the repository root
+
+D3 put a copy of the PR template inside every bundled template. Two facts
+overtook that placement. GitHub reads the template only from the
+repository root (the root `.github/`, the repo root, or `docs/`): in a
+multi-service scaffold the copies land under `src/<service>/.github/`
+and are never used — the 2026-11-19 hands-on walkthrough run had to
+compose its root template by hand. And the template's content does not
+vary by stack (the copies were byte-identical), so per-template
+duplication bought nothing.
+
+The template now ships once, in SDLC form (summary / SDLC phases covered
+/ prompts used / cloud resources / testing / documentation / design
+reference), as an asset of the workspace-init skill, which deploys it to
+the root `.github/pull_request_template.md` at initialization — keeping
+a project's existing root template, which is the project's own standard.
+The stack templates no longer carry a copy. D3's requirement itself
+stands: harness-opened PRs follow the template, and the Phase 3 exit
+gate still verifies the root file exists.
 
 ## Consequences
 
