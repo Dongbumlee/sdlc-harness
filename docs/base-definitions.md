@@ -511,6 +511,21 @@ frame-moving change with the user's approval; the run basis is then
 amended by a dated frame revision, and the transition count marks the
 phase where the configuration changed.
 
+**Instruction surface.** The run basis also records the run's
+instruction-surface census at intake: the character counts of the
+project's always-on instruction text — the deployed
+`.github/copilot-instructions.md` (the map) and the deployed
+`.github/instructions/` files — stated as
+`Instruction surface: <total> chars (map <a>, instructions <b>)`.
+The records check (§8.4) verifies the stated census against the
+files on disk. The Phase 9 retrospective restates the census beside
+the previous run's, when the project has one. There is no cap: the
+census is the guard. Always-on text is the most expensive form an
+instruction can take — it is paid on every call — so a change that
+grows the total, in a project's records or in the shipped
+definitions, names what it displaces; growth with nothing displaced
+is recorded as a deliberate addition, never a silent one.
+
 ### 8.2 The other records
 
 | Record | Creator | Writers | Verifier / consumer |
