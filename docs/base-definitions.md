@@ -711,7 +711,9 @@ the recommended option for all five on 2026-11-10:
 
 The conformance sweep edits the packs to match this document, one item
 per row, then regenerates the mirrors and runs the full battery
-(assemble check, pytest, template verification, pack contracts).
+(assemble check, pytest, template verification, pack contracts). A row
+leaves the register when its divergence is resolved; row numbers are
+not reused.
 
 | # | Divergence | Canonical (§) | Files to align |
 |---|---|---|---|
@@ -728,14 +730,10 @@ per row, then regenerates the mirrors and runs the full battery
 | 11 | Manifest skill tells reviewers to flag deviations "as an Important finding" (synthesis term for a YAML act) | §4.2 | sdlc-project-manifest/SKILL.md |
 | 12 | Release scope contradiction: manifest skill blocks release on any uncovered phase; Release Manager checks "through QA" only | §3 (Phases 8–9) | sdlc-project-manifest/SKILL.md, release-manager.agent.md |
 | 13 | Python profile's template-source line breaks the template-sourcing chain | §9.4 | sdlc-stack-profiles/SKILL.md |
-| 14 | Harness routing footnote defaults the cloud reviewer to Azure when no target is set — the exact default the Coordinator forbids — **Resolved (verified 2026-11-14):** the footnote states there is no default cloud; QA Coordinator Step 0.5 governs | §6.5 | harness.agent.md |
 | 15 | Manual-mode prompt says the Coordinator runs "8 parallel reviewers" and lists 8 lenses (Requirements missing) | §6.5 | prompts/qa-rai-release.prompt.md |
-| 16 | Release Manager (core pack) carries Azure-only specifics (App Insights, Cosmos RU, `azd up`, `pytest --cov`) with no scope note — **Resolved 2026-11-14:** monitoring, rollback, and checklist passages carry scope notes; the exit-criteria deploy-path line gained the pack-equivalent clause; the PR-body section list and the template path were aligned to the merged PR template | §3, Deployer pattern | release-manager.agent.md |
 | 17 | Devcontainer owned twice (Scaffolder creates, Deployer exit criteria claim) with no cross-reference | §2.1/§3: Scaffolder creates in Phase 3; Deployer validates at 3B/8 | scaffolder.agent.md, deployer.agent.md |
 | 18 | ADR phase attribution in three places: template "Phase 1-2", skill metadata "Phase 2", skill title "Phase 5" | §2.4 | .design/ADR-TEMPLATE.md, sdlc-adr-authoring/SKILL.md |
-| 19 | ADR-authoring skill (core) states Azure-pattern gotchas (`RootEntityBase`, Cosmos tables) as universal rules — **Resolved 2026-11-14:** the gotchas are scoped in text, and the Step 3 worked example is labeled an Azure order system whose patterns are that project's, not defaults | §2.4 + profile scoping | sdlc-adr-authoring/SKILL.md |
 | 20 | Bug-checklist reviewer details only 5 of its 7 checklists (Cosmos, Smoke have no execution steps) and its report template says "X/6" | §4.4 | qa-bug-checklist-reviewer.agent.md |
-| 21 | Cloud category lists diverge: format skill's set matches only the Azure agent; AWS/GCP agents override with their own after citing the format skill as "the complete specification" — **Resolved (verified 2026-11-14):** the format skill defines the mechanism and the shared values; each cloud pack's compliance-agent list governs for its cloud | §4.1: per-cloud category sets are pack-level definitions; the format skill defines the mechanism, not the union | sdlc-reviewer-output-format/SKILL.md, aws/gcp compliance agents |
 | 22 | Project-QA skill: item 1.9 says `deviceScaleFactor: 2`; its own Pattern 3 and the UX reviewer use 1.5 | 1.5 | sdlc-project-qa/SKILL.md |
 | 23 | Harness "What you must NOT do" states "never edit files directly" without the two defined exceptions its own Workflow rules carry | §8.1 upkeep + init config exception | harness.agent.md |
 | 24 | "Environment-failure exit condition" referenced by name in the Harness with no pointer to its definition | §10.3 | harness.agent.md (cross-reference) |
@@ -745,6 +743,5 @@ per row, then regenerates the mirrors and runs the full battery
 | 28 | Copilot-instructions template §5 prescribes Moq + FluentAssertions for C# — libraries the bundled .NET template deliberately excludes (the exact divergence that poisoned the 2026-11-10 live run's spec) | §9.2: template/profile wins | copilot-instructions.template.md |
 | 29 | Reference-catalog skill says the catalog is created "during Step 0" of workspace-init; the creation step is Step 6 | factual fix | sdlc-reference-catalog/SKILL.md |
 | 30 | Coverage 80% exists only in a reviewer checklist line, owned by no criterion and enforced by no template | §10.4 (+D3) | test-coverage-reviewer.agent.md, sdlc-stack-profiles/SKILL.md (profile target field) |
-| 31 | Core Deployer was the Azure deployer (Bicep/AVM body, Azure-only description) and on-premises existed as no target at all — no pack, no deployment skill, no compliance reviewer | §3 (Phase 3B/8 exits), Deployer pattern | deployer.agent.md, packs/ | **Resolved 2026-11-14 (deployment split P1–P4): the Deployer is target-neutral and routes by the recorded target; per-target procedures live in the packs' deployment skills; `packs/onprem` adds the fourth target (deployment skill + compliance reviewer); the pack schema's `cloud` enum gains `onprem`.** |
 
 *End of document.*
