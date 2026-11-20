@@ -4,7 +4,7 @@
 > Regenerate with `python3 tools/generate_agent_inventory.py`.
 
 **Version:** 1.3.4  
-**Generated:** 2026-11-19  
+**Generated:** 2026-11-20  
 **Total agents:** 22 (22 agent files)  
 **Total skills:** 25
 
@@ -73,7 +73,7 @@
 | 22 | `sdlc-s3-storage` | sdlc-s3-storage | Implement Amazon S3 object storage with private buckets, presigned URLs, and lifecycle rules. Use when uploading, downloading, listing, o... | — |
 | 23 | `sdlc-security-review` | sdlc-security-review | Perform SDLC-aligned security review combining OWASP Top 10 with project-specific Azure patterns. Use when reviewing code for security vu... | LLM Behavior Reviewer, QA Bug Checklist Reviewer, Security Reviewer |
 | 24 | `sdlc-stack-profiles` | sdlc-stack-profiles | Per-stack profiles that declare everything language-specific in the harness — project files, layout, package manager, build/test/lint com... | Implementer, Scaffolder |
-| 25 | `sdlc-workspace-init` | sdlc-workspace-init | Initialize a new repository with SDLC workspace files — MCP config, copilot-instructions.md, quality instructions, and prompt files. Use ... | Harness |
+| 25 | `sdlc-workspace-init` | sdlc-workspace-init | Initialize a new repository with SDLC workspace files — MCP config, copilot-instructions.md, quality instructions, prompt files, and the ... | Harness |
 
 ## 4. Phase-to-Agent Mapping
 
