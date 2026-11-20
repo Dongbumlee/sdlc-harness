@@ -727,7 +727,7 @@ git push origin feature/document-manager
 
 | ![GitHub PR with SDLC template](assets/guide/10-pull-request.png) |
 | -------------------------------------------------------------------- |
-| *The pull request: CI and security checks green, the QA panel verdict attached, phases 1–9 checked off* |
+| *The pull request for the walkthrough run: the SDLC template filled in with the phases checked off, all five checks green (CI for the three services, GitGuardian, the records check), ready to merge* |
 
 The PR template (`.github/PULL_REQUEST_TEMPLATE.md`) auto-populates. Fill in:
 
