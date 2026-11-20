@@ -1,6 +1,6 @@
 ---
 name: sdlc-workspace-init
-description: "Initialize a new repository with SDLC workspace files — MCP config, copilot-instructions.md, quality instructions, and prompt files. Use when setting up a new project, bootstrapping SDLC, onboarding a repo, or when Harness detects missing workspace files."
+description: "Initialize a new repository with SDLC workspace files — MCP config, copilot-instructions.md, quality instructions, prompt files, and the SDLC pull request template. Use when setting up a new project, bootstrapping SDLC, onboarding a repo, or when Harness detects missing workspace files."
 version: "1.0"
 author: sdlc-harness
 user-invocable: false
@@ -34,6 +34,7 @@ system because they require per-project customization or live outside the plugin
 | *(generated at runtime)* | `.github/reference-catalog.md` | Yes — empty template with 5 fixed sections |
 | `assets/records-check/check_records.py` | `.SDLC/tools/check_records.py` | No — copied as-is (records consistency checker) |
 | `assets/records-check/sdlc-records-check.yml` | `.github/workflows/sdlc-records-check.yml` | No — copied as-is (records check on pull requests) |
+| `assets/pull_request_template.md` | `.github/pull_request_template.md` | No — copied as-is (SDLC pull request template) |
 
 ## Procedure
 
@@ -230,6 +231,18 @@ runs it on every pull request, and the Harness reads the result back as
 gate evidence. Deploy both files verbatim; never edit the deployed
 checker in a project — it is a copy of the plugin's `tools/check_records.py`.
 
+### Step 8c: Deploy the pull request template
+
+Copy [pull_request_template.md](./assets/pull_request_template.md) →
+`.github/pull_request_template.md`.
+
+One copy at the repository root: GitHub reads the PR template only from
+the root `.github/` directory (or the repo root, or `docs/`), so a copy
+inside a service folder is never used — and the template's content does
+not vary by stack, so the stack templates no longer carry one. If the
+project already has a root PR template, keep it: it is the project's own
+standard, and this step deploys only what is missing.
+
 ### Step 9: Report
 
 ```
@@ -241,6 +254,7 @@ checker in a project — it is a copy of the plugin's `tools/check_records.py`.
 - ✅ `.github/prompts/` — 6 SDLC prompt files deployed
 - ✅ `.github/reference-catalog.md` — empty catalog template created (Analyst will populate during Phase 1-2)
 - ✅ `.SDLC/tools/check_records.py` + `.github/workflows/sdlc-records-check.yml` — records check deployed
+- ✅ `.github/pull_request_template.md` — SDLC pull request template deployed
 
 **Next steps:**
 1. **Start MCP servers** — open `.vscode/mcp.json` and click "Start" on each server.
