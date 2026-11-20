@@ -77,6 +77,20 @@ docs/                 ← Architecture docs, specs, guides
 
 ## Releases
 
+Before the tag, three checks beyond the test battery:
+
+- **Doc census** — `python3 tools/check_doc_census.py` passes: every
+  count stated in the reader docs still matches the tree.
+- **Placement and form** — for every file the release ships or
+  deploys (plugin surfaces, workspace-init assets, template files),
+  name its reader, the location that reader reads from, and the form
+  it expects. A file no reader reaches in the form shipped is a
+  defect of the same class as a missing file: a checklist line is
+  not a file, and a file in the wrong place is not shipped.
+- **Claims** — measured claims in the release notes and docs carry
+  their scope, and no text promises an outcome the harness does not
+  measure.
+
 A version bump covers the full surface — `plugin.json`,
 `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`, all
 five `packs/*/pack.json` files, the generated Claude Code host
