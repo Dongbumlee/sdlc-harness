@@ -10,6 +10,15 @@ For a complete delivery with deployment, the
 [Hands-On Guide](hands-on-guide.md) walks a full Large run; this page
 is the five-minute version.
 
+```mermaid
+flowchart LR
+    A["Design conversation<br/>the brief, confirmed by you"] --> B["Scaffold<br/>from the bundled template"]
+    B --> C["Build<br/>code and tests together"]
+    C --> D{"QA panel<br/>nine domains score the work"}
+    D -->|pass| E["Pull request<br/>and the records on disk"]
+    D -->|fail| C
+```
+
 ## Before you start
 
 - The plugin installed and the workspace initialized — the
