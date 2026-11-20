@@ -1,12 +1,13 @@
 # SDLC Harness Benchmarks
 
-Canary-based E2E test scenarios for validating the SDLC Harness agent pipeline.
+Canary-based E2E test scenarios for validating the SDLC Harness agent pipeline,
+plus the frozen evaluation specs every skill carries.
 
 ## Structure
 
 ```
 bench/
-├── canaries/          # E2E test scenarios by SDLC phase
+├── canaries/          # E2E test scenarios by SDLC phase (60 specs)
 │   ├── requirements/  # Requirements generation canaries
 │   ├── design/        # Architecture design canaries
 │   ├── scaffold/      # Project scaffolding canaries
@@ -17,8 +18,22 @@ bench/
 │   ├── rai/           # Responsible AI canaries
 │   ├── release/       # Release preparation canaries (Phase 8)
 │   └── publish/       # Publish canaries (Phase 9)
+├── evals/             # Frozen per-skill evaluation specs (25) + the
+│                      # held-out judgment procedure (evals/README.md)
 └── results/           # Canary test results (generated)
 ```
+
+Specs are validated against the JSON schemas in `schemas/`
+(canary specs, cloud packs, skill evaluation specs):
+
+```bash
+python tools/validate_canaries.py   # 60 canaries
+python tools/validate_evals.py      # 25 eval specs
+```
+
+CI runs the same checks: `canary-test.yml` validates canary specs on
+PRs touching agents/skills, and `eval-spec-lint.yml` validates the
+evaluation specs.
 
 ## What Are Canaries?
 
