@@ -69,7 +69,9 @@ Canon: [§8](base-definitions.md#8-records-and-contracts)
 | Large | ≤ $250 | ≤ 5 days |
 
 Operational defaults, set at intake — the user may set a different
-envelope for a run, and the recorded value is the run's. The spend
+envelope for a run, and the recorded value is the run's. The envelope
+bounds the run; it does not predict it — actual elapsed time depends
+on the model seat the run executes on. The spend
 figure counts every model call issued under the run, the Harness's
 own included (§7); a host that reports credits or tokens is recorded
 in that unit, never converted by estimate. The pack and MCP set
@@ -114,7 +116,7 @@ Canon: [§2](base-definitions.md#2-phase-model) ·
 
 ## The package, in numbers
 
-22 agents · 25 skills · 30 bundled templates · 57 canary specs ·
-6 prompt files · 3 core MCP servers (GitHub, Context7, Playwright) plus
+22 agents · 25 skills · 30 bundled templates · 60 canary specs ·
+25 skill evaluation specs · 6 prompt files · 3 core MCP servers (GitHub, Context7, Playwright) plus
 the vendor servers in your cloud pack. Full generated listing:
 [Agent Inventory](agent-inventory.md).

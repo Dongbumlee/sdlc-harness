@@ -114,6 +114,13 @@ Start with the Harness as the main agent, then say `initialize workspace`:
 claude --agent sdlc-harness:harness
 ```
 
+### Your first run
+
+Start small: [Your First Run](docs/first-run.md) walks one small,
+local job — a Python CLI — through the design conversation, the
+build, and the QA panel, in about five minutes of reading. No cloud
+account needed.
+
 ---
 
 ## How It Works
@@ -405,15 +412,17 @@ The full generated list — every agent and skill with its file — lives in
 
 ## Documentation
 
-New here? Start with the **Hands-On Guide** — it walks one full delivery end
-to end — then the **Workflow Guide** for the day-to-day loop. **Base
-Definitions** is the reference the other documents point to: look rulings up
-there rather than reading it cover to cover.
+New here? Start with **Your First Run** — one small job, end to end —
+then the **Hands-On Guide** for a full delivery, and the **Workflow
+Guide** for the day-to-day loop. **Base Definitions** is the reference
+the other documents point to: look rulings up there rather than
+reading it cover to cover.
 
 **Start here**
 
 | Document | What it covers |
 |----------|---------------|
+| [Your First Run](docs/first-run.md) | The Small path in five minutes: one local CLI job through the design conversation, the build, and the QA panel |
 | [Hands-On Guide](docs/hands-on-guide.md) | End-to-end walkthrough: one complete delivery with a fictional sample application — every phase, gate, and prompt file, on both hosts |
 | [Workflow Guide](docs/workflow-guide.md) | Step-by-step: how engineers and agents work together, with a sequence diagram |
 | [Quick Reference](docs/quick-reference.md) | The numbers on one page: QA thresholds, round caps, the scoring formula, pit-stop triggers, run envelopes, and the records a run leaves |
