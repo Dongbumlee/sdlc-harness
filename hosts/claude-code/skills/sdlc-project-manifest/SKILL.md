@@ -146,6 +146,10 @@ Budget: <spend / time band> — the design brief's run envelope
 intake, <date>. The Harness reports cumulative spend against it in
 every transition count line; spend crossing the budget stops the run
 for a user decision, never a silent overrun.
+Instruction surface: <total> chars (map <a>, instructions <b>) —
+the character counts of `.github/copilot-instructions.md` and the
+deployed `.github/instructions/` files, measured at intake. The
+records check verifies the stated census against the files.
 
 | Phase | Status | Artifacts | Updated | Notes |
 |---|---|---|---|---|

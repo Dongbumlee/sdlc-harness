@@ -170,8 +170,8 @@ Build a Document Manager application that allows users to:
 
 The API should use the approved Cosmos DB library for document metadata and the
 approved Storage library for file storage.
-The agent service should use Azure AI Foundry for LLM inference and MCP tools
-for document access.
+The agent service should use Azure AI Foundry for LLM inference, receiving
+document text from the API (the API owns document storage and access).
 The web frontend should be Next.js with TypeScript, including a chat panel for Q&A.
 All three services (API, Agent, Web) should deploy to Azure Container Apps in a
 shared environment.
@@ -268,12 +268,12 @@ document-manager/
 │   │   ├── Dockerfile
 │   │   └── pyproject.toml
 │   ├── agent/                    # AI agent service (python/api template)
-│   │   ├── src/                  # main.py, agents/, tools/
+│   │   ├── app/                  # main.py, agents/, clients/, routers/, services/
 │   │   ├── tests/
 │   │   ├── Dockerfile
 │   │   └── pyproject.toml
 │   └── web/                      # Next.js frontend (typescript/web template)
-│       ├── src/                  # app/, components/, hooks/
+│       ├── src/                  # app/, Components/, Services/, lib/
 │       ├── Dockerfile
 │       └── package.json
 ├── infra/                        # Bicep + AVM (generated in Step 3)
@@ -337,7 +337,8 @@ Deploy to East US.
 - ✅ `infra/main.bicep` — AVM modules throughout, no hardcoded values
 - ✅ `infra/main.parameters.json` — environment defaults
 - ✅ `infra/modules/` — per-resource wrappers (Cosmos DB, storage, Container
-  Apps environment + apps, registry, AI Foundry, Key Vault, monitoring)
+  Apps environment + apps, registry, AI Foundry, Key Vault, monitoring,
+  managed identity)
 - ✅ `azure.yaml` — multi-service (api + agent + web)
 - ✅ Infrastructure validation (**Checkpoint 3B**): modules compile and the
   resource configuration validates before anything is deployed
@@ -407,8 +408,9 @@ Follow the design in docs/adr/ADR-001-document-manager-design.md.
 ### Expected output
 
 Copilot generates the layered implementation, each layer with its tests. The
-service layer shows the shape of the whole design — metadata and file
-operations orchestrated behind two approved libraries:
+service layer shows the shape of the whole design — the document service
+works against three interfaces (repository, blob store, agent client), each
+with its own implementation behind it:
 
 | ![Copilot generating implementation code](assets/guide/06-implementation.png) |
 | -------------------------------------------------------------------------------- |
@@ -416,15 +418,48 @@ operations orchestrated behind two approved libraries:
 
 ```python
 class DocumentService:
-    """Orchestrates document metadata and file operations."""
+    def __init__(
+        self,
+        repository: IDocumentRepository,
+        blobs: IBlobStore,
+        agent: IAgentClient,
+    ) -> None:
+        self._repository = repository
+        self._blobs = blobs
+        self._agent = agent
 
-    async def upload_async(self, document, file_content: bytes):
-        """Upload file to Blob Storage, save metadata to Cosmos DB."""
-        async with self._blob_helper as helper:
-            await helper.upload_blob("documents", document.blob_path, file_content)
-        async with self._repository:
-            await self._repository.add_async(document)
-        return document
+    async def upload(
+        self, user_id: str, file_name: str, content_type: str, data: bytes
+    ) -> DocumentMetadata:
+        if len(data) > MAX_UPLOAD_BYTES:
+            raise ValidationError(
+                f"File is {len(data)} bytes; the limit is {MAX_UPLOAD_BYTES}"
+            )
+        document_id = str(uuid.uuid4())
+        blob_path = f"{user_id}/{document_id}/{file_name}"
+        await self._blobs.put(blob_path, data, content_type)
+
+        summary, tags = "", []
+        text = extract_text(data, content_type)
+        if text:
+            try:
+                summary, tags = await self._agent.analyze(text)
+            except AgentUnavailable:
+                # FR-5 is enrichment: the upload stands without it.
+                summary, tags = "", []
+        doc = DocumentMetadata(
+            id=document_id,
+            userId=user_id,
+            fileName=file_name,
+            contentType=content_type,
+            sizeBytes=len(data),
+            blobPath=blob_path,
+            summary=summary,
+            tags=tags,
+            createdAt=datetime.now(UTC),
+        )
+        await self._repository.create(doc)
+        return doc
 ```
 
 ### Verify
@@ -452,16 +487,17 @@ Use .github/prompts/implementation-and-tests.prompt.md to implement:
 The Document Manager AI Agent service:
 
 1. Document Analyzer Agent — triggered after document upload:
-   - Reads the document from Blob Storage via an MCP tool
+   - Receives the document's extracted text from the API over HTTP
    - Summarizes the content using Azure AI Foundry
    - Extracts topic tags
-   - Saves analysis results to Cosmos DB via the approved Cosmos DB library
+   - Returns the analysis to the API, which saves it with the document's
+     metadata (the API owns Blob Storage and Cosmos DB access)
 
 2. Document Q&A Agent — chat endpoint:
-   - Receives natural language questions about a specific document
-   - Retrieves document content from Blob Storage via an MCP tool
+   - Receives a natural language question about a specific document,
+     together with the document's text
    - Generates answers using Azure AI Foundry
-   - Returns streaming responses
+   - Returns the answer with the exact passage it rests on as its citation
 
 Use Managed Identity (DefaultAzureCredential) for Azure AI Foundry access.
 Ground every answer in the retrieved document content and cite the source.
@@ -469,10 +505,14 @@ Ground every answer in the retrieved document content and cite the source.
 
 ### Expected output
 
-- ✅ `src/agent/src/agents/document_analyzer.py` — summarization + tag extraction
-- ✅ `src/agent/src/agents/document_qa.py` — grounded Q&A with citations
-- ✅ `src/agent/src/tools/` — MCP tools wrapping Blob reads
-- ✅ Unit tests with the AI client and MCP context mocked
+- ✅ `src/agent/app/agents/document_analyzer.py` — one analyzer class with
+  both jobs: summarization + tag extraction on upload, and grounded Q&A
+  whose answer carries its source passage as the citation
+- ✅ `src/agent/app/clients/foundry.py` — the model client behind an
+  interface, so tests substitute it
+- ✅ `src/agent/app/routers/agent.py` — `POST /agent/analyze` and
+  `POST /agent/ask`, called by the API service over HTTP
+- ✅ Unit tests with the model client mocked
 
 | ![Agent implementation](assets/guide/11-agent-implementation.png) |
 | --------------------------------------------------------------------- |
@@ -507,12 +547,14 @@ Fetch data from the API endpoints implemented in Step 4.
 
 Copilot generates components that follow `code-quality-tsx.instructions.md`:
 
-- `web/src/components/DocumentUpload.tsx`
-- `web/src/components/DocumentList.tsx`
-- `web/src/components/DocumentDetail.tsx`
-- `web/src/components/ChatPanel.tsx` — streaming Q&A chat with the agent
-- `web/src/hooks/useDocuments.ts`, `web/src/hooks/useChat.ts`
-- Component tests alongside (`DocumentList.test.tsx`, `ChatPanel.test.tsx`, …)
+- `src/web/src/Components/DocumentsPanel.tsx` — the document surface in one
+  panel: upload, the document list with summaries and tags, and asking a
+  question about a document, with the answer's citation shown
+- `src/web/src/Services/DocumentsService.ts` — the typed client the panel
+  calls; the browser reaches the API through the app's own route handlers
+  under `src/web/src/app/api/documents/`
+- Tests alongside (`DocumentsService.test.ts`, `ItemsPanel.test.tsx`,
+  `page.test.tsx`, …)
 
 ### Verify
 
@@ -645,7 +687,7 @@ Target audience: internal developers and operations team.
 ### Expected output
 
 - ✅ `README.md` — Solution Overview, Quick Deploy, Business Scenario
-- ✅ `docs/api/documents.md` — endpoint documentation
+- ✅ `docs/api/endpoints.md` — endpoint documentation
 - ✅ Updated `docs/adr/ADR-001-document-manager-design.md`
 - ✅ Exit Criteria Check (Phase 5)
 
@@ -716,7 +758,7 @@ git add .
 git commit -m "feat: Document Manager - full-stack implementation
 
 - FastAPI API with the approved Cosmos DB library + the approved Storage library
-- AI Agent service with Azure AI Foundry + MCP tools
+- AI Agent service with Azure AI Foundry (analyze + ask endpoints)
 - Next.js TypeScript frontend with chat panel
 - Bicep/AVM infrastructure with Container Apps
 - Unit tests + integration tests
@@ -767,9 +809,9 @@ After completing all steps, verify:
 | `.SDLC/project-manifest.md` | 3 | Scaffolder (updated every phase) |
 | `infra/` Bicep + AVM, `azure.yaml` | 3 + 8 | Deployer agent or `deployment.prompt.md` |
 | `src/api/app/models/`, `repositories/`, `services/`, `routers/` | 4 | `implementation-and-tests.prompt.md` |
-| `src/agent/src/agents/`, `src/agent/src/tools/` | 4 | `implementation-and-tests.prompt.md` |
-| `src/web/src/components/`, `src/web/src/hooks/` | 4 | `implementation-and-tests.prompt.md` |
-| `README.md`, `docs/api/documents.md` | 5 | Documenter agent or `repo-documentation.prompt.md` |
+| `src/agent/app/agents/`, `src/agent/app/clients/` | 4 | `implementation-and-tests.prompt.md` |
+| `src/web/src/Components/`, `src/web/src/Services/` | 4 | `implementation-and-tests.prompt.md` |
+| `README.md`, `docs/api/endpoints.md` | 5 | Documenter agent or `repo-documentation.prompt.md` |
 
 ### Quality standards verified
 

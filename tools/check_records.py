@@ -27,6 +27,12 @@ histories. This checker verifies, mechanically:
    line) has a row in `.SDLC/pattern-register.md` (base definitions
    section 7, pattern lifecycle). A fired signature with no register
    row is a record gap.
+5. Instruction-surface census — the manifest's run basis states the
+   census (`Instruction surface: <total> chars (map <a>,
+   instructions <b>)`, base definitions section 8.1) and the stated
+   numbers equal the character counts of the deployed
+   `.github/copilot-instructions.md` and `.github/instructions/`
+   files on disk. A missing line or a stale number is a record gap.
 
 Exit code 0 means every structural check passed. The check is
 read-only and uses only the standard library, so the copy deployed
@@ -282,6 +288,54 @@ def check_pattern_register(root: Path) -> None:
             )
 
 
+CENSUS_RE = re.compile(
+    r"Instruction surface: (\d+) chars \(map (\d+), instructions (\d+)\)"
+)
+
+
+def check_manifest_census(root: Path) -> None:
+    manifest = root / ".SDLC" / "project-manifest.md"
+    if not manifest.exists():
+        skip(f"{manifest}: no manifest — nothing to census-check")
+        return
+    match = CENSUS_RE.search(manifest.read_text(encoding="utf-8"))
+    if not match:
+        fail(
+            f"{manifest}: run basis carries no instruction-surface "
+            "census line (base definitions section 8.1)"
+        )
+        return
+    total, stated_map, stated_instructions = (int(g) for g in match.groups())
+    if total != stated_map + stated_instructions:
+        fail(
+            f"{manifest}: census total {total} != map {stated_map} "
+            f"+ instructions {stated_instructions}"
+        )
+        return
+    map_path = root / ".github" / "copilot-instructions.md"
+    if not map_path.exists():
+        fail(f"{map_path}: missing — the stated census cannot be verified")
+        return
+    actual_map = len(map_path.read_text(encoding="utf-8"))
+    instructions_dir = root / ".github" / "instructions"
+    actual_instructions = (
+        sum(
+            len(p.read_text(encoding="utf-8"))
+            for p in sorted(instructions_dir.glob("*.instructions.md"))
+        )
+        if instructions_dir.exists()
+        else 0
+    )
+    if stated_map != actual_map or stated_instructions != actual_instructions:
+        fail(
+            f"{manifest}: census states map {stated_map}, instructions "
+            f"{stated_instructions}; the files measure {actual_map}, "
+            f"{actual_instructions}"
+        )
+        return
+    ok(f"{manifest}: instruction-surface census matches the files ({total} chars)")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", default=".", help="project root (default: .)")
@@ -319,6 +373,8 @@ def main() -> int:
         skip(f"{adr_dir}: no ADR directory — nothing to index-check")
 
     check_pattern_register(root)
+
+    check_manifest_census(root)
 
     if _failures:
         print(f"records check: FAIL ({len(_failures)} failure(s))")

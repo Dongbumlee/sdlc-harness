@@ -53,3 +53,33 @@ evaluation gates.
 1. Create a YAML file in `canaries/<phase>/`
 2. Define `id`, `phase`, `input`, `expected_outputs`, and evaluation criteria
 3. See existing canaries for the schema
+
+## Maintaining the sets
+
+Three standing duties keep the sets honest:
+
+- **The ratchet** (base definitions §7): a failure signature that
+  fires a pit-stop trigger in a real run becomes a canary or an
+  evaluation case, or its run retrospective records why no case
+  fits. Field failures are the sets' primary source — a case added
+  any other way states what field evidence it stands for.
+- **Grader audit** (at each release freeze): graders rot — a
+  criterion written against yesterday's failure shape can start
+  rejecting correct work. Take a rotating sample of canary specs
+  (ten per freeze, cycling through the set), produce a known-good
+  response to each in the maintainer's seat, and check the spec's
+  graders accept it: keyword and structural criteria mechanically,
+  judge criteria by the seat reading the response against them. A
+  grader that rejects a known-good response is a spec defect; fix
+  it as its own change, with the response kept as the evidence.
+  Record the sample and the outcome in the freeze record.
+- **Panel tuning** (at each release freeze): the QA panel is itself
+  an evaluator, and evaluators drift toward approving their own
+  findings away or firing on neighbouring ground. Read the cycle's
+  QA reports and run records and note, per reviewer, where it
+  over-fired (findings a later phase proved wrong) or under-fired
+  (defects a later phase caught that its domain should have caught
+  first), each note citing the run record it rests on. A tuning
+  finding that indicts a reviewer's description or criteria goes
+  through the held-out procedure in `evals/README.md` like any
+  behaviour change; the tuning pass itself changes nothing.

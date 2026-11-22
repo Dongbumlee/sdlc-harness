@@ -124,3 +124,25 @@ def test_project_rule_file_extends_the_shipped_set(tmp_path):
 
 def test_unrelated_language_is_not_checked():
     assert create("Program.cs", "var x = eval(y);\n") == {}
+
+
+def test_deny_reason_carries_the_fix_pattern():
+    out = create("app.py", "result = eval(user_input)\n")
+    assert out["permissionDecision"] == "deny"
+    assert "Fix:" in out["permissionDecisionReason"]
+    assert "explicit mapping" in out["permissionDecisionReason"]
+
+
+def test_rule_without_fix_denies_without_a_fix_line(tmp_path):
+    (tmp_path / "BANNED_AST.md").write_text(
+        "---\n"
+        "name: no-print-debugging\n"
+        "languages: python\n"
+        "message: print debugging is banned in this project.\n"
+        "query: |\n"
+        '  (call function: (identifier) @fn (#eq? @fn "print")) @match\n',
+        encoding="utf-8",
+    )
+    out = create("src/app.py", 'print("debug")\n', cwd=str(tmp_path))
+    assert out["permissionDecision"] == "deny"
+    assert "Fix:" not in out["permissionDecisionReason"]

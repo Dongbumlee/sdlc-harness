@@ -32,6 +32,7 @@ A rule block looks like this:
     name: no-dynamic-code-execution
     languages: python
     message: Shown to the agent when the rule fires.
+    fix: The concrete compliant pattern, shown with the denial.
     query: |
       (call function: (identifier) @fn (#match? @fn "^(eval|exec)$")) @match
 
@@ -49,6 +50,18 @@ containing `<rule-name> justification: <reason>` on the matched line
 or up to three lines above it, inside the edited region, allows that
 one match. The justification stays in the code as the record — the
 same posture as a manifest deviation.
+
+## Changing the rules is an expansion
+
+The rule files are policy, and policy only narrows on its own.
+Removing a rule, weakening a query, or loosening a threshold is an
+**expansion**: it happens only as a reviewed change the user
+approves, never as a side effect of a task the rule is blocking. An
+agent stopped by a rule it believes is wrong has two legitimate
+moves — the justification comment for the single case, or raising
+the rule change to the user. Editing the rule file to get past the
+gate is neither; treat an unapproved loosening found in a diff as a
+finding, not a fix.
 
 ## Failure posture
 

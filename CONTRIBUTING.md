@@ -35,6 +35,9 @@ python3 -m pytest tests/ -q
   platform resolve it.
 - Measured claims carry their scope: what was run, on which stack,
   in which form (desk exercise, canary, live run).
+- Always-on instruction text is the most expensive form a rule can
+  take: a change that grows the shipped instruction surface names
+  what it displaces (base definitions §8.1).
 - Releases are cut with a written scope freeze (an IN list and an
   OUT list) recorded before the tag; release notes describe IN only.
 - VSIX distribution is retired — do not recreate `vscode-extension/`,
@@ -76,6 +79,20 @@ docs/                 ← Architecture docs, specs, guides
 | `bump-plugin-version.yml` | Manually bumps the plugin version and synchronizes marketplace metadata |
 
 ## Releases
+
+Before the tag, three checks beyond the test battery:
+
+- **Doc census** — `python3 tools/check_doc_census.py` passes: every
+  count stated in the reader docs still matches the tree.
+- **Placement and form** — for every file the release ships or
+  deploys (plugin surfaces, workspace-init assets, template files),
+  name its reader, the location that reader reads from, and the form
+  it expects. A file no reader reaches in the form shipped is a
+  defect of the same class as a missing file: a checklist line is
+  not a file, and a file in the wrong place is not shipped.
+- **Claims** — measured claims in the release notes and docs carry
+  their scope, and no text promises an outcome the harness does not
+  measure.
 
 A version bump covers the full surface — `plugin.json`,
 `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`, all
