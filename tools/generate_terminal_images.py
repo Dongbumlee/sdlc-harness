@@ -181,7 +181,7 @@ def generate_marketplace():
         "",
         [("── ", DIM), ("Browse available plugins", DIM), (" ──", DIM)],
         [("❯ ", BLUE), ("copilot plugin marketplace browse sdlc-harness", TEXT)],
-        [("    sdlc-harness", YELLOW), ("  v1.3.4", DIM)],
+        [("    sdlc-harness", YELLOW), ("  v1.3.5", DIM)],
         [("    22 agents · 25 skills · 3 core MCP servers + cloud pack", DIM)],
         [("    Multi-agent SDLC orchestration with adversarial QA", DIM)],
         "",
