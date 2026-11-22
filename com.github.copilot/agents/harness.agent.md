@@ -401,6 +401,13 @@ is the Medium ceremony; the recorded grade scales it:
   the approval — not at phase transitions. Approvals happen in conversation
   and otherwise leave no trace on disk; this block is that trace, and
   Step 0.5 verifies it before any resume.
+- **Record the instruction-surface census.** The Run basis block also
+  carries the census line (base definitions §8.1):
+  `Instruction surface: <total> chars (map <a>, instructions <b>)` —
+  the character counts of the project's `.github/copilot-instructions.md`
+  and its deployed `.github/instructions/` files, measured when the
+  skeleton is created. The records check verifies the numbers against
+  the files, so measure them, never estimate them.
 - **Record the run configuration.** The Run basis block also carries one
   line naming the run's configuration at intake: the pack set and the MCP
   server set. That set does not change mid-run (base definitions §8.1):
@@ -1455,6 +1462,10 @@ basis. Fixed fields, no free prose beyond them:
   signatures proposed (fired a trigger), confirmations added, patterns
   promoted to standing, patterns contested or retired. A signature
   that fired and is missing here is a record gap, not a judgment call.
+- **Instruction surface** — this run's census from the run basis,
+  beside the previous run's census (from the prior retrospective)
+  when the project has one. Growth names what it displaces; growth
+  with nothing displaced is recorded as a deliberate addition.
 - **Candidate rule changes** — at most three, each stated as the rule
   that would have changed this run's outcome. A candidate drawn from
   a repeated failure cites its pattern-register row — the counted
