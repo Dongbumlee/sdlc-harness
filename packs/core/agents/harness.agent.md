@@ -1462,6 +1462,8 @@ basis. Fixed fields, no free prose beyond them:
   signatures proposed (fired a trigger), confirmations added, patterns
   promoted to standing, patterns contested or retired. A signature
   that fired and is missing here is a record gap, not a judgment call.
+  Each spent signature also carries its bench disposition (§7): the
+  canary or evaluation case it became, or why no case fits.
 - **Instruction surface** — this run's census from the run basis,
   beside the previous run's census (from the prior retrospective)
   when the project has one. Growth names what it displaces; growth

@@ -482,6 +482,16 @@ domain pulls that domain into the round.
   the standing path — a retrospective candidate carried into a
   reviewed change to the shipped definitions — with the register row
   as its counted evidence.
+- **The bench ratchet.** A signature that fires a trigger has named a
+  failure mode the harness met in the field. Its Phase 9 disposition
+  includes a bench disposition: the failure mode becomes a canary or
+  an evaluation case (the case cites the signature), or the
+  retrospective records why no case fits — already covered by a named
+  case, or specific to an environment no spec can reproduce. A spent
+  signature with no bench disposition is a record gap of the same
+  kind as a missing register row. The sets only grow this way; a case
+  is retired only by the same reviewed-change path as any shipped
+  definition.
 
 ## 8. Records and contracts
 
