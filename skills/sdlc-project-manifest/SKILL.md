@@ -136,7 +136,7 @@ python defaults.
 
 ## Phase-State Ledger
 
-**Run basis** — Task: <one line naming the task> (user instruction, <date>).
+**Run basis** — Task: <one line naming the task> (user instruction, <date> <time>).
 Design brief: `.SDLC/design-brief.md` (Current frame as of frame revision <n>, <date>) — the run's framing of record.
 Tracking issue: <GitHub issue URL | local-only>.
 Approved artifacts:

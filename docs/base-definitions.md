@@ -552,7 +552,7 @@ is recorded as a deliberate addition, never a silent one.
 | QA findings (GitHub) | QA Coordinator | Coordinator | The ledger is the local source of truth; GitHub sync is one-way, ledger → GitHub (ADR-0003) |
 | Run tracking Issue (GitHub) | Harness, at GitHub intake | Harness (comments) | One Issue per run (`sdlc:run`), linking the brief; frame revisions, phase completions, and gate outcomes are posted as comments. Local records stay canonical; the sync is one-way (§8.4) |
 | Change Issues (GitHub) | Harness, on the change path (§8.4) | Harness | One Issue per change, labeled `change:add` / `change:modify` / `change:remove` (plus `frame-moving`); the propagation list is the Issue's task list; closure is verified at the next gate |
-| Run retrospective (`.SDLC/run-retrospective.md`) | Harness, at Phase 9, from the run's records | Harness only | The maintainer; candidate rule changes take effect only via a reviewed change to the shipped definitions; pattern candidates cite their pattern-register row (§7) as counted evidence |
+| Run retrospective (`.SDLC/run-retrospective.md`) | Harness, at Phase 9, from the run's records | Harness only | The maintainer; candidate rule changes take effect only via a reviewed change to the shipped definitions; pattern candidates cite their pattern-register row (§7) as counted evidence. It records the run's **lead time**: the run basis's intake timestamp to the retrospective's own, as elapsed wall-clock time (the envelope bands in §8.2 measure active run time; lead time is the wall-clock figure, idle gaps included) |
 
 **Run envelope bands (operational defaults).** Small: spend ≤ $20,
 active run time ≤ 4 hours. Medium: spend ≤ $75, ≤ 2 days. Large:

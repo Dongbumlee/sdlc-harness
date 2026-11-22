@@ -393,8 +393,8 @@ is the Medium ceremony; the recorded grade scales it:
   yours. The ledger is the resume source (Step 0.5) and the exit gates'
   cross-check.
 - **Maintain the Run basis block.** The ledger section opens with a
-  **Run basis** block: one line naming the task and the date of the user's
-  instruction that started the run, then one line per artifact the user has
+  **Run basis** block: one line naming the task and the date and time of
+  the user's instruction that started the run, then one line per artifact the user has
   approved — path, approver, approval date, and the artifact's short hash
   (`sha256sum`, first 12 characters; a change detector, not a security
   control). Create the block with the task line when the manifest skeleton
@@ -902,6 +902,11 @@ ls docs/adr/ADR-*.md            # a NEW ADR (or dated addendum) exists for THIS 
       proportionality record"); this gate is where that record is
       verified. (Measured 2026-11-10: the section stayed at its
       placeholder through Phase 3 while no gate looked at it.)
+      **This gate is the grade-fixing point.** Past it, the grade
+      changes only by a recorded re-grade decision — an upgrade on
+      new evidence, or a downgrade with the user's approval —
+      recorded as a dated frame revision in the brief. Later phases
+      read the grade; they do not re-litigate it.
 - [ ] **Stack conformance:** the stack claims in the REQ and the ADR
       (framework and runtime versions, test libraries, platform
       services) match the stack profile for the project's
@@ -1470,6 +1475,10 @@ basis. Fixed fields, no free prose beyond them:
   beside the previous run's census (from the prior retrospective)
   when the project has one. Growth names what it displaces; growth
   with nothing displaced is recorded as a deliberate addition.
+- **Lead time** — intake (the run basis timestamp) to this
+  retrospective's date and time, stated as elapsed wall-clock time.
+  The envelope bands measure active run time; lead time is the
+  wall-clock figure the run is judged by, idle gaps included.
 - **Candidate rule changes** — at most three, each stated as the rule
   that would have changed this run's outcome. A candidate drawn from
   a repeated failure cites its pattern-register row — the counted
