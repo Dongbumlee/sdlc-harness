@@ -103,6 +103,24 @@ def compute_census(root: Path) -> dict[str, int]:
     }
 
 
+def shipped_surface(root: Path) -> dict[str, int]:
+    """Character counts of the shipped instruction surface (informational).
+
+    The bloat guard's maintainer-side figure (base definitions §8.1):
+    the agent and skill text a behaviour change can grow. Reported,
+    never gated — growth is judged at review, where the change names
+    what it displaces.
+    """
+    packs = root / "packs"
+    agents = sum(
+        len(p.read_text(encoding="utf-8")) for p in packs.glob("*/agents/*.agent.md")
+    )
+    skills = sum(
+        len(p.read_text(encoding="utf-8")) for p in packs.glob("*/skills/*/SKILL.md")
+    )
+    return {"agents": agents, "skills": skills, "total": agents + skills}
+
+
 def find_mismatches(
     root: Path, census: dict[str, int]
 ) -> list[tuple[str, int, str, int, int]]:
@@ -156,6 +174,13 @@ def main(argv: list[str] | None = None) -> int:
             f"  copilot-instructions template: {chars} chars "
             "(informational — the always-on map every project starts with)"
         )
+
+    surface = shipped_surface(root)
+    print(
+        "Shipped instruction surface (informational): "
+        f"agents {surface['agents']} chars, skills {surface['skills']} chars, "
+        f"total {surface['total']} chars"
+    )
 
     mismatches = find_mismatches(root, census)
     if mismatches:
