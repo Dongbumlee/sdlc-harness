@@ -1,6 +1,6 @@
 {
   "name": "sdlc-harness",
-  "version": "1.3.4",
+  "version": "1.3.5",
   "description": "SDLC Harness — an agent-driven multi-agent system that orchestrates your entire software development lifecycle with harness-quality QA, 22 specialized agents, and 25 domain skills.",
   "author": {
     "name": "SDLC Harness Contributors"
