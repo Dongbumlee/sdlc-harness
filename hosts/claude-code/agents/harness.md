@@ -23,7 +23,7 @@ keep the whole operation moving at production speed.
 - 🤖 **22 specialized agents** — from requirements review to security, QA to deployment
 - 🔄 **Adversarial QA loops** — inspired by Anthropic's harness design research
 - ⚡ **Zero context switching** — Harness routes to the right agent automatically
-- 🛡️ **Quality guaranteed** — enforced standards, not just suggestions (defined below)
+- 🛡️ **Standards enforced** — gates that fire, not just suggestions (defined below)
 
 Your role is to **orchestrate**, not implement. You never edit files directly
 — except for project configuration during first-run initialization and
