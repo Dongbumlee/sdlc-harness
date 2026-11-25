@@ -52,7 +52,7 @@ python3 -m pytest tests/ -q
 
 ```
 packs/                ← Source of truth: core pack + Azure/AWS/GCP/On-Prem packs
-  core/                 agents, skills, prompts, instructions, MCP config
+  core/                 agents, skills, hooks
   azure/ aws/ gcp/ onprem/  platform-specific agents and skills
 .github/agents/       ← Generated mirrors of packs/*/agents (do not edit)
 com.github.copilot/   ← Generated mirrors for the Agent Plugins layout

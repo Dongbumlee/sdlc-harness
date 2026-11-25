@@ -210,7 +210,7 @@
 
  1. Requirement Analysis
  2. Design (incl. new services/technologies and patterns)
- 3. Repo structure and CI/CD (ADO) configuration
+ 3. Repo structure and CI/CD configuration
  4. Implementation with test strategy (unit + integration)
  5. Repository documentation
  6. QA activities
@@ -280,29 +280,21 @@
 
  ---
 
- ## 9. Azure DevOps MCP integration
+ ## 9. Public guidance sources
 
- This project uses **Azure DevOps**. The Azure DevOps MCP server (`@azure-devops/mcp`) is configured
- in `.vscode/mcp.json` and provides access to ADO projects, repositories, wikis, pipelines, and work items.
+ GitHub is this project's only forge — issues, pull requests, and GitHub Actions
+ are the work medium, and there is no Azure DevOps (or other tracker) integration.
+ Team standards live in this repository's own instruction files, not an external wiki.
 
- **Always check to see if the Azure DevOps MCP server has a tool relevant to the user's request.**
+ When no project-local pattern covers a question, agents consult the public sources
+ below — and note the gap rather than fabricating guidance:
 
- **Available domains:** `core`, `work`, `work-items`, `search`, `test-plans`, `repositories`, `wiki`, `pipelines`, `advanced-security`
-
- **Authentication:** The first time an ADO tool is executed, a browser window opens prompting Microsoft account login.
- Ensure credentials match the configured Azure DevOps organization.
-
- **Key use cases for agents:**
- - Fetch engineering standards, Bicep guidelines, and coding standards from the team's ADO wiki.
- - Browse ADO repositories for existing infrastructure patterns.
- - Query work items and iteration context for implementation planning.
- - Access pipeline definitions for CI/CD configuration.
-
- **Rules for Copilot and all agents:**
- - If an ADO MCP tool call fails with an auth error, inform the user that browser-based login is required.
- - Do NOT fabricate ADO wiki content — if the tool fails, proceed without it and note the gap.
- - Use ADO wiki content as supplementary guidance alongside the primary sources
-   (reference catalog, GitHub MCP repos, awesome-copilot, Microsoft Learn).
+ - Best-practice instructions and collections fetched from the `github/awesome-copilot`
+   repository via the GitHub MCP server's file-contents tool or `fetch`. This is a
+   discovery-time source, not a configured MCP server; skip a load if it is unreachable.
+ - **Microsoft Learn MCP** (Azure pack) and **Context7 MCP** for current vendor and
+   framework documentation.
+ - The **AVM module registry** for Azure Verified Modules.
 
  ---
 

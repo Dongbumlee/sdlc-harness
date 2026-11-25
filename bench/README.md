@@ -17,7 +17,10 @@ bench/
 │   ├── document/      # Documentation canaries
 │   ├── rai/           # Responsible AI canaries
 │   ├── release/       # Release preparation canaries (Phase 8)
-│   └── publish/       # Publish canaries (Phase 9)
+│   ├── publish/       # Publish canaries (Phase 9)
+│   ├── harness/       # Orchestration canaries (routing, escalation, guards)
+│   ├── phase-1-2/     # Catalog population canary (Phases 1–2)
+│   └── phase-3/       # Catalog consumption canary (Phase 3)
 ├── evals/             # Frozen per-skill evaluation specs (25) + the
 │                      # held-out judgment procedure (evals/README.md)
 └── results/           # Canary test results (generated)

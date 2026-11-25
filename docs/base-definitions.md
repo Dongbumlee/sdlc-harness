@@ -397,15 +397,12 @@ domain pulls that domain into the round.
 - **Conditional:** Requirements Completeness (a REQ file exists); UX
   (the change has a UI surface); LLM Behavior (AI features present);
   Cloud Compliance (a cloud target is recorded — exactly one of the
-  Azure/AWS/GCP compliance agents, matching the recorded target).
+  Azure/AWS/GCP/On-Prem compliance agents, matching the recorded target).
 - **No cloud target recorded → no cloud reviewer runs. There is no
-  default cloud.** (The routing table's "(default when no cloud target
-  is set)" footnote contradicts this rule and is listed for removal.)
-- "9 reviewers" always means the 9 domains at full panel. Eleven agents
-  are invocable because the cloud slot has three variants. The RAI
-  Reviewer is not a panel member (§4.4). The manual-mode prompt's "8
-  parallel reviewers" is stale and is listed for alignment to the 9
-  domains.
+  default cloud.**
+- "9 reviewers" always means the 9 domains at full panel. Twelve agents
+  are invocable because the cloud slot has four variants. The RAI
+  Reviewer is not a panel member (§4.4).
 - Phase-exit routing by slug (requirements, design, scaffold, …) selects
   reviewer subsets per the Harness routing table, modulated by grade:
   the table is the Medium ceremony; on Small, phase-exit reviews invoke
@@ -695,7 +692,7 @@ instead of being hardcoded per template.
 ### 10.5 Working agreements (reviewer boilerplate)
 
 The evidence-pack working-agreements block is currently byte-identical
-across all 11 panel reviewer files (verified by hash in this scan) and
+across all 12 panel reviewer files (verified by hash in this scan) and
 absent from the RAI Reviewer (correctly — §4.4). Canonical rule: the
 block's text is defined once, in the reviewer-output-format skill;
 copies in agent files must remain byte-identical to it, and drift
