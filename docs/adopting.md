@@ -9,16 +9,17 @@ shipped defaults, and from the moment you edit them, the gates enforce
 
 ## Where the standards live
 
-Every surface below lands in your project at workspace initialization
-(see [First use](../README.md#first-use)).
+Most surfaces below land in your project at workspace initialization
+(see [First use](../README.md#first-use)). The templates are the
+exception: they ship with the plugin and are read from there.
 
 | Surface | In your project | What it decides |
 |---|---|---|
 | Project instructions | `.github/copilot-instructions.md` | Project identity, the stack, and where your organization's templates live |
-| Quality instructions | `.github/instructions/` (14 files) | Per-language code and test standards — naming, structure, testing rules the reviewers measure against |
+| Quality instructions | `.github/instructions/` (the files for your stack, drawn from the 14 shipped) | Per-language code and test standards — naming, structure, testing rules the reviewers measure against |
 | Reference catalog | `.github/reference-catalog.md` | The approved libraries and patterns for the project |
-| Templates | Bundled per stack and type; document templates in `.design/` | The shape of scaffolded projects and of the REQ, ADR, and design documents |
-| Manifest patterns | `.SDLC/project-manifest.md` | The patterns recorded for one project, including its approved deviations |
+| Templates | Ship with the plugin: bundled per stack and type; document templates in the plugin's `.design/` | The shape of scaffolded projects and of the REQ, ADR, and design documents |
+| Manifest patterns | `.SDLC/project-manifest.md` (created at intake) | The patterns recorded for one project, including its approved deviations |
 | Cloud pack + MCP config | Chosen at install; `.vscode/mcp.json` | Which vendor rules and MCP servers apply |
 
 ## How a change takes effect
