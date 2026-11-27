@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 """Regenerate docs/agent-inventory.md from the agent and skill sources.
 
-The inventory used to be maintained by hand and drifted out of date
-(missing agents, missing skills, wrong counts). This script derives every
-table from the actual files so the document cannot silently go stale:
+This script derives every table from the actual files so the document
+cannot silently go stale:
 
   python3 tools/generate_agent_inventory.py            # rewrite the doc
   python3 tools/generate_agent_inventory.py --check    # CI: fail if stale
@@ -19,7 +18,6 @@ from __future__ import annotations
 import json
 import re
 import sys
-from datetime import date
 from pathlib import Path
 
 import yaml
@@ -34,10 +32,10 @@ GENERATED_RE = re.compile(r"^\*\*Generated:\*\* \d{4}-\d{2}-\d{2}\s*$", re.M)
 
 
 def without_generated_date(text: str) -> str:
-    """Normalize the generation-date line so --check is reproducible.
+    """Normalize any generation-date line so --check is reproducible.
 
-    The date is informative when generating, but it must not make the
-    freshness check fail just because a new day has begun.
+    A document copy that still carries the line compares equal to one
+    without it; the freshness check judges the derived content only.
     """
     return GENERATED_RE.sub("**Generated:** <date>", text)
 
@@ -158,7 +156,6 @@ def main() -> int:
     add("> Regenerate with `python3 tools/generate_agent_inventory.py`.")
     add("")
     add(f"**Version:** {version}  ")
-    add(f"**Generated:** {date.today().isoformat()}  ")
     add(f"**Total agents:** {len(agents)} ({len(agent_files)} agent files)  ")
     add(f"**Total skills:** {len(skills)}")
     add("")
