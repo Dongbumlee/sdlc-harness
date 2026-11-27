@@ -117,7 +117,7 @@ class TestPluginPackJson:
             mcp = json.load(f)  # raises if invalid JSON
         servers = mcp.get("servers", {})
         # The managed AWS MCP Server replaced the retired awslabs local
-        # servers (ADR-0003 D7): one "aws" entry is the whole pack set.
+        # servers (ADR-0003): one "aws" entry is the whole pack set.
         assert "aws" in servers, "aws server missing from pack mcp-servers.json"
         assert len(servers) == 1, f"expected only the managed aws server, got {sorted(servers)}"
 

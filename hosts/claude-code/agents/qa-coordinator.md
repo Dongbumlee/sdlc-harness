@@ -259,7 +259,7 @@ the summary. Coverage is therefore unbounded across continuations, while
 every individual session stays bounded and always returns a deliverable.
 
 **Verify test evidence before synthesizing (mandatory).** The evidence
-pack's **CI Evidence** section (ADR-0003 D5) is the primary source: when it
+pack's **CI Evidence** section (ADR-0003) is the primary source: when it
 records a CI run for the commit under review, cite its workflow, conclusion,
 and run URL in the QA summary — a CI conclusion for the exact commit is the
 test evidence, and you can open the run via GitHub MCP to inspect failures

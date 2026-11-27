@@ -706,7 +706,7 @@ is the Medium ceremony; the recorded grade scales it:
   conflict is recorded as a ledger deviation. Guidance earns a place in
   the shipped harness only offline, through a change that cites the
   run's recorded evidence.
-- **Mirror phase state to GitHub (ADR-0003 D4).** When the manifest's
+- **Mirror phase state to GitHub (ADR-0003).** When the manifest's
   `repository_mode` is not local-only: at each phase start, open (or reuse)
   the phase's Issue labeled `sdlc:phase-<n>` via GitHub MCP; when the ledger
   marks the phase Complete, close it. Sync is one-directional —
@@ -1336,7 +1336,7 @@ facts instead of re-deriving them:
    convene on an app that cannot start. (Origin: 2026-11-10 quality review
    — a generated app missing its `app.Run()` call reached QA on static
    evidence alone; nothing had ever booted it.)
-4. **Record the CI result for the commit under review (ADR-0003 D5).** When
+4. **Record the CI result for the commit under review (ADR-0003).** When
    the manifest's `repository_mode` is not local-only, query the check runs
    for the current HEAD commit via GitHub MCP and append a **CI Evidence**
    section to the pack: workflow name, conclusion, and run URL. This CI

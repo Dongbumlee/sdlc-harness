@@ -91,7 +91,7 @@ Note: Claude tools use `"mcpServers"` key; VSCode/Copilot use `"servers"` key.
 ## Configured Servers
 
 The workspace template configures three core servers in every workspace;
-each cloud pack adds its vendor's servers (ADR-0003 D7). Posture at run
+each cloud pack adds its vendor's servers (ADR-0003). Posture at run
 start differs by server (see `docs/base-definitions.md` §10.2): no server
 is a hard stop — a GitHub MCP authentication failure warns and the run
 continues in degraded local mode; it never gates a phase. GitHub MCP also
@@ -121,7 +121,7 @@ awesome-copilot is **not** a configured server: it is a discovery-time
 source — agents fetch named instructions and collections from the
 `github/awesome-copilot` repository through the GitHub MCP server or
 `fetch`, skipping a load if it is unreachable. There is likewise no
-Azure DevOps server — GitHub is the only forge (ADR-0003 D6).
+Azure DevOps server — GitHub is the only forge (ADR-0003).
 
 ## Still Stuck?
 
