@@ -2,8 +2,7 @@
 """Claude Code host adapter for the assembler.
 
 Translates the pack sources into a Claude Code plugin tree under
-``hosts/claude-code/`` (multi-host design note, 2026-11-14; decisions 1-3
-approved by the maintainer the same day). The packs stay the single source
+``hosts/claude-code/``. The packs stay the single source
 of truth; this module is the only place that knows Claude Code's format.
 
 Rules the build enforces:
