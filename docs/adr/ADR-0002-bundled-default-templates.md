@@ -1,6 +1,6 @@
 # ADR-0002: Bundled Default Templates
 
-> **Status:** Accepted (2026-10-18; merged via PR #21, implementation follows in the bundled-templates change)  
+> **Status:** Accepted  
 > **SDLC Phase:** 1-2 (Requirements & Design)  
 > **Date:** 2026-10-18  
 > **Author:** Dongbum(DB) Lee
@@ -22,7 +22,7 @@ Two layers of that standard already ship:
   commands, Dockerfile, and CI steps as prose an agent can follow.
 
 The third layer — the actual template files a project is scaffolded from —
-does **not** ship. By a 2026-10-07 design decision, templates are fetched at
+does **not** ship. Templates are fetched at
 scaffold time from template repositories in the project's GitHub organization
 (base app, API, agent templates), with `.github/reference-catalog.md` patterns
 as the fallback. That decision assumed an enterprise organization that already
@@ -310,6 +310,6 @@ after the fact.
 - `sdlc-stack-profiles` skill (stack profiles, resolution order) — v1.1.0
 - `sdlc-project-scaffolding` skill (documented application patterns)
 - v1.1.0 release notes — https://github.com/Dongbumlee/sdlc-harness/releases/tag/v1.1.0
-- Design discussions: 2026-10-07 (templates live in org repos; defaults fill
-  unspecified choices), 2026-10-18 (north star: cross-stack consistency via
-  adopted standards; .NET greenfield E2E findings)
+- Design discussions: templates live in org repos, with defaults filling
+  unspecified choices; north star: cross-stack consistency via
+  adopted standards; .NET greenfield E2E findings

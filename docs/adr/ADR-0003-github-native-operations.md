@@ -1,6 +1,6 @@
 # ADR-0003: GitHub-Native Operations — Repository First, Work Tracked in Issues/PRs, Test Evidence from CI
 
-> **Status:** Accepted (amended 2026-11-12 — D6, D7 added; amended 2026-11-20 — D3 placement superseded, root community files and workflow composition moved to the root)  
+> **Status:** Accepted  
 > **Date:** 2026-10-19  
 > **Author:** Dongbum(DB) Lee (product owner, harness maintainer)  
 > **Related:** ADR-0002 (bundled default templates), manifest Phase-State Ledger, QA evidence pack
@@ -9,7 +9,7 @@
 
 ## Context
 
-The 2026-10-19 baseline end-to-end run (bundled `dotnet/api` template, all nine
+The baseline end-to-end run (bundled `dotnet/api` template, all nine
 phases completed on a clean greenfield project) exposed four gaps that prose
 instructions alone did not close:
 
@@ -31,19 +31,21 @@ instructions alone did not close:
 
 ## Decision
 
-### D1. MIT LICENSE ships inside every bundled template
+### MIT LICENSE ships with every scaffolded project
 
-Each bundled template (ADR-0002) carries a `LICENSE` file at its root with the
-standard MIT text. The copyright line uses two existing-style tokens:
+Every scaffolded project carries a `LICENSE` file at its root with the
+standard MIT text, supplied with the root community set (see the
+community-files decision below) rather than as a per-template copy.
+The copyright line uses two existing-style tokens:
 `Copyright (c) {{Year}} {{ProjectName}} contributors`. `{{Year}}` is added to
 the template token contract (declared in each `template.yaml`, substituted at
 instantiation with the current year). An organization template or an explicit
 user decision overrides the license; the chosen license is recorded in the
-manifest next to the template provenance. The same treatment (a real file in
-the template, not a checklist line) is the pattern for any future compliance
+manifest next to the template provenance. The same treatment (a real file,
+not a checklist line) is the pattern for any future compliance
 file.
 
-### D2. The repository is created first, private by default — behind a mandatory intake gate
+### The repository is created first, private by default — behind a mandatory intake gate
 
 Initialization includes a **mandatory GitHub intake**; the run does not
 reach scaffolding until it is complete or explicitly waived by the user:
@@ -59,7 +61,7 @@ reach scaffolding until it is complete or explicitly waived by the user:
    (default). The questions must actually be asked — wording inside the
    task prompt (e.g. "build in this empty repository") is never an answer
    and must never be recorded as a user decision; the manifest records the
-   decision source alongside the mode. (Clarified 2026-10-19 after the
+   decision source alongside the mode. (Clarified after the
    first simulation inferred local-only from the feature prompt's prose.)
 3. **Create the repository at intake** (GitHub MCP `create_repository` where
    available, otherwise `gh repo create`), and record the intake in the
@@ -73,16 +75,24 @@ creation as a catch-up step before release (warn-and-proceed, consistent with
 the existing GitHub MCP policy). Creating a private repository is never a
 mid-run surprise: it is an intake decision, defaulted to private.
 
-### D3. A pull request template ships inside every bundled template
+### A pull request template ships with the harness — one template, at the repository root
 
-Each bundled template carries `.github/pull_request_template.md`, using the
-structure most widely recommended in current open-source practice
-(summary / type of change / how it was tested / checklist / linked issues).
-Harness-opened PRs are expected to fill it in; the checklist includes the
-harness-specific items (tests run, manifest ledger updated, ADR if a decision
-changed).
+Harness-opened PRs follow a pull request template. The template ships
+once, in SDLC form (summary / SDLC phases covered / prompts used /
+cloud resources / testing / documentation / design reference), as an
+asset of the workspace-init skill, which deploys it to the root
+`.github/pull_request_template.md` at initialization — keeping a
+project's existing root template, which is the project's own standard.
+The Phase 3 exit gate verifies the root file exists.
 
-### D4. Agents actively work in GitHub Issues and PRs — it is the working medium, not a log
+Placement is the root because that is the only place GitHub reads the
+template from (the root `.github/`, the repo root, or `docs/`): copies
+inside bundled templates land under `src/<service>/.github/` in a
+multi-service scaffold and are never used, and the template's content
+does not vary by stack, so per-template duplication buys nothing. The
+stack templates carry no copy.
+
+### Agents actively work in GitHub Issues and PRs — it is the working medium, not a log
 
 The orchestrator and every subagent use GitHub as the place work happens,
 not as an after-the-fact record. This matters mechanically: in the Copilot
@@ -119,7 +129,7 @@ Structure underneath the activity:
   ledger → GitHub, so the two never conflict. If GitHub is unavailable, work
   proceeds locally and the pending sync is noted in the ledger.
 
-### D5. Test evidence for gates comes from CI
+### Test evidence for gates comes from CI
 
 - Bundled templates' GitHub Actions workflows run the profile's test command
   on every PR and on pushes to the default branch.
@@ -131,14 +141,11 @@ Structure underneath the activity:
   and the QA report states that limitation explicitly when it applies —
   the same honesty rule as the recorded-not-re-run pattern it replaces.
 
-### D6. The forge standard is GitHub only — no tracker adapters (amendment, 2026-11-12)
-
-Decided by the product owner on 2026-11-11 after a market review of the
-late-2026 MCP/forge landscape, and implemented the next day.
+### The forge standard is GitHub only — no tracker adapters
 
 - **One standard, no variants.** GitHub is the only forge and work
   medium the harness supports: Issues are the phase medium, PRs the
-  review medium, Actions logs the gate evidence (D4/D5). The harness
+  review medium, Actions logs the gate evidence. The harness
   does **not** build or maintain adapters for Jira, GitLab, or Azure
   DevOps — a single pinned standard is the product's premise (the
   same rule the template program applies to every other decision
@@ -157,7 +164,7 @@ late-2026 MCP/forge landscape, and implemented the next day.
   a standards decision, not a capability judgement, and this ADR is
   where a future reversal would have to argue itself in.
 
-### D7. The MCP set is small, per-pack, and vendor-current (amendment, 2026-11-12)
+### The MCP set is small, per-pack, and vendor-current
 
 - **Core set (every workspace): three servers.** The official
   GitHub MCP (remote), Context7 (cross-ecosystem library docs),
@@ -188,42 +195,20 @@ late-2026 MCP/forge landscape, and implemented the next day.
   name (`mcp_<server>_<tool>` display strings, including truncated
   ones, differ per client and rot silently).
 
-### Amendment (2026-11-20): D3 placement superseded — one template, at the repository root
+### The root community files ship with initialization; workflows are composed at the root
 
-D3 put a copy of the PR template inside every bundled template. Two facts
-overtook that placement. GitHub reads the template only from the
-repository root (the root `.github/`, the repo root, or `docs/`): in a
-multi-service scaffold the copies land under `src/<service>/.github/`
-and are never used — the 2026-11-19 hands-on walkthrough run had to
-compose its root template by hand. And the template's content does not
-vary by stack (the copies were byte-identical), so per-template
-duplication bought nothing.
-
-The template now ships once, in SDLC form (summary / SDLC phases covered
-/ prompts used / cloud resources / testing / documentation / design
-reference), as an asset of the workspace-init skill, which deploys it to
-the root `.github/pull_request_template.md` at initialization — keeping
-a project's existing root template, which is the project's own standard.
-The stack templates no longer carry a copy. D3's requirement itself
-stands: harness-opened PRs follow the template, and the Phase 3 exit
-gate still verifies the root file exists.
-
-### Amendment (2026-11-20): the root community files ship with initialization; workflows are composed at the root
-
-The same placement lesson, one layer wider. The Scaffolder's compliance
-tree has always required `SECURITY.md`, `SUPPORT.md`, and `LICENSE` at
-the repository root, but the supply was per-template copies — which land
-under `src/<project>/` in a multi-service scaffold, where GitHub does
-not surface them — and `SUPPORT.md` was in no template at all: the
-2026-11-19 walkthrough run finished with that checklist line unmet and
-no file. A checklist line is not a file (Context, item 1).
+The Scaffolder's compliance tree requires `SECURITY.md`, `SUPPORT.md`,
+and `LICENSE` at the repository root, but per-template supply cannot
+meet it: copies land under `src/<project>/` in a multi-service
+scaffold, where GitHub does not surface them — and `SUPPORT.md` is in
+no template at all. A checklist line is not a file (Context, item 1).
 
 The root community set — `LICENSE`, `SECURITY.md`, `SUPPORT.md`,
-`CODE_OF_CONDUCT.md`, `CONTRIBUTING.md`, `renovate.json` — now ships
+`CODE_OF_CONDUCT.md`, `CONTRIBUTING.md`, `renovate.json` — ships
 once, as assets of the workspace-init skill, deployed to the repository
 root at initialization, keeping any file the project already has. The
-stack templates no longer carry `LICENSE`, `SECURITY.md`, or
-`renovate.json`.
+stack templates carry no `LICENSE`, `SECURITY.md`, or
+`renovate.json` copies.
 
 Workflows get the same treatment. GitHub Actions reads only the root
 `.github/workflows/`, so a template's workflows are composed at the
@@ -242,14 +227,16 @@ pack's deployment skill. The Scaffolder carries the composition rule.
   it should be: versioning and publishing an already-tracked history.
 - Cost/dependency: private-repository Actions minutes are consumed per run
   (within the GitHub Free/Pro included minutes at this project's scale), and
-  D2/D4/D5 degrade to local-only when GitHub is unavailable — by design, with
+  the repository-first, working-medium, and CI-evidence decisions
+  degrade to local-only when GitHub is unavailable — by design, with
   the degradation recorded rather than silent.
 
 ## Implementation checklist
 
-- [x] `LICENSE` (MIT) in all three bundled templates; `{{Year}}` token added
-      to each `template.yaml`; `tools/verify_templates.py` passes.
-- [x] `.github/pull_request_template.md` in all three bundled templates.
+- [x] `LICENSE` (MIT) ships with initialization as a workspace-init asset;
+      `{{Year}}` token added to each `template.yaml`; `tools/verify_templates.py` passes.
+- [x] The root `.github/pull_request_template.md` ships as a workspace-init
+      asset, deployed at initialization.
 - [x] Scaffolder: instantiation notes cover `{{Year}}` substitution and the
       license-override rule; compliance checklist cites the template files.
 - [x] Harness: repository bootstrap step at Phase 3 entry (intake questions,
@@ -261,4 +248,4 @@ pack's deployment skill. The Scaffolder carries the composition rule.
       gate assumes the remote exists.
 - [x] Repo self-checks green: `pytest`, `assemble_flat_layout.py --check`,
       pack contracts, template verification.
-- [ ] Exercised by a fresh greenfield E2E run on the test box before merge.
+- [ ] Exercised by a fresh greenfield E2E run on the test box.
